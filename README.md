@@ -1,5 +1,5 @@
 # Live_iOS_Play_SDK
-CC视频云直播  iOS平台播放SDK和Demo
+CC视频云直播 iOS平台播放SDK和Demo
 
 [iOS 直播观看SDK开发指南](https://github.com/CCVideo/Live_iOS_Play_SDK/wiki/iOS-%E7%9B%B4%E6%92%AD%E8%A7%82%E7%9C%8BSDK%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
 
