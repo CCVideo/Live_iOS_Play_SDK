@@ -266,7 +266,7 @@
     parameter.roomId = self.textFieldRoomId.text;
     parameter.viewerName = self.textFieldUserName.text;
     parameter.token = self.textFieldUserPassword.text;
-    parameter.security = NO;
+    parameter.security = YES;
     parameter.viewerCustomua = @"viewercustomua";
     RequestData *requestData = [[RequestData alloc] initLoginWithParameter:parameter];
     requestData.delegate = self;
@@ -403,6 +403,7 @@
 }
 
 #pragma mark - CCPushDelegate
+
 //@optional
 /**
  *	@brief	请求成功

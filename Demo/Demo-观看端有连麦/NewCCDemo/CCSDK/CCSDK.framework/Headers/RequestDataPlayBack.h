@@ -71,6 +71,10 @@
  */
 -(void)roomInfo:(NSDictionary *)dic;
 /**
+ *  @brief 回放的开始时间和结束时间(The new method)
+ */
+-(void)liveInfo:(NSDictionary *)dic;
+/**
  *  @brief  加载视频失败
  */
 - (void)playback_loadVideoFail;
@@ -78,6 +82,10 @@
  *  @brief  回放翻页数据列表
  */
 - (void)pageChangeList:(NSMutableArray *)array;
+/**
+ *    @brief     双击ppt(The new method)
+ */
+- (void)doubleCllickPPTView;
 
 @end
 
@@ -87,7 +95,7 @@
 /**
  *  @brief  播放器
  */
-@property (retain,    atomic) id<IJKMediaPlayback>          ijkPlayer;
+@property (retain,    atomic) IJKFFMoviePlayerController      *ijkPlayer;
 
 /**
  *	@brief	登录房间

@@ -425,21 +425,16 @@
 
 -(void)micBgViewClicked {
     if(self.audioPermission == AVAuthorizationStatusAuthorized) return;
-    if ([UIDevice currentDevice].systemVersion.floatValue <= 10.0) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=com.cc.NewCCDemo&path=MICROPHONE"]];
-    
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-        
-        
-        
-    }else{
+//    if ([UIDevice currentDevice].systemVersion.floatValue <= 10.0) {
+//        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=com.cc.NewCCDemo&path=MICROPHONE"]];
+//    }else{
         // iOS10 之后, 比较特殊, 只能跳转到设置界面 , UIApplicationOpenSettingsURLString这个只支持iOS8之后.
         NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             // 还可以跳过success这个bool值进行更加精确的判断.
             //NSLog(@"跳转成功回调");
         }];
-    }
+//    }
 }
 
 @end

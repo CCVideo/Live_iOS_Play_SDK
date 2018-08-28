@@ -56,7 +56,7 @@
  */
 - (void)OnPrivateChat:(NSDictionary *)dic;
 /**
- *    @brief    修改昵称(The new method)
+ *    @brief    修改昵称
  */
 - (void)onChangeNickname:(NSString *)nickNime;
 /*
@@ -101,7 +101,7 @@
  */
 - (void)getDocAspectRatioOfWidth:(CGFloat)width height:(CGFloat)height;
 /**
- *  @brief  获取ppt当前页数和总页数(The new method)
+ *  @brief  获取ppt当前页数和总页数
  *
  *  回调当前翻页的页数信息 <br/>
  *  白板docTotalPage一直为0, pageNum从1开始<br/>
@@ -193,6 +193,10 @@
  */
 - (void)questionnaireDetailInformation:(NSDictionary *)detailDic;
 /**
+ *  @brief  获取问卷统计(The new method)
+ */
+- (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic;
+/**
  *  @brief  提交问卷结果（成功，失败）
  */
 - (void)commitQuestionnaireResult:(BOOL)success;
@@ -201,11 +205,17 @@
  */
 - (void)questionnaireWithTitle:(NSString *)title url:(NSString *)url;
 /**
- *  @brief  收到最后一条广播(The new method)
+ *  @brief  收到最后一条广播
  *  content 广播内容
  *  time 发布时间(单位:秒)
  */
 - (void)broadcastHistory_msg:(NSArray *)History_msg;
+
+/**
+ *    @brief     双击ppt(The new method)
+ */
+- (void)doubleCllickPPTView;
+
 /**
  *  @brief  获取直播开始时间和直播时长(The new method)
  *  liveDuration 直播持续时间，单位（s），直播未开始返回-1"
@@ -213,6 +223,16 @@
  */
 - (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic;
 
+
+/**
+ *    @brief     直播间被禁(The new method)
+ */
+- (void)theRoomWasBanned;
+
+/**
+ *    @brief     直播间解禁(The new method)
+ */
+- (void)theRoomWasCleared;
 
 //#ifdef LIANMAI_WEBRTC
 /**
@@ -245,9 +265,7 @@
 @interface RequestData : NSObject
 
 @property (weak,nonatomic) id<RequestDataDelegate>      delegate;
-@property (retain,    atomic) id<IJKMediaPlayback>      ijkPlayer;
-
-
+@property (retain,    atomic) IJKFFMoviePlayerController      *ijkPlayer;
 
 /**
  *	@brief	登录房间

@@ -88,6 +88,8 @@ typedef enum IJKLogLevel {
 - (long long)audioCachedBytes;
 - (long long)videoCachedDuration;
 - (long long)audioCachedDuration;
+
+
 - (int64_t)trafficStatistic;
 - (float)dropFrameRate;
 

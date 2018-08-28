@@ -9,6 +9,7 @@
 #import "QuestionnaireSurvey.h"
 #import "UIButton+UserInfo.h"
 #import "UITextView+UserInfo.h"
+#import "UIColor+RCColor.h"
 
 @interface QuestionnaireSurvey()<UITextViewDelegate>
 
@@ -22,6 +23,7 @@
 @property(nonatomic,strong)UIButton                 *submitBtn;
 @property(nonatomic,strong)UIView                   *view;
 @property(nonatomic,assign)BOOL                     isScreenLandScape;
+@property(nonatomic,assign)BOOL                     isStastic;
 @property(nonatomic,copy)  CloseBlock               closeblock;
 @property(strong,nonatomic)UIScrollView             *scrollView;
 //@property(strong,nonatomic)NSDictionary             *questionDic;
@@ -29,24 +31,36 @@
 @property(nonatomic,strong)UITextView               *selectedTextView;
 @property(nonatomic,strong)UILabel                  *msgLabel;
 @property(nonatomic,strong)NSMutableArray           *buttonIdArray;
+@property(nonatomic,strong)NSMutableArray           *correctLabelArray;
 @property(nonatomic,strong)NSMutableArray           *buttonArray;
 @property(nonatomic,strong)NSMutableArray           *textViewArray;
 @property(nonatomic,assign)NSInteger                selectQuestionCount;
 @property(nonatomic,strong)NSDictionary             *questionnaireDic;
+@property(nonatomic,strong)NSDictionary             *selectDic;
+@property(nonatomic,assign)NSInteger                submitedAction;//是否显示答案1显示其他不显示
+@property(nonatomic,assign)CGFloat                submitAnswerViewerCount;//提交人数
+
 @property(nonatomic,copy)  CommitBlock              commitblock;
+@property(nonatomic,strong)UILabel                   *correctLabel;//正确答案前面的提示
+@property(nonatomic,assign)NSInteger                 lastType;
 
 @end
 
 //答题
 @implementation QuestionnaireSurvey
 
--(instancetype)initWithCloseBlock:(CloseBlock)closeblock CommitBlock:(CommitBlock)commitblock questionnaireDic:(NSDictionary *)questionnaireDic isScreenLandScape:(BOOL)isScreenLandScape {
+- (instancetype)initWithCloseBlock:(CloseBlock)closeblock CommitBlock:(CommitBlock)commitblock questionnaireDic:(NSDictionary *)questionnaireDic isScreenLandScape:(BOOL)isScreenLandScape isStastic:(BOOL)isStastic {
+
     self = [super init];
     if(self) {
         self.isScreenLandScape  = isScreenLandScape;
+        self.isStastic          = isStastic;
         self.closeblock         = closeblock;
         self.commitblock        = commitblock;
         self.questionnaireDic   = questionnaireDic;
+        self.submitedAction     = [questionnaireDic[@"submitedAction"] integerValue];//
+        self.submitAnswerViewerCount = (CGFloat)[questionnaireDic[@"submitAnswerViewerCount"] integerValue];
+//        self.lastType = 2;
         [self initUI];
         [self addObserver];
     }
@@ -72,6 +86,12 @@
         _buttonIdArray = [[NSMutableArray alloc]init];
     }
     return _buttonIdArray;
+}
+-(NSMutableArray *)correctLabelArray {
+    if(!_correctLabelArray) {
+        _correctLabelArray = [[NSMutableArray alloc]init];
+    }
+    return _correctLabelArray;
 }
 
 -(void)initUI {
@@ -158,10 +178,10 @@
     }];
 
 //    NSString *questionStr = @"{\"id\": \"83450A45EB037826\",\"title\": \"CC视频问卷功能细节考评\",\"subjects\": [{\"id\": \"8CF77A91E659162F\",\"index\": 0,\"type\": 0,\"content\": \"第一道题（单选题）, type = 0\",\"options\": [{\"id\": \"83450A45EB037826\",\"index\": 0,\"content\": \"第01个选项（正确答案）\"},{\"id\": \"23C36A9C2E8649CA\",\"index\": 1,\"content\": \"第02个选项（错误答案）\"},{\"id\": \"20543941BC1B9A28\",\"index\": 2,\"content\": \"第03个选项（错误答案）\"},{\"id\": \"72AF62C81D0B48F7\",\"index\": 2,\"content\": \"第04个选项（错误答案）\"}]},{\"id\": \"736BE943513CC9C2\",\"index\": 1,\"type\": 1,\"content\": \"第二道题（多选题）, type = 1\",\"options\": [{\"id\": \"11A3D9A7F1169A89\",\"index\": 0,\"content\": \"第01个选项（正确答案）\"},{\"id\": \"9EEC738B25189C8D\",\"index\": 1,\"content\": \"第02个选项（错误答案）\"},{\"id\": \"5C28C57726CF8726\",\"index\": 2,\"content\": \"第03个选项（正确答案）\"},{\"id\": \"D1CD8F561E26EF7C\",\"index\": 3,\"content\": \"第04个选项（错误答案）\"}]},{\"id\": \"1BE68588D53A91D8\",\"index\": 2,\"type\": 2,\"content\": \"第三道题（问答题）, type = 2\"}]}";
-//    
+    
 //    NSData *jsonData = [questionStr dataUsingEncoding:NSUTF8StringEncoding];
 //    id jsonDrawValue = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
-//    _questionDic = (NSDictionary *)jsonDrawValue;
+//    _questionnaireDic = (NSDictionary *)jsonDrawValue;
     float textMaxWidth = self.isScreenLandScape? CCGetRealFromPt(669) : CCGetRealFromPt(610);
     NSMutableAttributedString *textAttri = [[NSMutableAttributedString alloc] initWithString:_questionnaireDic[@"title"]];
     [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(153,153,153) range:NSMakeRange(0, textAttri.length)];
@@ -215,8 +235,17 @@
             if(i == 0) {
                 make.top.mas_equalTo(referenceViewPreview.mas_bottom).offset(CCGetRealFromPt(52));
             } else {
-                make.top.mas_equalTo(referenceViewPreview.mas_bottom).offset(CCGetRealFromPt(58));
+                if ([opthionsDic[@"type"] intValue] == 2 && self.isStastic) {
+                    if (self.lastType == 1 || self.lastType == 0) {
+                        make.top.mas_equalTo(referenceViewPreview.mas_bottom).offset(CCGetRealFromPt(58+2));
+                    } else {
+                        make.top.mas_equalTo(referenceViewPreview.mas_bottom).offset(CCGetRealFromPt(1));
+                    }
+                } else {
+                    make.top.mas_equalTo(referenceViewPreview.mas_bottom).offset(CCGetRealFromPt(58+2));
+                }
             }
+            self.lastType = [opthionsDic[@"type"] intValue];
             make.width.mas_equalTo(leftSizeNum.width);
             make.height.mas_equalTo(leftSizeNum.height);
         }];
@@ -297,6 +326,7 @@
             for(int j = 0;j < [optionsArray count];j++) {
                 NSDictionary *optionDic = optionsArray[j];
                 UIButton *selectButton = [UIButton buttonWithType:UIButtonTypeCustom];
+                selectButton.hidden = self.isStastic? YES: NO;
                 [selectButton addTarget:self action:@selector(selectBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
                 if([opthionsDic[@"type"] intValue] == 0) {
                     [selectButton setBackgroundImage:[UIImage imageNamed:@"单选未选"] forState:UIControlStateNormal];
@@ -307,6 +337,7 @@
                     [selectButton setBackgroundImage:[UIImage imageNamed:@"多选选中"] forState:UIControlStateSelected];
                     [selectButton setBackgroundImage:[UIImage imageNamed:@"多选选中"] forState:UIControlStateHighlighted];
                 }
+                
                 //题号-类型（0：单选，1:多选）-选项个数-选项索引值-题目ID-选项ID
                 NSString *buttonId = [NSString stringWithFormat:@"%d-%d-%d-%d-%@-%@",i,[opthionsDic[@"type"] intValue],(int)[optionsArray count],j,opthionsDic[@"id"],optionDic[@"id"]];
                 selectButton.userid = buttonId;
@@ -320,12 +351,30 @@
                     if(j == 0) {
                         make.top.mas_equalTo(referenceView.mas_bottom).offset(CCGetRealFromPt(40));
                     } else {
-                        make.top.mas_equalTo(referenceView.mas_bottom).offset(CCGetRealFromPt(48));
+                        make.top.mas_equalTo(referenceView.mas_bottom).offset(CCGetRealFromPt(58));
                     }
                     make.width.mas_equalTo(CCGetRealFromPt(40));
                     make.height.mas_equalTo(CCGetRealFromPt(40));
                 }];
-                
+//需要判断是否正确
+                if ([optionsArray[j][@"correct"] integerValue] == 1) {
+                    
+                        UILabel * correctLabel = [[UILabel alloc] init];
+                        _correctLabel = correctLabel;
+                        correctLabel.text = @"正确";
+                        correctLabel.textColor = CCRGBColor(67,181,15);
+                        correctLabel.textAlignment = NSTextAlignmentLeft;
+                        correctLabel.font = [UIFont boldSystemFontOfSize:FontSize_24];
+                    correctLabel.hidden = self.isStastic ? NO : YES;
+                        [_scrollView addSubview:correctLabel];
+                        [correctLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                            make.centerY.mas_equalTo(selectButton);
+                            make.right.mas_equalTo(selectButton.mas_left).offset(-5);
+                        }];
+                    [self.correctLabelArray addObject:correctLabel];
+                }
+
+            
                 UILabel *ALabel = [[UILabel alloc] init];
                 ALabel.text = [NSString stringWithFormat:@"%c：",'A' + j];
                 ALabel.textColor = CCRGBColor(102,102,102);
@@ -376,26 +425,67 @@
                 referenceView = contentLabelOption;
 
                 referenceViewPreview = contentLabelOption;
+                
+//添加统计条形图
+                if (self.isStastic) {
+                    CGFloat  submitCount = (CGFloat)([optionsArray[j][@"selectedCount"] integerValue] / self.submitAnswerViewerCount);
+                    selectButton.userInteractionEnabled = NO;
+                    //背景
+                    UIView *bgView = [[UIView alloc] initWithFrame:CGRectZero];
+                    bgView.backgroundColor = [UIColor colorWithHexString:@"#edf5ff" alpha:1.0f];
+                    [_scrollView addSubview:bgView];
+                    [bgView mas_makeConstraints:^(MASConstraintMaker *make) {
+                        make.left.equalTo(selectButton);
+                        make.right.equalTo(self).offset(-100);
+                        make.top.mas_equalTo(contentLabelOption.mas_bottom).offset(10);
+                        make.height.mas_equalTo(15);
+                    }];
+                    //数据
+                    UIView *dataView = [[UIView alloc] initWithFrame:CGRectZero];
+                    dataView.backgroundColor = [UIColor colorWithHexString:@"#43b50f" alpha:1.0f];
+                    [_scrollView addSubview:dataView];
+                    [dataView mas_makeConstraints:^(MASConstraintMaker *make) {
+                        make.left.equalTo(selectButton);
+                        make.width.equalTo(bgView).multipliedBy(submitCount);
+                        make.top.mas_equalTo(contentLabelOption.mas_bottom).offset(10);
+                        make.height.mas_equalTo(15);
+                    }];
+                    
+                    //百分比
+                    
+                    UILabel *percent = [[UILabel alloc] init];
+                    percent.text = [NSString stringWithFormat:@"%ld人(%.1f%%)",[optionsArray[j][@"selectedCount"] integerValue],submitCount*100];
+                    percent.textAlignment = NSTextAlignmentCenter;
+                    [percent setTextColor:[UIColor darkGrayColor]];
+                    percent.font = [UIFont systemFontOfSize:12];
+                    [_scrollView addSubview:percent];
+                    [percent mas_makeConstraints:^(MASConstraintMaker *make) {
+                        make.centerY.equalTo(bgView);
+                        make.left.equalTo(bgView.mas_right).offset(2);
+                    }];
+                }
             }
 
         } else if([opthionsDic[@"type"] intValue] == 2) {
             UIView *viewBG = [[UIView alloc] init];
             viewBG.backgroundColor = CCRGBColor(250,250,250);
-            [_scrollView addSubview:viewBG];
+            viewBG.hidden = self.isStastic? YES: NO;
+                [_scrollView addSubview:viewBG];
+                [viewBG mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.mas_equalTo(_scrollView.mas_left).offset(CCGetRealFromPt(70));
+                    make.top.mas_equalTo(referenceView.mas_bottom).offset(CCGetRealFromPt(40));
+                    if(ws.isScreenLandScape) {
+                        make.width.mas_equalTo(CCGetRealFromPt(770));
+                    } else {
+                        make.width.mas_equalTo(CCGetRealFromPt(570));
+                    }
+                    make.height.mas_equalTo(CCGetRealFromPt(self.isStastic?1:178));
+                }];
+
             viewBG.layer.borderColor = CCRGBColor(221,221,221).CGColor;
             viewBG.layer.borderWidth = 1;
             viewBG.tag = i + 1 + 100;
             referenceView.tag = viewBG.tag + 100;
-            [viewBG mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_equalTo(_scrollView.mas_left).offset(CCGetRealFromPt(70));
-                make.top.mas_equalTo(referenceView.mas_bottom).offset(CCGetRealFromPt(40));
-                if(ws.isScreenLandScape) {
-                    make.width.mas_equalTo(CCGetRealFromPt(770));
-                } else {
-                    make.width.mas_equalTo(CCGetRealFromPt(570));
-                }
-                make.height.mas_equalTo(CCGetRealFromPt(178));
-            }];
             
             UITextView *uiTextView = [[UITextView alloc] init];
             uiTextView.backgroundColor = CCClearColor;
@@ -408,16 +498,18 @@
             uiTextView.scrollEnabled = YES;
             uiTextView.userid = opthionsDic[@"id"];
             uiTextView.delegate = self;
-            [viewBG addSubview:uiTextView];
-            [self.textViewArray addObject:uiTextView];
             uiTextView.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
-            [uiTextView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_equalTo(viewBG).offset(CCGetRealFromPt(20));
-                make.top.mas_equalTo(viewBG).offset(CCGetRealFromPt(20));
-                make.bottom.mas_equalTo(viewBG).offset(-CCGetRealFromPt(20));
-                make.right.mas_equalTo(viewBG).offset(-CCGetRealFromPt(20));
-            }];
-        
+            if (!self.isStastic) {
+            
+                [self.textViewArray addObject:uiTextView];
+                [viewBG addSubview:uiTextView];
+                [uiTextView mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.mas_equalTo(viewBG).offset(CCGetRealFromPt(20));
+                    make.top.mas_equalTo(viewBG).offset(CCGetRealFromPt(20));
+                    make.bottom.mas_equalTo(viewBG).offset(-CCGetRealFromPt(20));
+                    make.right.mas_equalTo(viewBG).offset(-CCGetRealFromPt(20));
+                }];
+            }
             referenceViewPreview = viewBG;
         }
     }
@@ -671,7 +763,14 @@
     if(_submitBtn == nil) {
         _submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _submitBtn.backgroundColor = CCRGBColor(255,102,51);
-        [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+        if (self.isStastic) {
+//            [_submitBtn setTitle:@"统计信息" forState:UIControlStateNormal];
+//            _submitBtn.userInteractionEnabled = NO;
+            _submitBtn.hidden = YES;
+        } else {
+            
+            [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+        }
         [_submitBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
         [_submitBtn setTitleColor:CCRGBAColor(255, 255, 255, 1) forState:UIControlStateNormal];
         [_submitBtn.layer setMasksToBounds:YES];
@@ -777,6 +876,14 @@
     dic[@"subjectsAnswer"] = array;
     if(self.commitblock) {
         self.commitblock(dic);
+        if (self.submitedAction == 1) {
+            [_submitBtn setTitle:@"已提交" forState:UIControlStateNormal];
+            _submitBtn.userInteractionEnabled = NO;
+            for(UILabel *correctLabel in self.correctLabelArray) {
+                correctLabel.hidden = NO;
+            }
+        }
+
     }
 }
 
@@ -831,7 +938,7 @@
 -(UILabel *)label {
     if(!_label) {
         _label = [UILabel new];
-        _label.text = @"问卷调查";
+        _label.text = self.isStastic? @"问卷统计":@"问卷调查";
         _label.textColor = CCRGBColor(51,51,51);
         _label.textAlignment = NSTextAlignmentCenter;
         _label.font = [UIFont systemFontOfSize:FontSize_36];

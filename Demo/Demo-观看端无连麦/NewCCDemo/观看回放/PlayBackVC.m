@@ -70,7 +70,6 @@
 
 @property(assign,nonatomic)int                      currentChatTime;
 @property(assign,nonatomic)int                      currentChatIndex;
-@property (assign, nonatomic)BOOL                   isSlider;
 
 @end
 
@@ -131,7 +130,6 @@
 
 - (void) durationSliderDone:(UISlider *)sender
 {
-    _isSlider = YES;
     UIImage *image2 = [UIImage imageNamed:@"return_btn_playplan_nor"];//图片模式，不设置的话会被压缩
     [_slider setThumbImage:image2 forState:UIControlStateNormal];//设置图片
     
@@ -156,6 +154,7 @@
 {
     self.hiddenTime = 5.0f;
     _suspendButton.selected = NO;
+
     int duration = (int)sender.value;
     _leftTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", duration / 60, duration % 60];
     _slider.value = duration;
@@ -228,21 +227,16 @@
             if(duration - position == 1 && (_sliderValue == position || _sliderValue == duration)) {
                 position = duration;
             }
-//            NSLog(@"判断时间%f==%f",_requestDataPlayBack.currentPlaybackTime,position);
+//            NSLog(@"---%f",_requestDataPlayBack.currentPlaybackTime);
             
             _slider.maximumValue = (int)duration;
             _rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
             
-//            NSLog(@"--走这里了%f=%f=%f=%ld",_requestDataPlayBack.currentPlaybackTime,position,_slider.value,_sliderValue);
             if(position == 0 && _sliderValue != 0) {
                 _requestDataPlayBack.currentPlaybackTime = _sliderValue;
                 position = _sliderValue;
                 _slider.value = _sliderValue;
             } else if(fabs(position - _slider.value) > 10) {
-//            } else if(_isSlider == YES) {
-
-//                NSLog(@"走这里了%f=%f=%f",_requestDataPlayBack.currentPlaybackTime,position,_slider.value);
-                _isSlider = NO;
                 _requestDataPlayBack.currentPlaybackTime = _slider.value;
                 position = _slider.value;
                 _sliderValue = _slider.value;
@@ -300,7 +294,7 @@
 
 -(UISegmentedControl *)segment {
     if(!_segment) {
-        NSArray *segmentedArray = [[NSArray alloc] initWithObjects:@"文档",@"聊天记录",@"问答", nil];
+        NSArray *segmentedArray = [[NSArray alloc] initWithObjects:@"文档",@"聊天",@"问答", nil];
         _segment = [[UISegmentedControl alloc] initWithItems:segmentedArray];
         //文字设置
         NSMutableDictionary *attDicNormal = [NSMutableDictionary dictionary];
@@ -687,9 +681,9 @@
     
     [_scrollView addSubview:self.pptView];
     self.pptView.frame = CGRectMake(0, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
-    UITapGestureRecognizer *pptViewDoubleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealPPTViewDoubleTap)];
-    pptViewDoubleTap.numberOfTapsRequired = 2;
-    [_pptView addGestureRecognizer:pptViewDoubleTap];
+//    UITapGestureRecognizer *pptViewDoubleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealPPTViewDoubleTap)];
+//    pptViewDoubleTap.numberOfTapsRequired = 2;
+//    [_pptView addGestureRecognizer:pptViewDoubleTap];
     
 //    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"document_bg"]];
 //    [self.pptView addSubview:imageView];
@@ -721,6 +715,12 @@
     [self.view bringSubviewToFront:self.videoView];
     
     [self.view layoutIfNeeded];
+}
+/**
+ *    @brief     双击ppt(The new method)
+ */
+- (void)doubleCllickPPTView {
+    [self dealPPTViewDoubleTap];
 }
 
 -(UIView *)pptView {
@@ -839,7 +839,6 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     [self initUI];
-    _isSlider = NO;
     [self addObserver];
     [self startHiddenTimer];
     _autoRotate = NO;
@@ -860,7 +859,7 @@
     parameter.playerParent = self.videoView;
     parameter.playerFrame = _videoRect;
     parameter.security = YES;
-    parameter.PPTScalingMode = 2;
+    parameter.PPTScalingMode = 4;
     parameter.pauseInBackGround = YES;
     parameter.defaultColor = [UIColor whiteColor];
     parameter.scalingMode = 1;
@@ -869,7 +868,7 @@
     
     _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
     [self.videoView addSubview:_loadingView];
-    
+
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
     }];
@@ -1176,6 +1175,10 @@
         _questionChatView.backgroundColor = CCRGBColor(250,250,250);
     }
     return _questionChatView;
+}
+
+- (void)liveInfo:(NSDictionary *)dic {
+    
 }
 
 /**

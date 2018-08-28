@@ -147,7 +147,8 @@
 @property(nonatomic,copy  )NSString                 *roomUserCount;
 @property(nonatomic,strong)InformationShowView      *informationViewPop;
 @property(nonatomic,strong)UIView                   *smallVideoView;
-@property(nonatomic, assign)BOOL                    isDoubleTap;
+@property(nonatomic, assign)NSInteger                submitedAction;
+
 //#ifdef LIANMAI_WEBRTC
 @property(nonatomic,assign)BOOL                     isAudioVideo;//YES表示音视频连麦，NO表示音频连麦
 @property(strong,nonatomic)UIView                   *remoteView;
@@ -214,18 +215,35 @@
     [self showAll];
     
     _informationView = [[UIView alloc] init];
-    _informationView.backgroundColor = CCClearColor;
+    _informationView.backgroundColor = [UIColor blackColor];
     UITapGestureRecognizer *hideTextBoardTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealSingleInformationTap)];
     [self.videoView addSubview:_informationView];
     if([informationStr isEqualToString:@"视频加载失败"]) {
         [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(50, 100, 0, 100));
         }];
+ 
     } else {
         [_informationView addGestureRecognizer:hideTextBoardTap];
         [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
+            make.edges.mas_equalTo(self.videoView);
         }];
+        UIButton * titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        titleBtn.backgroundColor = CCClearColor;
+        [titleBtn addTarget:self action:@selector(onSelectVC) forControlEvents:UIControlEventTouchUpInside];
+        UIImage *aimage = [UIImage imageNamed:@"nav_ic_back_nor"];
+        UIImage *image = [aimage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        [titleBtn setImage:image forState:UIControlStateNormal];
+        titleBtn.contentMode = UIViewContentModeScaleAspectFit;
+        [titleBtn addTarget:self action:@selector(onSelectVC) forControlEvents:UIControlEventTouchUpInside];
+        [_informationView addSubview:titleBtn];
+        WS(ws)
+        [titleBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(ws.informationView).offset(10);
+            make.top.mas_equalTo(ws.informationView).offset(14);
+            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80), CCGetRealFromPt(80)));
+        }];
+        
     }
     UILabel *label = [UILabel new];
     label.backgroundColor = CCClearColor;
@@ -238,11 +256,13 @@
     [label mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(ws.informationView);
     }];
+
 }
 /**
  *	@brief  停止直播，endNormal表示是否异常停止推流，这个参数对观看端影响不大
  */
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal {
+    
     [self loadInformationView:@"直播已停止"];
 }
 /*
@@ -487,8 +507,9 @@
     WS(ws)
     dispatch_async(dispatch_get_main_queue(), ^{
         [ws.questionnaireSurvey commitSuccess:success];
-        if(success) {
+        if(success &&self.submitedAction != 1) {
             [NSTimer scheduledTimerWithTimeInterval:3.0f target:ws selector:@selector(removeQuestionnaireSurvey) userInfo:nil repeats:NO];
+            
         }
     });
 }
@@ -764,11 +785,15 @@
         }
     });
 }
-
 /*
- *  获取问卷详细内容
+ *  获取问卷统计
  */
-- (void)questionnaireDetailInformation:(NSDictionary *)detailDic {
+- (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic {
+    
+    if (self.questionnaireSurvey != nil) {
+        [self.questionnaireSurvey removeFromSuperview];
+        self.questionnaireSurvey = nil;
+    }
     WS(ws)
     dispatch_async(dispatch_get_main_queue(), ^{
         ws.questionnaireSurvey = [[QuestionnaireSurvey alloc] initWithCloseBlock:^{
@@ -777,9 +802,38 @@
             [ws.questionnaireSurveyPopUp removeFromSuperview];
             ws.questionnaireSurveyPopUp = nil;
         } CommitBlock:^(NSDictionary *dic) {
-//提交问卷结果
+
+        } questionnaireDic:staticsDic isScreenLandScape:ws.isScreenLandScape isStastic:YES];
+
+        [APPDelegate.window addSubview:ws.questionnaireSurvey];
+        [ws.questionnaireSurvey mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(ws.view);
+        }];
+        
+        [ws.questionnaireSurvey layoutIfNeeded];
+    
+        if(ws.rollcallView) {
+            [APPDelegate.window bringSubviewToFront:ws.rollcallView];
+        }
+    });
+}
+/*
+ *  获取问卷详细内容
+ */
+- (void)questionnaireDetailInformation:(NSDictionary *)detailDic {
+   
+    self.submitedAction     = [detailDic[@"submitedAction"] integerValue];
+    WS(ws)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ws.questionnaireSurvey = [[QuestionnaireSurvey alloc] initWithCloseBlock:^{
+            [ws.questionnaireSurvey removeFromSuperview];
+            ws.questionnaireSurvey = nil;
+            [ws.questionnaireSurveyPopUp removeFromSuperview];
+            ws.questionnaireSurveyPopUp = nil;
+        } CommitBlock:^(NSDictionary *dic) {
+            //提交问卷结果
             [ws.requestData commitQuestionnaire:dic];
-        } questionnaireDic:detailDic isScreenLandScape:ws.isScreenLandScape];
+        } questionnaireDic:detailDic isScreenLandScape:ws.isScreenLandScape isStastic:NO];
         [APPDelegate.window addSubview:ws.questionnaireSurvey];
         [ws.questionnaireSurvey mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(ws.view);
@@ -1122,41 +1176,18 @@
             break;
         }
 }
-//强制转屏
-- (void)interfaceOrientation:(UIInterfaceOrientation)orientation
-{
-    if ([[UIDevice currentDevice] respondsToSelector:@selector(setOrientation:)]) {
-        SEL selector  = NSSelectorFromString(@"setOrientation:");
-        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[UIDevice instanceMethodSignatureForSelector:selector]];
-        [invocation setSelector:selector];
-        [invocation setTarget:[UIDevice currentDevice]];
-        int val = orientation;
-        // 从2开始是因为0 1 两个参数已经被selector和target占用
-        [invocation setArgument:&val atIndex:2];
-        [invocation invoke];
-    }
-}
 
 -(void)dealPPTViewDoubleTap {
     if(_pptView == nil) return;
     WS(ws)
     [self.view endEditing:YES];
-    if (!self.isScreenLandScape) {//横屏
+    if (!self.isScreenLandScape) {
         self.isScreenLandScape = YES;
         self.autoRotate = YES;
-        self.isDoubleTap = YES;
-//        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationLandscapeLeft] forKey:@"orientation"];
-        [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
-        if (self.view.frame.size.width < self.view.frame.size.height) {
-            CGFloat isWidth = self.view.frame.size.height;
-            CGFloat isHeight = self.view.frame.size.width;
-            
-            self.view.frame = CGRectMake(0, 0, isWidth, isHeight);
-        }
+        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationLandscapeLeft] forKey:@"orientation"];
         [UIApplication sharedApplication].statusBarHidden = YES;
         [_pptView removeFromSuperview];
         [self.view addSubview:_pptView];
-        NSLog(@"屏幕朝尺寸%@",NSStringFromCGRect(self.view.frame));
         [self.view bringSubviewToFront:_pptView];
         CGRect rect = self.view.frame;
         [UIView animateWithDuration:0.25f animations:^{
@@ -1192,24 +1223,14 @@
             [_requestData setRemoteVideoFrameA:self.remoteView.frame];
         }
 //#endif
-    } else {//竖屏
+    } else {
         self.isScreenLandScape = NO;
         self.autoRotate = YES;
-        self.isDoubleTap = NO;
-
-//        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
-        [self interfaceOrientation:UIInterfaceOrientationPortrait];
-        if (self.view.frame.size.width > self.view.frame.size.height) {
-            CGFloat isWidth = self.view.frame.size.width;
-            CGFloat isHeight = self.view.frame.size.height;
-            
-            self.view.frame = CGRectMake(0, 0, isHeight, isWidth);
-        }
+        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
         [UIApplication sharedApplication].statusBarHidden = NO;
         [_pptView removeFromSuperview];
         [_scrollView addSubview:_pptView];
         CGRect rect = CGRectMake(0, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
-        NSLog(@"尺寸%@",NSStringFromCGRect(self.view.frame));
 
         [UIView animateWithDuration:0.25f animations:^{
             [ws.pptView setFrame:rect];
@@ -1855,16 +1876,14 @@
         _scrollView.delegate = self;
         _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width * 4, _scrollView.frame.size.height);
         _scrollView.showsHorizontalScrollIndicator = NO;
+    
+        
 
         [self.view addSubview:self.scrollView];
         
         //ppt文档
         [_scrollView addSubview:self.pptView];
         self.pptView.frame = CGRectMake(0, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
-
-        UITapGestureRecognizer *pptViewDoubleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealPPTViewDoubleTap)];
-        pptViewDoubleTap.numberOfTapsRequired = 2;
-        [_pptView addGestureRecognizer:pptViewDoubleTap];
         
 //        UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"document_bg"]];
 //        [self.pptView addSubview:imageView];
@@ -1932,6 +1951,12 @@
         }];
     }
     [self.view layoutIfNeeded];
+}
+/**
+ *    @brief     双击ppt(The new method)
+ */
+- (void)doubleCllickPPTView {
+    [self dealPPTViewDoubleTap];
 }
 
 -(UIView *)pptView {
@@ -2051,9 +2076,7 @@
 
 -(void)startTimer {
     [self stopTimer];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:3.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
-//    [_requestData roomUserCount];
-
+    _timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
 }
 
 -(void)cancelBtnClicked {
@@ -2139,87 +2162,61 @@
     parameter.playerParent = self.videoView;
     parameter.playerFrame = _videoRect;
     parameter.security = NO;
-    parameter.PPTScalingMode = 2;
+    parameter.PPTScalingMode = 4;
     parameter.defaultColor = [UIColor whiteColor];
     parameter.scalingMode = 1;
-    parameter.viewerCustomua = @"viewerCustomua";
-    parameter.pauseInBackGround = YES;
+    parameter.pauseInBackGround = NO;
+    parameter.viewerCustomua = @"viewercustomua";
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;
     
     _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
     [self.videoView addSubview:_loadingView];
+
     UITapGestureRecognizer *hideTextBoardTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealSingleInformationTap)];
     [_loadingView addGestureRecognizer:hideTextBoardTap];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
     }];
     [_loadingView layoutIfNeeded];
-//    开启和监听 设备旋转的通知（不开启的话，设备方向一直是UIInterfaceOrientationUnknown）
-    if (![UIDevice currentDevice].generatesDeviceOrientationNotifications) {
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    }
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(handleDeviceOrientationChange:)
-                                                name:UIDeviceOrientationDidChangeNotification object:nil];
+    
+//    UIButton * surebtn = [[UIButton alloc] init];
+//    [surebtn setBackgroundColor:[UIColor redColor]];
+//    surebtn.frame = CGRectMake(50, 30, 50, 50);
+//    [surebtn addTarget:self action:@selector(banroom:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:surebtn];
+//
+//    UIButton * canclebtn = [[UIButton alloc] init];
+//    [canclebtn setBackgroundColor:[UIColor greenColor]];
+//    canclebtn.frame = CGRectMake(100, 30, 50, 50);
+//    [canclebtn addTarget:self action:@selector(unbanroom:) forControlEvents:UIControlEventTouchUpInside];
+//
+//    [self.view addSubview:canclebtn];
+}
+
+
+//直播间被封
+- (void)theRoomWasBanned {
+    [self loadInformationView:@"该直播间已封禁"];
+
+}
+//直播间解禁
+- (void)theRoomWasCleared {
     
 }
-//设备方向改变的处理
-- (void)handleDeviceOrientationChange:(NSNotification *)notification{
-    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-    switch (deviceOrientation) {
-        case UIDeviceOrientationFaceUp:
-            NSLog(@"屏幕朝上平躺%ld",(long)self.autoRotate);
-            break;
-        case UIDeviceOrientationFaceDown:
-            NSLog(@"屏幕朝下平躺%ld",(long)self.autoRotate);
-            break;
-        case UIDeviceOrientationUnknown:
-            NSLog(@"未知方向%ld",(long)self.autoRotate);
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            NSLog(@"屏幕向左横置,%ld",(long)self.autoRotate);
-            if (!self.autoRotate && !self.isDoubleTap) {
-                [self interfaceOrientation:UIInterfaceOrientationPortrait];
-            }
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            NSLog(@"屏幕向右橫置%ld",(long)self.autoRotate);
-            if (!self.autoRotate &&!self.isDoubleTap) {
-                [self interfaceOrientation:UIInterfaceOrientationPortrait];
-            }
-            break;
-        case UIDeviceOrientationPortrait:
-            NSLog(@"屏幕直立%ld",(long)self.autoRotate);
-            if (self.isDoubleTap) {
-                [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
-//                self.autoRotate = NO;
-//                return;
-            }
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            NSLog(@"屏幕直立，上下顛倒%ld",(long)self.autoRotate);
-            break;
-        default:
-            NSLog(@"无法辨识%ld",(long)self.autoRotate);
-            break;
-    }
-}
-//最后在dealloc中移除通知 和结束设备旋转的通知
-- (void)dealloc{
-    //...
-    [[NSNotificationCenter defaultCenter]removeObserver:self];
-    [[UIDevice currentDevice]endGeneratingDeviceOrientationNotifications];
-}
+//翻页数据
 - (void)onPageChange:(NSDictionary *) dictionary {
     
 //    NSLog(@"翻页数据%@",dictionary);
 }
+//最后一条广播
 - (void)broadcastLast_msg:(NSArray *)array {
 //    NSLog(@"最后一条广播%@",array);
     
 }
-- (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic {
-//    NSLog(@"开始时间%@",dataDic);
+//获取开播时间
+- (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic{
+    //    NSLog(@"开播时间%@",dataDic);
 }
 //点击公告
 - (void)dealSingleTap:(UITapGestureRecognizer *)tap {
@@ -3435,7 +3432,7 @@
 }
 
 - (void)onPublicChatMessage:(NSDictionary *)dic {
-//    NSLog(@"onPublicChatMessage = %@",dic);
+    NSLog(@"onPublicChatMessage = %@",dic);
     if(!_hideDanMuBtn.selected) {
         [self insertStr:dic[@"msg"]];
     }
@@ -3808,7 +3805,6 @@
 
 - (BOOL)shouldAutorotate{
     return self.autoRotate;
-//    return YES;
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation

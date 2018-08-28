@@ -77,17 +77,19 @@
 		42F3418E1DF53BC900CB6FD8 /* PhotoNotPermissionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F3418D1DF53BC900CB6FD8 /* PhotoNotPermissionVC.m */; };
 		42F44F091DE574B700021D35 /* LiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F44F081DE574B700021D35 /* LiveViewController.m */; };
 		42F44F0C1DE5780F00021D35 /* TextFieldUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F44F0B1DE5780F00021D35 /* TextFieldUserInfo.m */; };
-		524A9A0C20AAE557007B431E /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0920AAE557007B431E /* DWDrmServer.framework */; };
-		524A9A0D20AAE557007B431E /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0A20AAE557007B431E /* WebRTC.framework */; };
-		524A9A0E20AAE55F007B431E /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0920AAE557007B431E /* DWDrmServer.framework */; };
-		524A9A0F20AAE55F007B431E /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0920AAE557007B431E /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		524A9A1020AAE55F007B431E /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0820AAE557007B431E /* IJKMediaFramework.framework */; };
-		524A9A1120AAE55F007B431E /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0820AAE557007B431E /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		524A9A1220AAE55F007B431E /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0A20AAE557007B431E /* WebRTC.framework */; };
-		524A9A1320AAE55F007B431E /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 524A9A0A20AAE557007B431E /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		52685724211C60E40022DB93 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52685723211C60E30022DB93 /* CCSDK.framework */; };
-		52685725211C60F60022DB93 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52685723211C60E30022DB93 /* CCSDK.framework */; };
-		52685726211C60F60022DB93 /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52685723211C60E30022DB93 /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5230840720F30133008864E5 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; };
+		5230840920F3015C008864E5 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; };
+		5230840A20F3017B008864E5 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; };
+		5230840B20F3017B008864E5 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5230840C20F3017B008864E5 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; };
+		5230840D20F3017B008864E5 /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		527283502133EA5300256FAA /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5272834F2133EA5300256FAA /* CCSDK.framework */; };
+		527283512133EA6300256FAA /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5272834F2133EA5300256FAA /* CCSDK.framework */; };
+		527283522133EA6300256FAA /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5272834F2133EA5300256FAA /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52B70FB1211BE20B00641411 /* UIColor+RCColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 52B70FB0211BE20B00641411 /* UIColor+RCColor.m */; };
+		52EBECDE2119A1330048CF3A /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */; };
+		52EBECDF2119A1470048CF3A /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */; };
+		52EBECE02119A1470048CF3A /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7B1D7D3273344E9BC877D253 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 023911B30F22348300AA4759 /* libPods.a */; };
 		FB322251204D3CA900510CEC /* QuestionNaire.m in Sources */ = {isa = PBXBuildFile; fileRef = FB322250204D3CA800510CEC /* QuestionNaire.m */; };
 		FB814D081F628EDC006BD6FD /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB814D071F628EDC006BD6FD /* MediaPlayer.framework */; };
@@ -117,10 +119,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				524A9A0F20AAE55F007B431E /* DWDrmServer.framework in Embed Frameworks */,
-				524A9A1120AAE55F007B431E /* IJKMediaFramework.framework in Embed Frameworks */,
-				524A9A1320AAE55F007B431E /* WebRTC.framework in Embed Frameworks */,
-				52685726211C60F60022DB93 /* CCSDK.framework in Embed Frameworks */,
+				52EBECE02119A1470048CF3A /* IJKMediaFramework.framework in Embed Frameworks */,
+				5230840B20F3017B008864E5 /* WebRTC.framework in Embed Frameworks */,
+				5230840D20F3017B008864E5 /* DWDrmServer.framework in Embed Frameworks */,
+				527283522133EA6300256FAA /* CCSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,10 +263,12 @@
 		42F44F081DE574B700021D35 /* LiveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveViewController.m; sourceTree = "<group>"; };
 		42F44F0B1DE5780F00021D35 /* TextFieldUserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldUserInfo.m; sourceTree = "<group>"; };
 		42F44F0D1DE57F5300021D35 /* TextFieldUserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldUserInfo.h; sourceTree = "<group>"; };
-		524A9A0820AAE557007B431E /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
-		524A9A0920AAE557007B431E /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
-		524A9A0A20AAE557007B431E /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
-		52685723211C60E30022DB93 /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
+		5230840620F30133008864E5 /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
+		5230840820F3015C008864E5 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
+		5272834F2133EA5300256FAA /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
+		52B70FAF211BE20B00641411 /* UIColor+RCColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+RCColor.h"; sourceTree = "<group>"; };
+		52B70FB0211BE20B00641411 /* UIColor+RCColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+RCColor.m"; sourceTree = "<group>"; };
+		52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
 		914D2A59949F58CF328057D4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		FB32224F204D3CA800510CEC /* QuestionNaire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuestionNaire.h; sourceTree = "<group>"; };
 		FB322250204D3CA800510CEC /* QuestionNaire.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuestionNaire.m; sourceTree = "<group>"; };
@@ -276,20 +280,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				524A9A1220AAE55F007B431E /* WebRTC.framework in Frameworks */,
+				5230840C20F3017B008864E5 /* DWDrmServer.framework in Frameworks */,
+				5230840920F3015C008864E5 /* WebRTC.framework in Frameworks */,
 				FB814D081F628EDC006BD6FD /* MediaPlayer.framework in Frameworks */,
+				52EBECDE2119A1330048CF3A /* IJKMediaFramework.framework in Frameworks */,
+				5230840720F30133008864E5 /* DWDrmServer.framework in Frameworks */,
+				52EBECDF2119A1470048CF3A /* IJKMediaFramework.framework in Frameworks */,
+				527283512133EA6300256FAA /* CCSDK.framework in Frameworks */,
+				5230840A20F3017B008864E5 /* WebRTC.framework in Frameworks */,
 				42C7ED911E8CAF6A008A878A /* JavaScriptCore.framework in Frameworks */,
 				4289C64D1E2211660033F5CA /* Security.framework in Frameworks */,
-				524A9A1020AAE55F007B431E /* IJKMediaFramework.framework in Frameworks */,
-				524A9A0D20AAE557007B431E /* WebRTC.framework in Frameworks */,
 				429907241DE2E589001C4824 /* libz.1.1.3.tbd in Frameworks */,
 				4289C64C1E2211570033F5CA /* UIKit.framework in Frameworks */,
-				52685724211C60E40022DB93 /* CCSDK.framework in Frameworks */,
-				524A9A0C20AAE557007B431E /* DWDrmServer.framework in Frameworks */,
-				524A9A0E20AAE55F007B431E /* DWDrmServer.framework in Frameworks */,
 				4289C64B1E22114F0033F5CA /* CoreTelephony.framework in Frameworks */,
 				4289C6491E2211460033F5CA /* GLKit.framework in Frameworks */,
-				52685725211C60F60022DB93 /* CCSDK.framework in Frameworks */,
+				527283502133EA5300256FAA /* CCSDK.framework in Frameworks */,
 				421FB66B1E151135006AF260 /* VideoToolbox.framework in Frameworks */,
 				429907261DE2E86D001C4824 /* libc++.1.tbd in Frameworks */,
 				429907201DE2E57B001C4824 /* SystemConfiguration.framework in Frameworks */,
@@ -338,10 +343,10 @@
 		4209E6861E260A0C004612B1 /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
-				52685723211C60E30022DB93 /* CCSDK.framework */,
-				524A9A0920AAE557007B431E /* DWDrmServer.framework */,
-				524A9A0820AAE557007B431E /* IJKMediaFramework.framework */,
-				524A9A0A20AAE557007B431E /* WebRTC.framework */,
+				5272834F2133EA5300256FAA /* CCSDK.framework */,
+				52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */,
+				5230840820F3015C008864E5 /* WebRTC.framework */,
+				5230840620F30133008864E5 /* DWDrmServer.framework */,
 				42D1C9701E8E3D2C0033C417 /* socketio.html */,
 			);
 			path = CCSDK;
@@ -591,6 +596,8 @@
 		42F44F0E1DE584F200021D35 /* 类别 */ = {
 			isa = PBXGroup;
 			children = (
+				52B70FAF211BE20B00641411 /* UIColor+RCColor.h */,
+				52B70FB0211BE20B00641411 /* UIColor+RCColor.m */,
 				424948771DF596A300CE37C0 /* UIButton+UserInfo.h */,
 				424948781DF596A300CE37C0 /* UIButton+UserInfo.m */,
 				428DD4201F41B884007FF300 /* UITextView+UserInfo.h */,
@@ -700,7 +707,7 @@
 				TargetAttributes = {
 					42A66C651DE2C2F0005D796F = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = P92BH8WWP5;
+						DevelopmentTeam = TX67Q8A5U5;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -869,6 +876,7 @@
 				42F3418B1DF5344A00CB6FD8 /* ScanOverViewController.m in Sources */,
 				425BBD851DE9FB3B000B8CEF /* LoadingView.m in Sources */,
 				42B189821DEC860900F072E4 /* ServerChildItem.m in Sources */,
+				52B70FB1211BE20B00641411 /* UIColor+RCColor.m in Sources */,
 				425C211C1DE45226001A3674 /* UIButtonImageLabel.m in Sources */,
 				424977A41DF81686001633E4 /* Utility.m in Sources */,
 				42E5E7FA1E31FA530093BDBF /* VoteViewResult.m in Sources */,
@@ -1015,10 +1023,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing DreamWindows Digital Technology Co., Ltd. (P92BH8WWP5)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = P92BH8WWP5;
+				DEVELOPMENT_TEAM = TX67Q8A5U5;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1083,10 +1092,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Beijing DreamWindows Digital Technology Co., Ltd. (P92BH8WWP5)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = P92BH8WWP5;
+				DEVELOPMENT_TEAM = TX67Q8A5U5;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
