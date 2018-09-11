@@ -235,6 +235,7 @@
 - (void)theRoomWasCleared;
 
 
+
 @end
 
 @interface RequestData : NSObject
@@ -375,7 +376,6 @@
  *    @param     nickName  修改后的昵称
  */
 - (void)changeNickName:(NSString *)nickName;
-
 
 
 @end

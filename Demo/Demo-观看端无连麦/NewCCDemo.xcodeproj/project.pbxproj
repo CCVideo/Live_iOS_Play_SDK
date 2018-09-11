@@ -78,9 +78,6 @@
 		42F44F091DE574B700021D35 /* LiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F44F081DE574B700021D35 /* LiveViewController.m */; };
 		42F44F0C1DE5780F00021D35 /* TextFieldUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F44F0B1DE5780F00021D35 /* TextFieldUserInfo.m */; };
 		5230840720F30133008864E5 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; };
-		5230840920F3015C008864E5 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; };
-		5230840A20F3017B008864E5 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; };
-		5230840B20F3017B008864E5 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840820F3015C008864E5 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5230840C20F3017B008864E5 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; };
 		5230840D20F3017B008864E5 /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5230840620F30133008864E5 /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		527283502133EA5300256FAA /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5272834F2133EA5300256FAA /* CCSDK.framework */; };
@@ -120,7 +117,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				52EBECE02119A1470048CF3A /* IJKMediaFramework.framework in Embed Frameworks */,
-				5230840B20F3017B008864E5 /* WebRTC.framework in Embed Frameworks */,
 				5230840D20F3017B008864E5 /* DWDrmServer.framework in Embed Frameworks */,
 				527283522133EA6300256FAA /* CCSDK.framework in Embed Frameworks */,
 			);
@@ -264,7 +260,6 @@
 		42F44F0B1DE5780F00021D35 /* TextFieldUserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldUserInfo.m; sourceTree = "<group>"; };
 		42F44F0D1DE57F5300021D35 /* TextFieldUserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldUserInfo.h; sourceTree = "<group>"; };
 		5230840620F30133008864E5 /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
-		5230840820F3015C008864E5 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
 		5272834F2133EA5300256FAA /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
 		52B70FAF211BE20B00641411 /* UIColor+RCColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+RCColor.h"; sourceTree = "<group>"; };
 		52B70FB0211BE20B00641411 /* UIColor+RCColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+RCColor.m"; sourceTree = "<group>"; };
@@ -281,13 +276,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5230840C20F3017B008864E5 /* DWDrmServer.framework in Frameworks */,
-				5230840920F3015C008864E5 /* WebRTC.framework in Frameworks */,
 				FB814D081F628EDC006BD6FD /* MediaPlayer.framework in Frameworks */,
 				52EBECDE2119A1330048CF3A /* IJKMediaFramework.framework in Frameworks */,
 				5230840720F30133008864E5 /* DWDrmServer.framework in Frameworks */,
 				52EBECDF2119A1470048CF3A /* IJKMediaFramework.framework in Frameworks */,
 				527283512133EA6300256FAA /* CCSDK.framework in Frameworks */,
-				5230840A20F3017B008864E5 /* WebRTC.framework in Frameworks */,
 				42C7ED911E8CAF6A008A878A /* JavaScriptCore.framework in Frameworks */,
 				4289C64D1E2211660033F5CA /* Security.framework in Frameworks */,
 				429907241DE2E589001C4824 /* libz.1.1.3.tbd in Frameworks */,
@@ -345,7 +338,6 @@
 			children = (
 				5272834F2133EA5300256FAA /* CCSDK.framework */,
 				52EBECDD2119A1330048CF3A /* IJKMediaFramework.framework */,
-				5230840820F3015C008864E5 /* WebRTC.framework */,
 				5230840620F30133008864E5 /* DWDrmServer.framework */,
 				42D1C9701E8E3D2C0033C417 /* socketio.html */,
 			);

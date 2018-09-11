@@ -234,31 +234,7 @@
  */
 - (void)theRoomWasCleared;
 
-//#ifdef LIANMAI_WEBRTC
-/**
- *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
- */
-- (void)connectWebRTCSuccess;
-/**
- *  @brief 当前是否可以连麦
- */
-- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
-/**
- *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
- *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
- *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
- */
-- (void)acceptSpeak:(NSDictionary *)dict;
-/**
- *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
- */
--(void)speak_disconnect:(BOOL)isAllow;
-/**
- *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
- *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
- */
-- (void)allowSpeakInteraction:(BOOL)isAllow;
-//#endif
+
 
 @end
 
@@ -401,37 +377,5 @@
  */
 - (void)changeNickName:(NSString *)nickName;
 
-//#ifdef LIANMAI_WEBRTC
-/**
- *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法
- * dict 正是- (void)acceptSpeak:(NSDictionary *)dict;接收到的的参数
- * remoteView 是远程连麦页面的view，需要自己设置并发给SDK，SDK将要在这个view上进行远程画面渲染
- */
-- (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;
-/**
- *  @brief 观看端主动断开连麦时候需要调用的接口
- */
-- (void)disConnectSpeak;
-/**
- *  @brief 当观看端主动申请连麦时，需要调用这个接口，并把本地连麦预览窗口传给SDK，SDK会在这个view上
- * 进行远程画面渲染
- * param localView:本地预览窗口，传入本地view，连麦准备时间将会自动绘制预览画面在此view上
- * param isAudioVideo:是否是音视频连麦，不是音视频即是纯音频连麦(YES表示音视频连麦，NO表示音频连麦)
- */
--(void)requestAVMessageWithLocalView:(UIView *)localView isAudioVideo:(BOOL)isAudioVideo;
-/**
- *  @brief 设置本地预览窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
- */
--(void)setLocalVideoFrameA:(CGRect)localVideoFrame;
-/**
- *  @brief 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
- */
--(void)setRemoteVideoFrameA:(CGRect)remoteVideoFrame;
-/**
- *  @brief 将要连接WebRTC
- */
--(void)gotoConnectWebRTC;
-
-//#endif
 
 @end

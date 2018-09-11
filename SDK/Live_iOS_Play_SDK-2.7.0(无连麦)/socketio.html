@@ -6434,6 +6434,18 @@
             socket.on('change_nickname', function(data){
                socket_message('change_nickname', data);
             });
+            //40 发布问卷统计信息
+            socket.on('questionnaire_publish_statis', function(data){
+               socket_message('questionnaire_publish_statis', data);
+            });
+            //41 直播间封禁
+            socket.on('ban_stream', function(data){
+               socket_message('ban_stream', data);
+            });
+            //41 直播间封禁
+            socket.on('unban_stream', function(data){
+                       socket_message('unban_stream', data);
+                       });
         }
 
         function socketIOConnectReplay(uri, spareUri, sessionId, platform, terminal, roomId) {

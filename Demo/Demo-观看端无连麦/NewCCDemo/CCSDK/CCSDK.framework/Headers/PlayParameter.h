@@ -92,6 +92,10 @@
  * 4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
  */
 @property(assign, nonatomic)NSInteger                   PPTScalingMode;//PPT适配方式，含义见上面
+/**
+ *  @brief PPT是否允许滚动
+ */
+@property(nonatomic, assign)BOOL                        pptInteractionEnabled;
 
 @end
 
