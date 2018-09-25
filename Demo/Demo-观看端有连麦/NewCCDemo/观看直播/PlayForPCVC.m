@@ -2165,7 +2165,7 @@
     parameter.PPTScalingMode = 4;
     parameter.defaultColor = [UIColor whiteColor];
     parameter.scalingMode = 1;
-    parameter.pauseInBackGround = NO;
+    parameter.pauseInBackGround = YES;
     parameter.viewerCustomua = @"viewercustomua";
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;

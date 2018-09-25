@@ -9,6 +9,8 @@
 #import "Download.h"
 #import "FileManager.h"
 
+#define IOS12 [[UIDevice currentDevice].systemVersion floatValue]>=12?YES:NO
+
 @interface Download ()<NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property(nonatomic, strong)NSURLSession                *session;
@@ -34,7 +36,18 @@
 - (void)cancel {
     // 取消下载。
     [_downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
-        
+        if (IOS12 && resumeData.length >0) {
+            if (resumeData == nil) {
+                
+            }else { 
+                NSMutableDictionary *plist = [[FileManager sharedInstance]plist];
+                NSMutableDictionary *dicItem = [plist objectForKey:_downLoadUrl];
+                [dicItem setObject:resumeData forKey:@"dataString"];
+                [plist setObject:dicItem forKey:_downLoadUrl];
+                [[FileManager sharedInstance]saveplist:plist];
+            }
+        }
+
     }];
     _downloadTask = nil;
 }
@@ -44,7 +57,8 @@
     // 继续下载
     [self cancel];
     if ([self getResumeData]) {
-        _downloadTask = [self.session downloadTaskWithResumeData:[self getResumeData]];
+        NSData * resumeData = [self getResumeData];
+        _downloadTask = [self.session downloadTaskWithResumeData:resumeData];
     } else {
         _downloadTask = [self.session downloadTaskWithURL:[NSURL URLWithString:_downLoadUrl]];
     }
@@ -172,27 +186,48 @@
     __weak typeof(self) vc = self;
     // 此方法就是要获取刚开始下载的那些data，先通过取消下载，获取到data，然后将data内的数据存储到本地。之后再data的基础上继续下载。
     [vc.downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
-        NSMutableDictionary *plist = [[FileManager sharedInstance]plist];
-        NSMutableDictionary *dicItem = [plist objectForKey:vc.downLoadUrl];
-        if (resumeData && dicItem) {
-            NSString *dataString = [[NSString alloc] initWithData:resumeData encoding:NSUTF8StringEncoding];
-            dataString = [self cleanResumeData:dataString];
-            NSString *tempName = [dataString componentsSeparatedByString:@"<key>NSURLSessionResumeInfoTempFileName</key>\n\t<string>"].lastObject;
-            tempName = [tempName componentsSeparatedByString:@"</string>"].firstObject;
-            
-            [dicItem setObject:tempName forKey:@"tempName"];
-            [dicItem setObject:dataString forKey:@"dataString"];
+            NSMutableDictionary *plist = [[FileManager sharedInstance]plist];
+            NSMutableDictionary *dicItem = [plist objectForKey:vc.downLoadUrl];
+        
+        
+//        BOOL ios12 =[[UIDevice currentDevice].systemVersion floatValue]>=12?YES:NO;
+        
+        if (IOS12) {
+            if (resumeData && dicItem) {
+            [dicItem setObject:resumeData forKey:@"dataString"];
             [plist setObject:dicItem forKey:vc.downLoadUrl];
             [[FileManager sharedInstance]saveplist:plist];
-            vc.tempName = tempName;
-            NSLog(@"---filename = %@,downloadsize = %lld,tempName = %@",self.fileName,_alreadyDownLoadSize,tempName);
-            vc.downloadTask = nil;
-            // 保存完信息之后开始继续下载。（不知道什么情况下会存在下载的东西不是自己点击的? 我知道了，就是要实现退出app还可以断点下载的。我去！）
+            
             if(vc.downloadType == DOWNLOAD_LOADING) {
-                vc.downloadTask = [vc.session downloadTaskWithResumeData:[dataString dataUsingEncoding:NSUTF8StringEncoding]];
+               
+                vc.downloadTask = [vc.session downloadTaskWithResumeData:resumeData];
                 // 继续下载
                 [vc.downloadTask resume];
             }
+            }
+        }else {
+        
+         if (resumeData && dicItem) {
+         NSString *dataString = [[NSString alloc] initWithData:resumeData encoding:NSUTF8StringEncoding];
+         dataString = [self cleanResumeData:dataString];
+         NSString *tempName = [dataString componentsSeparatedByString:@"<key>NSURLSessionResumeInfoTempFileName</key>\n\t<string>"].lastObject;
+         tempName = [tempName componentsSeparatedByString:@"</string>"].firstObject;
+         
+         [dicItem setObject:tempName forKey:@"tempName"];
+         [dicItem setObject:dataString forKey:@"dataString"];
+         [plist setObject:dicItem forKey:vc.downLoadUrl];
+         [[FileManager sharedInstance]saveplist:plist];
+         vc.tempName = tempName;
+         //                NSLog(@"---filename = %@,downloadsize = %lld,tempName = %@",self.fileName,_alreadyDownLoadSize,tempName);
+         vc.downloadTask = nil;
+         // 保存完信息之后开始继续下载。（不知道什么情况下会存在下载的东西不是自己点击的? 我知道了，就是要实现退出app还可以断点下载的。我去！）
+         if(vc.downloadType == DOWNLOAD_LOADING) {
+         vc.downloadTask = [vc.session downloadTaskWithResumeData:[dataString dataUsingEncoding:NSUTF8StringEncoding]];
+         //                    vc.downloadTask = [vc.session downloadTaskWithResumeData:resumeData];
+         // 继续下载
+         [vc.downloadTask resume];
+         }
+         }
         }
     }];
 }
@@ -201,23 +236,30 @@
 - (NSData *)getResumeData{
     NSMutableDictionary *plist = [[FileManager sharedInstance]plist];
     NSMutableDictionary *dicItem = [plist objectForKey:_downLoadUrl];
-    if(dicItem) {
-        NSString *dataString = [dicItem objectForKey:@"dataString"];
-        if (dataString.length > 0)
-        {
-            dataString = [self cleanResumeData:dataString];
-            NSData *resumeData = [dataString  dataUsingEncoding:NSUTF8StringEncoding];
-            NSError *error = nil;
-            NSDictionary *resumeDic = [NSPropertyListSerialization propertyListWithData:resumeData options:NSPropertyListImmutable format:nil error:&error];
-//            NSLog(@"error:%@", error);
-            NSMutableDictionary *muteResumeDic = [NSMutableDictionary dictionaryWithDictionary:resumeDic];
-            [muteResumeDic setObject:GetFromUserDefaults(_downLoadUrl) forKey:@"NSURLSessionResumeBytesReceived"];
-//            NSLog(@"%s__%@", __func__, dataString);
-            
-            NSData *resume = [NSPropertyListSerialization dataWithPropertyList:muteResumeDic format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
-            //        return [dataString dataUsingEncoding:NSUTF8StringEncoding];
-            return resume;
-        }
+    
+    if (IOS12 && dicItem) {
+        
+        NSData *resumeData =[dicItem objectForKey:@"dataString"];
+        return resumeData;
+    } else {
+         if(dicItem) {
+         NSString *dataString = [dicItem objectForKey:@"dataString"];
+         if (dataString.length > 0)
+         {
+         dataString = [self cleanResumeData:dataString];
+         NSData *resumeData = [dataString  dataUsingEncoding:NSUTF8StringEncoding];
+         NSError *error = nil;
+         NSDictionary *resumeDic = [NSPropertyListSerialization propertyListWithData:resumeData options:NSPropertyListImmutable format:nil error:&error];
+         //            NSLog(@"error:%@", error);
+         NSMutableDictionary *muteResumeDic = [NSMutableDictionary dictionaryWithDictionary:resumeDic];
+         [muteResumeDic setObject:GetFromUserDefaults(_downLoadUrl) forKey:@"NSURLSessionResumeBytesReceived"];
+         //            NSLog(@"%s__%@", __func__, dataString);
+         
+         NSData *resume = [NSPropertyListSerialization dataWithPropertyList:muteResumeDic format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+         //        return [dataString dataUsingEncoding:NSUTF8StringEncoding];
+         return resume;
+         }
+         }
     }
     return nil;
 }
