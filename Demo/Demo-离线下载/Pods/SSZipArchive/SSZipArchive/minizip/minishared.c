@@ -58,7 +58,7 @@ uint32_t get_file_date(const char *path, uint32_t *dos_date)
         if (name[len - 1] == '/')
             name[len - 1] = 0;
 
-        /* Not all systems allow stat'ing a file with / appended */
+        /* not all systems allow stat'ing a file with / appended */
         if (stat(name, &s) == 0)
         {
             tm_t = s.st_mtime;
@@ -95,11 +95,24 @@ void change_file_date(const char *path, uint32_t dos_date)
 #endif
 }
 
+// convertion without validation
+void dosdate_to_raw_tm(uint64_t dos_date, struct tm *ptm)
+{
+    uint64_t date = (uint64_t)(dos_date >> 16);
+
+    ptm->tm_mday = (uint16_t)(date & 0x1f);
+    ptm->tm_mon = (uint16_t)(((date & 0x1E0) / 0x20) - 1);
+    ptm->tm_year = (uint16_t)(((date & 0x0FE00) / 0x0200) + 1980);
+    ptm->tm_hour = (uint16_t)((dos_date & 0xF800) / 0x800);
+    ptm->tm_min = (uint16_t)((dos_date & 0x7E0) / 0x20);
+    ptm->tm_sec = (uint16_t)(2 * (dos_date & 0x1f));
+    ptm->tm_isdst = -1;
+}
+
 int invalid_date(const struct tm *ptm)
 {
 #define datevalue_in_range(min, max, value) ((min) <= (value) && (value) <= (max))
-    return (!datevalue_in_range(0, 207, ptm->tm_year) ||
-            !datevalue_in_range(0, 11, ptm->tm_mon) ||
+    return (!datevalue_in_range(0, 11, ptm->tm_mon) ||
             !datevalue_in_range(1, 31, ptm->tm_mday) ||
             !datevalue_in_range(0, 23, ptm->tm_hour) ||
             !datevalue_in_range(0, 59, ptm->tm_min) ||
@@ -107,26 +120,11 @@ int invalid_date(const struct tm *ptm)
 #undef datevalue_in_range
 }
 
-// Conversion without validation
-void dosdate_to_raw_tm(uint64_t dos_date, struct tm *ptm)
-{
-    uint64_t date = (uint64_t)(dos_date >> 16);
-
-    ptm->tm_mday = (uint16_t)(date & 0x1f);
-    ptm->tm_mon = (uint16_t)(((date & 0x1E0) / 0x20) - 1);
-    ptm->tm_year = (uint16_t)(((date & 0x0FE00) / 0x0200) + 80);
-    ptm->tm_hour = (uint16_t)((dos_date & 0xF800) / 0x800);
-    ptm->tm_min = (uint16_t)((dos_date & 0x7E0) / 0x20);
-    ptm->tm_sec = (uint16_t)(2 * (dos_date & 0x1f));
-    ptm->tm_isdst = -1;
-}
-
 int dosdate_to_tm(uint64_t dos_date, struct tm *ptm)
 {
     dosdate_to_raw_tm(dos_date, ptm);
-
-    if (invalid_date(ptm))
-    {
+    
+    if (invalid_date(ptm)) {
         // Invalid date stored, so don't return it.
         memset(ptm, 0, sizeof(struct tm));
         return -1;
@@ -134,37 +132,44 @@ int dosdate_to_tm(uint64_t dos_date, struct tm *ptm)
     return 0;
 }
 
+uint32_t tm_to_dosdate(const struct tm *ptm)
+{
+    uint32_t year = 0;
+
+#define datevalue_in_range(min, max, value) ((min) <= (value) && (value) <= (max))
+    /* Years supported:
+    * [00, 79] (assumed to be between 2000 and 2079)
+    * [80, 207] (assumed to be between 1980 and 2107, typical output of old
+    software that does 'year-1900' to get a double digit year)
+    * [1980, 2107]
+    Due to the date format limitations, only years between 1980 and 2107 can be stored.
+    */
+    if (!(datevalue_in_range(1980, 2107, ptm->tm_year) || datevalue_in_range(0, 207, ptm->tm_year)) ||
+        invalid_date(ptm))
+    {
+        return 0;
+    }
+#undef datevalue_in_range
+
+    year = (uint32_t)ptm->tm_year;
+    if (year >= 1980) /* range [1980, 2107] */
+        year -= 1980;
+    else if (year >= 80) /* range [80, 99] */
+        year -= 80;
+    else /* range [00, 79] */
+        year += 20;
+
+    return (uint32_t)(((ptm->tm_mday) + (32 * (ptm->tm_mon + 1)) + (512 * year)) << 16) |
+        ((ptm->tm_sec / 2) + (32 * ptm->tm_min) + (2048 * (uint32_t)ptm->tm_hour));
+}
+
 time_t dosdate_to_time_t(uint64_t dos_date)
 {
     struct tm ptm;
     dosdate_to_raw_tm(dos_date, &ptm);
+    // standard is year 1900 indexed struct tm, but dosdate_to_raw_tm returns a year 0 indexed struct tm
+    ptm.tm_year %= 1900;
     return mktime(&ptm);
-}
-
-uint32_t tm_to_dosdate(const struct tm *ptm)
-{
-    struct tm fixed_tm;
-
-    /* Years supported:
-    * [00, 79]      (assumed to be between 2000 and 2079)
-    * [80, 207]     (assumed to be between 1980 and 2107, typical output of old
-                     software that does 'year-1900' to get a double digit year)
-    * [1980, 2107]  (due to the date format limitations, only years between 1980 and 2107 can be stored.)
-    */
-
-    memcpy(&fixed_tm, ptm, sizeof(struct tm));
-    if (fixed_tm.tm_year >= 1980) /* range [1980, 2107] */
-        fixed_tm.tm_year -= 1980;
-    else if (fixed_tm.tm_year >= 80) /* range [80, 99] */
-        fixed_tm.tm_year -= 80;
-    else /* range [00, 79] */
-        fixed_tm.tm_year += 20;
-
-    if (invalid_date(ptm))
-        return 0;
-
-    return (uint32_t)(((fixed_tm.tm_mday) + (32 * (fixed_tm.tm_mon + 1)) + (512 * fixed_tm.tm_year)) << 16) |
-        ((fixed_tm.tm_sec / 2) + (32 * fixed_tm.tm_min) + (2048 * (uint32_t)fixed_tm.tm_hour));
 }
 
 int makedir(const char *newdir)
@@ -220,28 +225,9 @@ int makedir(const char *newdir)
     return 1;
 }
 
-FILE *get_file_handle(const char *path)
-{
-    FILE *handle = NULL;
-#if defined(WIN32)
-    wchar_t *pathWide = NULL;
-    int pathLength = 0;
-
-    pathLength = MultiByteToWideChar(CP_UTF8, 0, path, -1, NULL, 0) + 1;
-    pathWide = (wchar_t*)calloc(pathLength, sizeof(wchar_t));
-    MultiByteToWideChar(CP_UTF8, 0, path, -1, pathWide, pathLength);
-    handle = _wfopen((const wchar_t*)pathWide, L"rb");
-    free(pathWide);
-#else
-    handle = fopen64(path, "rb");
-#endif
-
-    return handle;
-}
-
 int check_file_exists(const char *path)
 {
-    FILE *handle = get_file_handle(path);
+    FILE* handle = fopen64(path, "rb");
     if (handle == NULL)
         return 0;
     fclose(handle);
@@ -250,10 +236,9 @@ int check_file_exists(const char *path)
 
 int is_large_file(const char *path)
 {
-    FILE* handle = NULL;
     uint64_t pos = 0;
+    FILE* handle = fopen64(path, "rb");
 
-    handle = get_file_handle(path);
     if (handle == NULL)
         return 0;
 

@@ -821,7 +821,7 @@
     parameter.playerParent = self.videoView;
     parameter.playerFrame = _videoRect;
     parameter.security = NO;
-    parameter.PPTScalingMode = 1;
+    parameter.PPTScalingMode = 2;
     parameter.pauseInBackGround = NO;
     parameter.defaultColor = [UIColor whiteColor];
     parameter.scalingMode = 1;
@@ -1260,7 +1260,7 @@
 }
 
 - (void)pageChangeList:(NSMutableArray *)array {
-    NSLog(@"%@",array);
+//    NSLog(@"%@",array);
 }
 -(void)onPageChange:(NSDictionary *)dictionary {
     NSLog(@"翻页数据是%@",dictionary);

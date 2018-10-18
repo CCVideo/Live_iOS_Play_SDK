@@ -3,8 +3,8 @@
 
    This version of ioapi is designed to buffer IO.
 
-   Copyright (C) 2012-2017 Nathan Moinvaziri
-      https://github.com/nmoinvaz/minizip
+   Copyright (C) 1998-2003 Gilles Vollant
+             (C) 2012-2014 Nathan Moinvaziri
 
    This program is distributed under the terms of the same license as zlib.
    See the accompanying LICENSE file for the full text of the license.
@@ -39,16 +39,16 @@
 #ifdef __GNUC__
 #ifndef max
 #define max(x,y) ({ \
-const __typeof__(x) _x = (x);	\
-const __typeof__(y) _y = (y);	\
+const typeof(x) _x = (x);	\
+const typeof(y) _y = (y);	\
 (void) (&_x == &_y);		\
 _x > _y ? _x : _y; })
 #endif /* __GNUC__ */
 
 #ifndef min
 #define min(x,y) ({ \
-const __typeof__(x) _x = (x);	\
-const __typeof__(y) _y = (y);	\
+const typeof(x) _x = (x);	\
+const typeof(y) _y = (y);	\
 (void) (&_x == &_y);		\
 _x < _y ? _x : _y; })
 #endif
@@ -75,7 +75,7 @@ typedef struct ourstream_s {
 #  define print_buf(o,s,f,...)
 #endif
 
-void print_buf_internal(ZIP_UNUSED voidpf opaque, voidpf stream, char *format, ...)
+void print_buf_internal(voidpf opaque, voidpf stream, char *format, ...)
 {
     ourstream_t *streamio = (ourstream_t *)stream;
     va_list arglist;
@@ -85,7 +85,7 @@ void print_buf_internal(ZIP_UNUSED voidpf opaque, voidpf stream, char *format, .
     va_end(arglist);
 }
 
-voidpf fopen_buf_internal_func(ZIP_UNUSED voidpf opaque, voidpf stream, ZIP_UNUSED uint32_t number_disk, ZIP_UNUSED int mode)
+voidpf fopen_buf_internal_func(voidpf opaque, voidpf stream, uint32_t number_disk, int mode)
 {
     ourstream_t *streamio = NULL;
     if (stream == NULL)
@@ -280,7 +280,7 @@ uint32_t ZCALLBACK fwrite_buf_func(voidpf opaque, voidpf stream, const void *buf
     return size - bytes_left_to_write;
 }
 
-uint64_t ftell_buf_internal_func(ZIP_UNUSED voidpf opaque, voidpf stream, uint64_t position)
+uint64_t ftell_buf_internal_func(voidpf opaque, voidpf stream, uint64_t position)
 {
     ourstream_t *streamio = (ourstream_t *)stream;
     streamio->position = position;

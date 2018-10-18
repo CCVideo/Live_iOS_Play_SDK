@@ -12,7 +12,18 @@
 //#import "PlayBackViewController.h"
 //#import "PlayViewController.h"
 //#import "LiveViewController.h"
+#ifdef __OBJC__
+
+
 #import <Masonry.h>
+
+typedef NS_ENUM(NSInteger, NSContentType) {
+    NS_CONTENT_TYPE_CHAT,//默认从0开始
+    NS_CONTENT_TYPE_QA_QUESTION,
+    NS_CONTENT_TYPE_QA_ANSWER,
+};
+
+#endif
 
 //[em2_01]
 #define FACE_NAME_HEAD  @"[em2_"
@@ -198,11 +209,6 @@ item.alpha = 0.0; \
 #define FontSize_42 MinSize?21:23
 #define FontSize_72 MinSize?36:40
 
-typedef NS_ENUM(NSInteger, NSContentType) {
-    NS_CONTENT_TYPE_CHAT,//默认从0开始
-    NS_CONTENT_TYPE_QA_QUESTION,
-    NS_CONTENT_TYPE_QA_ANSWER,
-};
 
 //获取系统版本
 #define IOS_SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]

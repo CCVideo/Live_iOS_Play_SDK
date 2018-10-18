@@ -197,7 +197,6 @@ community can help you solve it.
 - [Konstantinos K.](https://github.com/mythodeia)
 - [Bogdan Poplauschi](https://github.com/bpoplauschi)
 - [Chester Liu](https://github.com/skyline75489)
-- [DreamPiggy](https://github.com/dreampiggy)
 
 ## Licenses
 

@@ -234,6 +234,11 @@
  */
 - (void)theRoomWasCleared;
 
+/**
+ *    @brief     获取所有文档列表(The new method)
+ */
+- (void)receivedDocsList:(NSDictionary *)listDic;
+
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
@@ -400,6 +405,19 @@
  *    @param     nickName  修改后的昵称
  */
 - (void)changeNickName:(NSString *)nickName;
+
+/**
+ *    @brief     切换当前的文档模式(The new method)
+ *      1.切换至跟随模式（默认值）值为0，
+ *      2.切换至自由模式；值为1，
+ */
+- (void)changeDocMode:(NSInteger)mode;
+/**
+ *    @brief     查找并获取当前文档的信息(The new method)
+ *      @param     docId  文档的docId
+ *      @param     pageIndex  跳转的页数
+ */
+- (void)changePageToNumWithDocId:(NSString *)docId pageIndex:(NSInteger)pageIndex;
 
 //#ifdef LIANMAI_WEBRTC
 /**

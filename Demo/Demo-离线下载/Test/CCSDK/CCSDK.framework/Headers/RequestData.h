@@ -56,7 +56,7 @@
  */
 - (void)OnPrivateChat:(NSDictionary *)dic;
 /**
- *    @brief    修改昵称(The new method)
+ *    @brief    修改昵称
  */
 - (void)onChangeNickname:(NSString *)nickNime;
 /*
@@ -101,7 +101,7 @@
  */
 - (void)getDocAspectRatioOfWidth:(CGFloat)width height:(CGFloat)height;
 /**
- *  @brief  获取ppt当前页数和总页数(The new method)
+ *  @brief  获取ppt当前页数和总页数
  *
  *  回调当前翻页的页数信息 <br/>
  *  白板docTotalPage一直为0, pageNum从1开始<br/>
@@ -193,6 +193,10 @@
  */
 - (void)questionnaireDetailInformation:(NSDictionary *)detailDic;
 /**
+ *  @brief  获取问卷统计(The new method)
+ */
+- (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic;
+/**
  *  @brief  提交问卷结果（成功，失败）
  */
 - (void)commitQuestionnaireResult:(BOOL)success;
@@ -201,23 +205,72 @@
  */
 - (void)questionnaireWithTitle:(NSString *)title url:(NSString *)url;
 /**
- *  @brief  收到最后一条广播(The new method)
+ *  @brief  收到最后一条广播
  *  content 广播内容
  *  time 发布时间(单位:秒)
  */
 - (void)broadcastHistory_msg:(NSArray *)History_msg;
 
+/**
+ *    @brief     双击ppt(The new method)
+ */
+- (void)doubleCllickPPTView;
+
+/**
+ *  @brief  获取直播开始时间和直播时长(The new method)
+ *  liveDuration 直播持续时间，单位（s），直播未开始返回-1"
+ *  liveStartTime 新增开始直播时间（格式：yyyy-MM-dd HH:mm:ss），如果直播未开始，则返回空字符串
+ */
+- (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic;
 
 
+/**
+ *    @brief     直播间被禁(The new method)
+ */
+- (void)theRoomWasBanned;
+
+/**
+ *    @brief     直播间解禁(The new method)
+ */
+- (void)theRoomWasCleared;
+
+/**
+ *    @brief     获取所有文档列表(The new method)
+ */
+- (void)receivedDocsList:(NSDictionary *)listDic;
+
+//#ifdef LIANMAI_WEBRTC
+/**
+ *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
+ */
+- (void)connectWebRTCSuccess;
+/**
+ *  @brief 当前是否可以连麦
+ */
+- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
+/**
+ *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
+ *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
+ *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
+ */
+- (void)acceptSpeak:(NSDictionary *)dict;
+/**
+ *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
+ */
+-(void)speak_disconnect:(BOOL)isAllow;
+/**
+ *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
+ *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
+ */
+- (void)allowSpeakInteraction:(BOOL)isAllow;
+//#endif
 
 @end
 
 @interface RequestData : NSObject
 
 @property (weak,nonatomic) id<RequestDataDelegate>      delegate;
-@property (retain,    atomic) id<IJKMediaPlayback>      ijkPlayer;
-
-
+@property (retain,    atomic) IJKFFMoviePlayerController      *ijkPlayer;
 
 /**
  *	@brief	登录房间
@@ -353,6 +406,50 @@
  */
 - (void)changeNickName:(NSString *)nickName;
 
+/**
+ *    @brief     切换当前的文档模式(The new method)
+ *      1.切换至跟随模式（默认值）值为0，
+ *      2.切换至自由模式；值为1，
+ */
+- (void)changeDocMode:(NSInteger)mode;
+/**
+ *    @brief     查找并获取当前文档的信息(The new method)
+ *      @param     docId  文档的docId
+ *      @param     pageIndex  跳转的页数
+ */
+- (void)changePageToNumWithDocId:(NSString *)docId pageIndex:(NSInteger)pageIndex;
 
+//#ifdef LIANMAI_WEBRTC
+/**
+ *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法
+ * dict 正是- (void)acceptSpeak:(NSDictionary *)dict;接收到的的参数
+ * remoteView 是远程连麦页面的view，需要自己设置并发给SDK，SDK将要在这个view上进行远程画面渲染
+ */
+- (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;
+/**
+ *  @brief 观看端主动断开连麦时候需要调用的接口
+ */
+- (void)disConnectSpeak;
+/**
+ *  @brief 当观看端主动申请连麦时，需要调用这个接口，并把本地连麦预览窗口传给SDK，SDK会在这个view上
+ * 进行远程画面渲染
+ * param localView:本地预览窗口，传入本地view，连麦准备时间将会自动绘制预览画面在此view上
+ * param isAudioVideo:是否是音视频连麦，不是音视频即是纯音频连麦(YES表示音视频连麦，NO表示音频连麦)
+ */
+-(void)requestAVMessageWithLocalView:(UIView *)localView isAudioVideo:(BOOL)isAudioVideo;
+/**
+ *  @brief 设置本地预览窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
+ */
+-(void)setLocalVideoFrameA:(CGRect)localVideoFrame;
+/**
+ *  @brief 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
+ */
+-(void)setRemoteVideoFrameA:(CGRect)remoteVideoFrame;
+/**
+ *  @brief 将要连接WebRTC
+ */
+-(void)gotoConnectWebRTC;
+
+//#endif
 
 @end

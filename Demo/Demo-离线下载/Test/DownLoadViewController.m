@@ -15,8 +15,12 @@
 #import "MyTableViewCell.h"
 #import "LoadingView.h"
 #import "FileManager.h"
+#import "CCSDK/OfflinePlayBack.h"
 
-@interface DownLoadViewController ()<UITextFieldDelegate,UITableViewDelegate,UITableViewDataSource,NSURLSessionDelegate,SSZipArchiveDelegate>
+
+@interface DownLoadViewController ()<UITextFieldDelegate,UITableViewDelegate,UITableViewDataSource,NSURLSessionDelegate>
+
+///<,UITableViewDelegate,UITableViewDataSource,NSURLSessionDelegate,SSZipArchiveDelegate>
 
 @property(nonatomic,strong)UITableView          *tableView;
 @property(nonatomic,  copy)NSString             *alreadyDownloadPath; // 已经下载下来的数据存放的位置。
@@ -26,10 +30,38 @@
 @property(nonatomic,strong)NSMutableArray       *nameArr;
 @property(nonatomic,strong)LoadingView          *loadingView;
 @property(nonatomic,assign)BOOL                 enterbackground;
+@property(nonatomic,strong)OfflinePlayBack          *offlinePlayBack;
+
 
 @end
 
 @implementation DownLoadViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.enterbackground = NO;
+    [self addObserverObjC];
+    WS(ws)
+    [self.navigationController.navigationBar setBackgroundImage:
+     [self createImageWithColor:CCRGBColor(255,102,51)] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+    self.view.backgroundColor = CCRGBColor(250, 250, 250);
+    
+    UIBarButtonItem *addUrlButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUrlClicked)];
+    self.navigationItem.rightBarButtonItem = addUrlButton;
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CCGetRealFromPt(178), CCGetRealFromPt(34))];
+    [label setTextColor:[UIColor whiteColor]];
+    label.font = [UIFont systemFontOfSize:FontSize_34];
+    label.text = @"回放离线播放";
+    
+    self.navigationItem.titleView = label;
+    
+    [self.view addSubview:self.tableView];
+    [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.bottom.top.mas_equalTo(ws.view);
+    }];
+}
 
 - (long long) fileSizeAtPath:(NSString*) filePath{
     
@@ -41,27 +73,8 @@
     return 0;
 }
 
--(UITableView *)tableView {
-    if(!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-        _tableView.backgroundColor = [UIColor clearColor];
-        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        _tableView.delegate = self;
-        _tableView.dataSource = self;
-        _tableView.showsVerticalScrollIndicator = NO;
-    }
-    return _tableView;
-}
 
-//设置样式
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
-}
 
-//设置隐藏动画
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
-    return UIStatusBarAnimationNone;
-}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return CCGetPxFromPt(250);
@@ -213,31 +226,7 @@
     return _taskArr;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.enterbackground = NO;
-    [self addObserverObjC];
-    WS(ws)
-    [self.navigationController.navigationBar setBackgroundImage:
-     [self createImageWithColor:CCRGBColor(255,102,51)] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
-    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
-    self.view.backgroundColor = CCRGBColor(250, 250, 250);
-    
-    UIBarButtonItem *addUrlButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUrlClicked)];
-    self.navigationItem.rightBarButtonItem = addUrlButton;
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CCGetRealFromPt(178), CCGetRealFromPt(34))];
-    [label setTextColor:[UIColor whiteColor]];
-    label.font = [UIFont systemFontOfSize:FontSize_34];
-    label.text = @"回放离线播放";
-    
-    self.navigationItem.titleView = label;
-    
-    [self.view addSubview:self.tableView];
-    [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.bottom.top.mas_equalTo(ws.view);
-    }];
-}
+
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.taskArr.count;
@@ -450,11 +439,17 @@
         } else if(dicItem) {
             NSString *fileName = [self SSZipArchiveToDirectoryName:download.fileName];
             NSString *destination = [ws.alreadyDownloadPath stringByAppendingString:fileName];
-//            NSTimeInterval startLoadingTime = [[NSDate date] timeIntervalSince1970];
-//            NSLog(@"---startLoadingTime = %f",startLoadingTime);
-            [SSZipArchive unzipFileAtPath:srcPath toDestination:destination];
-//            NSTimeInterval time = [[NSDate date] timeIntervalSince1970];
-//            NSLog(@"---time - startLoadingTime = %f",time - startLoadingTime);
+
+            
+/**
+ *解压:0代表成功
+ */
+//                [SSZipArchive unzipFileAtPath:srcPath toDestination:destination];
+
+            _offlinePlayBack = [[OfflinePlayBack alloc] init];
+            int zipDec = [_offlinePlayBack DecompressZipWithDec:srcPath dir:destination];
+            NSLog(@"解压验证码%d",zipDec);
+
             download.downloadType = DOWNLOAD_FINISH_AVAILABLE;
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.informationLabel.text = @"下载完成\t可播放";
@@ -525,6 +520,15 @@
     });
 }
 
+//设置样式
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
+//设置隐藏动画
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
+    return UIStatusBarAnimationNone;
+}
 #pragma mark Notification
 -(void)addObserverObjC {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -540,6 +544,18 @@
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
 }
+-(UITableView *)tableView {
+    if(!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _tableView.backgroundColor = [UIColor clearColor];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.showsVerticalScrollIndicator = NO;
+    }
+    return _tableView;
+}
+
 
 
 @end

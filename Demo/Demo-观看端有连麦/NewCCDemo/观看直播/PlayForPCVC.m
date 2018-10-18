@@ -87,7 +87,6 @@
 
 @property(nonatomic,strong)UIButton                 *mainRoad;
 @property(nonatomic,strong)UIButton                 *secondRoad;
-@property(nonatomic,strong)UIButton                 *thirdRoad;
 
 @property(nonatomic,copy)  NSString                 *viewerId;
 @property(nonatomic,strong)NSMutableDictionary      *userDic;
@@ -644,7 +643,6 @@
     } else if(_mainRoad.hidden == NO) {
         _mainRoad.hidden = YES;
         _secondRoad.hidden = YES;
-        _thirdRoad.hidden = YES;
         return YES;
     }
     return NO;
@@ -1031,7 +1029,6 @@
         _liuChangBtn.hidden = YES;
         _mainRoad.hidden = YES;
         _secondRoad.hidden = YES;
-        _thirdRoad.hidden = YES;
         _zhibozhongImage.hidden = NO;
         
         if(_lianMaiView.needToRemoveLianMaiView) {
@@ -1057,7 +1054,6 @@
     _soundVideoBtn.hidden = YES;
     _mainRoad.hidden = YES;
     _secondRoad.hidden = YES;
-    _thirdRoad.hidden = YES;
     _qingXiDuBtn.hidden = YES;
     _contentView.hidden = YES;
     _hideDanMuBtn.hidden = YES;
@@ -1085,7 +1081,6 @@
     
     _mainRoad.hidden = YES;
     _secondRoad.hidden = YES;
-    _thirdRoad.hidden = YES;
     _zhibozhongImage.hidden = YES;
     
     if(_isScreenLandScape) {
@@ -1362,11 +1357,6 @@
             make.size.mas_equalTo(ws.mainRoad);
         }];
 
-        [_thirdRoad mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(ws.mainRoad);
-            make.top.mas_equalTo(ws.secondRoad.mas_bottom);
-            make.size.mas_equalTo(ws.mainRoad);
-        }];
         
         [_soundBg mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(ws.videoView).offset(CCGetRealFromPt(294));
@@ -1394,7 +1384,6 @@
         self.quanPingBtn.hidden = YES;
         self.mainRoad.hidden = YES;
         self.secondRoad.hidden = YES;
-        self.thirdRoad.hidden = YES;
 
         [UIView animateWithDuration:0.25f animations:^{
             [ws.view layoutIfNeeded];
@@ -1498,11 +1487,6 @@
             make.size.mas_equalTo(ws.mainRoad);
         }];
 
-        [_thirdRoad mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(ws.mainRoad);
-            make.top.mas_equalTo(ws.secondRoad.mas_bottom);
-            make.size.mas_equalTo(ws.mainRoad);
-        }];
         
         [_hideDanMuBtn mas_updateConstraints:^(MASConstraintMaker *make) {
             make.right.mas_equalTo(ws.soundVideoBtn);
@@ -1541,7 +1525,6 @@
         self.quanPingBtn.hidden = NO;
         self.mainRoad.hidden = YES;
         self.secondRoad.hidden = YES;
-        self.thirdRoad.hidden = YES;
         
         [UIView animateWithDuration:0.25f animations:^{
             [ws.view layoutIfNeeded];
@@ -1586,7 +1569,6 @@
     } else if(_mainRoad.hidden == NO) {
         _mainRoad.hidden = YES;
         _secondRoad.hidden = YES;
-        _thirdRoad.hidden = YES;
     }
 
     self.hiddenTime = 5.0f;
@@ -1790,25 +1772,12 @@
         }];
         imageRight2.hidden = YES;
         _secondRoad.hidden = YES;
-        //备用线路二
-        [self.videoView addSubview:self.thirdRoad];
-        [_thirdRoad mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(ws.mainRoad);
-            make.top.mas_equalTo(ws.secondRoad.mas_bottom);
-            make.size.mas_equalTo(ws.mainRoad);
-        }];
+
         
         UIImageView *imageRight3 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"line_btn_select"]];
         imageRight3.contentMode = UIViewContentModeScaleAspectFit;
         imageRight3.tag = 1;
-        [self.thirdRoad addSubview:imageRight3];
-        [imageRight3 mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(ws.thirdRoad).offset(-CCGetRealFromPt(20));
-            make.centerY.mas_equalTo(ws.thirdRoad);
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(31), CCGetRealFromPt(22)));
-        }];
-        imageRight3.hidden = YES;
-        _thirdRoad.hidden = YES;
+
         //弹幕开关
         [self.videoView addSubview:self.hideDanMuBtn];
         [_hideDanMuBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -2167,6 +2136,8 @@
     parameter.scalingMode = 1;
     parameter.pauseInBackGround = YES;
     parameter.viewerCustomua = @"viewercustomua";
+    parameter.pptInteractionEnabled = YES;
+    parameter.DocModeType = 0;
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;
     
@@ -2897,26 +2868,10 @@
     return _secondRoad;
 }
 
--(UIButton *)thirdRoad {
-    if(!_thirdRoad) {
-        _thirdRoad = [UIButton new];
-        _thirdRoad.backgroundColor = CCRGBAColor(0, 0, 0, 0.6);
-        _thirdRoad.layer.shadowOffset = CGSizeMake(0, 2);
-        _thirdRoad.layer.shadowColor = [CCRGBAColor(0,0,0,0.5) CGColor];
-        [_thirdRoad setTitleEdgeInsets:UIEdgeInsetsMake(0,CCGetPxFromPt(19),CCGetPxFromPt(10),0)];
-        [_thirdRoad setTitle:@"备用线路2" forState:UIControlStateNormal];
-        [_thirdRoad.titleLabel setFont:[UIFont systemFontOfSize:FontSize_26]];
-        [_thirdRoad setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _thirdRoad.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        [_thirdRoad addTarget:self action:@selector(thirdRoadBtnClicked) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _thirdRoad;
-}
 
 -(void)roadHide{
     _mainRoad.hidden = YES;
     _secondRoad.hidden = YES;
-    _thirdRoad.hidden = YES;
 }
 
 -(void)mainRoadBtnClicked {
@@ -2930,10 +2885,9 @@
     
     UIImageView *imageView1 = [(UIImageView *)self.mainRoad viewWithTag:1];
     UIImageView *imageView2 = [(UIImageView *)self.secondRoad viewWithTag:1];
-    UIImageView *imageView3 = [(UIImageView *)self.thirdRoad viewWithTag:1];
     imageView1.hidden = NO;
     imageView2.hidden = YES;
-    imageView3.hidden = YES;
+
 // 切换线路
     if(self.soundVideoBtn.selected) {
         [_requestData switchToPlayUrlWithFirIndex:_currentRoadNum key:@""];
@@ -2963,10 +2917,8 @@
     
     UIImageView *imageView1 = [(UIImageView *)self.mainRoad viewWithTag:1];
     UIImageView *imageView2 = [(UIImageView *)self.secondRoad viewWithTag:1];
-    UIImageView *imageView3 = [(UIImageView *)self.thirdRoad viewWithTag:1];
     imageView1.hidden = YES;
     imageView2.hidden = NO;
-    imageView3.hidden = YES;
     if(self.soundVideoBtn.selected) {
         [_requestData switchToPlayUrlWithFirIndex:_currentRoadNum key:@""];
     } else {
@@ -2985,37 +2937,6 @@
     [_loadingView layoutIfNeeded];
 }
 
--(void)thirdRoadBtnClicked {
-    self.hiddenTime = 5;
-    [NSTimer scheduledTimerWithTimeInterval:0.25f target:self selector:@selector(roadHide) userInfo:nil repeats:NO];
-    if(_currentRoadNum == 2) {
-        return;
-    }
-    _currentRoadNum = 2;
-    
-    UIImageView *imageView1 = [(UIImageView *)self.mainRoad viewWithTag:1];
-    UIImageView *imageView2 = [(UIImageView *)self.secondRoad viewWithTag:1];
-    UIImageView *imageView3 = [(UIImageView *)self.thirdRoad viewWithTag:1];
-    imageView1.hidden = YES;
-    imageView2.hidden = YES;
-    imageView3.hidden = NO;
-    if(self.soundVideoBtn.selected) {
-        [_requestData switchToPlayUrlWithFirIndex:_currentRoadNum key:@""];
-    } else {
-        [_requestData switchToPlayUrlWithFirIndex:_currentRoadNum key:[_secRoadKeyArray objectAtIndex:_currentSecRoadNum]];
-    }
-    
-    [_informationView removeFromSuperview];
-    _informationView = nil;
-    _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
-    [self.videoView addSubview:_loadingView];
-    UITapGestureRecognizer *hideTextBoardTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealSingleInformationTap)];
-    [_loadingView addGestureRecognizer:hideTextBoardTap];
-    [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
-    }];
-    [_loadingView layoutIfNeeded];
-}
 
 -(void)gongGaoAction {
     
@@ -3059,11 +2980,9 @@
     if(self.mainRoad.hidden) {
         _mainRoad.hidden = NO;
         _secondRoad.hidden = NO;
-        _thirdRoad.hidden = NO;
     } else {
         _mainRoad.hidden = YES;
         _secondRoad.hidden = YES;
-        _thirdRoad.hidden = YES;
     }
 }
 

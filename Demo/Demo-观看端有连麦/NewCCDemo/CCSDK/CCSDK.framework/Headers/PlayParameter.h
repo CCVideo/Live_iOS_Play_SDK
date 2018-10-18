@@ -93,9 +93,16 @@
  */
 @property(assign, nonatomic)NSInteger                   PPTScalingMode;//PPT适配方式，含义见上面
 /**
- *  @brief PPT是否允许滚动
+ *  @brief PPT是否允许滚动(The New Method)
  */
 @property(nonatomic, assign)BOOL                        pptInteractionEnabled;
+/**
+ *  @brief 设置当前的文档模式，
+ * 1.切换至跟随模式（默认值）值为0，
+ * 2.切换至自由模式；值为1，
+ */
+@property(assign, nonatomic)NSInteger                   DocModeType;//设置当前的文档模式
+
 
 @end
 

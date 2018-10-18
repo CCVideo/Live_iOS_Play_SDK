@@ -10,15 +10,15 @@
 		</data>
 		<key>Headers/OfflinePlayBack.h</key>
 		<data>
-		9VhfqlVGunTaL+otKoArlncK2QY=
+		/Ylgtu086u7T5uXrVg6C1OadcJ8=
 		</data>
 		<key>Headers/PlayParameter.h</key>
 		<data>
-		DHk62attpjb4nMLc5Z+defr84SA=
+		O4OA0fYqQDrvg8eW2ucC3/lKcDU=
 		</data>
 		<key>Headers/RequestData.h</key>
 		<data>
-		31+7oS/Wd4DBa8VRHGLW/aS0dv4=
+		R+xefPGLZ18qPFl+TFubo+SED+I=
 		</data>
 		<key>Headers/RequestDataPlayBack.h</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		gpXAg401iSQt7Le0nsgwP5oY8/Y=
+		E4iHVNtOa5Qs7SMVWjzGUFgtfV8=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -50,33 +50,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			9VhfqlVGunTaL+otKoArlncK2QY=
+			/Ylgtu086u7T5uXrVg6C1OadcJ8=
 			</data>
 			<key>hash2</key>
 			<data>
-			/PGYbSd6FjoR2g5Qe8ghAQVRvCRXn7v/nN6HUsgpp9s=
+			sadsthrP4uuDt1/EhuqBkuF9H8SXya3rke0GVk58hm4=
 			</data>
 		</dict>
 		<key>Headers/PlayParameter.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			DHk62attpjb4nMLc5Z+defr84SA=
+			O4OA0fYqQDrvg8eW2ucC3/lKcDU=
 			</data>
 			<key>hash2</key>
 			<data>
-			iy78CjBWiY4ej56VY79L2/o+Z7H+8Vr3jAlawhXtQbE=
+			zqo1HAMVtxle4OHr2ETedIsLiW2QlyIUTvZi9w3Czhg=
 			</data>
 		</dict>
 		<key>Headers/RequestData.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			31+7oS/Wd4DBa8VRHGLW/aS0dv4=
+			R+xefPGLZ18qPFl+TFubo+SED+I=
 			</data>
 			<key>hash2</key>
 			<data>
-			3MkN097aeFHh7HV/pMiQp0nLW8qnKvw8h/nIjDvdJn0=
+			kdg5zxu3c92RzQl/2lG8cKN+u+J50eq/IBIa/KqSgHs=
 			</data>
 		</dict>
 		<key>Headers/RequestDataPlayBack.h</key>
@@ -104,7 +104,7 @@
 	</dict>
 	<key>rules</key>
 	<dict>
-		<key>^</key>
+		<key>^.*</key>
 		<true/>
 		<key>^.*\.lproj/</key>
 		<dict>
@@ -135,24 +135,12 @@
 			<key>weight</key>
 			<real>11</real>
 		</dict>
-		<key>^</key>
-		<dict>
-			<key>weight</key>
-			<real>20</real>
-		</dict>
 		<key>^(.*/)?\.DS_Store$</key>
 		<dict>
 			<key>omit</key>
 			<true/>
 			<key>weight</key>
 			<real>2000</real>
-		</dict>
-		<key>^(Frameworks|SharedFrameworks|PlugIns|Plug-ins|XPCServices|Helpers|MacOS|Library/(Automator|Spotlight|LoginItems))/</key>
-		<dict>
-			<key>nested</key>
-			<true/>
-			<key>weight</key>
-			<real>10</real>
 		</dict>
 		<key>^.*</key>
 		<true/>
@@ -188,13 +176,6 @@
 			<true/>
 			<key>weight</key>
 			<real>20</real>
-		</dict>
-		<key>^[^/]+$</key>
-		<dict>
-			<key>nested</key>
-			<true/>
-			<key>weight</key>
-			<real>10</real>
 		</dict>
 		<key>^embedded\.provisionprofile$</key>
 		<dict>

@@ -1,9 +1,9 @@
 PODS:
   - Masonry (1.1.0)
-  - SDWebImage (4.1.2):
-    - SDWebImage/Core (= 4.1.2)
-  - SDWebImage/Core (4.1.2)
-  - SSZipArchive (2.1.1)
+  - SDWebImage (4.1.0):
+    - SDWebImage/Core (= 4.1.0)
+  - SDWebImage/Core (4.1.0)
+  - SSZipArchive (2.0.7)
 
 DEPENDENCIES:
   - Masonry
@@ -12,8 +12,8 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
-  SSZipArchive: 14401ade5f8e82aba1ff03e9f88e9de60937ae60
+  SDWebImage: 0e435c14e402a6730315a0fb79f95e68654d55a4
+  SSZipArchive: 8c197761d66bd33e7f8b5b51ee57dff303971150
 
 PODFILE CHECKSUM: 5deaf6aececc8d9111842071663f5b245b7b3418
 

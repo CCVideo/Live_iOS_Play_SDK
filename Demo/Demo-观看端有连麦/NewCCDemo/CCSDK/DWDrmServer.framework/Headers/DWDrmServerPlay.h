@@ -12,12 +12,12 @@
 @property (assign, nonatomic, readonly)UInt16 listenPort;
 
 /**
- *  @brief 初始化 DWDrmServer
+ *  @brief 初始化 DWDrmServerPlay
  *
  *  @param port 指定 drmServer 监听的端口。
  *  若port不为0，则绑定指定端口。若绑定失败，则转由内核分配。
  *
- *  @return 返回一个 DWDrmServer 实例
+ *  @return 返回一个 DWDrmServerPlay 实例
  */
 - (id)initWithListenPort:(UInt16)port;
 
