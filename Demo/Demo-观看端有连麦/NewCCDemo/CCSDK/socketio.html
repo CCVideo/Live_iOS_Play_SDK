@@ -6442,10 +6442,14 @@
             socket.on('ban_stream', function(data){
                socket_message('ban_stream', data);
             });
-            //41 直播间封禁
+            //41 直播间封禁switch_source
             socket.on('unban_stream', function(data){
                        socket_message('unban_stream', data);
-                       });
+            });
+            //42 客户端关闭摄像头switch_source
+            socket.on('switch_source', function(data){
+                       socket_message('switch_source', data);
+            });
         }
 
         function socketIOConnectReplay(uri, spareUri, sessionId, platform, terminal, roomId) {

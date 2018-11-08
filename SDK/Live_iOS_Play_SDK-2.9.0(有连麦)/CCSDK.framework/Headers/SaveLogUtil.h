@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define SDKVersion @"2.9.0"
+
 @interface SaveLogUtil : NSObject
 
 + (instancetype)sharedInstance;
@@ -15,5 +17,6 @@
 -(void)isNeedToSaveLog:(BOOL)needsave;
 
 -(void)saveLog:(NSString *)logStr action:(NSString *)action;
+-(NSString *)getCurrentSDKVersion;
 
 @end
