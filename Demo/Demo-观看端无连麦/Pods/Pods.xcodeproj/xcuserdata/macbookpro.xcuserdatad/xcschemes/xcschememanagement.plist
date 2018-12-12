@@ -9,7 +9,17 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>AFNetworking.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>BlocksKit.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>BlocksKit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
@@ -19,7 +29,17 @@
 			<key>orderHint</key>
 			<integer>3</integer>
 		</dict>
+		<key>JSONModel.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>KVOController.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>KVOController.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>4</integer>
@@ -29,7 +49,17 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
+		<key>LazyTableView.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 		<key>MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
+		<key>MBProgressHUD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>8</integer>
@@ -39,7 +69,17 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>MJRefresh.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
 		<key>Mantle.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
+		<key>Mantle.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>6</integer>
@@ -49,7 +89,17 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>Masonry.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
 		<key>ODRefreshControl.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
+		<key>ODRefreshControl.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>10</integer>
@@ -59,7 +109,17 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>Pods.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
 		<key>Reachability.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
+		<key>Reachability.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>12</integer>
@@ -69,7 +129,17 @@
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
+		<key>SDWebImage.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>13</integer>
+		</dict>
 		<key>Toast.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>14</integer>
+		</dict>
+		<key>Toast.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>14</integer>

@@ -11,7 +11,7 @@
 #import "PlayParameter.h"
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
-#define SDKVersion @"2.9.0"
+#define SDKVersion @"3.0.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -245,7 +245,7 @@
  */
 - (void)receivedDocsList:(NSDictionary *)listDic;
 /**
- *    @brief     客户端关闭摄像头(The new method)
+ *    @brief     客户端关闭摄像头
  数据源类型    数据源值    数据源类型描述       数据源类型描述值
  source_type    0     source_type_desc    数据源类型：默认值，
  source_type    10    source_type_desc    数据源类型：摄像头打开
@@ -265,8 +265,11 @@
  当以上场景无法满足要求时，主播可自定义场景，用户不需要关心自定义场景细节内容
  */
 - (void)receivedSwitchSource:(NSDictionary *)dic;
-
-
+/**
+ *  @brief  视频或者文档大窗(The new method)
+ *  isMain 1为视频为主,0为文档为主"
+ */
+- (void)onSwitchVideoDoc:(BOOL)isMain;
 
 @end
 
@@ -421,6 +424,7 @@
  *      @param     pageIndex  跳转的页数
  */
 - (void)changePageToNumWithDocId:(NSString *)docId pageIndex:(NSInteger)pageIndex;
+
 
 
 @end

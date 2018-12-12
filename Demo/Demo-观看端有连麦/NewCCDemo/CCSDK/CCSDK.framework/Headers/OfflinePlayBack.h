@@ -27,15 +27,6 @@
  */
 -(void)offline_onParserChat:(NSArray *)arr;
 /**
- *  @brief  获取ppt当前页数和总页数(The new method)
- *
- *  回调当前翻页的页数信息 <br/>
- *  白板docTotalPage一直为0, pageNum从1开始<br/>
- *  其他文档docTotalPage为正常页数,pageNum从0开始<br/>
- *  @param dictionary 翻页信息
- */
-- (void)onPageChange:(NSDictionary *) dictionary;
-/**
  *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
  *	房间简介：dic[@"desc"];
  *	房间名称：dic[@"name"];
@@ -56,16 +47,6 @@
  *    @brief   回放翻页数据列表
  */
 - (void)pageChangeList:(NSMutableArray *)array;
-/**
- *  @brief  收到本房间历史广播(The new method)
- *  content 广播内容
- *  time 发布时间(单位:秒)
- */
-- (void)broadcastHistory_msg:(NSArray *)array;
-/**
- *  @brief 回放的开始时间和结束时间(The new method)
- */
--(void)liveInfo:(NSDictionary *)dic;
 
 @end
 
@@ -163,19 +144,5 @@
  *	@brief  设置后台是否可播放
  */
 - (void)setpauseInBackGround:(BOOL)pauseInBackGround;
-/**
- * @brief 解压并解密(加密和非加密均能解压)
- * @param dst 需要进行解压解密的文件.
- * @param dir 解压后输出目录, =NULL则解压到当前目录.
- * @return 0-成功
- * errcode:
- -1 -打开输入文件(dst)失败；
- -2 -本地生成(dst)内部目录或文件失败,fopen或mkdir失败，检测是否有权限或者目录名是否正确;
- -3 -获取压缩文件中具体文件信息(dst->file)失败;
- -4 -获取全局信息(dst)失败;
- -5 -打开或读取压缩文件的内部文件失败;
- -6 -dst存在但并不是加密文件格式;
- */
-- (int)DecompressZipWithDec:(NSString *)dst dir:(NSString *)dir;
 
 @end

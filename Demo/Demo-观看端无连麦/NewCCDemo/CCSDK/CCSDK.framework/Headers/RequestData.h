@@ -11,6 +11,8 @@
 #import "PlayParameter.h"
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
+#define SDKVersion @"3.0.0"
+
 
 @protocol RequestDataDelegate <NSObject>
 @optional
@@ -76,9 +78,12 @@
  */
 -(void)setMyViewerId:(NSString *)viewerId;
 /**
- *	@brief  收到踢出消息，停止推流并退出播放（被主播踢出）
+ *	@brief  收到踢出消息，停止推流并退出播放（被主播踢出）(change)
+ kick_out_type
+ 10 在允许重复登录前提下，后进入者会登录会踢出先前登录者
+ 20 讲师、助教、主持人通过页面踢出按钮踢出用户
  */
-- (void)onKickOut;
+- (void)onKickOut:(NSDictionary *)dictionary;
 /**
  *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
  *	房间简介：dic[@"desc"];
@@ -142,6 +147,7 @@
 - (void)start_lottery;
 /**
  *  @brief  抽奖结果
+ *  remainNum   剩余奖品数
  */
 - (void)lottery_resultWithCode:(NSString *)code myself:(BOOL)myself winnerName:(NSString *)winnerName remainNum:(NSInteger)remainNum;
 /**
@@ -193,7 +199,7 @@
  */
 - (void)questionnaireDetailInformation:(NSDictionary *)detailDic;
 /**
- *  @brief  获取问卷统计(The new method)
+ *  @brief  获取问卷统计
  */
 - (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic;
 /**
@@ -212,12 +218,12 @@
 - (void)broadcastHistory_msg:(NSArray *)History_msg;
 
 /**
- *    @brief     双击ppt(The new method)
+ *    @brief     双击ppt
  */
 - (void)doubleCllickPPTView;
 
 /**
- *  @brief  获取直播开始时间和直播时长(The new method)
+ *  @brief  获取直播开始时间和直播时长
  *  liveDuration 直播持续时间，单位（s），直播未开始返回-1"
  *  liveStartTime 新增开始直播时间（格式：yyyy-MM-dd HH:mm:ss），如果直播未开始，则返回空字符串
  */
@@ -225,21 +231,45 @@
 
 
 /**
- *    @brief     直播间被禁(The new method)
+ *    @brief     直播间被禁
  */
 - (void)theRoomWasBanned;
 
 /**
- *    @brief     直播间解禁(The new method)
+ *    @brief     直播间解禁
  */
 - (void)theRoomWasCleared;
 
 /**
- *    @brief     获取所有文档列表(The new method)
+ *    @brief     获取所有文档列表
  */
 - (void)receivedDocsList:(NSDictionary *)listDic;
-
-
+/**
+ *    @brief     客户端关闭摄像头
+ 数据源类型    数据源值    数据源类型描述       数据源类型描述值
+ source_type    0     source_type_desc    数据源类型：默认值，
+ source_type    10    source_type_desc    数据源类型：摄像头打开
+ source_type    11    source_type_desc    数据源类型：摄像头关闭
+ source_type    20    source_type_desc    数据源类型：图片
+ source_type    30    source_type_desc    数据源类型：插播视频
+ source_type    40    source_type_desc    数据源类型：区域捕获
+ source_type    50    source_type_desc    数据源类型：桌面共享
+ source_type    60    source_type_desc    数据源类型：自定义场景
+ 
+ ps:
+ source_type 参数 0 值 应用场景：
+ 1. 文档模式下 0 默认值
+ 2. 非文档模式下 0 无意义
+ 3. 低版本客户端 0 无意义
+ source_type 参数 60 值 应用场景：
+ 当以上场景无法满足要求时，主播可自定义场景，用户不需要关心自定义场景细节内容
+ */
+- (void)receivedSwitchSource:(NSDictionary *)dic;
+/**
+ *  @brief  视频或者文档大窗(The new method)
+ *  isMain 1为视频为主,0为文档为主"
+ */
+- (void)onSwitchVideoDoc:(BOOL)isMain;
 
 @end
 
@@ -377,19 +407,19 @@
  */
 -(void)getPublishingQuestionnaire;
 /**
- *    @brief     修改昵称(The new method)
+ *    @brief     修改昵称
  *    @param     nickName  修改后的昵称
  */
 - (void)changeNickName:(NSString *)nickName;
 
 /**
- *    @brief     切换当前的文档模式(The new method)
+ *    @brief     切换当前的文档模式
  *      1.切换至跟随模式（默认值）值为0，
  *      2.切换至自由模式；值为1，
  */
 - (void)changeDocMode:(NSInteger)mode;
 /**
- *    @brief     查找并获取当前文档的信息(The new method)
+ *    @brief     查找并获取当前文档的信息
  *      @param     docId  文档的docId
  *      @param     pageIndex  跳转的页数
  */
