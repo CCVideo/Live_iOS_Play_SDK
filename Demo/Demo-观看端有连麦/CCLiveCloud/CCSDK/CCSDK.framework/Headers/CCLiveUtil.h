@@ -14,8 +14,8 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     ERROR_PLAYERURL = 1008,//@"视频播放地址"
     ERROR_QUESTIONLIST = 1009,//@"问卷列表"
     ERROR_STATISTICAL = 1010,//@"问卷统计"
-    ERROR_DOCLIST = 10011,//@"文档列表"
-    ERROR_HISTORY = 10012,//@"历史信息"
+    ERROR_DOCLIST = 1011,//@"文档列表"
+    ERROR_HISTORY = 1012,//@"历史信息"
 
 };
 
