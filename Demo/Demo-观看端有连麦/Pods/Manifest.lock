@@ -1,85 +1,52 @@
 PODS:
-  - AFNetworking (2.6.3):
-    - AFNetworking/NSURLConnection (= 2.6.3)
-    - AFNetworking/NSURLSession (= 2.6.3)
-    - AFNetworking/Reachability (= 2.6.3)
-    - AFNetworking/Security (= 2.6.3)
-    - AFNetworking/Serialization (= 2.6.3)
-    - AFNetworking/UIKit (= 2.6.3)
-  - AFNetworking/NSURLConnection (2.6.3):
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.6.3):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.6.3)
-  - AFNetworking/Security (2.6.3)
-  - AFNetworking/Serialization (2.6.3)
-  - AFNetworking/UIKit (2.6.3):
-    - AFNetworking/NSURLConnection
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - BlocksKit (2.2.5):
-    - BlocksKit/All (= 2.2.5)
-  - BlocksKit/All (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
-    - BlocksKit/MessageUI
-    - BlocksKit/UIKit
-  - BlocksKit/Core (2.2.5)
-  - BlocksKit/DynamicDelegate (2.2.5)
-  - BlocksKit/MessageUI (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
-  - BlocksKit/UIKit (2.2.5):
-    - BlocksKit/Core
-    - BlocksKit/DynamicDelegate
-  - JSONModel (1.2.0)
-  - KVOController (1.1.0)
-  - LazyTableView (1.4.2):
-    - AFNetworking (= 2.6.3)
-    - JSONModel
-    - MJRefresh
-  - Mantle (2.0.7):
-    - Mantle/extobjc (= 2.0.7)
-  - Mantle/extobjc (2.0.7)
-  - Masonry (1.0.1)
-  - MBProgressHUD (0.9.2)
-  - MJRefresh (3.1.10)
-  - ODRefreshControl (1.2)
-  - Reachability (3.2)
-  - SDWebImage (3.8.1):
-    - SDWebImage/Core (= 3.8.1)
-  - SDWebImage/Core (3.8.1)
-  - Toast (3.0)
+  - Bugly (2.5.0)
+  - Masonry (1.1.0)
+  - MBProgressHUD (1.1.0)
+  - MJExtension (3.0.15.1)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
 
 DEPENDENCIES:
   - AFNetworking
-  - BlocksKit
-  - KVOController
-  - LazyTableView
-  - Mantle
+  - Bugly
   - Masonry
   - MBProgressHUD
-  - ODRefreshControl
-  - Reachability
-  - SDWebImage
-  - Toast
+  - MJExtension
+  - SDWebImage (~> 4.0.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - Bugly
+    - Masonry
+    - MBProgressHUD
+    - MJExtension
+    - SDWebImage
 
 SPEC CHECKSUMS:
-  AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
-  BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
-  JSONModel: 12523685c4b623553ccf844bbbf7007624317b2c
-  KVOController: 321b5fc59300fcaabd42c0f679baa7a27efbb2fd
-  LazyTableView: 7c629c992f9a7cff40cb3013e4c7f315927a99de
-  Mantle: bc40bb061d8c2c6fb48d5083e04d928c3b7f73d9
-  Masonry: a1a931a0d08870ed8ae415a2ea5ea68ebcac77df
-  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
-  MJRefresh: bb72948c985914b0b5cecac573a2c69a8915fb02
-  ODRefreshControl: 907e6149d72dde488d5917ccfabee5bd8d711a20
-  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SDWebImage: 35f9627a3e44b4f292a8a8ce6a531fa488239b91
-  Toast: 32c59229abfcf41850162b83bb9259dc84372473
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
+  MJExtension: 19bc33ce2eee2d319760f5622562cf581a6ff756
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: cd6e5c4503c9e4b27329ceeec4c7ea7d476ec90b
+
+COCOAPODS: 1.5.3

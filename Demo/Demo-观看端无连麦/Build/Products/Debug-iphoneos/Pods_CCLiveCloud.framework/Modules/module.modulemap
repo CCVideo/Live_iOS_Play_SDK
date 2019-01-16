@@ -1,0 +1,6 @@
+framework module Pods_CCLiveCloud {
+  umbrella header "Pods-CCLiveCloud-umbrella.h"
+
+  export *
+  module * { export * }
+}

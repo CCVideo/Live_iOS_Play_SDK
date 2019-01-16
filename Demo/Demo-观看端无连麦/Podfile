@@ -1,15 +1,13 @@
-platform :ios, '7.0'
-
-pod 'Mantle'
+platform :ios, '9.0'
+use_frameworks!
+inhibit_all_warnings!
+target 'CCLiveCloud' do
 pod 'Masonry'
-pod 'SDWebImage'
-pod 'Reachability'
-pod 'BlocksKit'
-pod 'KVOController'
-pod 'MBProgressHUD'
-pod 'ODRefreshControl'
 pod 'AFNetworking'
-pod 'Toast'
-pod 'LazyTableView'
-pod "LeoDanmakuKit"
+pod 'Bugly'
+pod 'SDWebImage', '~> 4.0.0'
+pod 'MBProgressHUD'
+pod 'MJExtension'
+pod 'Bugly'
 
+end

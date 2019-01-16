@@ -1263,11 +1263,11 @@
 //    NSLog(@"%@",array);
 }
 -(void)onPageChange:(NSDictionary *)dictionary {
-    NSLog(@"翻页数据是%@",dictionary);
+//    NSLog(@"翻页数据是%@",dictionary);
 }
 
 -(void)broadcastHistory_msg:(NSArray *)array {
-    NSLog(@"历史广播%@",array);
+//    NSLog(@"历史广播%@",array);
 }
 
 /**
