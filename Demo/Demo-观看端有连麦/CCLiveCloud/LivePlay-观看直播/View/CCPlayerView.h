@@ -9,25 +9,38 @@
 #import <UIKit/UIKit.h>
 #import "CustomTextField.h"
 #import "InformationShowView.h"//提示框
-#import "LianmaiView.h"//a连麦
-#import "CCSDK/RequestData.h"//SDK
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
+//#ifdef LIANMAI_WEBRTC
+#import "LianmaiView.h"//连麦
+//#endif
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol CCPlayerViewDelegate <NSObject>
 
-/**
- 点击全屏按钮
- */
-- (void)quanpingButtonClick;
 
 /**
- //结束直播和退出全屏
- 
- @param sender 点击按钮
+ 点击全屏按钮代理
+
+ @param tag 1为视频为主，2为文档为主
  */
-- (void)backButtonClick:(UIButton *)sender;
+- (void)quanpingButtonClick:(NSInteger)tag;
+
+
+/**
+ 点击退出按钮(返回竖屏或者结束直播)
+
+ @param sender backBtn
+ @param tag changeBtn的标记，1为视频为主，2为文档为主
+ */
+- (void)backButtonClick:(UIButton *)sender changeBtnTag:(NSInteger)tag;
+
+/**
+ 点击切换视频/文档按钮
+
+ @param tag changeBtn的tag值
+ */
+-(void)changeBtnClicked:(NSInteger)tag;
 
 @end
 
@@ -51,8 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) void(^sendChatMessage)(NSString *);//发送聊天
 @property (nonatomic,copy) void(^selectedIndex)(NSInteger,NSInteger);//切换清晰度
 
-//----------------------------新加属性------------------------------------------
-@property (nonatomic,strong)RequestData              * requestData;//sdk
 @property(nonatomic,strong)SelectMenuView               *menuView;//选择菜单视图
 
 @property (nonatomic,strong)UIView                   * smallVideoView;//文档或者小图
@@ -60,22 +71,28 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong)LoadingView              * loadingView;//加载视图
 @property (nonatomic,assign)BOOL                     endNormal;//是否直播结束
 @property (nonatomic,assign)NSInteger                  templateType;//房间类型
+@property(nonatomic,strong)InformationShowView      *informationViewPop;
 //#ifdef LIANMAI_WEBRTC
+
 @property(nonatomic,strong)LianmaiView              *lianMaiView;//连麦
 @property(assign,nonatomic)BOOL                     isAllow;
 @property(assign,nonatomic)BOOL                     needReloadLianMainView;
 @property(nonatomic,assign)BOOL                     lianMaiHidden;
-@property(nonatomic,strong)InformationShowView      *informationViewPop;
 @property(nonatomic, assign)NSInteger               videoType;
 @property(nonatomic,assign)NSInteger                audoType;
 @property(copy,nonatomic)  NSString                 *videosizeStr;
 @property(nonatomic,assign)BOOL                     isAudioVideo;//YES表示音视频连麦，NO表示音频连麦
 @property(strong,nonatomic)UIView                   *remoteView;//远程连麦视图
 @property(nonatomic,strong)UIImageView              *connectingImage;//连麦中提示信息
+@property(nonatomic,copy) void(^setRemoteView)(CGRect frame);//设置连麦视图回调
+@property(nonatomic,copy) void(^connectSpeak)(BOOL connect);//是否断开连麦
 //#endif
 
 //meauView点击方法
 -(void)menuViewSelected:(BOOL)selected;
+
+//#ifdef LIANMAI_WEBRTC
+#pragma mark - 连麦相关
 //连麦点击
 -(void)lianmaiBtnClicked;
 /*
@@ -87,6 +104,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
 
+/**
+ *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
+ *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
+ *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
+ */
 - (void)acceptSpeak:(NSDictionary *)dict;
 /*
  *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
@@ -97,6 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
  */
 - (void)allowSpeakInteraction:(BOOL)isAllow;
+//#endif
 #pragma mark - 直播状态相关代理
 /**
  *    @brief  收到播放直播状态 0直播 1未直播
@@ -120,15 +143,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  isMain 1为视频为主,0为文档为主"
  */
 - (void)onSwitchVideoDoc:(BOOL)isMain;
-
-
-
-//-(void)changeBtnClick:(UIButton *)sender;
-///**
-// *  @brief  切换横竖屏
-// *  @param  screenLandScape yes:横屏 no:竖屏
-// */
-//- (void)layouUI:(BOOL)screenLandScape;
 
 
 /**

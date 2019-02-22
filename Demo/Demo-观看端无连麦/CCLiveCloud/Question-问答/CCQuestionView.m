@@ -7,35 +7,35 @@
 //
 
 #import "CCQuestionView.h"
-#import "QuestionTextField.h"
-#import "Dialogue.h"
-#import "UIImage+Extension.h"
-#import "InformationShowView.h"
+#import "QuestionTextField.h"//问答输入框
+#import "Dialogue.h"//数据模型
+#import "UIImage+Extension.h"//image扩展
+#import "InformationShowView.h"//提示视图
 #import "UIImageView+WebCache.h"
+#import "CCQuestionViewCell.h"//cell
 
 @interface CCQuestionView()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
-@property(nonatomic,strong)UITableView                  *questionTableView;
+@property(nonatomic,strong)UITableView                  *questionTableView;//问答视图
 //@property(nonatomic,strong)NSMutableArray               *tableArray;
-@property(nonatomic,copy)  NSString                     *antename;
-@property(nonatomic,copy)  NSString                     *anteid;
-@property(nonatomic,strong)QuestionTextField            *questionTextField;
-@property(nonatomic,strong)UIButton                     *sendButton;
-@property(nonatomic,strong)UIView                       *contentView;
-@property(nonatomic,strong)UIButton                     *leftView;
-@property(nonatomic,strong)UIView                       *emojiView;
-@property(nonatomic,assign)CGRect                       keyboardRect;
+@property(nonatomic,copy)  NSString                     *antename;//名称
+@property(nonatomic,copy)  NSString                     *anteid;//id
+@property(nonatomic,strong)QuestionTextField            *questionTextField;//输入框
+@property(nonatomic,strong)UIView                       *contentView;//输入视图
+@property(nonatomic,strong)UIButton                     *leftView;//左侧leftBtn
+@property(nonatomic,strong)UIView                       *emojiView;//表情视图
+@property(nonatomic,assign)CGRect                       keyboardRect;//键盘大小
 
-@property(nonatomic,strong)NSMutableDictionary          *QADic;
-@property(nonatomic,strong)NSMutableArray               *keysArrAll;
+@property(nonatomic,strong)NSMutableDictionary          *QADic;//问答字典
+@property(nonatomic,strong)NSMutableArray               *keysArrAll;//所有的答案数组
 
-@property(nonatomic,strong)NSMutableDictionary          *newQADic;
-@property(nonatomic,strong)NSMutableArray               *newKeysArr;
+@property(nonatomic,strong)NSMutableDictionary          *newQADic;//新问答字典
+@property(nonatomic,strong)NSMutableArray               *newKeysArr;//新答案数组
 
-@property(nonatomic,copy)  QuestionBlock                block;
-@property(nonatomic,assign)BOOL                         input;
-@property(nonatomic,strong)InformationShowView          *informationView;
-@property(nonatomic,strong)UIView *imageView;
+@property(nonatomic,copy)  QuestionBlock                block;//问答回调
+@property(nonatomic,assign)BOOL                         input;//是否有输入框
+@property(nonatomic,strong)InformationShowView          *informationView;//提示信息
+@property(nonatomic,strong)UIView *imageView;//
 //
 @end
 
@@ -125,22 +125,24 @@
 -(void)dealloc {
     [self removeObserver];
 }
-
+//初始化视图
 -(void)initUI {
     self.backgroundColor = [UIColor whiteColor];
     if(self.input) {
+        //添加输入视图
         [self addSubview:self.contentView];
         NSInteger tabheight = IS_IPHONE_X?178:110;
         [_contentView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.bottom.and.right.and.left.mas_equalTo(self);
             make.height.mas_equalTo(CCGetRealFromPt(tabheight));
         }];
-
+        //添加问答tableView
         [self addSubview:self.questionTableView];
         [_questionTableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.and.right.and.left.mas_equalTo(self);
             make.bottom.mas_equalTo(self.contentView.mas_top);
         }];
+        //为输入框添加分界线
         UIView * line = [[UIView alloc] init];
         line.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
         [self.contentView addSubview:line];
@@ -148,7 +150,7 @@
             make.left.top.right.equalTo(self.contentView);
             make.height.mas_equalTo(1);
         }];
-
+        //为输入视图添加输入框
         [self.contentView addSubview:self.questionTextField];
         [_questionTextField mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(self.contentView).offset(CCGetRealFromPt(10));
@@ -157,19 +159,34 @@
             make.height.mas_equalTo(CCGetRealFromPt(84));
         }];
 
-    } else {
+    } else {//没有输入时
+        //添加问答视图
         [self addSubview:self.questionTableView];
         [_questionTableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(self);
         }];
     }
 }
-
+//键盘将要退出时
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if(!StrNotEmpty([_questionTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
+        [_informationView removeFromSuperview];
+        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
+        [APPDelegate.window addSubview:_informationView];
+        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+        }];
+        
+        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
+        return YES;
+    }
     [self chatSendMessage];
     return YES;
 }
 
+/**
+ 发送问答消息
+ */
 -(void)chatSendMessage {
     NSString *str = _questionTextField.text;
     if(str == nil || str.length == 0) {
@@ -177,13 +194,13 @@
     }
 
     if(self.block) {
-        self.block(str);
+        self.block(str);//问答消息回调
     }
 
     _questionTextField.text = nil;
     [_questionTextField resignFirstResponder];
 }
-
+#pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -195,7 +212,7 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
 }
-
+//移除通知
 -(void)removeObserver {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 
@@ -203,6 +220,7 @@
 }
 
 #pragma mark keyboard notification
+//键盘将要出现
 - (void)keyboardWillShow:(NSNotification *)notif {
  
     if(![self.questionTextField isFirstResponder]) {
@@ -239,11 +257,11 @@
 
     }
 }
-
+//键盘将要隐藏
 - (void)keyboardWillHide:(NSNotification *)notif {
     [self hideKeyboard];
 }
-
+//隐藏键盘
 - (void)hideKeyboard {
     NSInteger tabheight = IS_IPHONE_X?178:110;
     [_contentView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -262,7 +280,7 @@
 
     }];
 }
-
+//输入视图
 -(UIView *)contentView {
     if(!_contentView) {
         _contentView = [UIView new];
@@ -271,7 +289,7 @@
     }
     return _contentView;
 }
-
+//问答输入框
 -(QuestionTextField *)questionTextField {
     if(!_questionTextField) {
         _questionTextField = [QuestionTextField new];
@@ -282,13 +300,13 @@
     }
     return _questionTextField;
 }
-
+//输入框内容改变
 -(void)questionTextFieldChange {
     if(_questionTextField.text.length > 300) {
         //        [self endEditing:YES];
         _questionTextField.text = [_questionTextField.text substringToIndex:300];
         [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:@"输入限制在300个字符以内"];
+        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
         [APPDelegate.window addSubview:_informationView];
         [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
@@ -297,12 +315,12 @@
         [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
     }
 }
-
+//移除提示信息
 -(void)removeInformationView {
     [_informationView removeFromSuperview];
     _informationView = nil;
 }
-
+//左侧按钮
 -(UIButton *)leftView {
     if(!_leftView) {
         _leftView = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -316,13 +334,14 @@
     return _leftView;
 }
 
+//点击左侧按钮
 -(void)leftButtonClicked {
     BOOL selected = !_leftView.selected;
     _leftView.selected = selected;
     _leftView.userInteractionEnabled = NO;
 
     [self bringSubviewToFront:self.contentView];
-
+//添加提示背景
      self.imageView = [[UIView alloc] init];
     self.imageView.backgroundColor = [UIColor colorWithHexString:@"#1e1f21" alpha:0.6f];
     [self.contentView addSubview:self.imageView];
@@ -333,13 +352,9 @@
     }];
     [self.imageView layoutIfNeeded];
     self.imageView.layer.cornerRadius = CCGetRealFromPt(30);
-
+//添加提示label
     UILabel *label = [UILabel new];
-    if(selected) {
-        label.text = @"查看我的问答";
-    } else {
-        label.text = @"查看所有回答";
-    }
+    label.text = ALERT_CHECKQUESTION(selected);
     label.backgroundColor = CCClearColor;
     label.font = [UIFont systemFontOfSize:FontSize_26];
     label.textColor = [UIColor whiteColor];
@@ -349,9 +364,9 @@
     [label mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.centerY.equalTo(self.imageView);
     }];
-
+//重载我的问答和所有问答
     [self reloadQADic:self.QADic keysArrAll:self.keysArrAll];
-
+//加载动画
     [UIView animateWithDuration:1.0 delay:1.0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.imageView.alpha = 0;
     } completion:^(BOOL finished) {
@@ -359,40 +374,7 @@
         self.leftView.userInteractionEnabled = YES;
     }];
 }
-
--(UIButton *)sendButton {
-    if(!_sendButton) {
-        _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _sendButton.backgroundColor = CCRGBColor(255,102,51);
-        _sendButton.layer.cornerRadius = CCGetRealFromPt(4);
-        _sendButton.layer.masksToBounds = YES;
-        _sendButton.layer.borderColor = [CCRGBColor(255,71,0) CGColor];
-        _sendButton.layer.borderWidth = 1;
-        [_sendButton setTitle:@"发送" forState:UIControlStateNormal];
-        [_sendButton setTitleColor:CCRGBColor(255,255,255) forState:UIControlStateNormal];
-        [_sendButton.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
-        [_sendButton addTarget:self action:@selector(sendBtnClicked) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _sendButton;
-}
-
--(void)sendBtnClicked {
-    if(!StrNotEmpty([_questionTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:@"发送内容为空"];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
-        return;
-    }
-    [self chatSendMessage];
-    _questionTextField.text = nil;
-    [_questionTextField resignFirstResponder];
-}
-//
+//问答tableView
 -(UITableView *)questionTableView {
     if(!_questionTableView) {
         _questionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -410,279 +392,59 @@
     }
     return _questionTableView;
 }
-
+#pragma mark - tableView Delegate And DataSource
+//返回行数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.newKeysArr count];
 }
-
+//返回footerView的高度
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return CCGetRealFromPt(26);
 }
-
+//设置footerView
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, CCGetRealFromPt(26))];
     view.backgroundColor = CCClearColor;
     return view;
 }
-
+//设置每行的高度
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *encryptId = [self.newKeysArr objectAtIndex:indexPath.row];
     NSMutableArray *arr = [self.newQADic objectForKey:encryptId];
+    //计算高度
     CGFloat height = [self heightForCellOfQuestion:arr] + 2;
     if(indexPath.row == 0) {
         height += 2;
     }
     return height;
 }
-
+#pragma mark - 设置cell
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"CellQuestionView";
-
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    //注册cell
+    CCQuestionViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
-    } else {
-        for(UIView *cellView in cell.subviews){
-            [cellView removeFromSuperview];
-        }
+        cell = [[CCQuestionViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
     }
-    [cell setBackgroundColor:[UIColor whiteColor]];
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
+    //解析数据
     NSString *encryptId = [self.newKeysArr objectAtIndex:indexPath.row];
     NSMutableArray *arr = [self.newQADic objectForKey:encryptId];
     Dialogue *dialogue = [arr objectAtIndex:0];
-
-//    NSArray * useravatarArr = @[@"用户1",@"用户2",@"用户3",@"用户4",@"用户5",@"主持",@"讲师",@"助教"];
-//    int r = arc4random() % [useravatarArr count];
-    UIImageView *head = [[UIImageView alloc] init];
-    NSURL *url = [NSURL URLWithString:dialogue.useravatar];
-    [head sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"chatHead_student"]];
-//    if(StrNotEmpty(dialogue.useravatar)) {
-//        head = [[UIImageView alloc] initWithImage:[UIImage ]];
-//    } else {
-//        head = [[UIImageView alloc] initWithImage:[UIImage imageNamed:useravatarArr[r]]];
-//    }
-    
-    head.backgroundColor = CCClearColor;
-    head.contentMode = UIViewContentModeScaleAspectFit;
-    head.userInteractionEnabled = NO;
-    [cell addSubview:head];
-    if(indexPath.row == 0) {
-        [head mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-            //            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(30) + 2);
-            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
-        }];
-    } else {
-        [head mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
-        }];
-    }
-
-    NSMutableAttributedString *textAttr = [[NSMutableAttributedString alloc] initWithString:dialogue.username];
-    [textAttr addAttribute:NSForegroundColorAttributeName value:CCRGBColor(248,129,25) range:NSMakeRange(0, textAttr.length)];
-
-    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    style.alignment = NSTextAlignmentLeft;
-    NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_24],NSParagraphStyleAttributeName:style};
-    [textAttr addAttributes:dict range:NSMakeRange(0, textAttr.length)];
-
-    CGSize textSize = [textAttr boundingRectWithSize:CGSizeMake(CCGetRealFromPt(500), CGFLOAT_MAX)
-                                             options:NSStringDrawingUsesLineFragmentOrigin
-                                             context:nil].size;
-    textSize.width = ceilf(textSize.width);
-    textSize.height = ceilf(textSize.height);
-    if(textSize.width > CCGetRealFromPt(500)) {
-        textSize.width = CCGetRealFromPt(500);
-    }
-    BOOL fromSelf = [dialogue.fromuserid isEqualToString:dialogue.myViwerId];
-
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.text = dialogue.username;
-    titleLabel.backgroundColor = CCClearColor;
-    titleLabel.numberOfLines = 1;
-    titleLabel.font = [UIFont systemFontOfSize:FontSize_28];
-    if (fromSelf) {
-        titleLabel.textColor = [UIColor colorWithHexString:@"#ff6633" alpha:1.0f];
-    }else {
-        titleLabel.textColor = CCRGBColor(102,102,102);
-    }
-    titleLabel.userInteractionEnabled = NO;
-    [cell addSubview:titleLabel];
-    titleLabel.textAlignment = NSTextAlignmentLeft;
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(head.mas_right).offset(CCGetRealFromPt(20));
-        make.top.mas_equalTo(head);
-        make.size.mas_equalTo(CGSizeMake(textSize.width * 1.2, CCGetRealFromPt(24) + 6));
-    }];
-
-//    if(self.input) {
-        UILabel *timeLabel = [UILabel new];
-        timeLabel.numberOfLines = 1;
-        NSString * startTime = GetFromUserDefaults(LIVE_STARTTIME);
-    if (!self.input) {
-        startTime = [startTime substringToIndex:19];
-    }
-//    NSLog(@"userName:%@, time = %@", dialogue.username, startTime);
-        NSInteger timea = [NSString timeSwitchTimestamp:startTime andFormatter:@"yyyy-MM-dd HH:mm:ss"];
-        timea += [dialogue.time integerValue];
-        timeLabel.text = [NSString timestampSwitchTime:timea andFormatter:@"HH:mm"];
-    //todo 问答禁言
-    if ([dialogue.time integerValue] == -1) {
-        NSLog(@"您已被禁言");
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"HH:mm"];
-        NSDate *datenow = [NSDate date];
-        timeLabel.text = [formatter stringFromDate:datenow];
-    }
-//    NSLog(@"最终显示时间:%@, 接口返回的持续时间 %@", timeLabel.text, dialogue.time);
-        timeLabel.backgroundColor = CCClearColor;
-        timeLabel.font = [UIFont systemFontOfSize:FontSize_20];
-        timeLabel.textColor = CCRGBColor(153,153,153);
-        timeLabel.userInteractionEnabled = NO;
-        [cell addSubview:timeLabel];
-        timeLabel.textAlignment = NSTextAlignmentLeft;
-        [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(cell);
-            make.bottom.mas_equalTo(titleLabel).offset(-2);
-            make.size.mas_equalTo(CGSizeMake(50, CCGetRealFromPt(20)));
-        }];
-//    }
-
-    float textMaxWidth = CCGetRealFromPt(590);
-    NSMutableAttributedString *textAttri = [[NSMutableAttributedString alloc] initWithString:dialogue.msg];
-    [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(51,51,51) range:NSMakeRange(0, textAttri.length)];
-    NSMutableParagraphStyle *style1 = [[NSMutableParagraphStyle alloc] init];
-    style1.minimumLineHeight = CCGetRealFromPt(40);
-    style1.maximumLineHeight = CCGetRealFromPt(40);
-    style1.alignment = NSTextAlignmentLeft;
-    style1.lineBreakMode = NSLineBreakByCharWrapping;
-    NSDictionary *dict1 = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_28],NSParagraphStyleAttributeName:style1};
-    [textAttri addAttributes:dict1 range:NSMakeRange(0, textAttri.length)];
-
-    CGSize textSize1 = [textAttri boundingRectWithSize:CGSizeMake(textMaxWidth, CGFLOAT_MAX)
-                                               options:NSStringDrawingUsesLineFragmentOrigin
-                                               context:nil].size;
-    textSize1.width = ceilf(textSize1.width);
-    textSize1.height = ceilf(textSize1.height);
-    UILabel *contentLabel = [UILabel new];
-    contentLabel.numberOfLines = 0;
-    contentLabel.backgroundColor = CCClearColor;
-    contentLabel.textColor = CCRGBColor(51,51,51);
-    contentLabel.textAlignment = NSTextAlignmentLeft;
-    contentLabel.userInteractionEnabled = NO;
-    contentLabel.attributedText = textAttri;
-    [cell addSubview:contentLabel];
-
-    [contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(head.mas_right).offset(CCGetRealFromPt(20));
-        make.top.mas_equalTo(head.mas_centerY).offset(-1);
-        make.size.mas_equalTo(textSize1);
-    }];
-    
-    if (arr.count > 1) {
-            UIView * line =[[UIView alloc] init];
-            line.backgroundColor = [UIColor colorWithHexString:@"#dddddd" alpha:1.0f];
-            [cell addSubview:line];
-            [line mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(contentLabel.mas_bottom).offset(13);
-                make.left.mas_equalTo(cell).offset(CCGetRealFromPt(130));
-                make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(590), 1));
-            }];
-    }
-    
-    UIView *viewBase = nil;
-    for(int i = 1;i < [arr count];i++) {
-        
-        Dialogue *dialogue = [arr objectAtIndex:i];
-        UIView *viewTop = [UIView new];
-        viewTop.backgroundColor = CCRGBColor(255,255,255);
-        [cell addSubview:viewTop];
-        if(viewBase == nil) {
-            [viewTop mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_equalTo(cell).offset(CCGetRealFromPt(130));
-                make.top.mas_equalTo(contentLabel.mas_bottom).offset(CCGetRealFromPt(16)+10);
-                make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(590), 1));
-            }];
-        } else {
-            viewTop = viewBase;
-        }
-
-        float textMaxWidth = CCGetRealFromPt(550);
-        NSString *text = [[dialogue.username stringByAppendingString:@": "] stringByAppendingString:dialogue.msg];
-        NSMutableAttributedString *textAttri1 = [[NSMutableAttributedString alloc] initWithString:text];
-        [textAttri1 addAttribute:NSForegroundColorAttributeName value:CCRGBColor(102,102,102) range:NSMakeRange(0, [dialogue.username stringByAppendingString:@": "].length)];
-        NSInteger fromIndex = [dialogue.username stringByAppendingString:@": "].length;
-        [textAttri1 addAttribute:NSForegroundColorAttributeName value:CCRGBColor(51,51,51) range:NSMakeRange(fromIndex,text.length - fromIndex)];
-        //找出特定字符在整个字符串中的位置
-        NSRange redRange = NSMakeRange([[textAttri1 string] rangeOfString:dialogue.username].location, [[textAttri1 string] rangeOfString:dialogue.username].length+1);
-        //修改特定字符的颜色
-        [textAttri1 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHexString:@"#12ad1a" alpha:1.0f] range:redRange];
-        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-        style.minimumLineHeight = CCGetRealFromPt(36);
-        style.maximumLineHeight = CCGetRealFromPt(36);
-        style.lineBreakMode = NSLineBreakByCharWrapping;
-        style.alignment = NSTextAlignmentLeft;
-        NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_26],NSParagraphStyleAttributeName:style};
-        [textAttri1 addAttributes:dict range:NSMakeRange(0, textAttri1.length)];
-
-        CGSize textSize = [textAttri1 boundingRectWithSize:CGSizeMake(textMaxWidth, CGFLOAT_MAX)
-                                                   options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                                                   context:nil].size;
-        textSize.width = ceilf(textSize.width);
-        textSize.height = ceilf(textSize.height);// + 1;
-        UIView *viewBg = [UIView new];
-        viewBg.backgroundColor = CCRGBColor(255,255,255);
-        [cell addSubview:viewBg];
-        [viewBg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.mas_equalTo(viewTop);
-            make.top.mas_equalTo(viewTop.mas_bottom);
-            make.height.mas_equalTo(textSize.height + CCGetRealFromPt(10) + CCGetRealFromPt(20)-10);
-        }];
-
-        UILabel *contentLabel = [UILabel new];
-        contentLabel.numberOfLines = 0;
-        contentLabel.font = [UIFont systemFontOfSize:FontSize_24];
-        contentLabel.backgroundColor = CCClearColor;
-        contentLabel.textAlignment = NSTextAlignmentLeft;
-        contentLabel.userInteractionEnabled = NO;
-        contentLabel.lineBreakMode = NSLineBreakByCharWrapping;
-        contentLabel.attributedText = textAttri1;
-        [viewBg addSubview:contentLabel];
-        [contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(viewBg);
-            make.centerY.mas_equalTo(viewBg).offset(-1);//.offset(CCGetRealFromPt(20));
-            make.size.mas_equalTo(textSize);
-        }];
-        UIView *viewBottom = [UIView new];
-        viewBottom.backgroundColor = [UIColor clearColor];
-        [cell addSubview:viewBottom];
-        [viewBottom mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.mas_equalTo(viewTop);
-            make.top.mas_equalTo(viewBg.mas_bottom);
-            make.height.mas_equalTo(1);
-        }];
-
-        viewBase = viewBottom;
-    }
-    UIView *cellBottomLine = [UIView new];
-    cellBottomLine.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5" alpha:1.0f];;
-    [cell addSubview:cellBottomLine];
-    [cellBottomLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.bottom.mas_equalTo(cell);
-        make.height.mas_equalTo(5);
-    }];
+    //设置cell
+    [cell setQuestionModel:dialogue indexPath:indexPath arr:arr isInput:self.input];
 
     return cell;
 }
 
+/**
+ 计算cell的高度
+
+ @param array 问答数据数组
+ @return 高度
+ */
 -(CGFloat)heightForCellOfQuestion:(NSMutableArray *)array {
     CGFloat height = CCGetRealFromPt(130);
-
+//计算高度
     Dialogue *dialogue = [array objectAtIndex:0];
     float textMaxWidth = CCGetRealFromPt(590);
     NSMutableAttributedString *textAttri = [[NSMutableAttributedString alloc] initWithString:dialogue.msg];
@@ -747,38 +509,6 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [_questionTextField resignFirstResponder];
 }
-
-//#pragma mark - 将某个时间转化成 时间戳
-//- (NSInteger)timeSwitchTimestamp:(NSString *)formatTime andFormatter:(NSString *)format{
-//
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    [formatter setDateStyle:NSDateFormatterMediumStyle];
-//    [formatter setTimeStyle:NSDateFormatterShortStyle];
-//    [formatter setDateFormat:format]; //(@"YYYY-MM-dd hh:mm:ss") ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
-//    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
-//    [formatter setTimeZone:timeZone];
-//    NSDate* date = [formatter dateFromString:formatTime]; //------------将字符串按formatter转成nsdate
-//    //时间转时间戳的方法:
-//    NSInteger timeSp = [[NSNumber numberWithDouble:[date timeIntervalSince1970]] integerValue];
-//    return timeSp;
-//
-//}
-//
-//#pragma mark - 将某个时间戳转化成 时间
-//- (NSString *)timestampSwitchTime:(NSInteger)timestamp andFormatter:(NSString *)format{
-//
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    [formatter setDateStyle:NSDateFormatterMediumStyle];
-//    [formatter setTimeStyle:NSDateFormatterShortStyle];
-//    [formatter setDateFormat:format]; // （@"YYYY-MM-dd hh:mm:ss"）----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
-//    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
-//    [formatter setTimeZone:timeZone];
-//    NSDate *confromTimesp = [NSDate dateWithTimeIntervalSince1970:timestamp];
-//    NSString *confromTimespStr = [formatter stringFromDate:confromTimesp];
-//    return confromTimespStr;
-//
-//}
-
 
 
 @end

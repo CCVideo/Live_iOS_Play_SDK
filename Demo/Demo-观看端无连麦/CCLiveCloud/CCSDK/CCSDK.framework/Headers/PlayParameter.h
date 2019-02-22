@@ -67,7 +67,7 @@
 /**
  *  @brief 是否使用https
  */
-@property(nonatomic,assign)BOOL                         security;//是否使用https(已弃用!)
+@property(nonatomic,assign)BOOL                         security;//是否使用https(已弃用!现在均为https)
 /**
  *  @brief
  * 0:IJKMPMovieScalingModeNone
@@ -103,10 +103,11 @@
  */
 @property(assign, nonatomic)NSInteger                   DocModeType;//设置当前的文档模式
 /**
- *聊天分组id
- *使用聊天分组功能时传入,不使用可以不传
+ *  @brief 聊天分组id
+ *         使用聊天分组功能时传入,不使用可以不传
  */
 @property(copy, nonatomic)NSString                   *groupid;
+
 
 @end
 

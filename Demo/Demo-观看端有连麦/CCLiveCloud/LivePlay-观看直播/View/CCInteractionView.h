@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CCPlayerView.h"//观看直播视频
-#import "ChatView.h"//聊天
-#import "CCSDK/RequestData.h"//观看直播SDK
+#import "CCChatBaseView.h"//聊天
 NS_ASSUME_NONNULL_BEGIN
 
 //隐藏更多菜单视图回调
@@ -21,11 +20,17 @@ typedef void(^InsertDanMuBlock)(NSString *str);
 //加载私聊新消息提示回调
 typedef void(^NewMessageBlock)(void);
 
+//发送公聊回调
+typedef void(^ChatMessageBlock)(NSString *msg);
+//问答回调
+typedef void(^QuestionBlock)(NSString *message);
+//发送私聊回调
+typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
+
 @interface CCInteractionView : UIView
 
 @property (nonatomic,strong)UISegmentedControl       * segment;//功能切换,文档,聊天等
-@property (nonatomic,strong)ChatView                 * chatView;//聊天
-@property (nonatomic,strong)RequestData              * requestData;//观看直播sdk
+@property (nonatomic,strong)CCChatBaseView           * chatView;//聊天
 @property (nonatomic,strong)CCPlayerView             * playerView;//观看直播视频
 @property (nonatomic,copy)  NSString                 * groupId;//用户的guoupId
 /**
@@ -36,7 +41,10 @@ typedef void(^NewMessageBlock)(void);
  @return self
  */
 -(instancetype)initWithFrame:(CGRect)frame
-              hiddenMenuView:(HiddenMenuViewBlock)block;
+              hiddenMenuView:(HiddenMenuViewBlock)block
+                   chatBlock:(ChatMessageBlock)chatBlock
+            privateChatBlock:(PrivateChatBlock)privateChatBlock
+               questionBlock:(QuestionBlock)questionBlock;
 
 #pragma mark - 代替代理接收事件类
 //房间信息

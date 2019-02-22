@@ -230,7 +230,6 @@
  */
 - (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic;
 
-
 /**
  *    @brief     直播间被禁
  */
@@ -290,10 +289,56 @@
 -(void)onUnBanChat:(NSDictionary *) modeDic;
 /**
  *    @brief    聊天管理(The new method)
- *    status    聊天消息的状态 0 显示 1 不不显示
+ *    status    聊天消息的状态 0 显示 1 不显示
  *    chatIds   聊天消息的id列列表
  */
 -(void)chatLogManage:(NSDictionary *) manageDic;
+
+/**
+ *    @brief    文档加载状态(The new method)
+ *    index
+ *      0 文档组件初始化完成
+ *      1 动画文档加载完成
+ *      2 非动画文档加载完成
+ */
+- (void)docLoadCompleteWithIndex:(NSInteger)index;
+
+/**
+ *    @brief    接收到随堂测(The new method)
+ *    rseultDic    随堂测内容
+ */
+-(void)receivePracticeWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    随堂测提交结果(The new method)
+ *    rseultDic    提交结果,调用commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options后执行
+ */
+-(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    随堂测统计结果(The new method)
+ *    rseultDic    统计结果,调用getPracticeStatisWithPracticeId:(NSString *)practiceId后执行
+ */
+-(void)practiceStatisResultsWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    随堂测排名结果(The new method)
+ *    rseultDic    排名结果,调用getPracticeRankWithPracticeId:(NSString *)practiceId后执行
+ */
+-(void)practiceRankResultsWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    停止随堂测(The new method)
+ *    rseultDic    结果
+ */
+-(void)practiceStopWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    关闭随堂测(The new method)
+ *    rseultDic    结果
+ */
+-(void)practiceCloseWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    视频状态(The new method)
+ *    rseult    playing/paused
+ */
+-(void)videoStateChangeWithString:(NSString *) result;
+
 
 
 //#ifdef LIANMAI_WEBRTC
@@ -475,6 +520,23 @@
  *      @param     pageIndex  跳转的页数
  */
 - (void)changePageToNumWithDocId:(NSString *)docId pageIndex:(NSInteger)pageIndex;
+
+/**
+ *    @brief     提交随堂测(The new method)
+ *      @param     practiceId  随堂测ID
+ *      @param     options   选项ID
+ */
+- (void)commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options;
+/**
+ *    @brief     获取随堂测统计信息(可多次调用)(The new method)
+ *      @param     practiceId  随堂测ID
+ */
+-(void)getPracticeStatisWithPracticeId:(NSString *)practiceId;
+/**
+ *    @brief     获取随堂测排名(可多次调用)(The new method)
+ *      @param     practiceId  随堂测ID
+ */
+-(void)getPracticeRankWithPracticeId:(NSString *)practiceId;
 
 //#ifdef LIANMAI_WEBRTC
 /**

@@ -13,7 +13,7 @@
 
 @property(nonatomic,copy)  LotteryBtnClicked        lotteryblock;//签到回调
 @property(nonatomic,strong)UIImageView              *topBgView;//顶部背景
-@property(nonatomic,strong)UIView                   *view;
+@property(nonatomic,strong)UIView                   *view;//背景视图
 @property(nonatomic,strong)UILabel                  *label;//提示文字
 @property(nonatomic,strong)UILabel                  *titleLabel;//titleLabel
 @property(nonatomic,assign)NSInteger                duration;//签到时间
@@ -35,22 +35,26 @@
         _duration = duration;
         self.isScreenLandScape = isScreenLandScape;
         self.lotteryblock = lotteryblock;
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];//签到倒计时
         [self initUI];
     }
     return self;
 }
 
-//签到倒计时
+/**
+ 签到倒计时
+ */
 -(void)timerfunc {
     WS(ws)
     _duration = _duration-1;
 //    NSLog(@"_duration = %d",(int)_duration);
-    if(_duration == 0) {
-        self.lotteryBtn.enabled = YES;
-        self.lotteryBtn.hidden = YES;
-        [self stopTimer];
-        self.label.text = @"签到结束";
+    if(_duration == 0) {//签到时间为零时,设置视图样式
+        self.lotteryBtn.enabled = YES;//设置签到按钮不可点击
+        self.lotteryBtn.hidden = YES;//隐藏签到按钮
+        [self stopTimer];//关闭timer
+        
+        //设置label样式和约束
+        self.label.text = ROLLCALL_OVER;
         self.label.textColor = [UIColor colorWithHexString:@"#ff412e" alpha:1.f];
         [self.label mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.and.right.mas_equalTo(ws.view);
@@ -58,11 +62,13 @@
             make.bottom.mas_equalTo(ws.view).offset(-CCGetRealFromPt(180));
         }];
         [ws layoutIfNeeded];
+        
+        //1.5秒后移除视图
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self removeFromSuperview];
         });
     } else {
-        self.label.text = [NSString stringWithFormat:@"签到倒计时：%@",[self timeFormat:self.duration]];
+        self.label.text = [NSString stringWithFormat:@"%@%@", ROLLCALL_TIMER,[self timeFormat:self.duration]];
     }
 }
 //关闭Timer
@@ -73,6 +79,12 @@
     _timer = nil;
 }
 
+/**
+ 秒数转固定格式的时间字符串
+
+ @param time 秒数
+ @return 时间字符串
+ */
 -(NSString *)timeFormat:(NSInteger)time {
     NSInteger minutes = time / 60;
     NSInteger seconds = time % 60;
@@ -80,8 +92,11 @@
     return timeStr;
 }
 #pragma mark - setUI
+
+/**
+ 初始化UI
+ */
 -(void)initUI {
-    WS(ws)
     self.backgroundColor = CCRGBAColor(0,0,0,0.5);
     
     //背景视图
@@ -91,14 +106,14 @@
     [self addSubview:_view];
     if(!self.isScreenLandScape) {//竖屏模式下
         [_view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(ws);
-            make.centerY.mas_equalTo(ws);
+            make.centerX.mas_equalTo(self);
+            make.centerY.mas_equalTo(self);
             make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(650), CCGetRealFromPt(565)));
         }];
     } else {//横屏模式下
         [_view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(ws);
-            make.centerY.mas_equalTo(ws);
+            make.centerX.mas_equalTo(self);
+            make.centerY.mas_equalTo(self);
             make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(650), CCGetRealFromPt(565)));
         }];
     }
@@ -106,31 +121,31 @@
     //顶部背景视图
     [self.view addSubview:self.topBgView];
     [_topBgView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(ws.view);
-        make.right.mas_equalTo(ws.view);
-        make.top.mas_equalTo(ws.view);
+        make.left.mas_equalTo(self.view);
+        make.right.mas_equalTo(self.view);
+        make.top.mas_equalTo(self.view);
         make.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     
     //顶部标题
     [self.view addSubview:self.titleLabel];
     [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(ws.topBgView);
+        make.edges.equalTo(self.topBgView);
     }];
     
     //提示文字
     [self.view addSubview:self.label];
     [_label mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.right.mas_equalTo(ws.view);
-        make.top.mas_equalTo(ws.view).offset(CCGetRealFromPt(215));
+        make.left.and.right.mas_equalTo(self.view);
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(215));
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(650), CCGetRealFromPt(40)));
     }];
     
     //签到按钮
     [self.view addSubview:self.lotteryBtn];
     [_lotteryBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(ws.view);
-        make.bottom.mas_equalTo(ws.view).offset(-CCGetRealFromPt(140));
+        make.centerX.mas_equalTo(self.view);
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(140));
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(360), CCGetRealFromPt(90)));
     }];
 }
@@ -139,7 +154,7 @@
 -(UILabel *)label {
     if(!_label) {
         _label = [UILabel new];
-        _label.text = [NSString stringWithFormat:@"签到倒计时：%@",[self timeFormat:self.duration]];
+        _label.text = [NSString stringWithFormat:@"%@%@", ROLLCALL_TIMER,[self timeFormat:self.duration]];
         _label.textColor = [UIColor colorWithHexString:@"#1e1f21" alpha:1.f];
         _label.textAlignment = NSTextAlignmentCenter;
         _label.font = [UIFont systemFontOfSize:FontSize_40];
@@ -150,7 +165,7 @@
 -(UIButton *)lotteryBtn {
     if(_lotteryBtn == nil) {
         _lotteryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_lotteryBtn setTitle:@"我要签到" forState:UIControlStateNormal];
+        [_lotteryBtn setTitle:ROLLCALL_SIGN forState:UIControlStateNormal];
         [_lotteryBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
         [_lotteryBtn setTitleColor:CCRGBAColor(255, 255, 255, 1) forState:UIControlStateNormal];
         [_lotteryBtn setBackgroundImage:[UIImage imageNamed:@"default_btn"] forState:UIControlStateNormal];
@@ -164,7 +179,7 @@
 -(void)lotteryBtnClicked {
     self.lotteryBtn.hidden = YES;
     [self stopTimer];
-    self.label.text = @"签到成功";
+    self.label.text = ROLLCALL_SUCCESS;
     self.label.textColor = [UIColor colorWithHexString:@"#ff412e" alpha:1.f];
     [self.label mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.and.right.mas_equalTo(self.view);
@@ -174,14 +189,14 @@
     [self layoutIfNeeded];
     
     if(self.lotteryblock) {
-        self.lotteryblock();
+        self.lotteryblock();//签到回调
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self removeFromSuperview];
     });
 }
 
-
+//顶部背景视图
 -(UIImageView *)topBgView {
     if(!_topBgView) {
         _topBgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Bar"]];
@@ -199,10 +214,11 @@
     }
     return _topBgView;
 }
+//顶部提示文字
 -(UILabel *)titleLabel{
     if (!_titleLabel) {
         _titleLabel = [UILabel new];
-        _titleLabel.text = @"签到";
+        _titleLabel.text = ROLLCALL;
         _titleLabel.textColor = [UIColor colorWithHexString:@"#38404b" alpha:1.f];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.font = [UIFont systemFontOfSize:FontSize_32];

@@ -21,7 +21,13 @@
 @end
 
 @implementation QuestionnaireSurveyPopUp
-
+/**
+ 初始化方法
+ 
+ @param isScreenLandScape 是否是全屏
+ @param sureBtnBlock 点击确定回调
+ @return self
+ */
 -(instancetype)initIsScreenLandScape:(BOOL)isScreenLandScape SureBtnBlock:(SureBtnBlock)sureBtnBlock {
     self = [super init];
     if(self) {
@@ -31,7 +37,11 @@
     }
     return self;
 }
+#pragma mark - UI布局
 
+/**
+ 初始化UI
+ */
 -(void)initUI {
     WS(ws)
     self.backgroundColor = CCRGBAColor(0, 0, 0, 0.5);
@@ -74,7 +84,8 @@
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(280), CCGetRealFromPt(80)));
     }];
 }
-
+#pragma mark - 懒加载
+//提示文字
 -(UILabel *)label {
     if(!_label) {
         _label = [UILabel new];
@@ -86,12 +97,12 @@
     }
     return _label;
 }
-
+//确认按钮
 -(UIButton *)sureBtn {
     if(_sureBtn == nil) {
         _sureBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _sureBtn.backgroundColor = [UIColor colorWithHexString:@"#38404b" alpha:1.f];
-        [_sureBtn setTitle:@"确定" forState:UIControlStateNormal];
+        [_sureBtn setTitle:SURE forState:UIControlStateNormal];
         [_sureBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
         [_sureBtn setTitleColor:CCRGBAColor(255, 255, 255, 1) forState:UIControlStateNormal];
         [_sureBtn.layer setMasksToBounds:YES];

@@ -15,7 +15,6 @@
 #import "InformationShowView.h"
 #import "LoadingView.h"
 #import "CCPlayBackController.h"
-
 @interface CCPalyBackLoginController ()<UITextFieldDelegate,RequestDataPlayBackDelegate>
 
 @property(nonatomic,strong)UILabel                      * informationLabel;//直播间信息
@@ -42,6 +41,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    //设置导航栏
     self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5" alpha:1.0f];
     self.navigationItem.leftBarButtonItem=self.leftBarBtn;
     self.navigationItem.rightBarButtonItem=self.rightBarBtn;
@@ -50,6 +50,15 @@
      [self createImageWithColor:CCRGBColor(255,255,255)] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
     [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    
+    //设置输入框和登陆按钮
+    [self setTextfields];
+}
+
+/**
+ 设置输入框和登陆按钮
+ */
+-(void)setTextfields{
     self.textFieldUserId.text = GetFromUserDefaults(PLAYBACK_USERID);
     self.textFieldRoomId.text = GetFromUserDefaults(PLAYBACK_ROOMID);
     self.textFieldLiveId.text = GetFromUserDefaults(PLAYBACK_LIVEID);
@@ -57,6 +66,7 @@
     self.textFieldUserName.text = GetFromUserDefaults(PLAYBACK_USERNAME);
     self.textFieldUserPassword.text = GetFromUserDefaults(PLAYBACK_PASSWORD);
     
+    //设置登录按钮样式
     if(StrNotEmpty(_textFieldUserId.text) && StrNotEmpty(_textFieldRoomId.text) && StrNotEmpty(_textFieldUserName.text) && StrNotEmpty(_textFieldLiveId.text)) {
         self.loginBtn.enabled = YES;
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,1) CGColor]];
@@ -65,7 +75,6 @@
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,0.6) CGColor]];
     }
 }
-
 #pragma mark- 必须实现的代理方法RequestDataPlayBackDelegate
 /**
  *    @brief    请求成功
@@ -105,7 +114,7 @@
     
     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
 }
-
+#pragma mark - 点击登录
 /**
  点击登录
  */
@@ -113,34 +122,58 @@
     [self.view endEditing:YES];
     [self keyboardHide];
     if(self.textFieldUserName.text.length > 20) {
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:USERNAME_CONFINE];
-        [self.view addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
-        }];
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
+        [self showInformationView];//输入限制提示
         return;
     }
-    _loadingView = [[LoadingView alloc] initWithLabel:@"正在登录" centerY:NO];
+    //正在登录提示视图
+    [self showLoadingView];
+    //配置SDK
+    [self integrationSDK];
+}
+/**
+ 配置SDK
+ */
+-(void)integrationSDK{
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId = self.textFieldUserId.text;//userId
+    parameter.roomId = self.textFieldRoomId.text;//直播间Id
+    parameter.liveId = self.textFieldLiveId.text;//直播Id
+    parameter.recordId = self.textFieldRecordId.text;//回放Id
+    parameter.viewerName = self.textFieldUserName.text;//昵称
+    parameter.token = self.textFieldUserPassword.text;//密码
+    parameter.security = NO;//是否使用https协议
+    RequestDataPlayBack *requestDataPlayBack = [[RequestDataPlayBack alloc] initLoginWithParameter:parameter];
+    requestDataPlayBack.delegate = self;
+}
+/**
+ 添加正在登录提示视图
+ */
+-(void)showLoadingView{
+    _loadingView = [[LoadingView alloc] initWithLabel:LOGIN_LOADING centerY:NO];
     [self.view addSubview:_loadingView];
     
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
     }];
     [_loadingView layoutIfNeeded];
-    PlayParameter *parameter = [[PlayParameter alloc] init];
-    parameter.userId = self.textFieldUserId.text;
-    parameter.roomId = self.textFieldRoomId.text;
-    parameter.liveId = self.textFieldLiveId.text;
-    parameter.recordId = self.textFieldRecordId.text;
-    parameter.viewerName = self.textFieldUserName.text;
-    parameter.token = self.textFieldUserPassword.text;
-    parameter.security = NO;
-    RequestDataPlayBack *requestDataPlayBack = [[RequestDataPlayBack alloc] initLoginWithParameter:parameter];
-    requestDataPlayBack.delegate = self;
+}
+/**
+ 显示输入限制提示视图
+ */
+-(void)showInformationView{
+    [_informationView removeFromSuperview];
+    _informationView = [[InformationShowView alloc] initWithLabel:USERNAME_CONFINE];
+    [self.view addSubview:_informationView];
+    [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
+    }];
+    //2秒后移除提示信息
+    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
 }
 
+/**
+ 移除提示信息
+ */
 -(void)informationViewRemove {
     [_informationView removeFromSuperview];
     _informationView = nil;
@@ -161,17 +194,6 @@
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,0.6) CGColor]];
     }
 }
--(UILabel *)informationLabel {
-    if(_informationLabel == nil) {
-        _informationLabel = [UILabel new];
-        [_informationLabel setBackgroundColor:CCRGBColor(250, 250, 250)];
-        [_informationLabel setFont:[UIFont systemFontOfSize:FontSize_24]];
-        [_informationLabel setTextColor:CCRGBColor(102, 102, 102)];
-        [_informationLabel setTextAlignment:NSTextAlignmentLeft];
-        [_informationLabel setText:@"直播间信息"];
-    }
-    return _informationLabel;
-}
 //监听touch事件
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
@@ -182,6 +204,20 @@
         _textFieldUserName.text = [_textFieldUserName.text substringToIndex:20];
     }
 }
+#pragma mark - 懒加载
+//直播间信息
+-(UILabel *)informationLabel {
+    if(_informationLabel == nil) {
+        _informationLabel = [UILabel new];
+        [_informationLabel setBackgroundColor:CCRGBColor(250, 250, 250)];
+        [_informationLabel setFont:[UIFont systemFontOfSize:FontSize_24]];
+        [_informationLabel setTextColor:CCRGBColor(102, 102, 102)];
+        [_informationLabel setTextAlignment:NSTextAlignmentLeft];
+        [_informationLabel setText:LOGIN_TEXT_INFOR];
+    }
+    return _informationLabel;
+}
+//左侧返回Btn
 -(UIBarButtonItem *)leftBarBtn {
     if(_leftBarBtn == nil) {
         UIImage *aimage = [UIImage imageNamed:@"nav_ic_back_nor"];
@@ -190,7 +226,7 @@
     }
     return _leftBarBtn;
 }
-
+//右侧扫描按钮
 -(UIBarButtonItem *)rightBarBtn {
     if(_rightBarBtn == nil) {
         UIImage *aimage = [UIImage imageNamed:@"nav_ic_code"];
@@ -200,25 +236,16 @@
     return _rightBarBtn;
 }
 
-//扫码
+
+/**
+ 点击扫描按钮
+ */
 -(void)onSweepCode {
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     switch (status) {
         case AVAuthorizationStatusNotDetermined:{
             // 许可对话没有出现，发起授权许可
-            
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (granted) {
-                        ScanViewController *scanViewController = [[ScanViewController alloc] initWithType:3];;
-                        [self.navigationController pushViewController:scanViewController animated:NO];
-                    }else{
-                        //用户拒绝
-                        ScanViewController *scanViewController = [[ScanViewController alloc] initWithType:3];
-                        [self.navigationController pushViewController:scanViewController animated:NO];
-                    }
-                });
-            }];
+            [self requestAccess];
         }
             break;
         case AVAuthorizationStatusAuthorized:{
@@ -238,12 +265,110 @@
             break;
     }
 }
-
+/**
+ 发起授权许可
+ */
+-(void)requestAccess{
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (granted) {
+                ScanViewController *scanViewController = [[ScanViewController alloc] initWithType:3];;
+                [self.navigationController pushViewController:scanViewController animated:NO];
+            }
+        });
+    }];
+}
+#pragma mark - UI布局
+- (void)setupUI {
+    self.title = LOGIN_PLAYBACK;
+    //直播间信息
+    [self.view addSubview:self.informationLabel];
+    [_informationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(self.view).with.offset(CCGetRealFromPt(40));
+        make.top.mas_equalTo(self.view).with.offset(CCGetRealFromPt(30));
+        make.height.mas_equalTo(CCGetRealFromPt(24));
+    }];
+    
+    //添加输入框
+    [self.view addSubview:self.textFieldUserId];
+    [self.view addSubview:self.textFieldRoomId];
+    [self.view addSubview:self.textFieldLiveId];
+    [self.view addSubview:self.textFieldRecordId];
+    [self.view addSubview:self.textFieldUserName];
+    [self.view addSubview:self.textFieldUserPassword];
+    //test   groupId
+    //    [self.view addSubview:self.groupId];
+    
+    [self.textFieldUserName addTarget:self action:@selector(userNameTextFieldChange) forControlEvents:UIControlEventEditingChanged];
+    //userId输入框
+    [self.textFieldUserId mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.view);
+        make.top.mas_equalTo(self.informationLabel.mas_bottom).with.offset(CCGetRealFromPt(22));
+        make.height.mas_equalTo(CCGetRealFromPt(92));
+    }];
+    //roomId输入框
+    [self.textFieldRoomId mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.textFieldUserId);
+        make.top.mas_equalTo(self.textFieldUserId.mas_bottom);
+        make.height.mas_equalTo(self.textFieldUserId.mas_height);
+    }];
+    //直播Id输入框
+    [self.textFieldLiveId mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.textFieldUserId);
+        make.top.mas_equalTo(self.textFieldRoomId.mas_bottom);
+        make.height.mas_equalTo(self.textFieldUserId.mas_height);
+    }];
+    //回放Id输入框
+    [self.textFieldRecordId mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.textFieldUserId);
+        make.top.mas_equalTo(self.textFieldLiveId.mas_bottom);
+        make.height.mas_equalTo(self.textFieldUserId.mas_height);
+    }];
+    //昵称输入框
+    [self.textFieldUserName mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.textFieldUserId);
+        make.top.mas_equalTo(self.textFieldRecordId.mas_bottom);
+        make.height.mas_equalTo(self.textFieldUserId.mas_height);
+    }];
+    //密码输入框
+    [self.textFieldUserPassword mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.textFieldUserId);
+        make.top.mas_equalTo(self.textFieldUserName.mas_bottom);
+        make.height.mas_equalTo(self.textFieldUserId);
+    }];
+    //test   groupId
+    //    [self.groupId mas_makeConstraints:^(MASConstraintMaker *make) {
+    //        make.left.right.mas_equalTo(self.textFieldUserId);
+    //        make.top.mas_equalTo(self.textFieldUserPassword.mas_bottom);
+    //        make.height.mas_equalTo(self.textFieldUserName);
+    //    }];
+    //分界线
+    UIView *line = [UIView new];
+    [self.view addSubview:line];
+    [line setBackgroundColor:CCRGBColor(238,238,238)];
+    [line mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.and.right.mas_equalTo(self.view);
+        make.top.mas_equalTo(self.textFieldUserPassword.mas_bottom);
+        make.height.mas_equalTo(1);
+    }];
+    //登录按钮
+    [self.view addSubview:self.loginBtn];
+    [_loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(line.mas_bottom).with.offset(CCGetRealFromPt(80));
+        make.centerX.equalTo(self.view);
+        make.height.mas_equalTo(50);
+        make.width.mas_equalTo(300);
+    }];
+    //添加通知
+    [self addObserver];
+}
+#pragma mark - 懒加载
+//userId输入框
 -(TextFieldUserInfo *)textFieldUserId {
     if(_textFieldUserId == nil) {
         _textFieldUserId = [TextFieldUserInfo new];
         _textFieldUserId.delegate = self;
-        [_textFieldUserId textFieldWithLeftText:@"CC账号ID" placeholder:@"16位账号ID" lineLong:YES text:GetFromUserDefaults(PLAYBACK_USERID)];
+        [_textFieldUserId textFieldWithLeftText:LOGIN_TEXT_USERID placeholder:LOGIN_TEXT_USERID_PLACEHOLDER lineLong:YES text:GetFromUserDefaults(PLAYBACK_USERID)];
         _textFieldUserId.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldUserId.rightViewMode = UITextFieldViewModeAlways;
@@ -251,12 +376,12 @@
     }
     return _textFieldUserId;
 }
-
+//roomId输入框
 -(TextFieldUserInfo *)textFieldRoomId {
     if(_textFieldRoomId == nil) {
         _textFieldRoomId = [TextFieldUserInfo new];
         _textFieldRoomId.delegate = self;
-        [_textFieldRoomId textFieldWithLeftText:@"直播间ID" placeholder:@"32位直播间ID" lineLong:NO text:GetFromUserDefaults(PLAYBACK_ROOMID)];
+        [_textFieldRoomId textFieldWithLeftText:LOGIN_TEXT_ROOMID placeholder:LOGIN_TEXT_ROOMID_PLACEHOLDER lineLong:NO text:GetFromUserDefaults(PLAYBACK_ROOMID)];
         _textFieldRoomId.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldRoomId.rightViewMode = UITextFieldViewModeAlways;
@@ -264,12 +389,12 @@
     }
     return _textFieldRoomId;
 }
-
+//直播Id输入框
 -(TextFieldUserInfo *)textFieldLiveId {
     if(_textFieldLiveId == nil) {
         _textFieldLiveId = [TextFieldUserInfo new];
         _textFieldLiveId.delegate = self;
-        [_textFieldLiveId textFieldWithLeftText:@"直播ID" placeholder:@"16位直播ID" lineLong:NO text:GetFromUserDefaults(PLAYBACK_LIVEID)];
+        [_textFieldLiveId textFieldWithLeftText:LOGIN_TEXT_LIVEID placeholder:LOGIN_TEXT_LIVEID_PLACEHOLDER lineLong:NO text:GetFromUserDefaults(PLAYBACK_LIVEID)];
         _textFieldLiveId.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldLiveId.rightViewMode = UITextFieldViewModeAlways;
@@ -277,12 +402,12 @@
     }
     return _textFieldLiveId;
 }
-
+//回放Id输入框
 -(TextFieldUserInfo *)textFieldRecordId {
     if(_textFieldRecordId == nil) {
         _textFieldRecordId = [TextFieldUserInfo new];
         _textFieldRecordId.delegate = self;
-        [_textFieldRecordId textFieldWithLeftText:@"回放ID" placeholder:@"16位回放ID" lineLong:NO text:GetFromUserDefaults(PLAYBACK_RECORDID)];
+        [_textFieldRecordId textFieldWithLeftText:LOGIN_TEXT_RECORDID placeholder:LOGIN_TEXT_RECORDID_PLACEHOLDER lineLong:NO text:GetFromUserDefaults(PLAYBACK_RECORDID)];
         _textFieldRecordId.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldRecordId.rightViewMode = UITextFieldViewModeAlways;
@@ -290,12 +415,12 @@
     }
     return _textFieldRecordId;
 }
-
+//昵称输入框
 -(TextFieldUserInfo *)textFieldUserName {
     if(_textFieldUserName == nil) {
         _textFieldUserName = [TextFieldUserInfo new];
         _textFieldUserName.delegate = self;
-        [_textFieldUserName textFieldWithLeftText:@"昵称" placeholder:@"聊天中显示的名字" lineLong:NO text:GetFromUserDefaults(PLAYBACK_USERNAME)];
+        [_textFieldUserName textFieldWithLeftText:LOGIN_TEXT_USERNAME placeholder:LOGIN_TEXT_USERNAME_PLACEHOLDER lineLong:NO text:GetFromUserDefaults(PLAYBACK_USERNAME)];
         _textFieldUserName.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldUserName.rightViewMode = UITextFieldViewModeAlways;
@@ -303,12 +428,12 @@
     }
     return _textFieldUserName;
 }
-
+//密码输入框
 -(TextFieldUserInfo *)textFieldUserPassword {
     if(_textFieldUserPassword == nil) {
         _textFieldUserPassword = [TextFieldUserInfo new];
         _textFieldUserPassword.delegate = self;
-        [_textFieldUserPassword textFieldWithLeftText:@"密码" placeholder:@"观看密码" lineLong:NO text:GetFromUserDefaults(PLAYBACK_PASSWORD)];
+        [_textFieldUserPassword textFieldWithLeftText:LOGIN_TEXT_PASSWORD placeholder:LOGIN_TEXT_PASSWORD_PLACEHOLDER lineLong:NO text:GetFromUserDefaults(PLAYBACK_PASSWORD)];
         _textFieldUserPassword.rightView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 20, 0)];
         //设置显示模式为永远显示(默认不显示 必须设置 否则没有效果)
         _textFieldUserPassword.rightViewMode = UITextFieldViewModeAlways;
@@ -331,9 +456,14 @@
 //    return _groupId;
 //}
 //-------------------------------------------
+
+/**
+ 点击返回按钮
+ */
 -(void)onSelectVC {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
+#pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -381,7 +511,7 @@
         }
     }
 }
-
+//隐藏键盘
 -(void)keyboardHide {
     WS(ws)
     [self.informationLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -394,25 +524,18 @@
         [ws.view layoutIfNeeded];
     }];
 }
-
+//键盘将要隐藏
 - (void)keyboardWillHide:(NSNotification *)notif {
     [self keyboardHide];
 }
 
-- (BOOL)shouldAutorotate{
-    return NO;
-}
 
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-    return UIInterfaceOrientationPortrait;
-}
+/**
+ color转image
 
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
-}
-
+ @param color color
+ @return image
+ */
 - (UIImage*)createImageWithColor:(UIColor*) color
 {
     CGRect rect=CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
@@ -424,90 +547,7 @@
     UIGraphicsEndImageContext();
     return theImage;
 }
-
-- (void)setupUI {
-    self.title = @"观看回放";
-    
-    [self.view addSubview:self.informationLabel];
-    
-    [_informationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.view).with.offset(CCGetRealFromPt(40));
-        make.top.mas_equalTo(self.view).with.offset(CCGetRealFromPt(30));
-        make.height.mas_equalTo(CCGetRealFromPt(24));
-    }];
-    [self.view addSubview:self.textFieldUserId];
-    [self.view addSubview:self.textFieldRoomId];
-    [self.view addSubview:self.textFieldLiveId];
-    [self.view addSubview:self.textFieldRecordId];
-    [self.view addSubview:self.textFieldUserName];
-    [self.view addSubview:self.textFieldUserPassword];
-    //test   groupId
-//    [self.view addSubview:self.groupId];
-    
-    [self.textFieldUserName addTarget:self action:@selector(userNameTextFieldChange) forControlEvents:UIControlEventEditingChanged];
-    
-    [self.textFieldUserId mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.view);
-        make.top.mas_equalTo(self.informationLabel.mas_bottom).with.offset(CCGetRealFromPt(22));
-        make.height.mas_equalTo(CCGetRealFromPt(92));
-    }];
-    
-    [self.textFieldRoomId mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.textFieldUserId);
-        make.top.mas_equalTo(self.textFieldUserId.mas_bottom);
-        make.height.mas_equalTo(self.textFieldUserId.mas_height);
-    }];
-    
-    [self.textFieldLiveId mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.textFieldUserId);
-        make.top.mas_equalTo(self.textFieldRoomId.mas_bottom);
-        make.height.mas_equalTo(self.textFieldUserId.mas_height);
-    }];
-    
-    [self.textFieldRecordId mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.textFieldUserId);
-        make.top.mas_equalTo(self.textFieldLiveId.mas_bottom);
-        make.height.mas_equalTo(self.textFieldUserId.mas_height);
-    }];
-    
-    [self.textFieldUserName mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.textFieldUserId);
-        make.top.mas_equalTo(self.textFieldRecordId.mas_bottom);
-        make.height.mas_equalTo(self.textFieldUserId.mas_height);
-    }];
-    
-    [self.textFieldUserPassword mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self.textFieldUserId);
-        make.top.mas_equalTo(self.textFieldUserName.mas_bottom);
-        make.height.mas_equalTo(self.textFieldUserId);
-    }];
-    //test   groupId
-//    [self.groupId mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.right.mas_equalTo(self.textFieldUserId);
-//        make.top.mas_equalTo(self.textFieldUserPassword.mas_bottom);
-//        make.height.mas_equalTo(self.textFieldUserName);
-//    }];
-    
-    UIView *line = [UIView new];
-    [self.view addSubview:line];
-    [line setBackgroundColor:CCRGBColor(238,238,238)];
-    [line mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.right.mas_equalTo(self.view);
-        make.top.mas_equalTo(self.textFieldUserPassword.mas_bottom);
-        make.height.mas_equalTo(1);
-    }];
-    
-    [self.view addSubview:self.loginBtn];
-    [_loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(line.mas_bottom).with.offset(CCGetRealFromPt(80));
-        make.centerX.equalTo(self.view);
-        make.height.mas_equalTo(50);
-        make.width.mas_equalTo(300);
-    }];
-
-    [self addObserver];
-}
-
+//登录按钮
 -(UIButton *)loginBtn {
     if(_loginBtn == nil) {
         _loginBtn = [[UIButton alloc] init];
@@ -523,5 +563,18 @@
     }
     return _loginBtn;
 }
+#pragma mark - 屏幕旋转
+- (BOOL)shouldAutorotate{
+    return NO;
+}
 
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskPortrait;
+}
 @end

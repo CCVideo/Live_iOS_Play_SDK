@@ -13,6 +13,54 @@
  
  [[SaveLogUtil sharedInstance]isNeedToSaveLog:YES];这个需要在AppDelegate.m中设置一下,如果遇见问题可以查看一下手机日志确定稳定的位置!如果不会查看手机日志的话可以参考:https://www.jianshu.com/p/d5e3a6109036
  
+ 
+ 如果想在该产品基础上做修改的可按如下方法修改
+ 一:修改项目名称(显示在手机上的名称)
+    1.点击左侧CCLiveCloud项目名(最上层那个,旁边有个蓝色图标)
+    2.点击TARGETS
+    3.点击上方的Gengral
+    4.下方有一个identity,identity里面有一项叫Display name, 修改Display name右边的文字为您想要的APP名称即可
+ 二:修改项目图标
+    1.点击左侧Assets.xcassets文件会看到AppIcon
+    2.点击AppIcon可以看到所有的图标,替换掉即可
+    3.图标尺寸为20 29 40 60 76 83.5 1024的2x和3x图
+ 三:修改启动页
+    1.点击左侧Assets.xcassets文件会看到LaunchImage
+    2.点击LaunchImage可以看到所有的启动图,替换掉即可
+    3.图片尺寸
+        iOS11+:
+         iPhone Xs Max: 1242 × 2688 px
+         iPhone Xʀ: 828 × 1792 px
+         iPhone X / iPhone Xs: 1125 × 2436 px
+        iOS 8+:
+         1242 × 2208 px
+         750 × 1334 px
+        iOS7+:
+         640 × 960px
+         640 × 1136px
+        iOS5,6:
+         320 × 480 px
+         640 × 960 px
+         640 × 1136 px
+ 四:修改登录背景图片
+    1.点击左侧Assets.xcassets
+    2.在Assets.xcassets内的搜索框内输入launch_backgroundImage
+    3.将这个图片删掉或者修改他的名字,将您想要的登录背景图片放入文件内并命名为launch_backgroundImage
+    4.图片尺寸1125 × 2436px和1688 × 3654px
+ 
+至此,该产品的名字,图标和启动图片以及登录背景图片都已经变成了您替换过后的!
+ 
+ 上线流程:
+ 1.登录https://developer.apple.com
+ 2.点击account并登录,ps:个人版本/公司版本 99$/年;
+ 3.配置相关证书,这个可以自行百度解决
+ 4.点击App Store Connect 创建APP, 填写相关信息
+ 5.点击上方Product->Scheme->Edit Scheme
+ 6.修改Run和Archive右面的Build configuration的模式为release
+ 7.将模拟器或者真机换成Generic iOS Device
+ 8.点击上方Product->archive->distribute APP->ios App Store->upload然后一直下一步即可
+ 9.上传完成之后回到App Store Connect中构建刚才上传的版本,提交审核即可!
+ 
  祝您使用愉快!!!
  
  */
@@ -31,7 +79,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [Bugly startWithAppId:@"144af8c8e4"];
+    [Bugly startWithAppId:@"144af8c8e4"];
     _window = [[UIWindow alloc] init];
     _window.backgroundColor = [UIColor whiteColor];
     _window.frame = [UIScreen mainScreen].bounds;

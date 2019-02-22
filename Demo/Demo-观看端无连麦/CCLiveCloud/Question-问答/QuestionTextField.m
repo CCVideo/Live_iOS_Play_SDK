@@ -12,7 +12,7 @@
 
 
 @end
-
+#define QUESTIONTEXT @"我要提问~"
 @implementation QuestionTextField
 
 -(instancetype)init {
@@ -20,7 +20,7 @@
     if(self) {
         self.borderStyle = UITextBorderStyleNone;
         self.backgroundColor = CCRGBAColor(245,245,245,1.0f);
-        self.placeholder = @"我要提问~";
+        self.placeholder = QUESTIONTEXT;
         self.font = [UIFont systemFontOfSize:FontSize_30];
         self.textColor = CCRGBColor(51, 51, 51);
         self.clearButtonMode = UITextFieldViewModeNever;

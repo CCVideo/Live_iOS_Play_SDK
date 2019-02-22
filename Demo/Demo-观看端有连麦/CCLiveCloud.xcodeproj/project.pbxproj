@@ -9,19 +9,6 @@
 /* Begin PBXBuildFile section */
 		5201080121ED7D07006578BF /* CCPrivateChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 520107FE21ED7D07006578BF /* CCPrivateChatView.m */; };
 		5201080221ED7D07006578BF /* PrivateChatViewForOne.m in Sources */ = {isa = PBXBuildFile; fileRef = 520107FF21ED7D07006578BF /* PrivateChatViewForOne.m */; };
-		5201085221EEDAC6006578BF /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084D21EEDAC6006578BF /* WebRTC.framework */; };
-		5201085321EEDAC6006578BF /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084E21EEDAC6006578BF /* IJKMediaFramework.framework */; };
-		5201085421EEDAC6006578BF /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084F21EEDAC6006578BF /* CCSDK.framework */; };
-		5201085521EEDAC6006578BF /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201085021EEDAC6006578BF /* DWDrmServer.framework */; };
-		5201085621EEDAC6006578BF /* socketio.html in Resources */ = {isa = PBXBuildFile; fileRef = 5201085121EEDAC6006578BF /* socketio.html */; };
-		5201085721EEDB70006578BF /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084F21EEDAC6006578BF /* CCSDK.framework */; };
-		5201085821EEDB70006578BF /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084F21EEDAC6006578BF /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5201085921EEDB70006578BF /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201085021EEDAC6006578BF /* DWDrmServer.framework */; };
-		5201085A21EEDB70006578BF /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5201085021EEDAC6006578BF /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5201085B21EEDB70006578BF /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084E21EEDAC6006578BF /* IJKMediaFramework.framework */; };
-		5201085C21EEDB70006578BF /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084E21EEDAC6006578BF /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5201085D21EEDB70006578BF /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084D21EEDAC6006578BF /* WebRTC.framework */; };
-		5201085E21EEDB71006578BF /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5201084D21EEDAC6006578BF /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5202E5C3219D22C100C13EF9 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5C1219D22C100C13EF9 /* LoadingView.m */; };
 		5202E5C6219D233100C13EF9 /* UITouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5C4219D233000C13EF9 /* UITouchView.m */; };
 		5202E5C921A249CC00C13EF9 /* InformationShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5C821A249CC00C13EF9 /* InformationShowView.m */; };
@@ -45,9 +32,19 @@
 		522A764F21D321BA00C871B2 /* RollcallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A764D21D321B900C871B2 /* RollcallView.m */; };
 		522A766321D4A4D200C871B2 /* LianmaiView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A766221D4A4D200C871B2 /* LianmaiView.m */; };
 		522A766621D4A4E300C871B2 /* AnnouncementView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A766421D4A4E200C871B2 /* AnnouncementView.m */; };
+		522F4ED7217D606D001B078F /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED2217D606D001B078F /* WebRTC.framework */; };
+		522F4ED8217D606D001B078F /* socketio.html in Resources */ = {isa = PBXBuildFile; fileRef = 522F4ED3217D606D001B078F /* socketio.html */; };
+		522F4ED9217D606D001B078F /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED4217D606D001B078F /* DWDrmServer.framework */; };
+		522F4EDD217D6079001B078F /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED2217D606D001B078F /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		522F4EDF217D6079001B078F /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED4217D606D001B078F /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		522F4EE0217D6079001B078F /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED5217D606D001B078F /* IJKMediaFramework.framework */; };
+		522F4EE1217D6079001B078F /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED5217D606D001B078F /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		522F4EE7217D612D001B078F /* CCPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4EE6217D612D001B078F /* CCPlayerController.m */; };
 		522F4F3A217DB62F001B078F /* UIButton+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4F38217DB62F001B078F /* UIButton+Extension.m */; };
 		522F4F3E217DBA90001B078F /* UIColor+RCColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4F3D217DBA90001B078F /* UIColor+RCColor.m */; };
+		523BE8B5221BFCC3002D6325 /* CCQuestionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 523BE8B3221BFCC3002D6325 /* CCQuestionViewCell.m */; };
+		523BE8B8221BFCCC002D6325 /* CCPlayBackInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 523BE8B7221BFCCC002D6325 /* CCPlayBackInteractionView.m */; };
+		526B650121FAED4D000676B7 /* CCAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 526B650021FAED4D000676B7 /* CCAlertView.m */; };
 		5286A67321913D0B00912BC2 /* CCIntroductionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5286A67221913D0B00912BC2 /* CCIntroductionView.m */; };
 		5286A67621916B0C00912BC2 /* CCQuestionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5286A67521916B0C00912BC2 /* CCQuestionView.m */; };
 		5286A67921916BBF00912BC2 /* QuestionTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5286A67821916BBE00912BC2 /* QuestionTextField.m */; };
@@ -65,8 +62,19 @@
 		52B9173721DDD8A800C3AE9D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B9173621DDD8A800C3AE9D /* libz.tbd */; };
 		52B9173921DDD8B700C3AE9D /* libz.1.1.3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B9173821DDD8B700C3AE9D /* libz.1.1.3.tbd */; };
 		52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B9173A21DDD8CF00C3AE9D /* VideoToolbox.framework */; };
+		52CB6A3021F9BE070037AE94 /* CCChatBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A1E21F9BE070037AE94 /* CCChatBaseView.m */; };
+		52CB6A3121F9BE070037AE94 /* CCChatViewDataSourceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2421F9BE070037AE94 /* CCChatViewDataSourceManager.m */; };
+		52CB6A3221F9BE070037AE94 /* CCImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2721F9BE070037AE94 /* CCImageView.m */; };
+		52CB6A3321F9BE070037AE94 /* CCChatBaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2821F9BE070037AE94 /* CCChatBaseCell.m */; };
+		52CB6A3421F9BE070037AE94 /* CCPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2921F9BE070037AE94 /* CCPhotoBrowser.m */; };
+		52CB6A3521F9BE070037AE94 /* CCPublicChatModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2D21F9BE070037AE94 /* CCPublicChatModel.m */; };
+		52CB6A3621F9BE070037AE94 /* CCChatContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A2F21F9BE070037AE94 /* CCChatContentView.m */; };
+		52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */; };
 		52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D55EF32189ABC9008387DC /* CCPlayerView.m */; };
 		52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D76A6421AE416F00F968D0 /* CCNAVController.m */; };
+		52E1CDA1221F9FD4008DA93D /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E1CDA0221F9FD4008DA93D /* CCSDK.framework */; };
+		52E1CDA2221F9FDF008DA93D /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E1CDA0221F9FD4008DA93D /* CCSDK.framework */; };
+		52E1CDA3221F9FDF008DA93D /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52E1CDA0221F9FD4008DA93D /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		52F344A52186A7B1006F1E7B /* CCPlayLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344A42186A7B1006F1E7B /* CCPlayLoginController.m */; };
 		52F344A82186B227006F1E7B /* TextFieldUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344A62186B227006F1E7B /* TextFieldUserInfo.m */; };
 		52F344B22186F0F6006F1E7B /* ScanOverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344AC2186F0F5006F1E7B /* ScanOverViewController.m */; };
@@ -74,8 +82,6 @@
 		52F344B42186F0F6006F1E7B /* PhotoNotPermissionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344B02186F0F6006F1E7B /* PhotoNotPermissionVC.m */; };
 		52FFD8B22187117A00DEEF4F /* CCPalyBackLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FFD8B12187117A00DEEF4F /* CCPalyBackLoginController.m */; };
 		6E1E7835921085EF61E23DB4 /* Pods_CCLiveCloud.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC72D9C06320BC9395625D8 /* Pods_CCLiveCloud.framework */; };
-		70380D6A21C26C090073B2A7 /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 70380D6721C26C090073B2A7 /* ChatView.m */; };
-		70380D6B21C26C090073B2A7 /* ChatViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 70380D6921C26C090073B2A7 /* ChatViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,10 +108,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5201085C21EEDB70006578BF /* IJKMediaFramework.framework in Embed Frameworks */,
-				5201085A21EEDB70006578BF /* DWDrmServer.framework in Embed Frameworks */,
-				5201085821EEDB70006578BF /* CCSDK.framework in Embed Frameworks */,
-				5201085E21EEDB71006578BF /* WebRTC.framework in Embed Frameworks */,
+				522F4EE1217D6079001B078F /* IJKMediaFramework.framework in Embed Frameworks */,
+				522F4EDF217D6079001B078F /* DWDrmServer.framework in Embed Frameworks */,
+				522F4EDD217D6079001B078F /* WebRTC.framework in Embed Frameworks */,
+				52E1CDA3221F9FDF008DA93D /* CCSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,11 +124,6 @@
 		520107FE21ED7D07006578BF /* CCPrivateChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPrivateChatView.m; sourceTree = "<group>"; };
 		520107FF21ED7D07006578BF /* PrivateChatViewForOne.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivateChatViewForOne.m; sourceTree = "<group>"; };
 		5201080021ED7D07006578BF /* CCPrivateChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPrivateChatView.h; sourceTree = "<group>"; };
-		5201084D21EEDAC6006578BF /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
-		5201084E21EEDAC6006578BF /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
-		5201084F21EEDAC6006578BF /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
-		5201085021EEDAC6006578BF /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
-		5201085121EEDAC6006578BF /* socketio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = socketio.html; sourceTree = "<group>"; };
 		5202E5C1219D22C100C13EF9 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		5202E5C2219D22C100C13EF9 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
 		5202E5C4219D233000C13EF9 /* UITouchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITouchView.m; sourceTree = "<group>"; };
@@ -169,6 +170,10 @@
 		522A766221D4A4D200C871B2 /* LianmaiView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LianmaiView.m; sourceTree = "<group>"; };
 		522A766421D4A4E200C871B2 /* AnnouncementView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnouncementView.m; sourceTree = "<group>"; };
 		522A766521D4A4E200C871B2 /* AnnouncementView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnouncementView.h; sourceTree = "<group>"; };
+		522F4ED2217D606D001B078F /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
+		522F4ED3217D606D001B078F /* socketio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = socketio.html; sourceTree = "<group>"; };
+		522F4ED4217D606D001B078F /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
+		522F4ED5217D606D001B078F /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
 		522F4EE5217D612D001B078F /* CCPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPlayerController.h; sourceTree = "<group>"; };
 		522F4EE6217D612D001B078F /* CCPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayerController.m; sourceTree = "<group>"; };
 		522F4F38217DB62F001B078F /* UIButton+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Extension.m"; sourceTree = "<group>"; };
@@ -176,7 +181,12 @@
 		522F4F3B217DB671001B078F /* CCLiveCloud.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCLiveCloud.pch; sourceTree = "<group>"; };
 		522F4F3C217DBA90001B078F /* UIColor+RCColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+RCColor.h"; sourceTree = "<group>"; };
 		522F4F3D217DBA90001B078F /* UIColor+RCColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+RCColor.m"; sourceTree = "<group>"; };
-		524FB9112195223300744E0C /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
+		523BE8B3221BFCC3002D6325 /* CCQuestionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCQuestionViewCell.m; sourceTree = "<group>"; };
+		523BE8B4221BFCC3002D6325 /* CCQuestionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCQuestionViewCell.h; sourceTree = "<group>"; };
+		523BE8B6221BFCCC002D6325 /* CCPlayBackInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPlayBackInteractionView.h; sourceTree = "<group>"; };
+		523BE8B7221BFCCC002D6325 /* CCPlayBackInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPlayBackInteractionView.m; sourceTree = "<group>"; };
+		526B64FF21FAED4D000676B7 /* CCAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAlertView.h; sourceTree = "<group>"; };
+		526B650021FAED4D000676B7 /* CCAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCAlertView.m; sourceTree = "<group>"; };
 		5286A67121913D0B00912BC2 /* CCIntroductionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCIntroductionView.h; sourceTree = "<group>"; };
 		5286A67221913D0B00912BC2 /* CCIntroductionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCIntroductionView.m; sourceTree = "<group>"; };
 		5286A67421916B0C00912BC2 /* CCQuestionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCQuestionView.h; sourceTree = "<group>"; };
@@ -211,10 +221,27 @@
 		52B9173621DDD8A800C3AE9D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		52B9173821DDD8B700C3AE9D /* libz.1.1.3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.1.3.tbd; path = usr/lib/libz.1.1.3.tbd; sourceTree = SDKROOT; };
 		52B9173A21DDD8CF00C3AE9D /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		52CB6A1E21F9BE070037AE94 /* CCChatBaseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCChatBaseView.m; sourceTree = "<group>"; };
+		52CB6A1F21F9BE070037AE94 /* CCChatBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCChatBaseView.h; sourceTree = "<group>"; };
+		52CB6A2121F9BE070037AE94 /* CCChatContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCChatContentView.h; sourceTree = "<group>"; };
+		52CB6A2321F9BE070037AE94 /* CCChatViewDataSourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCChatViewDataSourceManager.h; sourceTree = "<group>"; };
+		52CB6A2421F9BE070037AE94 /* CCChatViewDataSourceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCChatViewDataSourceManager.m; sourceTree = "<group>"; };
+		52CB6A2621F9BE070037AE94 /* CCPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotoBrowser.h; sourceTree = "<group>"; };
+		52CB6A2721F9BE070037AE94 /* CCImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCImageView.m; sourceTree = "<group>"; };
+		52CB6A2821F9BE070037AE94 /* CCChatBaseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCChatBaseCell.m; sourceTree = "<group>"; };
+		52CB6A2921F9BE070037AE94 /* CCPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotoBrowser.m; sourceTree = "<group>"; };
+		52CB6A2A21F9BE070037AE94 /* CCImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCImageView.h; sourceTree = "<group>"; };
+		52CB6A2B21F9BE070037AE94 /* CCChatBaseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCChatBaseCell.h; sourceTree = "<group>"; };
+		52CB6A2D21F9BE070037AE94 /* CCPublicChatModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPublicChatModel.m; sourceTree = "<group>"; };
+		52CB6A2E21F9BE070037AE94 /* CCPublicChatModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPublicChatModel.h; sourceTree = "<group>"; };
+		52CB6A2F21F9BE070037AE94 /* CCChatContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCChatContentView.m; sourceTree = "<group>"; };
+		52CB6A3721F9BE280037AE94 /* UIView+GetVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+GetVC.h"; sourceTree = "<group>"; };
+		52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+GetVC.m"; sourceTree = "<group>"; };
 		52D55EF22189ABC9008387DC /* CCPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPlayerView.h; sourceTree = "<group>"; };
 		52D55EF32189ABC9008387DC /* CCPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayerView.m; sourceTree = "<group>"; };
 		52D76A6321AE416F00F968D0 /* CCNAVController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCNAVController.h; sourceTree = "<group>"; };
 		52D76A6421AE416F00F968D0 /* CCNAVController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCNAVController.m; sourceTree = "<group>"; };
+		52E1CDA0221F9FD4008DA93D /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
 		52F344A32186A7B1006F1E7B /* CCPlayLoginController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPlayLoginController.h; sourceTree = "<group>"; };
 		52F344A42186A7B1006F1E7B /* CCPlayLoginController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayLoginController.m; sourceTree = "<group>"; };
 		52F344A62186B227006F1E7B /* TextFieldUserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldUserInfo.m; sourceTree = "<group>"; };
@@ -228,9 +255,6 @@
 		52FFD8B02187117A00DEEF4F /* CCPalyBackLoginController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPalyBackLoginController.h; sourceTree = "<group>"; };
 		52FFD8B12187117A00DEEF4F /* CCPalyBackLoginController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPalyBackLoginController.m; sourceTree = "<group>"; };
 		5BC72D9C06320BC9395625D8 /* Pods_CCLiveCloud.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CCLiveCloud.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		70380D6721C26C090073B2A7 /* ChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatView.m; sourceTree = "<group>"; };
-		70380D6821C26C090073B2A7 /* ChatViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewCell.h; sourceTree = "<group>"; };
-		70380D6921C26C090073B2A7 /* ChatViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewCell.m; sourceTree = "<group>"; };
 		BC60902449F2B31138BA56CE /* Pods-CCLiveCloud.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CCLiveCloud.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,18 +263,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5201085421EEDAC6006578BF /* CCSDK.framework in Frameworks */,
 				52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */,
 				52B9173921DDD8B700C3AE9D /* libz.1.1.3.tbd in Frameworks */,
 				52B9173721DDD8A800C3AE9D /* libz.tbd in Frameworks */,
-				5201085721EEDB70006578BF /* CCSDK.framework in Frameworks */,
-				5201085B21EEDB70006578BF /* IJKMediaFramework.framework in Frameworks */,
-				5201085321EEDAC6006578BF /* IJKMediaFramework.framework in Frameworks */,
-				5201085221EEDAC6006578BF /* WebRTC.framework in Frameworks */,
-				5201085521EEDAC6006578BF /* DWDrmServer.framework in Frameworks */,
-				5201085921EEDB70006578BF /* DWDrmServer.framework in Frameworks */,
+				52E1CDA1221F9FD4008DA93D /* CCSDK.framework in Frameworks */,
+				52E1CDA2221F9FDF008DA93D /* CCSDK.framework in Frameworks */,
+				522F4ED9217D606D001B078F /* DWDrmServer.framework in Frameworks */,
+				522F4ED7217D606D001B078F /* WebRTC.framework in Frameworks */,
+				522F4EE0217D6079001B078F /* IJKMediaFramework.framework in Frameworks */,
 				6E1E7835921085EF61E23DB4 /* Pods_CCLiveCloud.framework in Frameworks */,
-				5201085D21EEDB70006578BF /* WebRTC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +317,8 @@
 		5202E5CD21A3DD6900C13EF9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				523BE8B6221BFCCC002D6325 /* CCPlayBackInteractionView.h */,
+				523BE8B7221BFCCC002D6325 /* CCPlayBackInteractionView.m */,
 				5202E5CF21A3DDC500C13EF9 /* CCPlayBackView.h */,
 				5202E5D021A3DDC500C13EF9 /* CCPlayBackView.m */,
 			);
@@ -339,11 +362,11 @@
 		522F4ED1217D606D001B078F /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
-				5201084F21EEDAC6006578BF /* CCSDK.framework */,
-				5201085021EEDAC6006578BF /* DWDrmServer.framework */,
-				5201084E21EEDAC6006578BF /* IJKMediaFramework.framework */,
-				5201085121EEDAC6006578BF /* socketio.html */,
-				5201084D21EEDAC6006578BF /* WebRTC.framework */,
+				52E1CDA0221F9FD4008DA93D /* CCSDK.framework */,
+				522F4ED2217D606D001B078F /* WebRTC.framework */,
+				522F4ED3217D606D001B078F /* socketio.html */,
+				522F4ED4217D606D001B078F /* DWDrmServer.framework */,
+				522F4ED5217D606D001B078F /* IJKMediaFramework.framework */,
 			);
 			path = CCSDK;
 			sourceTree = "<group>";
@@ -455,11 +478,10 @@
 		529D53B621797CD00093F724 /* Chat-聊天 */ = {
 			isa = PBXGroup;
 			children = (
+				52CB6A1F21F9BE070037AE94 /* CCChatBaseView.h */,
+				52CB6A1E21F9BE070037AE94 /* CCChatBaseView.m */,
+				52CB6A2021F9BE070037AE94 /* PublicChat-公聊 */,
 				520107FC21ED7D07006578BF /* Private-私聊 */,
-				524FB9112195223300744E0C /* ChatView.h */,
-				70380D6721C26C090073B2A7 /* ChatView.m */,
-				70380D6821C26C090073B2A7 /* ChatViewCell.h */,
-				70380D6921C26C090073B2A7 /* ChatViewCell.m */,
 			);
 			path = "Chat-聊天";
 			sourceTree = "<group>";
@@ -499,6 +521,8 @@
 		529D53BD21797CD00093F724 /* Category */ = {
 			isa = PBXGroup;
 			children = (
+				52CB6A3721F9BE280037AE94 /* UIView+GetVC.h */,
+				52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */,
 				522A752E21CB78F300C871B2 /* UIButton+UserInfo.h */,
 				522A753021CB78F300C871B2 /* UIButton+UserInfo.m */,
 				522A752F21CB78F300C871B2 /* UITextView+UserInfo.h */,
@@ -566,6 +590,8 @@
 		529D53C221797CEA0093F724 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				526B64FF21FAED4D000676B7 /* CCAlertView.h */,
+				526B650021FAED4D000676B7 /* CCAlertView.m */,
 				52275E2021ED7BC500C265D7 /* CellHeight.h */,
 				52275E2321ED7BC500C265D7 /* CellHeight.m */,
 				52275E1E21ED7BC400C265D7 /* CustomTextField.h */,
@@ -596,6 +622,8 @@
 		529D53C421797CEA0093F724 /* Question-问答 */ = {
 			isa = PBXGroup;
 			children = (
+				523BE8B4221BFCC3002D6325 /* CCQuestionViewCell.h */,
+				523BE8B3221BFCC3002D6325 /* CCQuestionViewCell.m */,
 				5286A67721916BBE00912BC2 /* QuestionTextField.h */,
 				5286A67821916BBE00912BC2 /* QuestionTextField.m */,
 				5286A67421916B0C00912BC2 /* CCQuestionView.h */,
@@ -611,6 +639,49 @@
 				522A764D21D321B900C871B2 /* RollcallView.m */,
 			);
 			path = "Sign-签到";
+			sourceTree = "<group>";
+		};
+		52CB6A2021F9BE070037AE94 /* PublicChat-公聊 */ = {
+			isa = PBXGroup;
+			children = (
+				52CB6A2121F9BE070037AE94 /* CCChatContentView.h */,
+				52CB6A2F21F9BE070037AE94 /* CCChatContentView.m */,
+				52CB6A2221F9BE070037AE94 /* DataSoruceManager */,
+				52CB6A2521F9BE070037AE94 /* Cell */,
+				52CB6A2C21F9BE070037AE94 /* Model */,
+			);
+			path = "PublicChat-公聊";
+			sourceTree = "<group>";
+		};
+		52CB6A2221F9BE070037AE94 /* DataSoruceManager */ = {
+			isa = PBXGroup;
+			children = (
+				52CB6A2321F9BE070037AE94 /* CCChatViewDataSourceManager.h */,
+				52CB6A2421F9BE070037AE94 /* CCChatViewDataSourceManager.m */,
+			);
+			path = DataSoruceManager;
+			sourceTree = "<group>";
+		};
+		52CB6A2521F9BE070037AE94 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				52CB6A2621F9BE070037AE94 /* CCPhotoBrowser.h */,
+				52CB6A2921F9BE070037AE94 /* CCPhotoBrowser.m */,
+				52CB6A2A21F9BE070037AE94 /* CCImageView.h */,
+				52CB6A2721F9BE070037AE94 /* CCImageView.m */,
+				52CB6A2B21F9BE070037AE94 /* CCChatBaseCell.h */,
+				52CB6A2821F9BE070037AE94 /* CCChatBaseCell.m */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		52CB6A2C21F9BE070037AE94 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				52CB6A2D21F9BE070037AE94 /* CCPublicChatModel.m */,
+				52CB6A2E21F9BE070037AE94 /* CCPublicChatModel.h */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		52D55EF02189AA89008387DC /* Controller */ = {
@@ -757,7 +828,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529D538B2179750D0093F724 /* Assets.xcassets in Resources */,
-				5201085621EEDAC6006578BF /* socketio.html in Resources */,
+				522F4ED8217D606D001B078F /* socketio.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,23 +900,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52CB6A3221F9BE070037AE94 /* CCImageView.m in Sources */,
 				5286A67621916B0C00912BC2 /* CCQuestionView.m in Sources */,
 				52275E2521ED7BC500C265D7 /* Utility.m in Sources */,
+				52CB6A3021F9BE070037AE94 /* CCChatBaseView.m in Sources */,
 				5287D2B7217ECDB50030AFB6 /* UIView+Extension.m in Sources */,
 				5202E5C6219D233100C13EF9 /* UITouchView.m in Sources */,
+				52CB6A3121F9BE070037AE94 /* CCChatViewDataSourceManager.m in Sources */,
 				52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */,
 				5201080221ED7D07006578BF /* PrivateChatViewForOne.m in Sources */,
 				522A752B21CB78D800C871B2 /* QuestionNaire.m in Sources */,
+				523BE8B8221BFCCC002D6325 /* CCPlayBackInteractionView.m in Sources */,
 				522F4F3E217DBA90001B078F /* UIColor+RCColor.m in Sources */,
 				522A753221CB78F300C871B2 /* UIButton+UserInfo.m in Sources */,
+				52CB6A3521F9BE070037AE94 /* CCPublicChatModel.m in Sources */,
 				52FFD8B22187117A00DEEF4F /* CCPalyBackLoginController.m in Sources */,
+				52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */,
 				522F4F3A217DB62F001B078F /* UIButton+Extension.m in Sources */,
+				523BE8B5221BFCC3002D6325 /* CCQuestionViewCell.m in Sources */,
 				5202E5D121A3DDC500C13EF9 /* CCPlayBackView.m in Sources */,
 				52F344A82186B227006F1E7B /* TextFieldUserInfo.m in Sources */,
 				522A766621D4A4E300C871B2 /* AnnouncementView.m in Sources */,
 				52F344B42186F0F6006F1E7B /* PhotoNotPermissionVC.m in Sources */,
 				5286A67C21916BF100912BC2 /* Dialogue.m in Sources */,
+				526B650121FAED4D000676B7 /* CCAlertView.m in Sources */,
 				522A74C821C8E7E800C871B2 /* UIImage+animatedGIF.m in Sources */,
+				52CB6A3421F9BE070037AE94 /* CCPhotoBrowser.m in Sources */,
 				522A764F21D321BA00C871B2 /* RollcallView.m in Sources */,
 				522A764B21D3219C00C871B2 /* VoteView.m in Sources */,
 				5286A67321913D0B00912BC2 /* CCIntroductionView.m in Sources */,
@@ -854,8 +934,6 @@
 				5202E5D421A3E83200C13EF9 /* MySlider.m in Sources */,
 				52F344B32186F0F6006F1E7B /* ScanViewController.m in Sources */,
 				52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */,
-				70380D6B21C26C090073B2A7 /* ChatViewCell.m in Sources */,
-				70380D6A21C26C090073B2A7 /* ChatView.m in Sources */,
 				522A766321D4A4D200C871B2 /* LianmaiView.m in Sources */,
 				522A764C21D3219C00C871B2 /* VoteViewResult.m in Sources */,
 				5202E5C3219D22C100C13EF9 /* LoadingView.m in Sources */,
@@ -865,8 +943,10 @@
 				529D53832179750C0093F724 /* AppDelegate.m in Sources */,
 				52F344A52186A7B1006F1E7B /* CCPlayLoginController.m in Sources */,
 				522A752C21CB78D800C871B2 /* QuestionnaireSurveyPopUp.m in Sources */,
+				52CB6A3321F9BE070037AE94 /* CCChatBaseCell.m in Sources */,
 				522A753321CB78F300C871B2 /* UITextView+UserInfo.m in Sources */,
 				52F344B22186F0F6006F1E7B /* ScanOverViewController.m in Sources */,
+				52CB6A3621F9BE070037AE94 /* CCChatContentView.m in Sources */,
 				528C514721BE175C0016FCD2 /* NSString+CCSwitchTime.m in Sources */,
 				5202E5CC21A3B01A00C13EF9 /* CCPlayBackController.m in Sources */,
 				5286A67F21916C3B00912BC2 /* UIImage+Extension.m in Sources */,

@@ -16,6 +16,11 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     ERROR_STATISTICAL = 1010,//@"问卷统计"
     ERROR_DOCLIST = 1011,//@"文档列表"
     ERROR_HISTORY = 1012,//@"历史信息"
+    PRACTICE_LIST = 1013,//@"随堂测试"
+    PRACTICECOMMIT = 1014,//@"提交随堂测试"
+    PRACTICESTATIS = 1015,//@"获取随堂测统计"
+    PRACTICERANK = 1016,//@"获取随堂测排名"
+
 
 };
 

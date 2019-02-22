@@ -13,32 +13,36 @@
 
 @interface CCPrivateChatView()<UITableViewDelegate,UITableViewDataSource>
 
-@property(nonatomic,strong)UIView                   *topView;
-@property(nonatomic,strong)UILabel                  *titleLabel;
-@property(nonatomic,strong)UIButton                 *closeButton;
-@property(nonatomic,strong)UITableView              *tableView;
-@property(nonatomic,strong)NSMutableArray           *dataArray;
-@property(nonatomic,copy)  CloseBtnClicked          closeBlock;
-@property(nonatomic,copy)  IsResponseBlock          isResponseBlock;
-@property(nonatomic,copy)  IsNotResponseBlock       isNotResponseBlock;
-@property(nonatomic,strong)NSMutableDictionary      *dataPrivateDic;
-@property(nonatomic,copy) NSString                  *currentAnteid;
-@property(nonatomic,copy) NSString                  *currentAnteName;
-@property(nonatomic,assign)Boolean                  isScreenLandScape;
-@property(nonatomic,copy)CheckDotBlock              checkDotBlock;
-@property(nonatomic,copy)UIView                     *bottomLine;
-@property(nonatomic,copy)UIView                     *topLine;
+@property(nonatomic,strong)UIView                   *topView;//顶部视图
+@property(nonatomic,strong)UILabel                  *titleLabel;//顶部标题
+@property(nonatomic,strong)UIButton                 *closeButton;//关闭按钮
+@property(nonatomic,strong)UITableView              *tableView;//私聊tableView
+@property(nonatomic,strong)NSMutableArray           *dataArray;//私聊数据数组
+@property(nonatomic,copy)  CloseBtnClicked          closeBlock;//关闭回调
+@property(nonatomic,copy)  IsResponseBlock          isResponseBlock;//回复回调
+@property(nonatomic,copy)  IsNotResponseBlock       isNotResponseBlock;//不回复回调
+@property(nonatomic,strong)NSMutableDictionary      *dataPrivateDic;//私聊字典
+@property(nonatomic,copy) NSString                  *currentAnteid;//当前的私聊id
+@property(nonatomic,copy) NSString                  *currentAnteName;//当前的私聊名称
+@property(nonatomic,assign)Boolean                  isScreenLandScape;//是否是全屏
+@property(nonatomic,copy)CheckDotBlock              checkDotBlock;//新消息标记
+@property(nonatomic,copy)UIView                     *bottomLine;//底部分界线
+@property(nonatomic,copy)UIView                     *topLine;//顶部分界线
 
 @end
 
 @implementation CCPrivateChatView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
+
+/**
+ 初始化方法
+
+@param closeBlock 关闭按钮
+@param isResponseBlock 回复回调
+@param isNotResponseBlock 不回复回调
+@param dataPrivateDic 私聊字典
+@param isScreenLandScape 是否是全屏
+@return self
 */
 -(instancetype)initWithCloseBlock:(CloseBtnClicked)closeBlock isResponseBlock:(IsResponseBlock)isResponseBlock isNotResponseBlock:(IsNotResponseBlock)isNotResponseBlock dataPrivateDic:(NSMutableDictionary *)dataPrivateDic isScreenLandScape:(BOOL)isScreenLandScape{
     self = [super init];
@@ -53,7 +57,53 @@
     }
     return self;
 }
+#pragma mark - 设置UI布局
 
+/**
+ 设置UI布局
+ */
+-(void)addSubviews {
+    //添加顶部分界线
+    [self addSubview:self.topLine];
+    [_topLine mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.top.mas_equalTo(self);
+        make.height.mas_equalTo(1);
+    }];
+    //添加顶部视图
+    [self addSubview:self.topView];
+    [_topView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.topLine);
+        make.top.mas_equalTo(self.topLine.mas_bottom);
+        make.height.mas_equalTo(CCGetRealFromPt(100));
+    }];
+    [self.topView addSubview:self.titleLabel];
+    //添加顶部文字
+    [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(self.topView);
+    }];
+    //添加关闭按钮
+    [self.topView addSubview:self.closeButton];
+    [_closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(self.topView);
+        make.right.mas_equalTo(self.topView).offset(-CCGetRealFromPt(30));
+        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(76), CCGetRealFromPt(76)));
+    }];
+    //添加底部分界线
+    [self addSubview:self.bottomLine];
+    [_bottomLine mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(self.topView);
+        make.top.mas_equalTo(self.topView.mas_bottom);
+        make.height.mas_equalTo(1);
+    }];
+    //私聊视图
+    [self addSubview:self.tableView];
+    [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.bottom.mas_equalTo(self);
+        make.top.mas_equalTo(self.bottomLine.mas_bottom);
+    }];
+}
+#pragma mark - 懒加载
+//底部分界线
 -(UIView *)bottomLine {
     if(!_bottomLine) {
         _bottomLine = [UIView new];
@@ -61,7 +111,7 @@
     }
     return _bottomLine;
 }
-
+//顶部分界线
 -(UIView *)topLine {
     if(!_topLine) {
         _topLine = [UIView new];
@@ -69,48 +119,7 @@
     }
     return _topLine;
 }
-
--(void)addSubviews {
-    [self addSubview:self.topLine];
-    WS(ws)
-    [_topLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.top.mas_equalTo(ws);
-        make.height.mas_equalTo(1);
-    }];
-    [self addSubview:self.topView];
-    [_topView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(ws.topLine);
-        make.top.mas_equalTo(ws.topLine.mas_bottom);
-        make.height.mas_equalTo(CCGetRealFromPt(100));
-    }];
-    [self.topView addSubview:self.titleLabel];
-    
-    [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(ws.topView);
-    }];
-    
-    [self.topView addSubview:self.closeButton];
-    
-    [_closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(ws.topView);
-        make.right.mas_equalTo(ws.topView).offset(-CCGetRealFromPt(30));
-        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(76), CCGetRealFromPt(76)));
-    }];
-    
-    [self addSubview:self.bottomLine];
-    [_bottomLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(ws.topView);
-        make.top.mas_equalTo(ws.topView.mas_bottom);
-        make.height.mas_equalTo(1);
-    }];
-    
-    [self addSubview:self.tableView];
-    [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.bottom.mas_equalTo(ws);
-        make.top.mas_equalTo(ws.bottomLine.mas_bottom);
-    }];
-}
-
+//顶部视图
 -(UIView *)topView {
     if(!_topView) {
         _topView = [UIView new];
@@ -120,19 +129,19 @@
     }
     return _topView;
 }
-
+//顶部标题
 -(UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [UILabel new];
         _titleLabel.backgroundColor = CCClearColor;
         _titleLabel.textColor = CCRGBColor(51,51,51);
         _titleLabel.font = [UIFont systemFontOfSize:FontSize_32];
-        _titleLabel.text = @"私聊列表";
+        _titleLabel.text = PRIVATE_LIST;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _titleLabel;
 }
-
+//关闭按钮
 -(UIButton *)closeButton {
     if(!_closeButton) {
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -143,13 +152,16 @@
     return _closeButton;
 }
 
+/**
+ 点击关闭按钮
+ */
 -(void)closeBtnClicked {
     if(self.closeBlock) {
-        self.closeBlock();
+        self.closeBlock();//关闭按钮回调
     }
     [self checkDot];
 }
-
+//私聊视图tableView
 -(UITableView *)tableView {
     if(!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -162,28 +174,34 @@
     }
     return _tableView;
 }
-
+//聊天数据数组
 -(NSMutableArray *)dataArray {
     if(!_dataArray) {
         _dataArray = [[NSMutableArray alloc] init];
     }
     return _dataArray;
 }
-
+#pragma mark - tableViewDataSource Delegate
+//footer高度
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return CCGetRealFromPt(26);
 }
-
+//设置footer视图
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, CCGetRealFromPt(26))];
     view.backgroundColor = CCClearColor;
     return view;
 }
-
+//返回高度
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return CCGetRealFromPt(141);
 }
-
+//返回行数
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.dataArray count];
+}
+//设置cell
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     Dialogue *privateDialogue = [self.dataArray objectAtIndex:indexPath.row];
     NSString *anteid = nil;
@@ -204,37 +222,60 @@
     }
     [cell setBackgroundColor:[UIColor clearColor]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//test 设置头部样式------------start
+    //设置cell样式
+    [self initCell:cell WithModel:privateDialogue];
+    return cell;
+}
+#pragma mark - 设置cell的样式
+/**
+ 设置头像视图
+
+ @param fromuserrole 头像的身份
+ @param tag 头像视图标记
+ @return 头像视图
+ */
+-(UIImageView *)createHeadImage:(NSString *)fromuserrole tag:(NSInteger)tag{
     UIImageView *headImage = [[UIImageView alloc] init];
     headImage.backgroundColor = CCClearColor;
     headImage.contentMode = UIViewContentModeScaleAspectFit;
     headImage.userInteractionEnabled = NO;
     NSString * str;
-    NSString *headImgName;
-    if ([privateDialogue.fromuserrole isEqualToString:@"publisher"]) {//主讲
+    NSString * headImgName;
+    if ([fromuserrole isEqualToString:@"publisher"]) {//主讲
         str = @"lecturer_nor";
         headImgName = @"chatHead_lecturer";
-    } else if ([privateDialogue.fromuserrole isEqualToString:@"student"]) {//学生或观众
+    } else if ([fromuserrole isEqualToString:@"student"]) {//学生或观众
         str = @"role_floorplan";
         headImgName = @"chatHead_student";
-    } else if ([privateDialogue.fromuserrole isEqualToString:@"host"]) {//主持人
+    } else if ([fromuserrole isEqualToString:@"host"]) {//主持人
         str = @"compere_nor";
         headImgName = @"chatHead_compere";
-    } else if ([privateDialogue.fromuserrole isEqualToString:@"unknow"]) {//其他没有角色
+    } else if ([fromuserrole isEqualToString:@"unknow"]) {//其他没有角色
         str = @"role_floorplan";
         headImgName = [NSString stringWithFormat:@"用户%d", arc4random_uniform(5) + 1];
-    } else if ([privateDialogue.fromuserrole isEqualToString:@"teacher"]) {//助教
+    } else if ([fromuserrole isEqualToString:@"teacher"]) {//助教
         str = @"assistant_nor";
         headImgName = @"chatHead_assistant";
     }
     headImage.image = [UIImage imageNamed:headImgName];
-    
+    //头像的标识
     UIImageView * imageid= [[UIImageView alloc] initWithImage:[UIImage imageNamed:str]];
     [headImage addSubview:imageid];
     [imageid mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(headImage);
     }];
-//test 设置头部样式-------------end
+    headImage.tag = tag;//设置头像标记
+    return headImage;
+}
+
+/**
+ 设置昵称
+
+ @param privateDialogue model
+ @param tag 视图标记
+ @return 昵称Label
+ */
+-(UILabel *)createNameLabel:(Dialogue *)privateDialogue tag:(NSInteger)tag{
     NSString *anteName = nil;
     if([privateDialogue.fromuserid isEqualToString:privateDialogue.myViwerId]) {
         anteName = privateDialogue.tousername;
@@ -248,7 +289,18 @@
     nameLabel.font = [UIFont systemFontOfSize:FontSize_30];
     nameLabel.textColor = CCRGBColor(51,51,51);
     nameLabel.userInteractionEnabled = NO;
+    nameLabel.tag = tag;
+    return nameLabel;
+}
 
+/**
+ 消息label
+
+ @param privateDialogue model
+ @param tag 消息视图标记
+ @return 消息视图
+ */
+-(UILabel *)createMsgLabel:(Dialogue *)privateDialogue tag:(NSInteger)tag{
     NSMutableAttributedString *textAttri = [Utility emotionStrWithString:privateDialogue.msg y:-8];
     [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(102,102,102) range:NSMakeRange(0, textAttri.length)];
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
@@ -256,13 +308,24 @@
     style.lineBreakMode = NSLineBreakByCharWrapping;
     NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_26],NSParagraphStyleAttributeName:style};
     [textAttri addAttributes:dict range:NSMakeRange(0, textAttri.length)];
-
+    
     UILabel *msgLabel = [UILabel new];
     msgLabel.attributedText = textAttri;
     msgLabel.numberOfLines = 1;
     msgLabel.backgroundColor = CCClearColor;
     msgLabel.userInteractionEnabled = NO;
+    msgLabel.tag = tag;
+    return msgLabel;
+}
 
+/**
+ 时间文本显示
+
+ @param privateDialogue model
+ @param tag 视图标记
+ @return 时间Label
+ */
+-(UILabel *)createTimeLabel:(Dialogue *)privateDialogue tag:(NSInteger)tag{
     UILabel *timeLabel = [UILabel new];
     timeLabel.text = [privateDialogue.time substringToIndex:5];
     timeLabel.backgroundColor = CCClearColor;
@@ -270,28 +333,64 @@
     timeLabel.font = [UIFont systemFontOfSize:FontSize_24];
     timeLabel.textColor = CCRGBColor(153,153,153);
     timeLabel.userInteractionEnabled = NO;
+    timeLabel.tag = tag;
+    return timeLabel;
+}
 
-    UIView *footView = [UIView new];
-    footView.backgroundColor = CCRGBColor(238,238,238);
-    footView.userInteractionEnabled = NO;
+/**
+ 设置cell的样式
 
-    headImage.tag = 1;
+ @param cell cell
+ @param privateDialogue 私聊数据
+ */
+-(void)initCell:(UITableViewCell *)cell WithModel:(Dialogue *)privateDialogue{
+    //添加头像
+    UIImageView *headImage = [self createHeadImage:privateDialogue.fromuserrole tag:1];
     [cell addSubview:headImage];
-    nameLabel.tag = 2;
-    [cell addSubview:nameLabel];
-    msgLabel.tag = 3;
-    [cell addSubview:msgLabel];
-    timeLabel.tag = 4;
-    [cell addSubview:timeLabel];
-    footView.tag = 5;
-    [cell addSubview:footView];
-    
     [headImage mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
         make.centerY.mas_equalTo(cell);
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80), CCGetRealFromPt(80)));
     }];
-    
+    //添加nameLabel
+    UILabel *nameLabel = [self createNameLabel:privateDialogue tag:2];
+    [cell addSubview:nameLabel];
+    [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(headImage.mas_right).offset(CCGetRealFromPt(30));
+        make.top.mas_equalTo(cell);
+        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(300), CCGetRealFromPt(90)));
+    }];
+    //添加消息Label
+    UILabel *msgLabel = [self createMsgLabel:privateDialogue tag:3];
+    [cell addSubview:msgLabel];
+    [msgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(nameLabel);
+        make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(50));
+        make.bottom.mas_equalTo(cell);
+        make.height.mas_equalTo(CCGetRealFromPt(86));
+    }];
+    //添加timeLabel
+    UILabel *timeLabel = [self createTimeLabel:privateDialogue tag:4];
+    [cell addSubview:timeLabel];
+    [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(cell.mas_right).offset(-CCGetRealFromPt(125));
+        make.right.mas_equalTo(cell);
+        make.top.mas_equalTo(cell);
+        make.height.mas_equalTo(CCGetRealFromPt(90));
+    }];
+    //添加footerView
+    UIView *footView = [UIView new];
+    footView.backgroundColor = CCRGBColor(238,238,238);
+    footView.userInteractionEnabled = NO;
+    footView.tag = 5;
+    [cell addSubview:footView];
+    [footView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(cell);
+        make.height.mas_equalTo(1);
+        make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
+        make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(30));
+    }];
+    //设置新消息标识
     UIImageView *idot = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"chatHead_newMessage"]];
     idot.contentMode = UIViewContentModeScaleAspectFit;
     [cell addSubview:idot];
@@ -301,45 +400,22 @@
     }];
     idot.tag = 6;
     idot.hidden = !privateDialogue.isNew;
-    
-    [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(headImage.mas_right).offset(CCGetRealFromPt(30));
-        make.top.mas_equalTo(cell);
-        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(300), CCGetRealFromPt(90)));
-    }];
-    
-    [msgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(nameLabel);
-        make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(50));
-        make.bottom.mas_equalTo(cell);
-        make.height.mas_equalTo(CCGetRealFromPt(86));
-    }];
-    
-    [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(cell.mas_right).offset(-CCGetRealFromPt(125));
-        make.right.mas_equalTo(cell);
-        make.top.mas_equalTo(cell);
-        make.height.mas_equalTo(CCGetRealFromPt(90));
-    }];
-    
-    [footView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(cell);
-        make.height.mas_equalTo(1);
-        make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-        make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(30));
-    }];
-    return cell;
 }
-
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.dataArray count];
-}
-
+#pragma mark - 显示tableView
+/**
+ 显示tableView
+ */
 -(void)showTableView {
     self.tableView.hidden = NO;
 }
 
+/**
+ 创建一个私聊对话视图
+ 
+ @param dataArrayForOne 1对1 对话聊天数组
+ @param anteid 私聊id
+ @param anteName 私聊名称
+ */
 -(void)createPrivateChatViewForOne:(NSMutableArray *)dataArrayForOne anteid:(NSString *)anteid anteName:(NSString *)anteName {
     WS(ws)
     _privateChatViewForOne = [[PrivateChatViewForOne alloc] initWithCloseBlock:^{
@@ -371,14 +447,13 @@
     _currentAnteid = anteid;
     _currentAnteName = anteName;
 }
-
+//点击某个cell
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if(_privateChatViewForOne) {
         [_privateChatViewForOne removeFromSuperview];
         _privateChatViewForOne = nil;
     }
-//    NSLog(@"TableViewCell 被点击！");
     Dialogue *globalDialogue = [self.dataArray objectAtIndex:indexPath.row];
     globalDialogue.isNew = NO;
     
@@ -392,31 +467,24 @@
         anteid = globalDialogue.fromuserid;
         anteName = globalDialogue.fromusername;
     }
-//    NSLog(@"-------globalDialogue = %@,anteid = %@,anteName = %@",globalDialogue,anteid,anteName);
+    //点击后隐藏新消息标识
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//    UIImageView *headImage = (UIImageView *)[cell viewWithTag:1];
     UIImageView *idot = (UIImageView *)[cell viewWithTag:6];
     idot.hidden = YES;
-//    UILabel *nameLabel = (UILabel *)[cell viewWithTag:2];
-//    UILabel *msgLabel = (UILabel *)[cell viewWithTag:3];
-//    UILabel *timeLabel = (UILabel *)[cell viewWithTag:4];
-//    nameLabel.text = anteName;
-//    msgLabel.text = globalDialogue.msg;
-//    timeLabel.text = globalDialogue.time;
 
     NSMutableArray *array = [self.dataPrivateDic objectForKey:anteid];
     
-//    for(Dialogue *globalDialogue in array) {
-//        NSLog(@"globalDialogue.msg = %@",globalDialogue.msg);
-//    }
-    //NSLog(@"------createPrivateChatViewForOne   anteid = %@,anteName = %@",anteid,anteName);
     [self createPrivateChatViewForOne:[array copy] anteid:anteid anteName:anteName];
-    
-//    CCLog(@"111 anteid = %@",globalDialogue.fromuserid);
     
     [self checkDot];
 }
 
+
+/**
+ 点击头像按钮
+
+ @param dialogue 私聊数据模型
+ */
 -(void)selectByClickHead:(Dialogue *)dialogue {
     if(_privateChatViewForOne) {
         [_privateChatViewForOne removeFromSuperview];
@@ -437,20 +505,23 @@
     for (Dialogue *dia in self.dataArray) {
         dia.isNew = NO;
     }
-    [self.tableView reloadData];
+    [self.tableView reloadData];//更新tableView数据源
     
-    [self checkDot];
+    [self checkDot];//检测是否是新消息
 }
 
+
+/**
+ 更新私聊字典
+
+ @param dic 更新的字典
+ */
 -(void)reloadDict:(NSDictionary *)dic anteName:anteName anteid:anteid {
     self.dataPrivateDic = [dic mutableCopy];
-//    NSLog(@"---self.dataPrivateDic = %@",self.dataPrivateDic);
     NSArray *array = [self.dataPrivateDic objectForKey:anteid];
-//    NSLog(@"---array = %@",array);
     Dialogue *dialogue = [array lastObject];
-    BOOL flag = NO;
+    BOOL flag = NO;//设置标识
     for (Dialogue *dia in self.dataArray) {
-        //NSLog(@"--- --- dia = %@,dialogue = %@",dia,dialogue);
         if(([dia.fromuserid isEqualToString:dialogue.fromuserid] && [dia.touserid isEqualToString:dialogue.touserid]) || ([dia.fromuserid isEqualToString:dialogue.touserid] && [dia.touserid isEqualToString:dialogue.fromuserid])) {
             [self.dataArray replaceObjectAtIndex:[self.dataArray indexOfObject:dia] withObject:dialogue];
             flag = YES;
@@ -458,21 +529,16 @@
         }
     }
     
-//    _currentAnteid = anteid;
-//    _currentAnteName = anteName;
-    
     if(flag == NO) {
         [self.dataArray addObject:dialogue];
     }
     dialogue.isNew = YES;
     
-//    NSLog(@"-----_currentAnteid = %@,anteid = %@,_currentAnteName = %@,anteName = %@",_currentAnteid,anteid,_currentAnteName,anteName);
-    
     if(_privateChatViewForOne && [_currentAnteid isEqualToString:anteid] && [_currentAnteName isEqualToString:anteName]) {
         [self.privateChatViewForOne updateDataArray:[array copy]];
         dialogue.isNew = NO;
     }
-    
+    //处理聊天数据
     if([self.dataArray count] >= 1){
         [_dataArray sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
             Dialogue *dialogue1 = (Dialogue *)obj1;
@@ -486,6 +552,7 @@
                 return NSOrderedSame;
             }
         }];
+        //刷新tableView
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
             if(self.dataArray != nil && [self.dataArray count] != 0) {
@@ -494,9 +561,12 @@
             }
         });
     }
-    [self checkDot];
+    [self checkDot];//检测是否是新消息
 }
 
+/**
+ 检测是否是新消息
+ */
 -(void)checkDot {
     BOOL flag = NO;
     for (Dialogue *dia in self.dataArray) {
@@ -505,12 +575,16 @@
             break;
         }
     }
-
     if(self.checkDotBlock) {
-        self.checkDotBlock(flag);
+        self.checkDotBlock(flag);//新消息标识回调
     }
 }
 
+/**
+ 设置标识回调
+
+ @param block 标示回调
+ */
 -(void)setCheckDotBlock1:(CheckDotBlock)block {
     self.checkDotBlock = block;
 }

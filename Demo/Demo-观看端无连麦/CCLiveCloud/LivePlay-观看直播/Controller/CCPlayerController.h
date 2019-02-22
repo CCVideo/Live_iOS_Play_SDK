@@ -12,6 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CCPlayerController : UIViewController
 
+
+/**
+ 初始化
+
+ @param roomName 直播间名称
+ @return self
+ */
 -(instancetype)initWithRoomName:(NSString *)roomName;
 
 

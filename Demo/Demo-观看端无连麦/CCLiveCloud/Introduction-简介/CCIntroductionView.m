@@ -24,11 +24,22 @@
     return self;
 }
 
+/**
+ 重写roomName的set方法
+
+ @param roomName 直播间信息
+ */
 - (void)setRoomName:(NSString *)roomName {
     _roomName = roomName;
     [self setupUI];
 }
 
+/**
+ 过滤html
+
+ @param html 需要过滤的html
+ @return 过滤过的html
+ */
 -(NSString *)filterHTML:(NSString *)html
 {
     NSScanner * scanner = [NSScanner scannerWithString:html];
@@ -44,7 +55,9 @@
     }
     return html;
 }
+#pragma mark - 设置UI布局
 - (void)setupUI {
+    //计算文字高度
     float textMaxWidth = CCGetRealFromPt(690);
     NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:_roomName];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
@@ -58,16 +71,18 @@
     CGSize textSize = [attrStr boundingRectWithSize:CGSizeMake(textMaxWidth, CGFLOAT_MAX)
                                             options:NSStringDrawingUsesLineFragmentOrigin
                                             context:nil].size;
-    
+    //添加背景视图
     UIView *titleLabelView = [UIView new];
     titleLabelView.backgroundColor = [UIColor whiteColor];
     titleLabelView.frame = CGRectMake(0, 0, self.frame.size.width, textSize.height + CCGetRealFromPt(30) + CCGetRealFromPt(30));
     [self addSubview:titleLabelView];
     
+    //添加分割线
     UIView * line= [[UIView alloc] init];
     line.backgroundColor = [UIColor colorWithHexString:@"#ff9049" alpha:1.0f];
     [titleLabelView addSubview:line];
     
+    //添加titleLabel，显示简介内容
     UILabel *titleLabel = [UILabel new];
     titleLabel.numberOfLines = 0;
     titleLabel.backgroundColor = CCClearColor;
@@ -89,6 +104,7 @@
         make.width.mas_equalTo(2);
     }];
     
+    //添加webView,加载简介
     UIWebView * web = [[UIWebView alloc] init];
     web.backgroundColor = [UIColor whiteColor];
     web.scrollView.showsHorizontalScrollIndicator = NO;

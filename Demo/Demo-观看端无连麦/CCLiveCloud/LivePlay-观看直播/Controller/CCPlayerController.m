@@ -21,6 +21,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SelectMenuView.h"//更多菜单
 #import "AnnouncementView.h"//公告
+#import "CCAlertView.h"//提示框
 @interface CCPlayerController ()<RequestDataDelegate,UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark - 房间相关参数
 @property (nonatomic,copy)  NSString                 * viewerId;//观看者的id
@@ -49,6 +50,9 @@
 #pragma mark - 公告
 @property(nonatomic,copy)  NSString                  * gongGaoStr;//公告内容
 @property(nonatomic,strong)AnnouncementView          * announcementView;//公告视图
+
+#pragma mark - 提示框
+@property (nonatomic,strong)CCAlertView              * alertView;//消息弹窗
 
 @property (nonatomic,assign)BOOL                     isScreenLandScape;//是否横屏
 @property (nonatomic,assign)BOOL                     screenLandScape;//横屏
@@ -106,14 +110,10 @@
     parameter.viewerCustomua = @"viewercustomua";//自定义参数,没有的话这么写就可以
     parameter.pptInteractionEnabled = NO;//是否开启ppt滚动
     parameter.DocModeType = 0;//设置当前的文档模式
+//    parameter.DocShowType = 1; 
 //    parameter.groupid = _contentView.groupId;//用户的groupId
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;
-    
-    //设置视频视图和互动视图的相关属性
-    _contentView.requestData = _requestData;//设置requestData
-    _playerView.requestData = _requestData;
-    _playerView.menuView = _menuView;
 }
 /**
  发送聊天
@@ -132,7 +132,7 @@
     if(rodIndex > self.firRoadNum) {
         [_requestData switchToPlayUrlWithFirIndex:0 key:@""];
     } else {
-        [_requestData switchToPlayUrlWithFirIndex:rodIndex-1 key:[self.secRoadKeyArray firstObject]];
+        [_requestData switchToPlayUrlWithFirIndex:rodIndex - 1 key:[self.secRoadKeyArray firstObject]];
     }
 }
 /**
@@ -142,7 +142,7 @@
  @param secIndex 清晰度
  */
 - (void)selectedRodWidthIndex:(NSInteger)rodIndex secIndex:(NSInteger)secIndex {
-    [_requestData switchToPlayUrlWithFirIndex:rodIndex-1 key:[_secRoadKeyArray objectAtIndex:secIndex]];
+    [_requestData switchToPlayUrlWithFirIndex:rodIndex - 1 key:[_secRoadKeyArray objectAtIndex:secIndex]];
 }
 /**
  旋转方向
@@ -180,22 +180,54 @@
     }
 }
 #pragma mark - playViewDelegate 以及相关方法
+
 /**
- 点击全屏按钮
+ 点击切换视频/文档按钮
+
+ @param tag 1为视频为主，2为文档为主
  */
-- (void)quanpingButtonClick {
+-(void)changeBtnClicked:(NSInteger)tag{
+    if (tag == 2) {
+        [_requestData changeDocParent:self.playerView];
+        [_requestData changePlayerParent:self.playerView.smallVideoView];
+        [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
+        [_requestData changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+    }else{
+        [_requestData changeDocParent:self.playerView.smallVideoView];
+        [_requestData changePlayerParent:self.playerView];
+        [_requestData changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
+        [_requestData changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+    }
+}
+/**
+ 点击全屏按钮代理
+ 
+ @param tag 1为视频为主，2为文档为主
+ */
+- (void)quanpingButtonClick:(NSInteger)tag {
     [self.view endEditing:YES];
     [self.contentView.chatView resignFirstResponder];
     [self othersViewHidden:YES];
+    if (tag == 1) {
+        [_requestData changePlayerFrame:self.view.frame];
+    } else {
+        [_requestData changeDocFrame:self.view.frame];
+    }
 }
 /**
- 结束直播和退出全屏
-
- @param sender 点击按钮
+ 点击退出按钮(返回竖屏或者结束直播)
+ 
+ @param sender backBtn
+ @param tag changeBtn的标记，1为视频为主，2为文档为主
  */
-- (void)backButtonClick:(UIButton *)sender {
+- (void)backButtonClick:(UIButton *)sender changeBtnTag:(NSInteger)tag{
     if (sender.tag == 2) {//横屏返回竖屏
         [self othersViewHidden:NO];
+        if (tag == 1) {
+            [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+        } else {
+            [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+        }
     }else if( sender.tag == 1){//结束直播
         [self creatAlertController_alert];
     }
@@ -217,59 +249,49 @@
 }
 //创建提示窗
 -(void)creatAlertController_alert {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:ALERT_EXITPLAY message:nil preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [self stopTimer];
-        [self.requestData requestCancel];
-        self.requestData = nil;
-        [self.playerView.smallVideoView removeFromSuperview];
-        //移除私聊
-        [self.contentView.chatView.ccPrivateChatView removeFromSuperview];
-        //移除多功能菜单
-        [self.menuView removeFromSuperview];
-        [self.menuView removeAllInformationView];
-        [self dismissViewControllerAnimated:YES completion:nil];
+    //添加提示窗
+    CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:ALERT_EXITPLAY sureAction:SURE cancelAction:CANCEL sureBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self exitPlayLive];
+        });
     }];
-    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-//        NSLog(@"点击了取消");
-    }];
-    [alert addAction:action1];
-    [alert addAction:action2];
-    [self presentViewController:alert animated:YES completion:nil];
+    [APPDelegate.window addSubview:alertView];
 }
 
+/**
+ 退出直播
+ */
+-(void)exitPlayLive{
+    [self stopTimer];
+    [self.requestData requestCancel];
+    self.requestData = nil;
+    [self.playerView.smallVideoView removeFromSuperview];
+    //移除私聊
+    [self.contentView.chatView.ccPrivateChatView removeFromSuperview];
+    //移除多功能菜单
+    [self.menuView removeFromSuperview];
+    [self.menuView removeAllInformationView];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 /**
  创建UI
  */
 - (void)setupUI {
     //视频视图
-    self.playerView = [[CCPlayerView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.playerView];
     [self.playerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.view);
         make.height.mas_equalTo(CCGetRealFromPt(462));
         make.top.equalTo(self.view).offset(SCREEN_STATUS);
     }];
-//    [self.playerView layoutIfNeeded];
-    self.playerView.delegate = self;
-    WS(ws)
-    //切换线路
-    self.playerView.selectedRod = ^(NSInteger selectedRod) {
-        [ws selectedRodWidthIndex:selectedRod];
-    };
-    //切换清晰度
-    self.playerView.selectedIndex = ^(NSInteger selectedRod,NSInteger selectedIndex) {
-        [ws selectedRodWidthIndex:selectedRod secIndex:selectedIndex];
-    };
-    //发送聊天
-    self.playerView.sendChatMessage = ^(NSString * sendChatMessage) {
-        [ws sendChatMessageWithStr:sendChatMessage];
-    };
     
     //添加互动视图
     [self.view addSubview:self.contentView];
     //添加更多菜单
     [APPDelegate.window addSubview:self.menuView];
+    
+    //设置视频视图和互动视图的相关属性
+    _playerView.menuView = _menuView;
 }
 - (void)timerfunc {
     // (已废弃)获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，几秒钟发一次就可以，然后在代理回调函数中，处理返回的数据
@@ -299,6 +321,7 @@
     } else {
         message = reason;
     }
+    // 添加提示窗,提示message
 }
 
 #pragma mark- 功能代理方法 用哪个实现哪个
@@ -318,10 +341,14 @@
 -(void)roomInfo:(NSDictionary *)dic {
     _roomName = dic[@"name"];
     self.playerView.titleLabel.text = _roomName;
-    
+    NSInteger type = [dic[@"templateType"] integerValue];
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
-    _playerView.templateType = [dic[@"templateType"] integerValue];
+    _playerView.templateType = type;
+    if (type == 1) {//如果只有视频的版型，去除menuView;
+        [_menuView removeFromSuperview];
+        _menuView = nil;
+    }
 }
 #pragma mark- 获取直播开始时间和直播时长
 /**
@@ -342,7 +369,9 @@
  *    @brief    收到在线人数
  */
 - (void)onUserCount:(NSString *)count {
-    self.playerView.userCountLabel.text = count;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.playerView.userCountLabel.text = count;
+    });
 }
 #pragma mark - 服务器端给自己设置的信息
 /**
@@ -401,16 +430,8 @@
  *    @brief    当主讲全体禁言时，你再发消息，会出发此代理方法，information是禁言提示信息
  */
 - (void)information:(NSString *)information {
-    //todo 抽离
-    NSString *str = ALERT_CLOSEQUESTION;
-    if(_contentView.segment.selectedSegmentIndex == 0) {
-        str = ALERT_CLOSECHAT;
-    }
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:str preferredStyle:(UIAlertControllerStyleAlert)];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    }];
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
+    //添加提示窗
+    [self addBanAlertView:information];
 }
 
 #pragma mark- 问答
@@ -455,6 +476,8 @@
     _secRoadKeyArray = [secRoadKeyArray mutableCopy];
     _firRoadNum = firRoadNum;
     [self.playerView SelectLinesWithFirRoad:_firRoadNum secRoadKeyArray:_secRoadKeyArray];
+
+//    NSLog(@"firRoadNum = %d,secRoadKeyArray = %@",(int)firRoadNum,secRoadKeyArray);
 }
 #pragma mark- 直播未开始和开始
 /**
@@ -498,8 +521,8 @@
 -(void)onBanChat:(NSDictionary *) modeDic{
     NSInteger mode = [modeDic[@"mode"] integerValue];
     NSString *str = ALERT_BANCHAT(mode == 1);
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"禁言" message:str delegate:self cancelButtonTitle:@"好的" otherButtonTitles:@"知道了", nil];
-    [alert show];
+    //添加禁言弹窗
+    [self addBanAlertView:str];
 }
 /**
  *    @brief    收到解除禁言事件(The new method)
@@ -508,8 +531,8 @@
 -(void)onUnBanChat:(NSDictionary *) modeDic{
     NSInteger mode = [modeDic[@"mode"] integerValue];
     NSString *str = ALERT_UNBANCHAT(mode == 1);
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"禁言" message:str delegate:self cancelButtonTitle:@"好的" otherButtonTitles:@"知道了", nil];
-    [alert show];
+    //添加禁言弹窗
+    [self addBanAlertView:str];
 }
 #pragma mark- 视频或者文档大窗
 /**
@@ -657,9 +680,9 @@
         [ws.requestData reply_vote_multiple:indexArray];
         ws.mySelectIndexArray = [indexArray mutableCopy];
     } singleNOSubmit:^(NSInteger index) {
-        ws.mySelectIndex = index;
+//        ws.mySelectIndex = index;
     } multipleNOSubmit:^(NSMutableArray *indexArray) {
-        ws.mySelectIndexArray = [indexArray mutableCopy];
+//        ws.mySelectIndexArray = [indexArray mutableCopy];
     } isScreenLandScape:self.screenLandScape];
     //避免强引用 weak指针指向局部变量
     self.voteView = voteView;
@@ -708,6 +731,7 @@
         [_announcementView updateViews:self.gongGaoStr];
     }
 }
+
 #pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self                  selector:@selector(moviePlayBackStateDidChange:)                                                name:IJKMPMoviePlayerPlaybackStateDidChangeNotification object:nil];
@@ -730,6 +754,7 @@
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:IJKMPMovieNaturalSizeAvailableNotification
                                                   object:nil];
+   
 }
 /**
  视频播放状态
@@ -807,6 +832,13 @@
     }];
     [self showRollCallView];
 }
+#pragma mark - 禁言弹窗
+-(void)addBanAlertView:(NSString *)str{
+    [_alertView removeFromSuperview];
+    _alertView = nil;
+    _alertView = [[CCAlertView alloc] initWithAlertTitle:str sureAction:@"好的" cancelAction:nil sureBlock:nil];
+    [APPDelegate.window addSubview:_alertView];
+}
 #pragma mark - 移除答题卡视图
 -(void)removeVoteView{
     [self.voteView removeFromSuperview];
@@ -816,12 +848,41 @@
     [self.view endEditing:YES];
 }
 #pragma mark - 懒加载
+//playView
+-(CCPlayerView *)playerView{
+    if (!_playerView) {
+        //视频视图
+        _playerView = [[CCPlayerView alloc] initWithFrame:CGRectZero];
+        _playerView.delegate = self;
+        WS(weakSelf)
+        //切换线路
+        _playerView.selectedRod = ^(NSInteger selectedRod) {
+            [weakSelf selectedRodWidthIndex:selectedRod];
+        };
+        //切换清晰度
+        _playerView.selectedIndex = ^(NSInteger selectedRod,NSInteger selectedIndex) {
+            [weakSelf selectedRodWidthIndex:selectedRod secIndex:selectedIndex];
+        };
+        //发送聊天
+        _playerView.sendChatMessage = ^(NSString * sendChatMessage) {
+            [weakSelf sendChatMessageWithStr:sendChatMessage];
+        };
+       
+    }
+    return _playerView;
+}
 //contentView
 -(CCInteractionView *)contentView{
     if (!_contentView) {
         WS(ws)
         _contentView = [[CCInteractionView alloc] initWithFrame:CGRectMake(0, CCGetRealFromPt(462)+SCREEN_STATUS, SCREEN_WIDTH,IS_IPHONE_X ? CCGetRealFromPt(835) + 90:CCGetRealFromPt(835)) hiddenMenuView:^{
             [ws hiddenMenuView];
+        } chatBlock:^(NSString * _Nonnull msg) {
+            [ws.requestData chatMessage:msg];
+        } privateChatBlock:^(NSString * _Nonnull anteid, NSString * _Nonnull msg) {
+            [ws.requestData privateChatWithTouserid:anteid msg:msg];
+        } questionBlock:^(NSString * _Nonnull message) {
+            [ws.requestData question:message];
         }];
         _contentView.playerView = self.playerView;
     }
@@ -882,6 +943,7 @@
             [ws.contentView.chatView privateChatBtnClicked];
             [APPDelegate.window bringSubviewToFront:ws.contentView.chatView.ccPrivateChatView];
         };
+       
         //公告按钮回调
         _menuView.announcementBlock = ^{
             [ws announcementBtnClicked];
@@ -892,10 +954,7 @@
 }
 //收回菜单
 -(void)hiddenMenuView{
-    //如果菜单是展开状态,切换时关闭菜单
-    if (!_menuView.announcementBtn.hidden) {
-        [_menuView hiddenAllBtns:YES];
-    }
+   
 }
 //公告
 -(AnnouncementView *)announcementView{

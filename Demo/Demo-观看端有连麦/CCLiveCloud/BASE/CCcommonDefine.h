@@ -287,22 +287,91 @@ typedef NS_ENUM(NSInteger, NSContentType) {
 #define USERNAME_CONFINE @"用户名限制在20个字符以内"
 //观看回放相关
 #define ALERT_EXITPLAYBACK @"您确认结束观看回放吗？"
+#define LOGIN_PLAYBACK @"观看回放"
 //观看直播相关
 #define ALERT_EXITPLAY @"您确认结束观看直播吗？"
 #define ALERT_CLOSEQUESTION @"讲师暂停了问答，请专心看直播吧"
 #define ALERT_CLOSECHAT @"讲师暂停了文字聊天，请专心看直播吧"
 #define ALERT_BANCHAT(status) (status ? @"个人禁言" : @"全体禁言")
 #define ALERT_UNBANCHAT(status) (status ? @"解除个人禁言" : @"解除全体禁言")
+#define SURE @"确定"
+#define CANCEL @"取消"
+#define LOGIN_PLAY @"观看直播"
+#define LOGIN_LOADING @"正在登录"
+//观看直播输入框text 和 placeHolder
+#define LOGIN_TEXT_USERID @"CC账号ID"
+#define LOGIN_TEXT_USERID_PLACEHOLDER @"16位账号ID"
+#define LOGIN_TEXT_ROOMID @"直播间ID"
+#define LOGIN_TEXT_ROOMID_PLACEHOLDER @"32位直播间ID"
+#define LOGIN_TEXT_USERNAME @"昵称"
+#define LOGIN_TEXT_USERNAME_PLACEHOLDER @"聊天中显示的名字"
+#define LOGIN_TEXT_PASSWORD @"密码"
+#define LOGIN_TEXT_PASSWORD_PLACEHOLDER @"观看密码"
+#define LOGIN_TEXT_LIVEID @"直播ID"
+#define LOGIN_TEXT_LIVEID_PLACEHOLDER @"16位直播ID"
+#define LOGIN_TEXT_RECORDID @"回放ID"
+#define LOGIN_TEXT_RECORDID_PLACEHOLDER @"16位回放ID"
+
+#define LOGIN_TEXT_INFOR @"直播间信息"
 //私聊
 #define ALERT_NEWMESSAGE(message) (message ? @"你有新私聊" : @"你有新公告")
+#define PRIVATE_LIST @"私聊列表"
+#define PRIVATE_PLACEHOLDER @"请输入消息"
 //答题卡
 #define ALERT_VOTE @"题干部分请参考文档或直播视频"
+#define VOTE_TOPSTR @"答题卡"
+#define VOTE_TITLESTR @"请选择答案"
+#define VOTERESULT_MYANSWER @"您的答案:"
+#define VOTERESULT_CORRECTANSWER @"正确答案:"
+#define VOTERESULT_VOTEOVER @"答题结束"
+#define VOTERESULT @"答题统计"
 //连麦
 #define LIANMAI_PERMISSION @"连麦需要允许以下权限:"
+#define LIANMAI_MSGLABEL(IsVideo) (IsVideo ? @"视频连麦中 00:00" : @"语音连麦中 00:00")
 #define LIANMAI_APPLYFOR(IsVideo) (IsVideo ? @"视频连麦申请中..." : @"音频连麦申请中...")
 #define LIANMAI_INTERACTION(IsVideo) (IsVideo ? @"与主播视频互动" : @"与主播语音互动")
 #define LIANMAI_LOSENETWORK @"网络异常，连麦失败"
 #define LIANMAI_GETVIDEOPERMISSION @"获取摄像头权限"
 #define LIANMAI_GETVOICEPERMISSION @"获取麦克风权限"
-
+#define LIANMAI_VIDEOCONNECTING @"视频连麦中"
+#define LIANMAI_AUDIOCONNECTING @"音频连麦中"
+#define LIANMAI_VIDEO @"视频连麦"
+#define LIANMAI_AUDIO @"音频连麦"
+#define LIANMAI_CANCEL @"取消申请"
+//问答
+#define ALERT_EMPTYMESSAGE @"发送消息为空"
+#define ALERT_INPUTLIMITATION @"输入限制在300个字符以内"
+#define ALERT_CHECKQUESTION(Selected) (Selected ? @"查看我的问答" : @"查看所有问答")
+//二维码扫描
+#define SCAN_PHOTONOTPERMISSION @"请在iPhone的“设置-隐私-照片”选项中，\n允许CC云直播访问你的手机相册。"
+#define SCAN_ALERTSTRING @"请在iPhone的“设置-隐私-相机”选项中，允许CC云直播访问你的相机。"
+#define SCAN_NOPERMISSION @"没有相册权限"
+#define SCAN_FAILED @"扫描错误"
+#define SCAN_FAILED_MESSAGE @"没有识别到有效的二维码信息"
+//简介
+#define EMPTYINTRO @"暂无简介"
+//CCPlayerView相关
+#define PLAY_CHANGEVIDEO @"切换视频"
+#define PLAY_CHANGEDOC @"切换文档"
+#define PLAY_LOADING @"视频加载中"
+#define PLAY_SHOWVIDEO @"显示视频"
+#define PLAY_SHOWDOC @"显示文档"
+#define PLAY_SOUND @"音频模式"
+#define PLAY_UNSTART @"直播未开始"
+#define PLAY_ONLYSOUND @"仅听音频"
+#define PLAY_OVER @"直播已结束"
+#define ALERT_LIANMAIFAILED @"主播未开启连麦功能"
+//签到
+#define ROLLCALL_OVER @"签到结束"
+#define ROLLCALL_TIMER @"签到倒计时："
+#define ROLLCALL_SIGN @"我要签到"
+#define ROLLCALL_SUCCESS @"签到成功"
+#define ROLLCALL @"签到"
+//统计
+#define STATISTICAL_COMMIT_SUCCESS @"已提交"
+#define STATISTICAL_COMMIT_FAILED @"您尚有部分题目未回答，请检查。"
+#define STATISTICAL_TITLE(ISSTASTIC) (ISSTASTIC?@"问卷统计":@"问卷")
+//第三方问卷
+#define QUESTIONNAIRE_TITLE @"问卷调查"
+#define QUESTIONNAIRE_OPEN @"打开问卷"
 #endif /* CCcommonDefine_h */

@@ -57,11 +57,11 @@
         var io;
 
         if (opts.forceNew || opts['force new connection'] || false === opts.multiplex) {
-            debug('ignoring socket cache for %s', source);
+            //debug('ignoring socket cache for %s', source);
             io = Manager(source, opts);
         } else {
             if (!cache[id]) {
-                debug('new io instance for %s', source);
+                //debug('new io instance for %s', source);
                 cache[id] = Manager(source, opts);
             }
             io = cache[id];
@@ -270,10 +270,10 @@
 
     Manager.prototype.open =
         Manager.prototype.connect = function(fn){
-            debug('readyState %s', this.readyState);
+            //debug('readyState %s', this.readyState);
             if (~this.readyState.indexOf('open')) return this;
 
-            debug('opening %s', this.uri);
+           // debug('opening %s', this.uri);
             this.engine = eio(this.uri, this.opts);
             var socket = this.engine;
             var self = this;
@@ -287,7 +287,7 @@
 
             // emit `connect_error`
             var errorSub = on(socket, 'error', function(data){
-                debug('connect_error');
+               // debug('connect_error');
                 self.cleanup();
                 self.readyState = 'closed';
                 self.emitAll('connect_error', data);
@@ -303,11 +303,11 @@
             // emit `connect_timeout`
             if (false !== this._timeout) {
                 var timeout = this._timeout;
-                debug('connect attempt will timeout after %d', timeout);
+               // debug('connect attempt will timeout after %d', timeout);
 
                 // set timer
                 var timer = setTimeout(function(){
-                    debug('connect attempt timed out after %d', timeout);
+                   // debug('connect attempt timed out after %d', timeout);
                     openSub.destroy();
                     socket.close();
                     socket.emit('error', 'timeout');
@@ -334,7 +334,7 @@
      */
 
     Manager.prototype.onopen = function(){
-        debug('open');
+        //debug('open');
 
         // clear old subs
         this.cleanup();
@@ -378,7 +378,7 @@
      */
 
     Manager.prototype.onerror = function(err){
-        debug('error', err);
+        //debug('error', err);
         this.emitAll('error', err);
     };
 
@@ -420,7 +420,7 @@
      */
 
     Manager.prototype.packet = function(packet){
-        debug('writing packet %j', packet);
+        //debug('writing packet %j', packet);
         var self = this;
 
         if (!self.encoding) {
@@ -487,7 +487,7 @@
      */
 
     Manager.prototype.onclose = function(reason){
-        debug('close');
+       // debug('close');
         this.cleanup();
         this.readyState = 'closed';
         this.emit('close', reason);
@@ -509,27 +509,27 @@
         this.attempts++;
 
         if (this.attempts > this._reconnectionAttempts) {
-            debug('reconnect failed');
+           // debug('reconnect failed');
             this.emitAll('reconnect_failed');
             this.reconnecting = false;
         } else {
             var delay = this.attempts * this.reconnectionDelay();
             delay = Math.min(delay, this.reconnectionDelayMax());
-            debug('will wait %dms before reconnect attempt', delay);
+           // debug('will wait %dms before reconnect attempt', delay);
 
             this.reconnecting = true;
             var timer = setTimeout(function(){
-                debug('attempting reconnect');
+               // debug('attempting reconnect');
                 self.emitAll('reconnect_attempt', self.attempts);
                 self.emitAll('reconnecting', self.attempts);
                 self.open(function(err){
                     if (err) {
-                        debug('reconnect attempt error');
+                       // debug('reconnect attempt error');
                         self.reconnecting = false;
                         self.reconnect();
                         self.emitAll('reconnect_error', err.data);
                     } else {
-                        debug('reconnect success');
+                       // debug('reconnect success');
                         self.onreconnect();
                     }
                 });
@@ -721,7 +721,7 @@
 
         // event ack callback
         if ('function' == typeof args[args.length - 1]) {
-            debug('emitting packet with ack id %d', this.ids);
+           // debug('emitting packet with ack id %d', this.ids);
             this.acks[this.ids] = args.pop();
             packet.id = this.ids++;
         }
@@ -752,7 +752,7 @@
 
         // event ack callback
         if ('function' == typeof args[args.length - 1]) {
-            debug('emitting packet with ack id %d', this.ids);
+           // debug('emitting packet with ack id %d', this.ids);
             this.acks[this.ids] = args.pop();
             packet.id = this.ids++;
         }
@@ -785,7 +785,7 @@
      */
 
     Socket.prototype.onopen = function(){
-        debug('transport is open - connecting');
+      //  debug('transport is open - connecting');
 
         // write connect packet if necessary
         if ('/' != this.nsp) {
@@ -801,7 +801,7 @@
      */
 
     Socket.prototype.onclose = function(reason){
-        debug('close (%s)', reason);
+       // debug('close (%s)', reason);
         this.connected = false;
         this.disconnected = true;
         this.emit('disconnect', reason);
@@ -857,10 +857,10 @@
 
     Socket.prototype.onevent = function(packet){
         var args = packet.data || [];
-        debug('emitting event %j', args);
+       // debug('emitting event %j', args);
 
         if (null != packet.id) {
-            debug('attaching ack callback to event');
+           // debug('attaching ack callback to event');
             args.push(this.ack(packet.id));
         }
 
@@ -885,7 +885,7 @@
             if (sent) return;
             sent = true;
             var args = toArray(arguments);
-            debug('sending ack %j', args);
+            //debug('sending ack %j', args);
 
             var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
             self.packet({
@@ -904,7 +904,7 @@
      */
 
     Socket.prototype.onack = function(packet){
-        debug('calling ack %s with %j', packet.id, packet.data);
+       // debug('calling ack %s with %j', packet.id, packet.data);
         var fn = this.acks[packet.id];
         fn.apply(this, packet.data);
         delete this.acks[packet.id];
@@ -949,7 +949,7 @@
      */
 
     Socket.prototype.ondisconnect = function(){
-        debug('server disconnect (%s)', this.nsp);
+       // debug('server disconnect (%s)', this.nsp);
         this.destroy();
         this.onclose('io server disconnect');
     };
@@ -982,7 +982,7 @@
         Socket.prototype.disconnect = function(){
             if (!this.connected) return this;
 
-            debug('performing disconnect (%s)', this.nsp);
+           // debug('performing disconnect (%s)', this.nsp);
             this.packet({ type: parser.DISCONNECT });
 
             // remove socket from pool
@@ -1034,7 +1034,7 @@
                 }
 
                 if (!/^(https?|wss?):\/\//.test(uri)) {
-                    debug('protocol-less url %s', uri);
+                  //  debug('protocol-less url %s', uri);
                     if ('undefined' != typeof loc) {
                         uri = loc.protocol + '//' + uri;
                     } else {
@@ -1043,7 +1043,7 @@
                 }
 
                 // parse
-                debug('parse %s', uri);
+              //  debug('parse %s', uri);
                 obj = parseuri(uri);
             }
 
@@ -1540,7 +1540,7 @@
          */
 
         Socket.prototype.createTransport = function (name) {
-            debug('creating transport "%s"', name);
+          //  debug('creating transport "%s"', name);
             var query = clone(this.query);
 
             // append engine.io protocol identifier
@@ -1624,11 +1624,11 @@
          */
 
         Socket.prototype.setTransport = function(transport){
-            debug('setting transport %s', transport.name);
+          //  debug('setting transport %s', transport.name);
             var self = this;
 
             if (this.transport) {
-                debug('clearing existing transport %s', this.transport.name);
+               // debug('clearing existing transport %s', this.transport.name);
                 this.transport.removeAllListeners();
             }
 
@@ -1659,7 +1659,7 @@
          */
 
         Socket.prototype.probe = function (name) {
-            debug('probing transport "%s"', name);
+          //  debug('probing transport "%s"', name);
             var transport = this.createTransport(name, { probe: 1 })
                 , failed = false
                 , self = this;
@@ -1673,23 +1673,23 @@
                 }
                 if (failed) return;
 
-                debug('probe transport "%s" opened', name);
+              //  debug('probe transport "%s" opened', name);
                 transport.send([{ type: 'ping', data: 'probe' }]);
                 transport.once('packet', function (msg) {
                     if (failed) return;
                     if ('pong' == msg.type && 'probe' == msg.data) {
-                        debug('probe transport "%s" pong', name);
+                       // debug('probe transport "%s" pong', name);
                         self.upgrading = true;
                         self.emit('upgrading', transport);
                         Socket.priorWebsocketSuccess = 'websocket' == transport.name;
 
-                        debug('pausing current transport "%s"', self.transport.name);
+                       // debug('pausing current transport "%s"', self.transport.name);
                         self.transport.pause(function () {
                             if (failed) return;
                             if ('closed' == self.readyState || 'closing' == self.readyState) {
                                 return;
                             }
-                            debug('changing transport and sending upgrade packet');
+                           // debug('changing transport and sending upgrade packet');
 
                             cleanup();
 
@@ -1701,7 +1701,7 @@
                             self.flush();
                         });
                     } else {
-                        debug('probe transport "%s" failed', name);
+                      //  debug('probe transport "%s" failed', name);
                         var err = new Error('probe error');
                         err.transport = transport.name;
                         self.emit('upgradeError', err);
@@ -1728,7 +1728,7 @@
 
                 freezeTransport();
 
-                debug('probe transport "%s" failed because of error: %s', name, err);
+               // debug('probe transport "%s" failed because of error: %s', name, err);
 
                 self.emit('upgradeError', error);
             }
@@ -1745,7 +1745,7 @@
             //When the socket is upgraded while we're probing
             function onupgrade(to){
                 if (transport && to.name != transport.name) {
-                    debug('"%s" works - aborting "%s"', to.name, transport.name);
+                  //  debug('"%s" works - aborting "%s"', to.name, transport.name);
                     freezeTransport();
                 }
             }
@@ -1777,7 +1777,7 @@
          */
 
         Socket.prototype.onOpen = function () {
-            debug('socket open');
+           // debug('socket open');
             this.readyState = 'open';
             Socket.priorWebsocketSuccess = 'websocket' == this.transport.name;
             this.emit('open');
@@ -1786,7 +1786,7 @@
             // we check for `readyState` in case an `open`
             // listener already closed the socket
             if ('open' == this.readyState && this.upgrade && this.transport.pause) {
-                debug('starting upgrade probes');
+               // debug('starting upgrade probes');
                 for (var i = 0, l = this.upgrades.length; i < l; i++) {
                     this.probe(this.upgrades[i]);
                 }
@@ -1801,7 +1801,7 @@
 
         Socket.prototype.onPacket = function (packet) {
             if ('opening' == this.readyState || 'open' == this.readyState) {
-                debug('socket receive: type "%s", data "%s"', packet.type, packet.data);
+                //debug('socket receive: type "%s", data "%s"', packet.type, packet.data);
 
                 this.emit('packet', packet);
 
@@ -1829,7 +1829,7 @@
                         break;
                 }
             } else {
-                debug('packet received with socket readyState "%s"', this.readyState);
+                //debug('packet received with socket readyState "%s"', this.readyState);
             }
         };
 
@@ -1883,7 +1883,7 @@
             var self = this;
             clearTimeout(self.pingIntervalTimer);
             self.pingIntervalTimer = setTimeout(function () {
-                debug('writing ping packet - expecting pong within %sms', self.pingTimeout);
+                //debug('writing ping packet - expecting pong within %sms', self.pingTimeout);
                 self.ping();
                 self.onHeartbeat(self.pingTimeout);
             }, self.pingInterval);
@@ -1936,7 +1936,7 @@
         Socket.prototype.flush = function () {
             if ('closed' != this.readyState && this.transport.writable &&
                 !this.upgrading && this.writeBuffer.length) {
-                debug('flushing %d packets in socket', this.writeBuffer.length);
+                //debug('flushing %d packets in socket', this.writeBuffer.length);
                 this.transport.send(this.writeBuffer);
                 // keep track of current length of writeBuffer
                 // splice writeBuffer and callbackBuffer on `drain`
@@ -1986,7 +1986,7 @@
         Socket.prototype.close = function () {
             if ('opening' == this.readyState || 'open' == this.readyState) {
                 this.onClose('forced close');
-                debug('socket closing - telling transport to close');
+               // debug('socket closing - telling transport to close');
                 this.transport.close();
             }
 
@@ -2000,7 +2000,7 @@
          */
 
         Socket.prototype.onError = function (err) {
-            debug('socket error %j', err);
+            //debug('socket error %j', err);
             Socket.priorWebsocketSuccess = false;
             this.emit('error', err);
             this.onClose('transport error', err);
@@ -2014,7 +2014,7 @@
 
         Socket.prototype.onClose = function (reason, desc) {
             if ('opening' == this.readyState || 'open' == this.readyState) {
-                debug('socket close with reason: "%s"', reason);
+                //debug('socket close with reason: "%s"', reason);
                 var self = this;
 
                 // clear timers
@@ -2617,7 +2617,7 @@
          */
 
         XHR.prototype.doPoll = function(){
-            debug('xhr poll');
+            //debug('xhr poll');
             var req = this.request();
             var self = this;
             req.on('data', function(data){
@@ -2667,7 +2667,7 @@
             var self = this;
 
             try {
-                debug('xhr open %s: %s', this.method, this.uri);
+                //debug('xhr open %s: %s', this.method, this.uri);
                 xhr.open(this.method, this.uri, this.async);
                 if (this.supportsBinary) {
                     // This has to be done after open because Firefox is stupid
@@ -2712,7 +2712,7 @@
                     };
                 }
 
-                debug('xhr data %s', this.data);
+                //debug('xhr data %s', this.data);
                 xhr.send(this.data);
             } catch (e) {
                 // Need to defer since .create() is called directly fhrom the constructor
@@ -2945,7 +2945,7 @@
         this.readyState = 'pausing';
 
         function pause(){
-            debug('paused');
+            //debug('paused');
             self.readyState = 'paused';
             onPause();
         }
@@ -2954,19 +2954,19 @@
             var total = 0;
 
             if (this.polling) {
-                debug('we are currently polling - waiting to pause');
+               // debug('we are currently polling - waiting to pause');
                 total++;
                 this.once('pollComplete', function(){
-                    debug('pre-pause polling complete');
+                   // debug('pre-pause polling complete');
                     --total || pause();
                 });
             }
 
             if (!this.writable) {
-                debug('we are currently writing - waiting to pause');
+               // debug('we are currently writing - waiting to pause');
                 total++;
                 this.once('drain', function(){
-                    debug('pre-pause writing complete');
+                   // debug('pre-pause writing complete');
                     --total || pause();
                 });
             }
@@ -2982,7 +2982,7 @@
      */
 
     Polling.prototype.poll = function(){
-        debug('polling');
+       // debug('polling');
         this.polling = true;
         this.doPoll();
         this.emit('poll');
@@ -2996,7 +2996,7 @@
 
     Polling.prototype.onData = function(data){
         var self = this;
-        debug('polling got data %s', data);
+       // debug('polling got data %s', data);
         var callback = function(packet, index, total) {
             // if its the first message we consider the transport open
             if ('opening' == self.readyState) {
@@ -3025,7 +3025,7 @@
             if ('open' == this.readyState) {
                 this.poll();
             } else {
-                debug('ignoring poll - transport state "%s"', this.readyState);
+                //debug('ignoring poll - transport state "%s"', this.readyState);
             }
         }
     };
@@ -3040,17 +3040,17 @@
         var self = this;
 
         function close(){
-            debug('writing close packet');
+            //debug('writing close packet');
             self.write([{ type: 'close' }]);
         }
 
         if ('open' == this.readyState) {
-            debug('transport open - closing');
+            //debug('transport open - closing');
             close();
         } else {
             // in case we're trying to close while
             // handshaking is in progress (GH-164)
-            debug('transport not open - deferring close');
+           // debug('transport not open - deferring close');
             this.once('open', close);
         }
     };
@@ -3260,7 +3260,7 @@
                 try {
                     self.ws.send(data);
                 } catch (e){
-                    debug('websocket closed before onclose event');
+                    //debug('websocket closed before onclose event');
                 }
             });
         }
@@ -5057,7 +5057,7 @@
      */
 
     Encoder.prototype.encode = function(obj, callback){
-        debug('encoding packet %j', obj);
+       // debug('encoding packet %j', obj);
 
         if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
             encodeAsBinary(obj, callback);
@@ -5111,7 +5111,7 @@
             str += json.stringify(obj.data);
         }
 
-        debug('encoded %j as %s', obj, str);
+        //debug('encoded %j as %s', obj, str);
         return str;
     }
 
@@ -5258,7 +5258,7 @@
             }
         }
 
-        debug('decoded %s as %j', str, p);
+       // debug('decoded %s as %j', str, p);
         return p;
     }
 
@@ -6458,6 +6458,23 @@
             socket.on('unban_chat', function(data){
                        socket_message('unban_chat', data);
             });
+            //44 聊天管理
+            socket.on('chat_log_manage', function(data){
+                       socket_message('chat_log_manage', data);
+            });
+            //45 发布随堂测事件
+            socket.on('practice_publish', function(data){
+                       socket_message('practice_publish', data);
+            });
+            //46 停止随堂测事件
+            socket.on('practice_stop', function(data){
+                       socket_message('practice_stop', data);
+            });
+            //47 关闭随堂测事件
+            socket.on('practice_close', function(data){
+                       socket_message('practice_close', data);
+            });
+     
         }
 
         function socketIOConnectReplay(uri, spareUri, sessionId, platform, terminal, roomId) {

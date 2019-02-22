@@ -14,21 +14,25 @@
 @property (nonatomic, strong) UILabel              *topLabel;//顶部标题
 @property (nonatomic, strong) UILabel              *announcementLabel;//公告
 @property (nonatomic, strong) UIButton             *closeBtn;//关闭按钮
-@property (nonatomic, strong) UIScrollView         *scrollView;//
+@property (nonatomic, strong) UIScrollView         *scrollView;//用于盛放内容的scrollView
 
 @end
-
+#define NOANNOUNCEMENT @"暂无公告"
 @implementation AnnouncementView
-
+/**
+ 初始化方法
+ 
+ @param str 公告内容
+ @return self
+ */
 -(instancetype)initWithAnnouncementStr:(NSString *)str{
     self = [super init];
     if (self) {
         if(!StrNotEmpty(str)) {
-            str = @"暂无公告";
+            str = NOANNOUNCEMENT;
         }
         self.backgroundColor = [UIColor whiteColor];
         _announcementStr = str;//初始化公告内容
-//        self.closeBlock = closeBlock;
         [self setUI];
     }
     return self;
@@ -43,6 +47,7 @@
         make.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     
+    //顶部分界线
     UIView *topline = [[UIView alloc] init];
     topline.backgroundColor = [UIColor colorWithHexString:@"#dddddd" alpha:1.f];
     [self addSubview:topline];
@@ -52,6 +57,7 @@
         make.size.mas_equalTo(CGSizeMake( CCGetRealFromPt(750), CCGetRealFromPt(1)));
     }];
     
+    //底部分界线
     UIView *bottomLine = [[UIView alloc] init];
     bottomLine.backgroundColor = [UIColor colorWithHexString:@"#dddddd" alpha:1.f];
     [self addSubview:bottomLine];
@@ -101,9 +107,15 @@
     [self setContentLabeltext:_announcementStr];
 }
 #pragma mark - 更新公告内容
+
+/**
+ 更新公告内容
+
+ @param str 需要更新的内容
+ */
 -(void)updateViews:(NSString *)str{
-    if(!StrNotEmpty(str)) {
-        str = @"暂无公告";
+    if(!StrNotEmpty(str)) {//如果为空,提示暂无公告
+        str = NOANNOUNCEMENT;
     }
     CGSize size = CGSizeZero;
     CGSize sizeOfContent = CGSizeZero;
@@ -123,9 +135,6 @@
     } completion:^(BOOL finished) {
         [self removeFromSuperview];
     }];
-//    if (_closeBlock) {
-//        _closeBlock();
-//    }
 }
 #pragma mark - 计算文字高度
 -(void)setContentLabeltext:(NSString *)str {
@@ -141,7 +150,15 @@
     self.announcementLabel.attributedText = attr;
     self.announcementLabel.textColor = [UIColor colorWithHexString:@"#38404b" alpha:1.f];
 }
-    
+
+/**
+ 计算字符串大小
+
+ @param str 需要计算的字符串
+ @param width 最大宽度
+ @param font 字体大小
+ @return 计算后的大小
+ */
 -(CGSize)getTitleSizeByFont:(NSString *)str width:(CGFloat)width font:(UIFont *)font {
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
     paragraphStyle.lineBreakMode = NSLineBreakByCharWrapping;

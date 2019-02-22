@@ -10,8 +10,8 @@
 
 @interface ScanOverViewController ()
 
-@property(strong,nonatomic)UIView                       *overWindowView;
-@property(copy,nonatomic)  OkBtnClickBlock              block;
+@property(strong,nonatomic)UIView                       *overWindowView;//背景视图
+@property(copy,nonatomic)  OkBtnClickBlock              block;//确认回调
 
 @end
 
@@ -28,18 +28,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+    //添加overWindowView
     [self.view addSubview:self.overWindowView];
     WS(ws)
     [_overWindowView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(ws.view);
     }];
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"请在iPhone的“设置-隐私-相机”选项中，允许CC云直播访问你的相机。" preferredStyle:(UIAlertControllerStyleAlert)];
+    //添加弹窗视图
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:SCAN_ALERTSTRING preferredStyle:(UIAlertControllerStyleAlert)];
     
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if(ws.block) {
-            ws.block();
+            ws.block();//确认回调
         }
     }];
     [alertController addAction:okAction];
@@ -51,36 +51,13 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+//初始化弹窗视图
 -(UIView *)overWindowView {
     if(!_overWindowView) {
         _overWindowView = [UIView new];
         _overWindowView.backgroundColor = CCRGBAColor(0, 0, 0, 0.4);
     }
     return _overWindowView;
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-- (BOOL)shouldAutorotate{
-    return NO;
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-    return UIInterfaceOrientationPortrait;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 @end

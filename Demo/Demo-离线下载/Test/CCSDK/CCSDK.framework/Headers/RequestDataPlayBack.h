@@ -93,6 +93,14 @@
  *    name 用户名
  */
 -(void)setMyViewerInfo:(NSDictionary *) infoDic;
+/**
+ *    @brief    文档加载状态(The new method)
+ *    index
+ *      0 文档组件初始化完成
+ *      1 动画文档加载完成
+ *      2 非动画文档加载完成
+ */
+- (void)docLoadCompleteWithIndex:(NSInteger)index;
 
 @end
 

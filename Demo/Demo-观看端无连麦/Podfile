@@ -3,7 +3,7 @@ use_frameworks!
 inhibit_all_warnings!
 target 'CCLiveCloud' do
 pod 'Masonry'
-pod 'AFNetworking'
+#pod 'AFNetworking'
 pod 'Bugly'
 pod 'SDWebImage', '~> 4.0.0'
 pod 'MBProgressHUD'

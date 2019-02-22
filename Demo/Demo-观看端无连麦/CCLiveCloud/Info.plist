@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2</string>
+	<string>1.2.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -31,6 +31,8 @@
 	<string>需要获取您的相机权限, 开启后才可以进行扫码和视频直播</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>需要获取您的麦克风权限, 开启后连麦时才会有声音</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>是否允许添加照片</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>需要获取您的相册权限, 开启后才能进行图片直播</string>
 	<key>UIBackgroundModes</key>
@@ -44,6 +46,8 @@
 	</array>
 	<key>UIRequiresFullScreen</key>
 	<true/>
+	<key>UIStatusBarHidden</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -8,10 +8,45 @@
 
 #import <UIKit/UIKit.h>
 #import "MySlider.h"
-
+#import "LoadingView.h"//加载
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol CCPlayBackViewDelegate <NSObject>
+
+/**
+ 全屏按钮点击代理
+
+ @param tag 1视频为主，2文档为主
+ */
+-(void)quanpingBtnClicked:(NSInteger)tag;
+
+/**
+ 返回按钮点击代理
+
+ @param tag 1.视频为主，2.文档为主
+ */
+-(void)backBtnClicked:(NSInteger)tag;
+
+/**
+ 切换视频/文档按钮点击回调
+
+ @param tag changeBtn的tag值
+ */
+-(void)changeBtnClicked:(NSInteger)tag;
+
+/**
+ 开始播放时调用此方法
+ */
+-(void)timerfunc;
+@end
 @interface CCPlayBackView : UIView
+@property (nonatomic,assign)BOOL                          isScreenLandScape;//是否横屏
+@property (nonatomic,assign)float                         playBackRate;//播放速率
+@property (nonatomic,strong)NSTimer                     * timer;//计时器
+@property (nonatomic,strong)UIView                      * smallVideoView;//文档或者小图
+@property (nonatomic, strong)UIButton                   * smallCloseBtn;//小窗关闭按钮
+@property (nonatomic,strong)LoadingView                 * loadingView;//加载视图
+@property (nonatomic, weak)id<CCPlayBackViewDelegate>   delegate;//代理
 
 @property (nonatomic, strong)UILabel                    * titleLabel;//房间标题
 @property (nonatomic, strong)UILabel                    * leftTimeLabel;//当前播放时长
@@ -26,16 +61,31 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong)UIView                     * topShadowView;//上面的阴影
 @property (nonatomic, strong)UIView                     * bottomShadowView;//下面的阴影
 
-@property (nonatomic,copy) void(^sliderCallBack)(int);
-@property (nonatomic,copy) void(^sliderMoving)(void);
+@property (nonatomic,copy) void(^exitCallBack)(void);//退出直播间回调
+@property (nonatomic,copy) void(^sliderCallBack)(int);//滑块回调
+@property (nonatomic,copy) void(^sliderMoving)(void);//滑块移动回调
+@property (nonatomic,copy) void(^changeRate)(float rate);//改变播放器速率回调
+@property (nonatomic,copy) void(^pausePlayer)(BOOL pause);//暂停播放器回调
 
 /**
- 改变横竖屏
-
- @param screenLandScape 横竖屏
+ 开始播放
  */
-- (void)layouUI:(BOOL)screenLandScape;
+-(void)startTimer;
 
+/**
+ 停止播放
+ */
+-(void)stopTimer;
+
+/**
+ 显示加载中视图
+ */
+-(void)showLoadingView;
+
+/**
+ 移除加载中视图
+ */
+-(void)removeLoadingView;
 @end
 
 NS_ASSUME_NONNULL_END

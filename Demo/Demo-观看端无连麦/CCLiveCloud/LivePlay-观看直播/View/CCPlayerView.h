@@ -12,25 +12,33 @@
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
 
-
-#ifdef __OBJC__
-#import "CCSDK/RequestData.h"//SDK
-#endif
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol CCPlayerViewDelegate <NSObject>
 
-/**
- 点击全屏按钮
- */
-- (void)quanpingButtonClick;
 
 /**
- //结束直播和退出全屏
- 
- @param sender 点击按钮
+ 点击全屏按钮代理
+
+ @param tag 1为视频为主，2为文档为主
  */
-- (void)backButtonClick:(UIButton *)sender;
+- (void)quanpingButtonClick:(NSInteger)tag;
+
+
+/**
+ 点击退出按钮(返回竖屏或者结束直播)
+
+ @param sender backBtn
+ @param tag changeBtn的标记，1为视频为主，2为文档为主
+ */
+- (void)backButtonClick:(UIButton *)sender changeBtnTag:(NSInteger)tag;
+
+/**
+ 点击切换视频/文档按钮
+
+ @param tag changeBtn的tag值
+ */
+-(void)changeBtnClicked:(NSInteger)tag;
 
 @end
 
@@ -54,18 +62,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) void(^sendChatMessage)(NSString *);//发送聊天
 @property (nonatomic,copy) void(^selectedIndex)(NSInteger,NSInteger);//切换清晰度
 
-//----------------------------新加属性------------------------------------------
-@property (nonatomic,strong)RequestData              * requestData;//sdk
-@property (nonatomic,strong)SelectMenuView           * menuView;//选择菜单视图
+@property(nonatomic,strong)SelectMenuView               *menuView;//选择菜单视图
 
 @property (nonatomic,strong)UIView                   * smallVideoView;//文档或者小图
 
 @property (nonatomic,strong)LoadingView              * loadingView;//加载视图
 @property (nonatomic,assign)BOOL                     endNormal;//是否直播结束
-@property (nonatomic,assign)NSInteger                templateType;//房间类型
+@property (nonatomic,assign)NSInteger                  templateType;//房间类型
+@property(nonatomic,strong)InformationShowView      *informationViewPop;
 
-////meauView点击方法
-//-(void)menuViewSelected:(BOOL)selected;
+
+//meauView点击方法
+-(void)menuViewSelected:(BOOL)selected;
+
 #pragma mark - 直播状态相关代理
 /**
  *    @brief  收到播放直播状态 0直播 1未直播
@@ -89,15 +98,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  isMain 1为视频为主,0为文档为主"
  */
 - (void)onSwitchVideoDoc:(BOOL)isMain;
-
-
-
-//-(void)changeBtnClick:(UIButton *)sender;
-///**
-// *  @brief  切换横竖屏
-// *  @param  screenLandScape yes:横屏 no:竖屏
-// */
-//- (void)layouUI:(BOOL)screenLandScape;
 
 
 /**

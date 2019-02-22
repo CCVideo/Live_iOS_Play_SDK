@@ -8,6 +8,7 @@
 
 #import "CCPlayerView.h"
 #import "Utility.h"
+#import "InformationShowView.h"
 
 @interface CCPlayerView ()<UITextFieldDelegate>
 
@@ -33,7 +34,7 @@
 @property (nonatomic, strong)NSMutableArray             * array;//弹幕数组
 @property (nonatomic, strong)UITapGestureRecognizer     * TapGesture;//单击手势
 @property (nonatomic, strong)UIButton                   * smallCloseBtn;//小窗关闭按钮
-@property (nonatomic, strong)InformationShowView        * informationViewPop;//提示信息
+@property (nonatomic, assign)BOOL                       isMain;//是否视频为主
 
 
 @end
@@ -105,7 +106,6 @@
         make.left.right.top.equalTo(self);
         make.height.mas_equalTo(CCGetRealFromPt(88));
     }];
-//    [self.topShadowView layoutIfNeeded];
     [self.topShadowView addSubview:topShadow];
     [topShadow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.topShadowView);
@@ -117,12 +117,11 @@
 
     [self.topShadowView addSubview:_backButton];
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.topShadowView).offset(CCGetRealFromPt(20));
+        make.left.equalTo(self.topShadowView).offset(CCGetRealFromPt(10));
         make.top.equalTo(self.topShadowView).offset(CCGetRealFromPt(26));
         make.width.height.mas_equalTo(30);
     }];
-//    [self.backButton layoutIfNeeded];
-    //new method   点击事件
+    //点击事件
     [self.backButton addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
 
     //房间标题
@@ -137,21 +136,19 @@
     self.changeButton.titleLabel.textColor = [UIColor whiteColor];
     self.changeButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_30];
     self.changeButton.tag = 1;
-    [self.changeButton setTitle:@"切换视频" forState:UIControlStateNormal];
+    [self.changeButton setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
     [self.topShadowView addSubview:_changeButton];
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.topShadowView).offset(CCGetRealFromPt(-20));
         make.centerY.equalTo(self.backButton);
-        make.height.mas_equalTo(CCGetRealFromPt(30));
-        make.width.mas_equalTo(CCGetRealFromPt(140));
+        make.height.mas_equalTo(CCGetRealFromPt(50));
+        make.width.mas_equalTo(CCGetRealFromPt(180));
     }];
-//    [self.changeButton layoutIfNeeded];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.backButton);
-        make.left.equalTo(self.backButton.mas_right).offset(-10);
+        make.left.equalTo(self.backButton.mas_right);
         make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(250));
     }];
-//    [titleLabel layoutIfNeeded];
     //new method    点击事件
     [self.changeButton addTarget:self action:@selector(changeBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -163,12 +160,14 @@
     [self.qingXiButton setTitle:@"原画" forState:UIControlStateNormal];
     [self.topShadowView addSubview:_qingXiButton];
     [self.qingXiButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.changeButton.mas_left).offset(CCGetRealFromPt(-40));
+        make.right.equalTo(self.changeButton.mas_left).offset(CCGetRealFromPt(-100));
         make.centerY.equalTo(self.backButton);
         make.height.mas_equalTo(CCGetRealFromPt(30));
-        make.width.mas_equalTo(CCGetRealFromPt(80));
+        make.width.mas_equalTo(CCGetRealFromPt(140));
     }];
+    self.qingXiButton.backgroundColor = [UIColor redColor];
     self.qingXiButton.hidden = YES;
+    self.qingXiButton.userInteractionEnabled = YES;
     [self.qingXiButton addTarget:self action:@selector(qingXiButtonClick) forControlEvents:UIControlEventTouchUpInside];
 
     //下面阴影
@@ -180,7 +179,6 @@
         make.left.right.bottom.equalTo(self);
         make.height.mas_equalTo(CCGetRealFromPt(60));
     }];
-//    [self.bottomShadowView layoutIfNeeded];
     [self.bottomShadowView addSubview:bottomShadow];
     [bottomShadow mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.bottomShadowView);
@@ -205,7 +203,6 @@
         make.centerY.equalTo(userCountLogo);
         make.left.equalTo(userCountLogo.mas_right).offset(CCGetRealFromPt(10));
     }];
-//    [userCountLabel layoutIfNeeded];
 
     //全屏按钮
     self.quanpingButton = [[UIButton alloc] init];
@@ -216,8 +213,7 @@
         make.right.equalTo(self.bottomShadowView).offset(CCGetRealFromPt(-20));
         make.width.height.mas_equalTo(CCGetRealFromPt(60));
     }];
-//    [self.quanpingButton layoutIfNeeded];
-    //new method  btn点击事件
+    //  btn点击事件
     [self.quanpingButton addTarget:self action:@selector(quanpingBtnClick) forControlEvents:UIControlEventTouchUpInside];
     
     //音频模式视图
@@ -226,7 +222,6 @@
     [self.soundview mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self);
     }];
-//    [self.soundview layoutIfNeeded];
     self.soundview.hidden = YES;
     self.soundview.backgroundColor = [UIColor colorWithHexString:@"#000000" alpha:1.0f];
     //音频背景图片
@@ -241,7 +236,7 @@
     //音频模式
     UILabel * soundLabel = [[UILabel alloc] init];
     soundLabel.textColor = [UIColor whiteColor];
-    soundLabel.text = @"音频模式";
+    soundLabel.text = PLAY_SOUND;
     soundLabel.alpha = 0.5f;
     soundLabel.font = [UIFont systemFontOfSize:FontSize_32];
     [self.soundview addSubview:soundLabel];
@@ -249,7 +244,6 @@
         make.centerX.equalTo(imageView);
         make.top.equalTo(imageView.mas_bottom).offset(CCGetRealFromPt(50));
     }];
-//    [soundLabel layoutIfNeeded];
 
     //选择线路
     self.selectedIndexView =[[UIView alloc] init];
@@ -258,7 +252,6 @@
     [self.selectedIndexView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self);
     }];
-//    [self.selectedIndexView layoutIfNeeded];
     UITapGestureRecognizer *TapGesture1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange1:)];
     TapGesture1.numberOfTapsRequired = 1;
     [self.selectedIndexView addGestureRecognizer:TapGesture1];
@@ -274,7 +267,6 @@
         make.left.equalTo(self.bottomShadowView);
         make.right.equalTo(self.bottomShadowView);
     }];
-//    [_contentView layoutIfNeeded];
     _contentView.hidden = YES;
     _contentView.alpha = 0.5;
 
@@ -319,7 +311,6 @@
     self.liveUnStart.image = [UIImage imageNamed:@"live_streaming_unstart_bg"];
     [self addSubview:self.liveUnStart];
     self.liveUnStart.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462));
-//    [self.liveUnStart layoutIfNeeded];
     self.liveUnStart.hidden = YES;
     //直播未开始图片
     UIImageView * alarmClock = [[UIImageView alloc] init];
@@ -336,10 +327,9 @@
     self.unStart.alpha = 0.6f;
     self.unStart.textAlignment = NSTextAlignmentCenter;
     self.unStart.font = [UIFont systemFontOfSize:FontSize_30];
-    self.unStart.text = @"直播未开始";
+    self.unStart.text = PLAY_UNSTART;
     [self.liveUnStart addSubview:self.unStart];
     self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(271), 100, 30);
-//    [self.unStart layoutIfNeeded];
 //单击手势
     _TapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange:)];
     _TapGesture.numberOfTapsRequired = 1;
@@ -348,14 +338,14 @@
     [self stopPlayerTimer];
     self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
     
-    //new method   视频小窗
+    //   视频小窗
     [self setSmallVideoView];
-    _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
+    _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
     }];
-//    [_loadingView layoutIfNeeded];
+
 }
 
 
@@ -367,6 +357,7 @@
 - (void)layouUI:(BOOL)screenLandScape {
     _screenLandScape = screenLandScape;
     if (screenLandScape == YES) {
+        /*  实现横屏状态下切换线路功能，将self.qingXiButton.hidden 设置为NO */
         self.qingXiButton.hidden = YES;
         self.quanpingButton.hidden = YES;
         self.contentView.hidden = NO;
@@ -396,7 +387,7 @@
         [self layoutIfNeeded];
         [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.backButton);
-            make.left.equalTo(self.backButton.mas_right).offset(-10);
+            make.left.equalTo(self.backButton.mas_right);
             make.right.equalTo(self.changeButton.mas_left).offset(-60);
         }];
         [self.titleLabel layoutIfNeeded];
@@ -426,7 +417,7 @@
         }];
         [self.titleLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.backButton);
-            make.left.equalTo(self.backButton.mas_right).offset(-10);
+            make.left.equalTo(self.backButton.mas_right);
             make.right.equalTo(self.changeButton.mas_left).offset(-5);
         }];
         [self.titleLabel layoutIfNeeded];
@@ -447,6 +438,10 @@
     if (firRoadNum >3) {
         firRoadNum = 3;
     }
+    /*
+     ps:此处注释的代码为线路切换功能,默认隐藏了切换清晰度的btn(self.qingXiButton),如果想要打开线路切换功能，解开这个方法的注释,并且在- (void)layouUI:(BOOL)screenLandScape;方法中,将_qingXiButton.hidden = NO;
+        默认只有横屏状态下显示清晰度切换按钮.
+     */
 //    self.firRoadNum = firRoadNum;
 //    self.secRoadArr = secRoadKeyArray;
 //    switch (firRoadNum) {
@@ -543,11 +538,12 @@
 //    }
     
 }
-#pragma mark - 点击事件
+#pragma mark - 切换线路相关
 /**
  点击清晰度
  */
 - (void)qingXiButtonClick {
+    [self bringSubviewToFront:self.selectedIndexView];
     self.selectedIndexView.hidden = NO;
     _TapGesture = nil;
     [self.selectedIndexView becomeFirstResponder];
@@ -578,7 +574,7 @@
         self.isSound = NO;
     }
     if (sender.tag > self.firRoadNum) {
-        [self.qingXiButton setTitle:@"仅听音频" forState:UIControlStateNormal];
+        [self.qingXiButton setTitle:PLAY_ONLYSOUND forState:UIControlStateNormal];
         self.secRoadview.hidden = YES;
         self.isSound = YES;
         self.soundview.hidden = NO;
@@ -607,7 +603,7 @@
     _secRoadButton = sender;
     self.selectedIndex(_btn.tag,sender.tag-1);
 }
-
+#pragma mark - 点击表情按钮
 /**
  表情按钮点击事件
  */
@@ -628,25 +624,25 @@
 #pragma mark - 新增的共有点击事件方法
 //点击全屏按钮
 -(void)quanpingBtnClick{
-    [self.delegate quanpingButtonClick];
+    //全屏按钮代理
+    [self.delegate quanpingButtonClick:_changeButton.tag];
+    
     CGRect frame = [UIScreen mainScreen].bounds;
     self.backButton.tag = 2;
     [UIApplication sharedApplication].statusBarHidden = YES;
-    if (_changeButton.tag == 1) {
-        [_requestData changePlayerFrame:frame];
-    } else {
-        [_requestData changeDocFrame:frame];
-    }
     UIView *view = [self superview];
     [self mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.top.right.equalTo(view);
         make.height.mas_equalTo(SCREENH_HEIGHT);
     }];
-    [self layoutIfNeeded];
+    [self layoutIfNeeded];//
+    
     
     //隐藏其他视图
     [self layouUI:YES];
     [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+    
+   
 }
 /**
 //结束直播和退出全屏
@@ -654,18 +650,14 @@
 @param sender 点击按钮
 */
 -(void)backBtnClick:(UIButton *)sender{
-    [self.delegate backButtonClick:sender];
+    //返回按钮代理
+    [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
         sender.tag = 1;
         [UIApplication sharedApplication].statusBarHidden = NO;
         self.selectedIndexView.hidden = YES;
         [self endEditing:NO];
         self.contentView.hidden = YES;
-        if (_changeButton.tag == 1) {
-            [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
-        } else {
-            [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
-        }
         UIView *view = [self superview];
         [self mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(view);
@@ -673,9 +665,11 @@
             make.top.equalTo(view).offset(SCREEN_STATUS);
         }];
         [self layoutIfNeeded];
+        
         CGRect rect = [UIScreen mainScreen].bounds;
         [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
         [self layouUI:NO];
+       
     }
 }
 /**
@@ -684,26 +678,24 @@
  @param sender 切换
  */
 -(void)changeBtnClick:(UIButton *)sender{
-    if (_smallVideoView.hidden) {
-        NSString *title = _changeButton.tag == 1 ? @"切换文档" : @"切换视频";
+    if (_smallVideoView.hidden && !_changeButton.hidden) {
+        NSString *title = _changeButton.tag == 1 ? PLAY_CHANGEDOC : PLAY_CHANGEVIDEO;
         [_changeButton setTitle:title forState:UIControlStateNormal];
         _smallVideoView.hidden = NO;
         return;
     }
     if (sender.tag == 1) {//切换文档大屏
         sender.tag = 2;
-        [sender setTitle:@"切换视频" forState:UIControlStateNormal];
-        [_requestData changeDocParent:self];
-        [_requestData changePlayerParent:self.smallVideoView];
-        [_requestData changeDocFrame:CGRectMake(0, 0,self.frame.size.width, self.frame.size.height)];
-        [_requestData changePlayerFrame:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
+        [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
+        //切换视频时remote的视图大小
+        
     } else {//切换文档小屏
         sender.tag = 1;
-        [sender setTitle:@"切换文档" forState:UIControlStateNormal];
-        [_requestData changeDocParent:self.smallVideoView];
-        [_requestData changePlayerParent:self];
-        [_requestData changePlayerFrame:CGRectMake(0, 0,self.frame.size.width, self.frame.size.height)];
-        [_requestData changeDocFrame:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
+        [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
+        
+    }
+    if (self.delegate) {//changeBtn按钮点击代理
+        [self.delegate changeBtnClicked:sender.tag];
     }
     [self bringSubviewToFront:self.topShadowView];
     [self bringSubviewToFront:self.bottomShadowView];
@@ -720,6 +712,7 @@
         if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
             _keyboardRect = CGRectMake(0, 0, 736, 194);
         }
+        //        NSLog(@"_keyboardRect = %@",NSStringFromCGRect(_keyboardRect));
         
         _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
         _emojiView.backgroundColor = CCRGBColor(242,239,237);
@@ -808,7 +801,7 @@
         //        [self.view endEditing:YES];
         _chatTextField.text = [_chatTextField.text substringToIndex:300];
         [_informationViewPop removeFromSuperview];
-        _informationViewPop = [[InformationShowView alloc] initWithLabel:@"输入限制在300个字符以内"];
+        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
         [APPDelegate.window addSubview:_informationViewPop];
         [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
@@ -851,7 +844,7 @@
 -(void)sendBtnClicked {
     if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
         [_informationViewPop removeFromSuperview];
-        _informationViewPop = [[InformationShowView alloc] initWithLabel:@"发送内容为空"];
+        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
         [APPDelegate.window addSubview:_informationViewPop];
         [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
 //            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
@@ -964,8 +957,8 @@
     contentLabel.shadowOffset = CGSizeMake(0, 1);
     contentLabel.shadowColor = CCRGBAColor(0, 0, 0, 0.5);
     contentLabel.backgroundColor = [UIColor clearColor];
-    //设置字体颜色为green
-    contentLabel.textColor = [UIColor whiteColor];
+    //设置字体颜色为随机色
+    contentLabel.textColor = CCRandomColor;
     //文字居中显示
     contentLabel.textAlignment = NSTextAlignmentCenter;
     //自动折行设置
@@ -1062,6 +1055,10 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
+
+/**
+ 关闭播放计时器
+ */
 -(void)stopPlayerTimer {
     if([self.playerTimer isValid]) {
         [self.playerTimer invalidate];
@@ -1071,6 +1068,10 @@
 
 
 #pragma mark - 小窗视图
+
+/**
+ 设置小窗视图
+ */
 -(void)setSmallVideoView{
     //文档小窗
     CGRect rect = [UIScreen mainScreen].bounds;
@@ -1103,13 +1104,15 @@
         _smallCloseBtn.hidden = YES;
         [_smallCloseBtn setBackgroundImage:[UIImage imageNamed:@"fenestrule_delete"] forState:UIControlStateNormal];
         _smallCloseBtn.backgroundColor = [UIColor clearColor];
+//        _smallCloseBtn.layer.cornerRadius = CCGetRealFromPt(25);
+//        _smallCloseBtn.layer.masksToBounds = YES;
         [_smallCloseBtn addTarget:self action:@selector(hiddenSmallVideoview) forControlEvents:UIControlEventTouchUpInside];
     }
     return _smallCloseBtn;
 }
 -(void)hiddenSmallVideoview{
     _smallVideoView.hidden = YES;
-    NSString *title = _changeButton.tag == 1 ? @"显示文档" : @"显示视频";
+    NSString *title = _changeButton.tag == 1 ? PLAY_SHOWDOC : PLAY_SHOWVIDEO;
     [_changeButton setTitle:title forState:UIControlStateNormal];
 }
 //拖拽小屏
@@ -1117,6 +1120,8 @@
 {
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
+//            NSLog(@"开始拖动smallVideoView");
+//            [APPDelegate.window bringSubviewToFront:self.smallVideoView];
             [self.smallVideoView bringSubviewToFront:self.smallCloseBtn];
             _smallCloseBtn.hidden = NO;
             break;
@@ -1145,6 +1150,7 @@
                 [self.smallVideoView setFrame:CGRectMake(x, y, smallVideoRect.size.width, smallVideoRect.size.height)];
             } completion:^(BOOL finished) {
             }];
+//            NSLog(@"拖动smallVideoView结束");
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 _smallCloseBtn.hidden = YES;
             });
@@ -1167,12 +1173,12 @@
         self.liveUnStart.hidden = NO;
         self.smallVideoView.hidden = YES;
         self.changeButton.hidden = YES;
-        self.unStart.text = @"直播未开始";
+        self.unStart.text = PLAY_UNSTART;
         _endNormal = YES;
         self.quanpingButton.hidden = YES;
     } else {
         _endNormal = NO;
-        [self changeBtnClick:self.changeButton];
+        [self switchVideoDoc:_isMain];
     }
     [_loadingView removeFromSuperview];
     _loadingView = nil;
@@ -1190,7 +1196,7 @@
         self.changeButton.hidden = NO;
     }
     if (_endNormal == NO) {
-        _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
+        _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
         [self addSubview:_loadingView];
         [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
@@ -1209,8 +1215,9 @@
     self.liveUnStart.hidden = NO;
     self.smallVideoView.hidden = YES;
     self.changeButton.hidden = YES;
-    self.unStart.text = @"直播已结束";
+    self.unStart.text = PLAY_OVER;
     self.quanpingButton.hidden = YES;
+    [self bringSubviewToFront:_liveUnStart];
     [_loadingView removeFromSuperview];
     _loadingView = nil;
 }
@@ -1220,7 +1227,7 @@
 - (void)play_loadVideoFail{
     [_loadingView removeFromSuperview];
     _loadingView = nil;
-    _loadingView = [[LoadingView alloc] initWithLabel:@"视频加载中" centerY:YES];
+    _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
@@ -1233,18 +1240,24 @@
  *  isMain 1为视频为主,0为文档为主"
  */
 - (void)onSwitchVideoDoc:(BOOL)isMain{
-    if (isMain || _templateType == 1 || _templateType == 2|| _templateType == 3||_templateType == 6) {
-        self.changeButton.tag = 2;
-    } else {
-        self.changeButton.tag = 1;
-        [self.changeButton setTitle:@"切换文档" forState:UIControlStateNormal];
-    }
-    [self changeBtnClick:self.changeButton];
+    _isMain = isMain;
+    [self switchVideoDoc:_isMain];
     if (_endNormal) {
         _smallVideoView.hidden = YES;
     }else{
         _smallVideoView.hidden = NO;
     }
+}
+#pragma mark - 初始化直播间状态
+//当第一次进入和收到直播状态的时候需要调用此方法
+-(void)switchVideoDoc:(BOOL)isMain{
+    if (isMain || _templateType == 1 || _templateType == 2|| _templateType == 3||_templateType == 6) {
+        self.changeButton.tag = 2;
+    } else {
+        self.changeButton.tag = 1;
+        [self.changeButton setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
+    }
+    [self changeBtnClick:self.changeButton];
 }
 
 @end

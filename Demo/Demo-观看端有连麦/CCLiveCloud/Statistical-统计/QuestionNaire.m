@@ -16,26 +16,33 @@
 @property(nonatomic,strong)UILabel                  *centerLabel;//问卷说明
 
 @property(nonatomic,copy) NSString                  *url;//第三方问卷地址
-@property(nonatomic,copy) NSString                  *title;
-@property(nonatomic,strong)UIView                   *view;
+@property(nonatomic,copy) NSString                  *title;//标题
+@property(nonatomic,strong)UIView                   *view;//背景视图
 @property(nonatomic,strong)UIButton                 *submitBtn;//提交按钮
 @property(nonatomic,assign)BOOL                     isScreenLandScape;//是否是全屏
 
 @end
 
 @implementation QuestionNaire
-
+/**
+ 初始化方法
+ 
+ @param title 问卷标题
+ @param url 第三方问卷链接
+ @param isScreenLandScape 是否是全屏
+ @return self
+ */
 -(instancetype) initWithTitle:(NSString *)title url:(NSString *)url isScreenLandScape:(BOOL)isScreenLandScape{
     self = [super init];
     if(self) {
         self.isScreenLandScape  = isScreenLandScape;
-        self.url                = url;
-        self.title              = title;
+        self.url                = url;//第三方问卷链接
+        self.title              = title;//问卷标题
         [self initUI];
     }
     return self;
 }
-
+#pragma mark - 初始化UI布局
 -(void)initUI {
     WS(ws)
     self.backgroundColor = CCRGBAColor(0, 0, 0, 0.5);
@@ -81,6 +88,25 @@
         make.edges.equalTo(ws.topBgView);
     }];
     
+    //添加问卷说明
+    [self addCenterLabel];
+    
+    //添加提交按钮
+    [self.view addSubview:self.submitBtn];
+    [_submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(ws.view).offset(CCGetRealFromPt(145));
+        make.right.mas_equalTo(ws.view).offset(-CCGetRealFromPt(145));
+        make.top.mas_equalTo(ws.view).offset(CCGetRealFromPt(415));
+        make.height.mas_equalTo(CCGetRealFromPt(90));
+    }];
+
+    [self layoutIfNeeded];
+}
+
+/**
+ 添加问卷说明
+ */
+-(void)addCenterLabel{
     float textMaxWidth = self.isScreenLandScape? CCGetRealFromPt(640) : CCGetRealFromPt(540);
     NSMutableAttributedString *textAttri = [[NSMutableAttributedString alloc] initWithString:_title];
     [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(51,51,51) range:NSMakeRange(0, textAttri.length)];
@@ -100,24 +126,12 @@
     //添加问卷说明
     [self.view addSubview:self.centerLabel];
     [_centerLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(ws.view).offset(CCGetRealFromPt(50));
-        make.right.mas_equalTo(ws.view).offset(-CCGetRealFromPt(50));
-        make.top.mas_equalTo(ws.topBgView.mas_bottom).offset(CCGetRealFromPt(50));
+        make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(50));
+        make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(50));
+        make.top.mas_equalTo(self.topBgView.mas_bottom).offset(CCGetRealFromPt(50));
         make.height.mas_equalTo(textSize.height);
     }];
-    
-    //添加提交按钮
-    [self.view addSubview:self.submitBtn];
-    [_submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(ws.view).offset(CCGetRealFromPt(145));
-        make.right.mas_equalTo(ws.view).offset(-CCGetRealFromPt(145));
-        make.top.mas_equalTo(ws.view).offset(CCGetRealFromPt(415));
-        make.height.mas_equalTo(CCGetRealFromPt(90));
-    }];
-
-    [self layoutIfNeeded];
 }
-
 #pragma mark - 懒加载
 //关闭按钮
 -(UIButton *)closeBtn {
@@ -133,7 +147,7 @@
 -(UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [UILabel new];
-        _titleLabel.text = @"问卷调查";
+        _titleLabel.text = QUESTIONNAIRE_TITLE;
         _titleLabel.textColor = [UIColor colorWithHexString:@"#38404b" alpha:1.f];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.font = [UIFont systemFontOfSize:FontSize_32];
@@ -189,7 +203,7 @@
 -(UIButton *)submitBtn {
     if(_submitBtn == nil) {
         _submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_submitBtn setTitle:@"打开问卷" forState:UIControlStateNormal];
+        [_submitBtn setTitle:QUESTIONNAIRE_OPEN forState:UIControlStateNormal];
         [_submitBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
         [_submitBtn setTitleColor:CCRGBAColor(255, 255, 255, 1) forState:UIControlStateNormal];
         [_submitBtn setBackgroundImage:[UIImage imageNamed:@"default_btn"] forState:UIControlStateNormal];

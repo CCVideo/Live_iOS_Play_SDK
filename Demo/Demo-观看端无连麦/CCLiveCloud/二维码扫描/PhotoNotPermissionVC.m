@@ -10,9 +10,9 @@
 
 @interface PhotoNotPermissionVC ()
 
-@property(nonatomic,strong)UIBarButtonItem              *rightBarCancelBtn;
-@property(nonatomic,strong)UILabel                      *inforLabel;
-@property(nonatomic,strong)UIBarButtonItem              *leftBarBtn;    
+@property(nonatomic,strong)UIBarButtonItem              *rightBarCancelBtn;//右侧取消按钮
+@property(nonatomic,strong)UILabel                      *inforLabel;//提示信息
+@property(nonatomic,strong)UIBarButtonItem              *leftBarBtn;//左侧返回按钮
 
 @end
 
@@ -20,25 +20,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
+    //设置导航栏
     self.navigationItem.leftBarButtonItem=self.leftBarBtn;
     self.navigationItem.rightBarButtonItem=self.rightBarCancelBtn;
     [self.navigationController.navigationBar setBackgroundImage:
      [self createImageWithColor:CCRGBColor(255,102,51)] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
     [self.navigationController.navigationBar setShadowImage:[UIImage new]];
-    self.title = @"";
+    self.title = SCAN_NOPERMISSION;
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    //添加提示信息
     [self.view addSubview:self.inforLabel];
-    WS(ws)
     [_inforLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(ws.view).offset(CCGetRealFromPt(112));
-        make.right.mas_equalTo(ws.view).offset(-CCGetRealFromPt(112));
-        make.top.mas_equalTo(ws.view).offset(CCGetRealFromPt(100));
+        make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(112));
+        make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(112));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(100));
         make.height.mas_equalTo(CCGetRealFromPt(312));
     }];
     self.navigationItem.rightBarButtonItem=self.rightBarCancelBtn;
 }
-
+//用color返回一个image
 - (UIImage*)createImageWithColor:(UIColor*) color
 {
     CGRect rect=CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
@@ -50,7 +52,7 @@
     UIGraphicsEndImageContext();
     return theImage;
 }
-
+//右侧取消按钮
 -(UIBarButtonItem *)rightBarCancelBtn {
     if(_rightBarCancelBtn == nil) {
         _rightBarCancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelBtn)];
@@ -58,16 +60,11 @@
     }
     return _rightBarCancelBtn;
 }
-
+//点击取消按钮
 -(void)onCancelBtn {
-    [self.navigationController popViewControllerAnimated:NO];
+    [self.navigationController popViewControllerAnimated:YES];
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
+//提示信息
 -(UILabel *)inforLabel {
     if(!_inforLabel) {
         _inforLabel = [UILabel new];
@@ -75,7 +72,7 @@
         _inforLabel.numberOfLines = 0;
         _inforLabel.textColor = CCRGBColor(51,51,51);
         
-        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:@"请在iPhone的“设置-隐私-照片”选项中，\n允许CC云直播访问你的手机相册。"];
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:SCAN_PHOTONOTPERMISSION];
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
         [paragraphStyle setLineSpacing:CCGetRealFromPt(18)];
         paragraphStyle.alignment = NSTextAlignmentCenter;
@@ -86,42 +83,18 @@
     }
     return _inforLabel;
 }
-
+//左侧leftLabel
 -(UIBarButtonItem *)leftBarBtn {
-    if(_leftBarBtn == nil) {
+    if(!_leftBarBtn) {
         UIImage *aimage = [UIImage imageNamed:@"nav_ic_back_nor"];
         UIImage *image = [aimage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         _leftBarBtn = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(onSelectVC)];
     }
     return _leftBarBtn;
 }
-
+//返回扫描视图
 -(void)onSelectVC {
     [self.navigationController popViewControllerAnimated:NO];
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (BOOL)shouldAutorotate{
-    return NO;
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-    return UIInterfaceOrientationPortrait;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 @end

@@ -17,4 +17,5 @@
 #import "UIBarButtonItem+Extension.h"
 #import "UIImageView+WebCache.h"
 #import "NSString+CCSwitchTime.h"
+#import "CCAlertView.h"
 #endif /* CCLiveCloud_pch */

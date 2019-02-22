@@ -25,6 +25,13 @@
 
 @implementation LotteryView
 #pragma mark - 初始化方法
+/**
+ 初始化方法
+ 
+ @param isScreenLandScape 是否是全屏
+ @param clearColor clearColor
+ @return self
+ */
 -(instancetype)initIsScreenLandScape:(BOOL)isScreenLandScape clearColor:(BOOL)clearColor{
     self = [super init];
     if(self) {
@@ -49,19 +56,18 @@
     _isScreenLandScape = isScreenLandScape;
     //更新_view的约束
     //判断是否是全屏，加载不同的样式
-    WS(ws)
     if(!self.isScreenLandScape) {//竖屏约束
         [_view mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(ws).offset(CCGetRealFromPt(50));
-            make.right.mas_equalTo(ws).offset(-CCGetRealFromPt(50));
-            make.top.mas_equalTo(ws).offset(CCGetRealFromPt(567));
-            make.bottom.mas_equalTo(ws).offset(IS_IPHONE_X ? - 120 - CCGetRealFromPt(202) :-CCGetRealFromPt(202));
+            make.left.mas_equalTo(self).offset(CCGetRealFromPt(50));
+            make.right.mas_equalTo(self).offset(-CCGetRealFromPt(50));
+            make.top.mas_equalTo(self).offset(CCGetRealFromPt(567));
+            make.bottom.mas_equalTo(self).offset(IS_IPHONE_X ? - 120 - CCGetRealFromPt(202) :-CCGetRealFromPt(202));
         }];
     } else {//横屏约束
         [_view mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(ws);
+            make.centerX.mas_equalTo(self);
             make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(650), CCGetRealFromPt(565)));
-            make.top.mas_equalTo(ws).offset(CCGetRealFromPt(100));
+            make.top.mas_equalTo(self).offset(CCGetRealFromPt(100));
         }];
     }
     if(myself) {
@@ -71,12 +77,22 @@
     }
 }
 #pragma mark - 公有方法
-//自己中奖
+
+/**
+ 自己中奖
+
+ @param code 中奖码
+ */
 -(void)myselfWin:(NSString *)code {
     
     [self setLotteryResultUIWithWinner:YES result:code];
 }
-//其他人中奖
+
+/**
+ 其他人中奖
+
+ @param winnerName 获奖人名称
+ */
 -(void)otherWin:(NSString *)winnerName {
     if (!_myself) {//如果自己没有中过奖,显示其他人中奖
         [self setLotteryResultUIWithWinner:NO result:winnerName];
@@ -162,12 +178,20 @@
     [self layoutIfNeeded];
 }
 #pragma mark - 初始化视图
+
+/**
+ 初始化抽奖视图
+ */
 -(void)initGiftView{
     [_view removeFromSuperview];
     _view = nil;
 //    self.hidden = self.hidden;
     [self initUI];
 }
+
+/**
+ 移除抽奖视图
+ */
 -(void)remove{
     WS(ws)
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -230,9 +254,12 @@
     }
     return _topBgView;
 }
-//初始化UI布局
+#pragma mark - 初始化UI
+
+/**
+ 初始化UI布局
+ */
 -(void)initUI {
-    WS(ws)
     self.type = 1;
     if(self.clearColor) {
         self.backgroundColor = CCClearColor;
@@ -246,42 +273,42 @@
     //判断是否是全屏，加载不同的样式
     if(!self.isScreenLandScape) {//竖屏约束
         [_view mas_makeConstraints:^(MASConstraintMaker *make) {
-                        make.left.mas_equalTo(ws).offset(CCGetRealFromPt(50));
-                        make.right.mas_equalTo(ws).offset(-CCGetRealFromPt(50));
-                        make.top.mas_equalTo(ws).offset(CCGetRealFromPt(567));
-                        make.bottom.mas_equalTo(ws).offset(IS_IPHONE_X ? - 120 - CCGetRealFromPt(202) :-CCGetRealFromPt(202));
+                        make.left.mas_equalTo(self).offset(CCGetRealFromPt(50));
+                        make.right.mas_equalTo(self).offset(-CCGetRealFromPt(50));
+                        make.top.mas_equalTo(self).offset(CCGetRealFromPt(567));
+                        make.bottom.mas_equalTo(self).offset(IS_IPHONE_X ? - 120 - CCGetRealFromPt(202) :-CCGetRealFromPt(202));
         }];
     } else {//横屏约束
         [_view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(ws);
+            make.centerX.mas_equalTo(self);
             make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(650), CCGetRealFromPt(565)));
-            make.top.mas_equalTo(ws).offset(CCGetRealFromPt(100));
+            make.top.mas_equalTo(self).offset(CCGetRealFromPt(100));
         }];
     }
     //顶部背景视图
     [self.view addSubview:self.topBgView];
     [_topBgView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(ws.view);
-        make.right.mas_equalTo(ws.view);
-        make.top.mas_equalTo(ws.view);
+        make.left.mas_equalTo(self.view);
+        make.right.mas_equalTo(self.view);
+        make.top.mas_equalTo(self.view);
         make.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     //顶部标题
     [self.view addSubview:self.titleLabel];
     [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(ws.topBgView);
+        make.edges.equalTo(self.topBgView);
     }];
     //顶部关闭按钮
     [self.view addSubview:self.closeBtn];
     [_closeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(ws.topBgView).offset(-CCGetRealFromPt(20));
-        make.centerY.mas_equalTo(ws.topBgView);
+        make.right.mas_equalTo(self.topBgView).offset(-CCGetRealFromPt(20));
+        make.centerY.mas_equalTo(self.topBgView);
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(56),CCGetRealFromPt(56)));
     }];
     //添加礼物视图
     [self.view addSubview:self.giftView];
     [_giftView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(ws.view);
+        make.edges.mas_equalTo(self.view);
     }];
 //    [self layoutIfNeeded];
 }
