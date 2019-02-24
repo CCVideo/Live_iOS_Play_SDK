@@ -22,6 +22,8 @@
 #import "SelectMenuView.h"//更多菜单
 #import "AnnouncementView.h"//公告
 #import "CCAlertView.h"//提示框
+#import "NSTimer+BlocksKit.h"
+
 @interface CCPlayerController ()<RequestDataDelegate,UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark - 房间相关参数
 @property (nonatomic,copy)  NSString                 * viewerId;//观看者的id
@@ -307,7 +309,12 @@
 -(void)requestSucceed {
     //    NSLog(@"请求成功！");
     [self stopTimer];
-    _userCountTimer = [NSTimer scheduledTimerWithTimeInterval:15.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
+    
+    __weak typeof(self) weakSelf = self;
+    self.userCountTimer = [NSTimer bk_scheduledTimerWithTimeInterval:15.0f block:^(NSTimer *timer) {
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf timerfunc];
+    } repeats:YES];
     
 }
 
