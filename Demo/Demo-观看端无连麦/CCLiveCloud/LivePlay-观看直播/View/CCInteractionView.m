@@ -581,8 +581,9 @@
 //创建问答视图
 -(CCQuestionView *)questionChatView {
     if(!_questionChatView) {
+        __weak typeof(self) weakSelf = self;
         _questionChatView = [[CCQuestionView alloc] initWithQuestionBlock:^(NSString *message) {
-            [self question:message];
+            [weakSelf question:message];
         } input:YES];
         _questionChatView.backgroundColor = [UIColor grayColor];
     }
@@ -605,9 +606,12 @@
 -(CCChatBaseView *)chatView {
     if(!_chatView) {
         //公聊发消息回调
+        __weak typeof(self) weakSelf = self;
         _chatView = [[CCChatBaseView alloc] initWithPublicChatBlock:^(NSString * _Nonnull msg) {
             // 发送公聊信息
-            _chatMessageBlock(msg);
+            if (weakSelf.chatMessageBlock) {
+                weakSelf.chatMessageBlock(msg);
+            }
         } isInput:YES];
         //私聊发消息回调
         WS(ws)
