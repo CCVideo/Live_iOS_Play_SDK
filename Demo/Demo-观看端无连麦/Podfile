@@ -9,5 +9,6 @@ pod 'SDWebImage', '~> 4.0.0'
 pod 'MBProgressHUD'
 pod 'MJExtension'
 pod 'Bugly'
+pod 'BlocksKit/Core'
 
 end
