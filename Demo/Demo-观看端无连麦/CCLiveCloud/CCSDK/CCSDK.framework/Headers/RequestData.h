@@ -11,7 +11,7 @@
 #import "PlayParameter.h"
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
-#define SDKVersion @"3.1.0"
+#define SDKVersion @"3.2.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -339,7 +339,6 @@
  */
 -(void)videoStateChangeWithString:(NSString *) result;
 
-
 @end
 
 @interface RequestData : NSObject
@@ -510,7 +509,11 @@
  *      @param     practiceId  随堂测ID
  */
 -(void)getPracticeRankWithPracticeId:(NSString *)practiceId;
-
+/**
+ *    @brief     获取随堂测(The new method)
+ *      @param     practiceId  随堂测ID(没有传@"")
+ */
+-(void)getPracticeInfo:(NSString *)practiceId;
 
 
 @end

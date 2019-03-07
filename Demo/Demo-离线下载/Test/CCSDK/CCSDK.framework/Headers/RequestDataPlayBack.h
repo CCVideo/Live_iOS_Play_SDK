@@ -11,7 +11,7 @@
 #import "PlayParameter.h"
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
-#define SDKVersion @"3.1.0"
+#define SDKVersion @"3.2.0"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**

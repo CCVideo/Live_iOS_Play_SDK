@@ -537,6 +537,13 @@
  *      @param     practiceId  随堂测ID
  */
 -(void)getPracticeRankWithPracticeId:(NSString *)practiceId;
+/**
+ *    @brief     获取随堂测(The new method)
+ *      @param     practiceId  随堂测ID(没有传@"")
+ */
+-(void)getPracticeInfo:(NSString *)practiceId;
+
+
 
 //#ifdef LIANMAI_WEBRTC
 /**
