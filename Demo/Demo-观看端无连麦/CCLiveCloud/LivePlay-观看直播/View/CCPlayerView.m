@@ -9,6 +9,7 @@
 #import "CCPlayerView.h"
 #import "Utility.h"
 #import "InformationShowView.h"
+#import "NSTimer+BlocksKit.h"
 
 @interface CCPlayerView ()<UITextFieldDelegate>
 
@@ -336,7 +337,11 @@
     [self addGestureRecognizer:_TapGesture];
 //隐藏导航
     [self stopPlayerTimer];
-    self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
+    
+    __weak typeof(self) weakSelf = self;
+    self.playerTimer = [NSTimer bk_scheduledTimerWithTimeInterval:5.0f block:^(NSTimer *timer) {
+        [weakSelf LatencyHiding];
+    } repeats:YES];
     
     //   视频小窗
     [self setSmallVideoView];
@@ -888,7 +893,11 @@
  */
 - (void)startDanMuTimer {
     [self stopDanMuTimer];
-    _danMuTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(makeTheRightAction) userInfo:nil repeats:YES];
+    
+    __weak typeof(self) weakSelf = self;
+    self.danMuTimer = [NSTimer bk_scheduledTimerWithTimeInterval:1.0f block:^(NSTimer *timer) {
+        [weakSelf makeTheRightAction];
+    } repeats:YES];
 }
 
 /**
