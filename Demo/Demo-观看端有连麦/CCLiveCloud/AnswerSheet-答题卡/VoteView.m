@@ -86,6 +86,7 @@
         }
     }
     [self remove];
+    _submitBtn.userInteractionEnabled = NO;//避免重复答题
 }
 
 /**
@@ -433,14 +434,11 @@
 -(UIButton *)submitBtn {
     if(_submitBtn == nil) {
         _submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//        _submitBtn.backgroundColor = CCRGBColor(255,102,51);
         [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
         [_submitBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
         [_submitBtn setTitleColor:CCRGBAColor(255, 255, 255, 1) forState:UIControlStateNormal];
         [_submitBtn setTitleColor:CCRGBAColor(255, 255, 255, 0.4) forState:UIControlStateDisabled];
         [_submitBtn.layer setMasksToBounds:YES];
-//        [_submitBtn.layer setBorderWidth:CCGetRealFromPt(2)];
-//        [_submitBtn.layer setBorderColor:[CCRGBColor(252,92,61) CGColor]];
         [_submitBtn.layer setCornerRadius:CCGetRealFromPt(45)];
         [_submitBtn addTarget:self action:@selector(submitBtnClicked) forControlEvents:UIControlEventTouchUpInside];
         
@@ -492,37 +490,9 @@
     NSUInteger index = [self.selectIndexArray indexOfObject:number];
     if(index != NSNotFound) {
         [self removeSelectStyle:sender.tag];
-//        UIView *view = [self.view viewWithTag:sender.tag + 10];
-//        UIImageView *imageView = [self.view viewWithTag:sender.tag + 20];
-//        [view removeFromSuperview];
-//        [imageView removeFromSuperview];
         [self.selectIndexArray removeObjectAtIndex:index];
     } else {
         [self addSelectStyle:sender];
-//        UIView *selectBorder = [[UIView alloc] init];
-//        selectBorder.backgroundColor = CCClearColor;
-//        selectBorder.layer.borderWidth = 1;
-//        selectBorder.layer.borderColor = [CCRGBColor(255,192,171) CGColor];
-//        selectBorder.layer.cornerRadius = sender.layer.cornerRadius;
-//        [self.view addSubview:selectBorder];
-//        selectBorder.tag = sender.tag + 10;
-//        [selectBorder mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.edges.mas_equalTo(sender);
-//        }];
-//        //            selectBorder.userInteractionEnabled = YES;
-//
-//        UIImageView *rightLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"voteView_selected"]];
-//        rightLogo.contentMode = UIViewContentModeScaleAspectFit;
-//        [self.view addSubview:rightLogo];
-//        rightLogo.tag = sender.tag + 20;
-//        //            rightLogo.userInteractionEnabled = YES;
-//
-//        [rightLogo mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.left.mas_equalTo(selectBorder).offset(CCGetRealFromPt(100));
-//            make.bottom.mas_equalTo(selectBorder).offset(-CCGetRealFromPt(100));
-//            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(32),CCGetRealFromPt(32)));
-//        }];
-        
         [self.selectIndexArray addObject:number];
     }
     if(self.multipleNOSubmit) {

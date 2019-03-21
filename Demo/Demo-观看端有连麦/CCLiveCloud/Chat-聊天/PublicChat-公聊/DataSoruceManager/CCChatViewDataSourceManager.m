@@ -132,6 +132,17 @@
             viewerId:(nonnull NSString *)viewerId
              groupId:(nonnull NSString *)groupId
           danMuBlock:(nonnull InsertDanMuBlock)block{
+//    if (self.publicChatArray.count > 300) {
+//        NSMutableArray *arr = [NSMutableArray array];
+//        for(NSInteger i = self.publicChatArray.count - 60; i < self.publicChatArray.count; ++i){
+//            [arr addObject:self.publicChatArray[i]];
+//        }
+//        [self removeData];
+//        self.publicChatArray = [arr mutableCopy];
+//        NSLog(@"count大于300,返回最新60条");
+//        return;
+//    }
+    
     NSString *msgGroupId = dic[@"groupId"];
     if ([groupId isEqualToString:@""] || [msgGroupId isEqualToString:@""] || [groupId isEqualToString:msgGroupId] || !msgGroupId) {
         BOOL haveImg = [dic[@"msg"] containsString:IMGURL];//是否含有图片
@@ -212,7 +223,7 @@
 -(void)dealIconAndTextColorWith:(CCPublicChatModel *)model{
     NSString * str;
     NSString *colorWithHexString = @"#79808b";
-    NSString *headImageName;
+    NSString *headImageName = @"";
     if(StrNotEmpty(model.useravatar) && [model.useravatar containsString:@"http"]) {
         if ([model.userrole isEqualToString:@"publisher"]) {//主讲
             str = @"lecturer_nor";
@@ -227,6 +238,8 @@
         } else if ([model.userrole isEqualToString:@"teacher"]) {//助教
             str = @"assistant_nor";
             colorWithHexString = @"#12ad1a";
+        } else{
+            str = @"role_floorplan";
         }
     } else {
         if ([model.userrole isEqualToString:@"publisher"]) {//主讲
@@ -249,6 +262,9 @@
             headImageName = @"chatHead_assistant";
             str = @"assistant_nor";
             colorWithHexString = @"#12ad1a";
+        } else {
+            headImageName = @"chatHead_user_five";
+            str = @"role_floorplan";
         }
     }
     //设置model的头像，头像标示，文本颜色
@@ -282,6 +298,10 @@
 -(CGFloat)getTextCellHeightWith:(CCPublicChatModel *)model{
     CGFloat height;
     //计算文本高度
+    //todo  用户名为特殊字符时，算不出redRange
+    if (!model.username.length) {
+        model.username = @"_";
+    }
     float textMaxWidth = CCGetRealFromPt(438);
     NSString * textAttr = [NSString stringWithFormat:@"%@:%@",model.username,model.msg];
     NSMutableAttributedString *textAttri = [Utility emotionStrWithString:textAttr y:-8];
@@ -363,6 +383,34 @@
         return YES;
     }else{
         return NO;
+    }
+}
+#pragma mark - 私聊图片
+/**
+ 添加一个私聊下载过的图片
+
+ @param url 图片链接
+ @param size 图片的大小
+ */
+-(void)setURL:(NSString *)url withImageSize:(CGSize)size{
+    [self.downloadDic setObject:[NSString stringWithFormat:@"%lf_%lf", size.width, size.height] forKey:url];
+}
+-(CGSize)getImageSizeWithMsg:(NSString *)msg{
+    NSString *url = [self getUrlWithMessage:msg];
+    CGSize imgSize;
+    if ([[self.downloadDic allKeys] containsObject:url]) {//如果下载过这张图片
+        //解析保存的图片大小
+        NSString *size = self.downloadDic[[NSString stringWithFormat:@"%@", url]];
+        NSArray *getSizeArray = [size componentsSeparatedByString:@"_"];
+        //去除前缀
+        imgSize.width = [[getSizeArray firstObject] floatValue];
+        imgSize.height = [[getSizeArray lastObject] floatValue];
+        return imgSize;
+    }else{
+//        NSLog(@"没有下载过这张图片");
+        imgSize.width = 20.f;
+        imgSize.height = 20.f;
+        return imgSize;
     }
 }
 #pragma mark - 更新对应indexPath的行高

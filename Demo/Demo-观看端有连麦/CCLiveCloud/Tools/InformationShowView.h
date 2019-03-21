@@ -12,4 +12,6 @@
 
 -(instancetype)initWithLabel:(NSString *)str;
 
+-(instancetype)initWithFrame:(CGRect)frame WithLabel:(NSString *)str;
+
 @end

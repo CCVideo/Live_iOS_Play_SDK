@@ -443,7 +443,7 @@
  @return 高度
  */
 -(CGFloat)heightForCellOfQuestion:(NSMutableArray *)array {
-    CGFloat height = CCGetRealFromPt(130);
+    CGFloat height;
 //计算高度
     Dialogue *dialogue = [array objectAtIndex:0];
     float textMaxWidth = CCGetRealFromPt(590);

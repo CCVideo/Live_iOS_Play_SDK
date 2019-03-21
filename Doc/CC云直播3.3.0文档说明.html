@@ -1,0 +1,1896 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>CC云直播3.3demo文档说明</title><link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color: #ffffff; --text-color: #333333; --select-text-bg-color: #B5D6FC; --select-text-font-color: auto; --monospace: "Lucida Console",Consolas,"Courier",monospace; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857143; overflow-x: hidden; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; word-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 40px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+@media screen and (max-width: 500px) { 
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:first-child { margin-top: -20px; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; }
+button, input, select, textarea { color: inherit; font-family: inherit; font-size: inherit; font-style: inherit; font-variant-caps: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 2; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.701961); color: rgb(85, 85, 85); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px !important; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right-width: 0px; background-color: inherit; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; position: relative !important; background-position: inherit inherit; background-repeat: inherit inherit; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; background-position: 0px 0px; background-repeat: initial initial; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print { 
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid-page; break-before: avoid-page; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid-page; }
+  .typora-export #write::after { height: 0px; }
+  @page { margin: 20mm 0px; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background-color: rgb(204, 204, 204); display: block; overflow-x: hidden; background-position: initial initial; background-repeat: initial initial; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) { 
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background-color: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; background-position: initial initial; background-repeat: initial initial; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; }
+a.md-print-anchor { white-space: pre !important; border: none !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; text-shadow: initial !important; background-position: 0px 0px !important; background-repeat: initial initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.html-for-mac .inline-math-svg .MathJax_SVG { vertical-align: 0.2px; }
+.md-math-block .MathJax_SVG_Display { text-align: center; margin: 0px; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; overflow-y: hidden; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: var(--monospace); }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none; }
+.MathJax_SVG_Display svg { vertical-align: middle !important; margin-bottom: 0px !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="mermaid"] svg, [lang="flow"] svg { max-width: 100%; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom-width: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+
+
+.CodeMirror { height: auto; }
+.CodeMirror.cm-s-inner { background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+.CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; z-index: 3; }
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler { background-color: rgb(255, 255, 255); }
+.CodeMirror-gutters { border-right-width: 1px; border-right-style: solid; border-right-color: rgb(221, 221, 221); background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; white-space: nowrap; background-position: inherit inherit; background-repeat: inherit inherit; }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: 700; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: red; }
+.cm-invalidchar { color: red; }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { height: 100%; outline: 0px; position: relative; box-sizing: content-box; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-gutter-filler, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-vscrollbar { position: absolute; z-index: 6; display: none; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow: hidden; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow: hidden; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 30px; z-index: 3; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-wrapper { position: absolute; z-index: 4; border: none !important; background-position: 0px 0px !important; background-repeat: initial initial !important; }
+.CodeMirror-gutter-background { position: absolute; top: 0px; bottom: 0px; z-index: 4; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; border-width: 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; word-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; background-position: 0px 0px; background-repeat: initial initial; }
+.CodeMirror-wrap pre { word-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right-width: 30px; border-right-style: solid; border-right-color: transparent; width: fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right-style: none; width: auto; }
+.CodeMirror-linebackground { position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right-style: none; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.cm-searching { background-color: rgba(255, 255, 0, 0.4); background-position: initial initial; background-repeat: initial initial; }
+@media print { 
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+   padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border-top: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table tr th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr td {
+    border: 1px solid #dfe2e5;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+.html-for-mac .context-menu {
+    --item-hover-bg-color: #E6F0FE;
+}
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+}
+
+ .typora-export li, .typora-export p, .typora-export,  .footnote-line {white-space: normal;} 
+</style>
+</head>
+<body class='typora-export' >
+<div  id='write'  class = 'is-mac'><div class='md-toc' mdtype='toc'><p class="md-toc-content"><span class="md-toc-item md-toc-h2" data-ref="n2"><a class="md-toc-inner" href="#header-n2">1.概述</a></span><span class="md-toc-item md-toc-h3" data-ref="n4"><a class="md-toc-inner" href="#header-n4">1.1 功能特性</a></span><span class="md-toc-item md-toc-h3" data-ref="n27"><a class="md-toc-inner" href="#header-n27">1.2 阅读对象</a></span><span class="md-toc-item md-toc-h2" data-ref="n36"><a class="md-toc-inner" href="#header-n36">2.功能使用</a></span><span class="md-toc-item md-toc-h3" data-ref="n37"><a class="md-toc-inner" href="#header-n37">2.1 前言</a></span><span class="md-toc-item md-toc-h3" data-ref="n39"><a class="md-toc-inner" href="#header-n39">2.2 项目入口</a></span><span class="md-toc-item md-toc-h4" data-ref="n44"><a class="md-toc-inner" href="#header-n44">2.2.1 导航控制器相关设置</a></span><span class="md-toc-item md-toc-h4" data-ref="n49"><a class="md-toc-inner" href="#header-n49">2.2.2 选择页面控制器</a></span><span class="md-toc-item md-toc-h5" data-ref="n51"><a class="md-toc-inner" href="#header-n51">2.2.2.1 点击观看直播进入直播登录界面</a></span><span class="md-toc-item md-toc-h5" data-ref="n55"><a class="md-toc-inner" href="#header-n55">2.2.2.2 点击观看回放按钮进入观看回放界面</a></span><span class="md-toc-item md-toc-h5" data-ref="n58"><a class="md-toc-inner" href="#header-n58">2.2.2.3 设置屏幕旋转相关设置</a></span><span class="md-toc-item md-toc-h3" data-ref="n60"><a class="md-toc-inner" href="#header-n60">2.3 观看直播登录界面</a></span><span class="md-toc-item md-toc-h4" data-ref="n62"><a class="md-toc-inner" href="#header-n62">2.3.1 登录所需参数</a></span><span class="md-toc-item md-toc-h4" data-ref="n64"><a class="md-toc-inner" href="#header-n64">2.3.2 登录事件</a></span><span class="md-toc-item md-toc-h4" data-ref="n66"><a class="md-toc-inner" href="#header-n66">2.3.3 代理方法RequestDataDelegate</a></span><span class="md-toc-item md-toc-h5" data-ref="n67"><a class="md-toc-inner" href="#header-n67">2.3.3.1 请求成功,跳转至观看直播界面(必须实现)</a></span><span class="md-toc-item md-toc-h5" data-ref="n70"><a class="md-toc-inner" href="#header-n70">2.3.3.2 登录请求失败(必须实现)</a></span><span class="md-toc-item md-toc-h5" data-ref="n73"><a class="md-toc-inner" href="#header-n73">2.3.3.3 获取房间信息(可选)</a></span><span class="md-toc-item md-toc-h3" data-ref="n75"><a class="md-toc-inner" href="#header-n75">2.4 观看回放登录界面</a></span><span class="md-toc-item md-toc-h4" data-ref="n77"><a class="md-toc-inner" href="#header-n77">2.4.1 登录所需参数</a></span><span class="md-toc-item md-toc-h4" data-ref="n79"><a class="md-toc-inner" href="#header-n79">2.4.2 登录事件</a></span><span class="md-toc-item md-toc-h4" data-ref="n81"><a class="md-toc-inner" href="#header-n81">2.4.3 代理RequestDataPlayBackDelegate方法</a></span><span class="md-toc-item md-toc-h5" data-ref="n82"><a class="md-toc-inner" href="#header-n82">2.4.3.1 请求成功(必须实现)</a></span><span class="md-toc-item md-toc-h5" data-ref="n85"><a class="md-toc-inner" href="#header-n85">2.4.3.2 登录请求失败(必须实现)</a></span><span class="md-toc-item md-toc-h5" data-ref="n88"><a class="md-toc-inner" href="#header-n88">2.4.3.3 获取房间信息(可选)</a></span><span class="md-toc-item md-toc-h2" data-ref="n90"><a class="md-toc-inner" href="#header-n90">3.观看直播</a></span><span class="md-toc-item md-toc-h3" data-ref="n92"><a class="md-toc-inner" href="#header-n92">3.1 目录介绍</a></span><span class="md-toc-item md-toc-h4" data-ref="n93"><a class="md-toc-inner" href="#header-n93">3.1.1 视频视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n96"><a class="md-toc-inner" href="#header-n96">3.1.1.1 视频代理</a></span><span class="md-toc-item md-toc-h5" data-ref="n102"><a class="md-toc-inner" href="#header-n102">3.1.1.2 block回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n104"><a class="md-toc-inner" href="#header-n104">3.1.1.3 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n115"><a class="md-toc-inner" href="#header-n115">3.1.2 互动视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n118"><a class="md-toc-inner" href="#header-n118">3.1.2.1 block回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n120"><a class="md-toc-inner" href="#header-n120">3.1.2.2 公有属性</a></span><span class="md-toc-item md-toc-h5" data-ref="n122"><a class="md-toc-inner" href="#header-n122">3.1.2.3 初始化方法</a></span><span class="md-toc-item md-toc-h5" data-ref="n124"><a class="md-toc-inner" href="#header-n124">3.1.2.4 代替SDK代理相关方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n131"><a class="md-toc-inner" href="#header-n131">3.1.3 聊天视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n134"><a class="md-toc-inner" href="#header-n134">3.1.3.1 公聊消息与私聊消息回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n136"><a class="md-toc-inner" href="#header-n136">3.1.3.2 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n138"><a class="md-toc-inner" href="#header-n138">3.1.4 问答</a></span><span class="md-toc-item md-toc-h5" data-ref="n141"><a class="md-toc-inner" href="#header-n141">3.1.4.1 QuestionMessage回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n143"><a class="md-toc-inner" href="#header-n143">3.1.4.2 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n145"><a class="md-toc-inner" href="#header-n145">3.1.5 简介</a></span><span class="md-toc-item md-toc-h4" data-ref="n149"><a class="md-toc-inner" href="#header-n149">3.1.6 功能菜单视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n152"><a class="md-toc-inner" href="#header-n152">3.1.6.1 新消息枚举状态</a></span><span class="md-toc-item md-toc-h5" data-ref="n154"><a class="md-toc-inner" href="#header-n154">3.1.6.2 block回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n156"><a class="md-toc-inner" href="#header-n156">3.1.6.3 公有属性</a></span><span class="md-toc-item md-toc-h5" data-ref="n158"><a class="md-toc-inner" href="#header-n158">3.1.6.4 公有方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n160"><a class="md-toc-inner" href="#header-n160">3.1.7 抽奖</a></span><span class="md-toc-item md-toc-h4" data-ref="n167"><a class="md-toc-inner" href="#header-n167">3.1.8 问卷</a></span><span class="md-toc-item md-toc-h5" data-ref="n168"><a class="md-toc-inner" href="#header-n168">3.1.8.1 第三方问卷</a></span><span class="md-toc-item md-toc-h5" data-ref="n173"><a class="md-toc-inner" href="#header-n173">3.1.8.2 问卷和问卷统计</a></span><span class="md-toc-item md-toc-h5" data-ref="n181"><a class="md-toc-inner" href="#header-n181">3.1.8.3 问卷弹窗</a></span><span class="md-toc-item md-toc-h4" data-ref="n187"><a class="md-toc-inner" href="#header-n187">3.1.9 签到</a></span><span class="md-toc-item md-toc-h4" data-ref="n193"><a class="md-toc-inner" href="#header-n193">3.1.10 答题卡</a></span><span class="md-toc-item md-toc-h5" data-ref="n194"><a class="md-toc-inner" href="#header-n194">3.1.10.1 答题卡</a></span><span class="md-toc-item md-toc-h5" data-ref="n200"><a class="md-toc-inner" href="#header-n200">3.1.10.2 答题结果</a></span><span class="md-toc-item md-toc-h4" data-ref="n204"><a class="md-toc-inner" href="#header-n204">3.1.11 公告</a></span><span class="md-toc-item md-toc-h4" data-ref="n210"><a class="md-toc-inner" href="#header-n210">3.1.12 随堂测</a></span><span class="md-toc-item md-toc-h4" data-ref="n224"><a class="md-toc-inner" href="#header-n224">3.1.13 奖杯</a></span><span class="md-toc-item md-toc-h4" data-ref="n228"><a class="md-toc-inner" href="#header-n228">3.1.14 锁屏界面播放器</a></span><span class="md-toc-item md-toc-h3" data-ref="n236"><a class="md-toc-inner" href="#header-n236">3.2 观看直播</a></span><span class="md-toc-item md-toc-h4" data-ref="n237"><a class="md-toc-inner" href="#header-n237">3.2.1 CCPlayerController的私有变量</a></span><span class="md-toc-item md-toc-h4" data-ref="n239"><a class="md-toc-inner" href="#header-n239">3.2.2 初始化所需要的roomName</a></span><span class="md-toc-item md-toc-h4" data-ref="n241"><a class="md-toc-inner" href="#header-n241">3.2.3 函数启动</a></span><span class="md-toc-item md-toc-h4" data-ref="n243"><a class="md-toc-inner" href="#header-n243">3.2.4 视图将要消失</a></span><span class="md-toc-item md-toc-h3" data-ref="n245"><a class="md-toc-inner" href="#header-n245">3.3  初始化页面布局</a></span><span class="md-toc-item md-toc-h4" data-ref="n246"><a class="md-toc-inner" href="#header-n246">3.3.1 添加视频视图(自定义视图)</a></span><span class="md-toc-item md-toc-h4" data-ref="n248"><a class="md-toc-inner" href="#header-n248">3.3.2 互动视图(自定义视图)</a></span><span class="md-toc-item md-toc-h4" data-ref="n251"><a class="md-toc-inner" href="#header-n251">3.3.3 更多菜单视图 (自定义视图)</a></span><span class="md-toc-item md-toc-h3" data-ref="n253"><a class="md-toc-inner" href="#header-n253">3.4 集成SDK</a></span><span class="md-toc-item md-toc-h3" data-ref="n255"><a class="md-toc-inner" href="#header-n255">3.5 必须实现的代理方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n256"><a class="md-toc-inner" href="#header-n256">3.5.1 请求成功</a></span><span class="md-toc-item md-toc-h4" data-ref="n258"><a class="md-toc-inner" href="#header-n258">3.5.2 请求失败</a></span><span class="md-toc-item md-toc-h3" data-ref="n260"><a class="md-toc-inner" href="#header-n260">3.6 功能代理方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n261"><a class="md-toc-inner" href="#header-n261">3.6.1 房间信息</a></span><span class="md-toc-item md-toc-h4" data-ref="n264"><a class="md-toc-inner" href="#header-n264">3.6.2 获取直播开始时间和直播时长</a></span><span class="md-toc-item md-toc-h4" data-ref="n266"><a class="md-toc-inner" href="#header-n266">3.6.3 在线人数</a></span><span class="md-toc-item md-toc-h4" data-ref="n269"><a class="md-toc-inner" href="#header-n269">3.6.4 服务器端给自己设置的信息</a></span><span class="md-toc-item md-toc-h4" data-ref="n272"><a class="md-toc-inner" href="#header-n272">3.6.5 聊天</a></span><span class="md-toc-item md-toc-h5" data-ref="n273"><a class="md-toc-inner" href="#header-n273">3.6.5.1 私聊</a></span><span class="md-toc-item md-toc-h5" data-ref="n275"><a class="md-toc-inner" href="#header-n275">3.6.5.2 历史聊天数据</a></span><span class="md-toc-item md-toc-h5" data-ref="n277"><a class="md-toc-inner" href="#header-n277">3.6.5.3 收到公聊消息</a></span><span class="md-toc-item md-toc-h5" data-ref="n279"><a class="md-toc-inner" href="#header-n279">3.6.5.4 接收发送的广播</a></span><span class="md-toc-item md-toc-h5" data-ref="n281"><a class="md-toc-inner" href="#header-n281">3.6.5.5 禁言</a></span><span class="md-toc-item md-toc-h5" data-ref="n286"><a class="md-toc-inner" href="#header-n286">3.6.5.6 聊天管理</a></span><span class="md-toc-item md-toc-h4" data-ref="n288"><a class="md-toc-inner" href="#header-n288">3.6.6 问答</a></span><span class="md-toc-item md-toc-h5" data-ref="n289"><a class="md-toc-inner" href="#header-n289">3.6.6.1 发布问题</a></span><span class="md-toc-item md-toc-h5" data-ref="n291"><a class="md-toc-inner" href="#header-n291">3.6.6.2 收到提问</a></span><span class="md-toc-item md-toc-h5" data-ref="n293"><a class="md-toc-inner" href="#header-n293">3.6.6.3 收到回答</a></span><span class="md-toc-item md-toc-h5" data-ref="n295"><a class="md-toc-inner" href="#header-n295">3.6.6.4 收到提问和回答</a></span><span class="md-toc-item md-toc-h5" data-ref="n297"><a class="md-toc-inner" href="#header-n297">3.6.6.5 主动提问</a></span><span class="md-toc-item md-toc-h4" data-ref="n299"><a class="md-toc-inner" href="#header-n299">3.6.7 视频线路和清晰度</a></span><span class="md-toc-item md-toc-h4" data-ref="n301"><a class="md-toc-inner" href="#header-n301">3.6.8 直播未开始和开始</a></span><span class="md-toc-item md-toc-h5" data-ref="n302"><a class="md-toc-inner" href="#header-n302">3.6.8.1 接受播放直播状态</a></span><span class="md-toc-item md-toc-h5" data-ref="n304"><a class="md-toc-inner" href="#header-n304">3.6.8.2 主讲开始推流</a></span><span class="md-toc-item md-toc-h5" data-ref="n306"><a class="md-toc-inner" href="#header-n306">3.6.8.3 停止直播</a></span><span class="md-toc-item md-toc-h4" data-ref="n308"><a class="md-toc-inner" href="#header-n308">3.6.9 加载视频失败</a></span><span class="md-toc-item md-toc-h4" data-ref="n310"><a class="md-toc-inner" href="#header-n310">3.6.10 视频或文档大窗</a></span><span class="md-toc-item md-toc-h4" data-ref="n312"><a class="md-toc-inner" href="#header-n312">3.6.11 抽奖</a></span><span class="md-toc-item md-toc-h4" data-ref="n319"><a class="md-toc-inner" href="#header-n319">3.6.12 问卷及问卷统计</a></span><span class="md-toc-item md-toc-h4" data-ref="n332"><a class="md-toc-inner" href="#header-n332">3.6.13 签到</a></span><span class="md-toc-item md-toc-h4" data-ref="n334"><a class="md-toc-inner" href="#header-n334">3.6.14 答题卡</a></span><span class="md-toc-item md-toc-h4" data-ref="n341"><a class="md-toc-inner" href="#header-n341">3.6.15 公告</a></span><span class="md-toc-item md-toc-h4" data-ref="n346"><a class="md-toc-inner" href="#header-n346">3.6.16 随堂测</a></span><span class="md-toc-item md-toc-h4" data-ref="n359"><a class="md-toc-inner" href="#header-n359">3.6.17 连麦</a></span><span class="md-toc-item md-toc-h3" data-ref="n370"><a class="md-toc-inner" href="#header-n370">3.7 添加通知</a></span><span class="md-toc-item md-toc-h4" data-ref="n371"><a class="md-toc-inner" href="#header-n371">3.7.1 视频状态改变</a></span><span class="md-toc-item md-toc-h4" data-ref="n374"><a class="md-toc-inner" href="#header-n374">3.7.2 视频加载状态改变</a></span><span class="md-toc-item md-toc-h2" data-ref="n376"><a class="md-toc-inner" href="#header-n376">4.观看回放</a></span><span class="md-toc-item md-toc-h3" data-ref="n378"><a class="md-toc-inner" href="#header-n378">4.1 目录介绍</a></span><span class="md-toc-item md-toc-h4" data-ref="n379"><a class="md-toc-inner" href="#header-n379">4.1.1 视频视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n381"><a class="md-toc-inner" href="#header-n381">4.1.1.1 代理方法</a></span><span class="md-toc-item md-toc-h5" data-ref="n390"><a class="md-toc-inner" href="#header-n390">4.1.1.2 block回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n392"><a class="md-toc-inner" href="#header-n392">4.1.1.3 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n394"><a class="md-toc-inner" href="#header-n394">4.1.2 直播回放互动视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n396"><a class="md-toc-inner" href="#header-n396">4.1.2.1 初始化方法</a></span><span class="md-toc-item md-toc-h5" data-ref="n398"><a class="md-toc-inner" href="#header-n398">4.1.2.2 公有方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n405"><a class="md-toc-inner" href="#header-n405">4.1.3 聊天视图</a></span><span class="md-toc-item md-toc-h5" data-ref="n408"><a class="md-toc-inner" href="#header-n408">4.1.3.1 公聊消息与私聊消息回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n410"><a class="md-toc-inner" href="#header-n410">4.1.3.2 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n412"><a class="md-toc-inner" href="#header-n412">4.1.4 问答</a></span><span class="md-toc-item md-toc-h5" data-ref="n415"><a class="md-toc-inner" href="#header-n415">4.1.4.1 QuestionMessage回调</a></span><span class="md-toc-item md-toc-h5" data-ref="n417"><a class="md-toc-inner" href="#header-n417">4.1.4.2 实例方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n419"><a class="md-toc-inner" href="#header-n419">4.1.5 简介</a></span><span class="md-toc-item md-toc-h4" data-ref="n423"><a class="md-toc-inner" href="#header-n423">4.1.6 锁屏界面播放器</a></span><span class="md-toc-item md-toc-h3" data-ref="n434"><a class="md-toc-inner" href="#header-n434">4.2 观看回放</a></span><span class="md-toc-item md-toc-h4" data-ref="n435"><a class="md-toc-inner" href="#header-n435">4.2.1 CCPlayBackController的私有变量</a></span><span class="md-toc-item md-toc-h4" data-ref="n437"><a class="md-toc-inner" href="#header-n437">4.2.2 函数启动</a></span><span class="md-toc-item md-toc-h3" data-ref="n440"><a class="md-toc-inner" href="#header-n440">4.3 初始化页面布局</a></span><span class="md-toc-item md-toc-h4" data-ref="n441"><a class="md-toc-inner" href="#header-n441">4.3.1 添加视频视图(自定义视图)</a></span><span class="md-toc-item md-toc-h4" data-ref="n443"><a class="md-toc-inner" href="#header-n443">4.3.2 添加直播回放互动视图(自定义视图)</a></span><span class="md-toc-item md-toc-h4" data-ref="n445"><a class="md-toc-inner" href="#header-n445">4.3.3 设置锁屏播放器界面</a></span><span class="md-toc-item md-toc-h3" data-ref="n448"><a class="md-toc-inner" href="#header-n448">4.4 集成SDK</a></span><span class="md-toc-item md-toc-h3" data-ref="n450"><a class="md-toc-inner" href="#header-n450">4.5 必须实现的代理方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n451"><a class="md-toc-inner" href="#header-n451">4.5.1 请求成功</a></span><span class="md-toc-item md-toc-h4" data-ref="n453"><a class="md-toc-inner" href="#header-n453">4.5.2 请求失败</a></span><span class="md-toc-item md-toc-h3" data-ref="n455"><a class="md-toc-inner" href="#header-n455">4.6 功能代理方法</a></span><span class="md-toc-item md-toc-h4" data-ref="n457"><a class="md-toc-inner" href="#header-n457">4.6.1 房间信息</a></span><span class="md-toc-item md-toc-h4" data-ref="n459"><a class="md-toc-inner" href="#header-n459">4.6.2 聊天</a></span><span class="md-toc-item md-toc-h5" data-ref="n460"><a class="md-toc-inner" href="#header-n460">4.6.2.1 解析本房间历史聊天数据</a></span><span class="md-toc-item md-toc-h4" data-ref="n462"><a class="md-toc-inner" href="#header-n462">4.6.3 问答</a></span><span class="md-toc-item md-toc-h3" data-ref="n464"><a class="md-toc-inner" href="#header-n464">4.7 添加通知</a></span><span class="md-toc-item md-toc-h4" data-ref="n465"><a class="md-toc-inner" href="#header-n465">4.7.1 播放状态发生改变</a></span><span class="md-toc-item md-toc-h4" data-ref="n468"><a class="md-toc-inner" href="#header-n468">4.7.2 视频加载状态改变</a></span><span class="md-toc-item md-toc-h4" data-ref="n470"><a class="md-toc-inner" href="#header-n470">4.7.3 进入前台通知</a></span><span class="md-toc-item md-toc-h4" data-ref="n473"><a class="md-toc-inner" href="#header-n473">4.7.4 进入后台通知</a></span></p></div><h2><a name='header-n2' class='md-header-anchor '></a>1.概述</h2><p>CCLiveCloud 是一个适用于iOS平台的项目，使用此项目可以使用CC视频云服务，在iOS端使用CC视频的直播回放功能,本项目只针对iOS手机播放端。</p><h3><a name='header-n4' class='md-header-anchor '></a>1.1 功能特性</h3><figure><table><thead><tr><th style='text-align:left;' >功能</th><th style='text-align:left;' >描述</th></tr></thead><tbody><tr><td style='text-align:left;' >直播观看视频</td><td style='text-align:left;' >观看直播视频</td></tr><tr><td style='text-align:left;' >观看回放视频</td><td style='text-align:left;' >观看直播回放视频</td></tr><tr><td style='text-align:left;' >文档展示</td><td style='text-align:left;' >观看直播时展示的文档</td></tr><tr><td style='text-align:left;' >问答</td><td style='text-align:left;' >观看直播时的问答</td></tr><tr><td style='text-align:left;' >历史聊天数据</td><td style='text-align:left;' >观看聊天数据</td></tr><tr><td style='text-align:left;' >房间信息</td><td style='text-align:left;' >观看直播间信息</td></tr></tbody></table></figure><h3><a name='header-n27' class='md-header-anchor '></a>1.2 阅读对象</h3><p>本文档为技术文档，需要阅读者：</p><ul><li>具备基本的iOS开发能力</li><li>准备接入CC视频的直播或回放SDK相关功能</li><li>对CC云直播产品使用方法有基础的了解，<a href='http://doc.bokecc.com/live/manual/introduction/'>使用帮助地址</a></li></ul><h2><a name='header-n36' class='md-header-anchor '></a>2.功能使用</h2><h3><a name='header-n37' class='md-header-anchor '></a>2.1 前言</h3><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang="" style="page-break-inside: unset;"><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~集成须知~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 1:本产品作为一个demo供参考</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 2:功能模块划分很详细了,每个模块的功能和UI都已经单独封装!</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 3:项目入口为CCEntranceViewController 分为观看直播入口和观看回放入口,入口文件见左侧文件夹已经为您分别使用中/英文两种语言命名</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 4:当您只需要使用某一个功能的时候只需要拷贝走对应的文件夹以及直播或者回放控制器的代码就好,对应的代码我们已经在selection中使用mark进行了标注(selection在当前路径的正上方, .m文件的旁边)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 5:如果遇到问题请先测试demo,如果demo也有问题请联系技术支持人员(请带上系统版本号,手机型号,SDK版本号,问题描述,有日志带上日志)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 6:如果遇到问题也可以直接百度"集成CC视频sdk+您的问题"自行解决</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> [[SaveLogUtil sharedInstance]isNeedToSaveLog:YES];这个需要在AppDelegate.m中设置一下,如果遇见问题可以查看一下手机日志确定稳定的位置!如果不会查看手机日志的话可以参考:https://www.jianshu.com/p/d5e3a6109036</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 如果想在该产品基础上做修改的可按如下方法修改</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 一:修改项目名称(显示在手机上的名称)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  1.点击左侧CCLiveCloud项目名(最上层那个,旁边有个蓝色图标)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  2.点击TARGETS</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  3.点击上方的Gengral</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  4.下方有一个identity,identity里面有一项叫Display name, 修改Display name右边的文字为您想要的APP名称即可</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 二:修改项目图标</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  1.点击左侧Assets.xcassets文件会看到AppIcon</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  2.点击AppIcon可以看到所有的图标,替换掉即可</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  3.图标尺寸为20 29 40 60 76 83.5 1024的2x和3x图</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 三:修改启动页</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  1.点击左侧Assets.xcassets文件会看到LaunchImage</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  2.点击LaunchImage可以看到所有的启动图,替换掉即可</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  3.图片尺寸</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  iOS11+:</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; iPhone Xs Max: 1242 × 2688 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; iPhone Xʀ: 828 × 1792 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; iPhone X / iPhone Xs: 1125 × 2436 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  iOS 8+:</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 1242 × 2208 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 750 × 1334 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  iOS7+:</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 640 × 960px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 640 × 1136px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  iOS5,6:</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 320 × 480 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 640 × 960 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; 640 × 1136 px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 四:修改登录背景图片</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  1.点击左侧Assets.xcassets</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  2.在Assets.xcassets内的搜索框内输入launch_backgroundImage</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  3.将这个图片删掉或者修改他的名字,将您想要的登录背景图片放入文件内并命名为launch_backgroundImage</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  4.图片尺寸1125 × 2436px和1688 × 3654px</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">至此,该产品的名字,图标和启动图片以及登录背景图片都已经变成了您替换过后的!</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 上线流程:</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 1.登录https://developer.apple.com</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 2.点击account并登录,ps:个人版本/公司版本 99$/年;</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 3.配置相关证书,这个可以自行百度解决</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 4.点击App Store Connect 创建APP, 填写相关信息</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 5.点击上方Product-&gt;Scheme-&gt;Edit Scheme</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 6.修改Run和Archive右面的Build configuration的模式为release</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 7.将模拟器或者真机换成Generic iOS Device</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 8.点击上方Product-&gt;archive-&gt;distribute APP-&gt;ios App Store-&gt;upload然后一直下一步即可</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 9.上传完成之后回到App Store Connect中构建刚才上传的版本,提交审核即可!</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> </span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> 祝您使用愉快!!!</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 1518px;"></div><div class="CodeMirror-gutters" style="display: none; height: 1518px;"></div></div></div></pre><h3><a name='header-n39' class='md-header-anchor '></a>2.2 项目入口</h3><p>路径: CCLiveCloud/BASE/AppDelegate</p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang=""><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">//根控制</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">CCNAVController *navigationController = [[CCNAVController alloc] initWithRootViewController:vc];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">self.window.rootViewController = navigationController;</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 88px;"></div><div class="CodeMirror-gutters" style="display: none; height: 88px;"></div></div></div></pre><p><strong>Ps:注意事项</strong></p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang=""><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><span><span>​</span>x</span></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  是否存储日志</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  [[SaveLogUtil sharedInstance]isNeedToSaveLog:YES];</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 110px;"></div><div class="CodeMirror-gutters" style="display: none; height: 110px;"></div></div></div></pre><h4><a name='header-n44' class='md-header-anchor '></a>2.2.1 导航控制器相关设置</h4><p>路径: CCLiveCloud/BASE/CCNAVController
+<strong>Ps:UINavigationController 需要实现的方法</strong></p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang="" style="page-break-inside: unset;"><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  跟控制器设置旋转屏</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  ps:跟控制器为UINavigationController</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">-(BOOL)shouldAutorotate {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [[self.viewControllers lastObject] shouldAutorotate];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">-(NSUInteger)supportedInterfaceOrientations {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [[self.viewControllers lastObject] supportedInterfaceOrientations];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [[self.viewControllers lastObject] preferredInterfaceOrientationForPresentation];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 330px;"></div><div class="CodeMirror-gutters" style="display: none; height: 330px;"></div></div></div></pre><p><strong>Ps:tabBar控制器设置旋转屏</strong></p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang="" style="page-break-inside: unset;"><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  跟控制器设置旋转屏</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  ps: 跟控制器是tabBar控制器，那么在这个tabBar控制器中实现下面三个方法</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">-(BOOL)shouldAutorotate {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [self.selectedViewController shouldAutorotate];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">-(NSUInteger)supportedInterfaceOrientations {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [self.selectedViewController supportedInterfaceOrientations];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return [self.selectedViewController preferredInterfaceOrientationForPresentation];</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 352px;"></div><div class="CodeMirror-gutters" style="display: none; height: 352px;"></div></div></div></pre><h4><a name='header-n49' class='md-header-anchor '></a>2.2.2 选择页面控制器</h4><p>路径: CCLiveCloud/BASE/CCEntranceViewController</p><h5><a name='header-n51' class='md-header-anchor '></a>2.2.2.1 点击观看直播进入直播登录界面</h5><p>功能介绍:详情查看 2.3观看直播入口</p><p> 跳转路径为CCLiveCloud/LivePlay-观看直播/Controller/CCPlayLoginController</p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang=""><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  点击观看直播</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (void)palyButtonClick;</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 88px;"></div><div class="CodeMirror-gutters" style="display: none; height: 88px;"></div></div></div></pre><h5><a name='header-n55' class='md-header-anchor '></a>2.2.2.2 点击观看回放按钮进入观看回放界面</h5><p>功能介绍:详情查看 2.4观看回放入口
+跳转路径为CCLiveCloud/LivePlayBack-观看回放/Controller/CCPalyBackLoginController</p><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang=""><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  点击观看回放</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (void)palyBackButtonClick;</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 88px;"></div><div class="CodeMirror-gutters" style="display: none; height: 88px;"></div></div></div></pre><h5><a name='header-n58' class='md-header-anchor '></a>2.2.2.3 设置屏幕旋转相关设置</h5><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang="" style="page-break-inside: unset;"><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">/**</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> *  @brief  旋转屏设置</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> */</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (BOOL)shouldAutorotate{</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return NO;</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">{</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return UIInterfaceOrientationPortrait;</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">- (UIInterfaceOrientationMask)supportedInterfaceOrientations</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">{</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  return UIInterfaceOrientationMaskPortrait;</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">}</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 352px;"></div><div class="CodeMirror-gutters" style="display: none; height: 352px;"></div></div></div></pre><h3><a name='header-n60' class='md-header-anchor '></a>2.3 观看直播登录界面</h3><p>路径: CCLiveCloud/LivePlay-观看直播/Controller/CCPlayLoginController</p><h4><a name='header-n62' class='md-header-anchor '></a>2.3.1 登录所需参数</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n63" mdtype="fences">NSString               * roomName;//房间名
+TextFieldUserInfo    * textFieldUserId;//UserId
+TextFieldUserInfo    * textFieldRoomId;//RoomId
+TextFieldUserInfo    * textFieldUserName;//用户名
+TextFieldUserInfo    * textFieldUserPassword;//密码
+</pre><h4><a name='header-n64' class='md-header-anchor '></a>2.3.2 登录事件</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n65" mdtype="fences">-(void)loginAction{
+Ps:需要初始化SDK
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId = self.textFieldUserId.text;         //UserId
+    parameter.roomId = self.textFieldRoomId.text;         //RoomId
+    parameter.viewerName = self.textFieldUserName.text;   //用户名
+    parameter.token = self.textFieldUserPassword.text;    //密码
+    parameter.security = YES;                             //是否开启https,建议开启
+    parameter.viewerCustomua = @"viewercustomua";         //自定义参数
+    RequestData *requestData = [[RequestData alloc] initLoginWithParameter:parameter];
+    requestData.delegate = self;
+}
+</pre><h4><a name='header-n66' class='md-header-anchor '></a>2.3.3 代理方法RequestDataDelegate</h4><h5><a name='header-n67' class='md-header-anchor '></a>2.3.3.1 请求成功,跳转至观看直播界面(必须实现)</h5><p>请求成功后，可以做相关处理
+跳转路径: CCLiveCloud/LivePlay-观看直播/Controller/CCPlayerController</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n69" mdtype="fences">//@optional
+/**
+ *    @brief    请求成功
+ */
+-(void)loginSucceedPlay
+</pre><h5><a name='header-n70' class='md-header-anchor '></a>2.3.3.2 登录请求失败(必须实现)</h5><p>登录失败，可以做相关处理</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n72" mdtype="fences">/**
+ *    @brief    登录请求失败
+ */
+-(void)loginFailed:(NSError *)error reason:(NSString *)reason
+</pre><h5><a name='header-n73' class='md-header-anchor '></a>2.3.3.3 获取房间信息(可选)</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n74" mdtype="fences">/**
+ *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
+ *	房间简介：dic[@"desc"];
+ *	房间名称：dic[@"name"];
+ *	房间模版类型：[dic[@"templateType"] integerValue];
+ *	模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
+ *	模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
+ *	模版类型为3: 聊天互动： 有 直播文档： 无 直播问答： 无
+ *	模版类型为4: 聊天互动： 有 直播文档： 有 直播问答： 无
+ *	模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
+ *	模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
+ */
+-(void)roomInfo:(NSDictionary *)dic;
+</pre><h3><a name='header-n75' class='md-header-anchor '></a>2.4 观看回放登录界面</h3><p>路径: CCLiveCloud/LivePlayBack-观看回放/Controller/CCPalyBackLoginController</p><h4><a name='header-n77' class='md-header-anchor '></a>2.4.1 登录所需参数</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n78" mdtype="fences">TextFieldUserInfo            * textFieldUserId;//UserId
+TextFieldUserInfo            * textFieldRoomId;//RoomId
+TextFieldUserInfo            * textFieldLiveId;//LiveId
+TextFieldUserInfo            * textFieldRecordId;//RecordId
+TextFieldUserInfo            * textFieldUserName;//用户名
+TextFieldUserInfo            * textFieldUserPassword;//密码
+</pre><h4><a name='header-n79' class='md-header-anchor '></a>2.4.2 登录事件</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n80" mdtype="fences">-(void)loginAction{
+Ps:需要初始化SDK
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId = self.textFieldUserId.text;        //UserId
+    parameter.roomId = self.textFieldRoomId.text;        //RoomId
+    parameter.liveId = self.textFieldLiveId.text;        //LiveId
+    parameter.recordId = self.textFieldRecordId.text;    //RecordId
+    parameter.viewerName = self.textFieldUserName.text;  //用户名
+    parameter.token = self.textFieldUserPassword.text;   //密码
+    parameter.security = NO;                             //是否开启https,建议开启
+    RequestDataPlayBack *requestDataPlayBack = [[RequestDataPlayBack alloc] initLoginWithParameter:parameter];
+    requestDataPlayBack.delegate = self;
+}
+</pre><h4><a name='header-n81' class='md-header-anchor '></a>2.4.3 代理RequestDataPlayBackDelegate方法</h4><h5><a name='header-n82' class='md-header-anchor '></a>2.4.3.1 请求成功(必须实现)</h5><p>请求成功,可以做相关操作
+跳转路径: CCLiveCloud/LivePlayBack-观看回放/Controller/CCPalyBackController</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n84" mdtype="fences">//@optional
+/**
+ *    @brief    请求成功
+ */
+-(void)loginSucceedPlay
+</pre><h5><a name='header-n85' class='md-header-anchor '></a>2.4.3.2 登录请求失败(必须实现)</h5><p>请求失败,可以做相关操作</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n87" mdtype="fences">/**
+ *    @brief    登录请求失败
+ */
+-(void)loginFailed:(NSError *)error reason:(NSString *)reason
+</pre><h5><a name='header-n88' class='md-header-anchor '></a>2.4.3.3 获取房间信息(可选)</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n89" mdtype="fences">/**
+ *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
+ *	房间简介：dic[@"desc"];
+ *	房间名称：dic[@"name"];
+ *	房间模版类型：[dic[@"templateType"] integerValue];
+ *	模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
+ *	模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
+ *	模版类型为3: 聊天互动： 有 直播文档： 无 直播问答： 无
+ *	模版类型为4: 聊天互动： 有 直播文档： 有 直播问答： 无
+ *	模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
+ *	模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
+ */
+-(void)roomInfo:(NSDictionary *)dic;
+</pre><h2><a name='header-n90' class='md-header-anchor '></a>3.观看直播</h2><p>路径: CCLiveCloud/LivePlay-观看直播</p><h3><a name='header-n92' class='md-header-anchor '></a>3.1 目录介绍</h3><h4><a name='header-n93' class='md-header-anchor '></a>3.1.1 视频视图</h4><p>头文件:   #import &quot;CCPlayerView.h&quot;</p><p>路径: CCLiveCloud/LivePlay-观看直播/View/CCPlayerView</p><h5><a name='header-n96' class='md-header-anchor '></a>3.1.1.1 视频代理</h5><p> 结束直播和退出全屏</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n98" mdtype="fences">/**
+ 点击退出按钮(返回竖屏或者结束直播)
+
+ @param sender backBtn
+ @param tag changeBtn的标记，1为视频为主，2为文档为主
+ */
+- (void)backButtonClick:(UIButton *)sender changeBtnTag:(NSInteger)tag;
+</pre><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n99" mdtype="fences">/**
+ 点击切换视频/文档按钮
+
+ @param tag changeBtn的tag值
+ */
+-(void)changeBtnClicked:(NSInteger)tag;
+</pre><p> 点击全屏按钮</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n101" mdtype="fences">/**
+ 点击全屏按钮代理
+
+ @param tag 1为视频为主，2为文档为主
+ */
+- (void)quanpingButtonClick:(NSInteger)tag;
+</pre><h5><a name='header-n102' class='md-header-anchor '></a>3.1.1.2 block回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n103" mdtype="fences">void(^selectedRod)(NSInteger);                 //切换线路
+void(^sendChatMessage)(NSString *);            //发送聊天
+void(^selectedIndex)(NSInteger,NSInteger);     //切换清晰度
+void(^setRemoteView)(CGRect frame);            //设置连麦视图回调
+void(^connectSpeak)(BOOL connect);             //是否断开连麦
+</pre><h5><a name='header-n104' class='md-header-anchor '></a>3.1.1.3 实例方法</h5><p>直播状态相关</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n106" mdtype="fences" style="page-break-inside: unset;">/**
+ *    @brief  收到播放直播状态 0直播 1未直播
+ */
+- (void)getPlayStatue:(NSInteger)status;
+/**
+ *    @brief  主讲开始推流
+ */
+- (void)onLiveStatusChangeStart;
+/**
+ *    @brief  停止直播，endNormal表示是否停止推流
+ */
+- (void)onLiveStatusChangeEnd:(BOOL)endNormal;
+/**
+ *  @brief  加载视频失败
+ */
+- (void)play_loadVideoFail;
+</pre><p>视频或者文档大窗</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n108" mdtype="fences">/**
+ *  @brief  视频或者文档大窗(The new method)
+ *  isMain 1为视频为主,0为文档为主"
+ */
+- (void)onSwitchVideoDoc:(BOOL)isMain;
+</pre><p>切换线路</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n110" mdtype="fences">/**
+ *  @brief  切换线路
+ *  @param  firRoadNum 线路
+ *  @param  secRoadKeyArray 清晰度
+ */
+- (void)SelectLinesWithFirRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray;
+</pre><p>添加弹幕</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n112" mdtype="fences">/**
+ *  @brief  插入弹幕内容
+ *  @param  str 弹幕内容
+ */
+- (void)insertDanmuString:(NSString *)str;
+</pre><p>连麦相关</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n114" mdtype="fences" style="page-break-inside: unset;">//连麦点击
+-(void)lianmaiBtnClicked;
+/*
+ *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
+ */
+- (void)connectWebRTCSuccess;
+/*
+ *  @brief 当前是否可以连麦
+ */
+- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
+/**
+ *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
+ *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
+ *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
+ */
+- (void)acceptSpeak:(NSDictionary *)dict;
+/*
+ *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
+ */
+-(void)speak_disconnect:(BOOL)isAllow;
+/*
+ *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
+ *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
+ */
+- (void)allowSpeakInteraction:(BOOL)isAllow;
+</pre><h4><a name='header-n115' class='md-header-anchor '></a>3.1.2 互动视图</h4><p>头文件:   #import &quot;CCInteractionView.h&quot;</p><p>路径: CCLiveCloud/LivePlay-观看直播/View/CCInteractionView</p><h5><a name='header-n118' class='md-header-anchor '></a>3.1.2.1 block回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n119" mdtype="fences" style="page-break-inside: unset;">//隐藏更多菜单视图回调
+typedef void(^HiddenMenuViewBlock)(void);
+
+//加载弹幕
+typedef void(^InsertDanMuBlock)(NSString *str);
+
+//加载私聊新消息提示回调
+typedef void(^NewMessageBlock)(void);
+
+//发送公聊回调
+typedef void(^ChatMessageBlock)(NSString *msg);
+
+//问答回调
+typedef void(^QuestionBlock)(NSString *message);
+
+//发送私聊回调
+typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
+</pre><h5><a name='header-n120' class='md-header-anchor '></a>3.1.2.2 公有属性</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n121" mdtype="fences">@property (nonatomic,strong)UISegmentedControl       * segment;//功能切换,文档,聊天等
+@property (nonatomic,strong)ChatView                 * chatView;//聊天
+@property (nonatomic,strong)CCPlayerView             * playerView;//观看直播视频
+</pre><h5><a name='header-n122' class='md-header-anchor '></a>3.1.2.3 初始化方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n123" mdtype="fences">/**
+ 初始化方法
+
+ @param frame frame
+ @param block 隐藏menuView回调
+ @return self
+ */
+-(instancetype)initWithFrame:(CGRect)frame
+              hiddenMenuView:(HiddenMenuViewBlock)block;
+</pre><h5><a name='header-n124' class='md-header-anchor '></a>3.1.2.4 代替SDK代理相关方法</h5><p>房间信息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n126" mdtype="fences">//房间信息
+-(void)roomInfo:(NSDictionary *)dic withPlayView:(CCPlayerView *)playerView smallView:(UIView *)smallView;
+
+/**
+ *    @brief    服务器端给自己设置的信息(The new method)
+ *    viewerId 服务器端给自己设置的UserId
+ *    groupId 分组id
+ *    name 用户名
+ */
+-(void)setMyViewerInfo:(NSDictionary *) infoDic;
+</pre><p>聊天</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n128" mdtype="fences" style="page-break-inside: unset;">/**
+ *    @brief    聊天管理(The new method)
+ *    status    聊天消息的状态 0 显示 1 不显示
+ *    chatIds   聊天消息的id列列表
+ */
+-(void)chatLogManage:(NSDictionary *) manageDic;
+/**
+ *    @brief    收到私聊信息
+ */
+- (void)OnPrivateChat:(NSDictionary *)dic withMsgBlock:(NewMessageBlock)block;
+
+/**
+ *    @brief  历史聊天数据
+ */
+- (void)onChatLog:(NSArray *)chatLogArr;
+
+/**
+ *    @brief  收到公聊消息
+ */
+- (void)onPublicChatMessage:(NSDictionary *)dic;
+
+/**
+ *  @brief  接收到发送的广播
+ */
+- (void)broadcast_msg:(NSDictionary *)dic;
+
+/*
+ *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
+ */
+- (void)onSilenceUserChatMessage:(NSDictionary *)message;
+
+/**
+ *    @brief    当主讲全体禁言时，你再发消息，会出发此代理方法，information是禁言提示信息
+ */
+- (void)information:(NSString *)information;
+</pre><p>问答</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n130" mdtype="fences" style="page-break-inside: unset;">//发布问题的id
+-(void)publish_question:(NSString *)publishId;
+
+/**
+ *    @brief  收到提问，用户观看时和主讲的互动问答信息
+ */
+- (void)onQuestionDic:(NSDictionary *)questionDic;
+
+/**
+ *    @brief  收到回答
+ */
+- (void)onAnswerDic:(NSDictionary *)answerDic;
+
+/**
+ *    @brief  收到提问&amp;回答
+ */
+- (void)onQuestionArr:(NSArray *)questionArr onAnswerArr:(NSArray *)answerArr;
+
+//主动调用方法
+/**
+ *    @brief    提问
+ *    @param     message 提问内容
+ */
+- (void)question:(NSString *)message;
+</pre><h4><a name='header-n131' class='md-header-anchor '></a>3.1.3 聊天视图</h4><p>头文件:   #import &quot;CCChatBaseView.h&quot;</p><p>路径: CCLiveCloud/Chat-聊天/CCChatBaseView</p><h5><a name='header-n134' class='md-header-anchor '></a>3.1.3.1 公聊消息与私聊消息回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n135" mdtype="fences" style="page-break-inside: unset;">/**
+ 公聊消息回调
+
+ @param msg 消息
+ */
+typedef void(^PublicChatBlock)(NSString *msg);
+
+/**
+ 私聊消息回调
+
+ @param anteid anteid
+ @param msg 私聊消息
+ */
+typedef void(^PrivateChatBlock)(NSString *anteid,NSString *msg);
+</pre><h5><a name='header-n136' class='md-header-anchor '></a>3.1.3.2 实例方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n137" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param block 公聊回调
+ @param input 是否有输入框
+ @return self
+ */
+-(instancetype)initWithPublicChatBlock:(PublicChatBlock)block
+                               isInput:(BOOL)input;
+
+/**
+ reload所有公聊视图
+
+ @param array 公聊数组
+ */
+-(void)reloadPublicChatArray:(NSMutableArray *)array;
+
+/**
+ 添加公聊数组，并且reload(ps:适用于直播回放加载)
+
+ @param array 直播回放的时候,每秒钟加载一些数据,用array盛放这一秒中的聊天数组
+ */
+- (void)addPublicChatArray:(NSMutableArray *)array;
+
+/**
+ 添加一条公聊聊天
+
+ @param array dataSource处理过的数组,需要处理最后一条数据，并加载
+ */
+-(void)addPublicChat:(NSMutableArray *)array;
+
+/**
+ 刷新私聊
+
+ @param dict 私聊字典
+ */
+- (void)reloadPrivateChatDict:(NSMutableDictionary *)dict anteName:anteName anteid:anteid;
+
+/**
+ 点击私聊按钮(ps:点击menuView的时候，需要主动调用此方法,用来弹出私聊视图);
+ */
+-(void)privateChatBtnClicked;
+
+/**
+ 聊天审核,刷新聊天记录
+ 
+ @param arr 需要被刷新的某一行数组
+ @param publicArr 更新过的数组
+ */
+-(void)reloadStatusWithIndexPaths:(NSMutableArray *)arr
+                        publicArr:(NSMutableArray *)publicArr;
+                        
+/**
+ 图片刷新
+ 
+ @param indexPath 需要被刷新的某一行数组
+ @param publicArr 更新过的数组
+ */
+-(void)reloadStatusWithIndexPath:(NSIndexPath *)indexPath
+                        publicArr:(NSMutableArray *)publicArr;
+</pre><h4><a name='header-n138' class='md-header-anchor '></a>3.1.4 问答</h4><p>头文件:    #import &quot;CCQuestionView.h&quot;</p><p>路径: CCLiveCloud/Question-问答/CCQuestionView</p><h5><a name='header-n141' class='md-header-anchor '></a>3.1.4.1 QuestionMessage回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n142" mdtype="fences">/**
+ 问答回调
+
+ @param message 问答信息
+ */
+typedef void(^QuestionBlock)(NSString *message);
+</pre><h5><a name='header-n143' class='md-header-anchor '></a>3.1.4.2 实例方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n144" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param questionBlock 问答回调
+ @param input 是否输入
+ @return self
+ */
+-(instancetype)initWithQuestionBlock:(QuestionBlock)questionBlock input:(BOOL)input;
+
+/**
+ 重新加载问题信息
+
+ @param QADic 问答信息字典
+ @param keysArrAll 键值
+ */
+-(void)reloadQADic:(NSMutableDictionary *)QADic keysArrAll:(NSMutableArray *)keysArrAll;
+</pre><h4><a name='header-n145' class='md-header-anchor '></a>3.1.5 简介</h4><p>头文件:  #import &quot;CCIntroductionView.h&quot;</p><p>路径: CCLiveCloud/Introduction-简介/CCIntroductionView
+实例变量</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n148" mdtype="fences">NSString                 *roomDesc;//简介
+NSString                 *roomName;//房间名
+</pre><h4><a name='header-n149' class='md-header-anchor '></a>3.1.6 功能菜单视图</h4><p>头文件:  #import &quot;SelectMenuView.h&quot;</p><p>路径: CCLiveCloud/Menu-菜单/SelectMenuView</p><h5><a name='header-n152' class='md-header-anchor '></a>3.1.6.1 新消息枚举状态</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n153" mdtype="fences">typedef enum : NSUInteger {
+    NewPrivateMessage,//新私聊
+    NewAnnouncementMessage,//新公告
+} NewMessageState;
+</pre><h5><a name='header-n154' class='md-header-anchor '></a>3.1.6.2 block回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n155" mdtype="fences">//私聊回调
+typedef void(^PrivateBlock)(void);
+//连麦回调
+typedef void(^LianmaiBlock)(void);
+//公告回调
+typedef void(^AnnouncementBlock)(void);
+</pre><h5><a name='header-n156' class='md-header-anchor '></a>3.1.6.3 公有属性</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n157" mdtype="fences">@property (nonatomic, strong) UIButton         *menuBtn;//菜单按钮
+@property (nonatomic, strong) UIButton         *privateChatBtn;//私聊按钮
+@property (nonatomic, strong) UIButton         *lianmaiBtn;//连麦按钮
+@property (nonatomic, strong) UIButton         *announcementBtn;//公告按钮
+</pre><h5><a name='header-n158' class='md-header-anchor '></a>3.1.6.4 公有方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n159" mdtype="fences" style="page-break-inside: unset;">/**
+ 隐藏btn方法
+
+ @param hidden 是否隐藏
+ */
+-(void)hiddenAllBtns:(BOOL)hidden;
+
+/**
+ 新消息提示
+
+ @param messageState 消息内容
+ */
+-(void)showInformationViewWithTitle:(NewMessageState)messageState;
+
+/**
+ 更新新消息
+ */
+-(void)updateMessageFrame;
+
+/**
+ 移除新消息
+ */
+-(void)removeAllInformationView;
+</pre><h4><a name='header-n160' class='md-header-anchor '></a>3.1.7 抽奖</h4><p>头文件:  #import &quot;LotteryView.h&quot;</p><p>路径: CCLiveCloud/LotteryDraw-抽奖/LotteryView</p><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n164" mdtype="fences">/**
+ 初始化方法
+
+ @param isScreenLandScape 是否是全屏
+ @param clearColor clearColor
+ @return self
+ */
+-(instancetype)initIsScreenLandScape:(BOOL)isScreenLandScape clearColor:(BOOL)clearColor;
+</pre><p>抽奖结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n166" mdtype="fences">/**
+ *  @brief  抽奖结果
+ *  remainNum   剩余奖品数
+ */
+- (void)lottery_resultWithCode:(NSString *)code myself:(BOOL)myself winnerName:(NSString *)winnerName remainNum:(NSInteger)remainNum IsScreenLandScape:(BOOL)isScreenLandScape;
+</pre><h4><a name='header-n167' class='md-header-anchor '></a>3.1.8 问卷</h4><h5><a name='header-n168' class='md-header-anchor '></a>3.1.8.1 第三方问卷</h5><p>头文件:  #import &quot;QuestionNaire.h&quot;</p><p>路径: CCLiveCloud/Statistical-统计/QuestionNaire</p><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n172" mdtype="fences">/**
+ 初始化方法
+
+ @param title 问卷标题
+ @param url 第三方问卷链接
+ @param isScreenLandScape 是否是全屏
+ @return self
+ */
+-(instancetype)initWithTitle:(NSString *)title
+                         url:(NSString *)url
+           isScreenLandScape:(BOOL)isScreenLandScape;
+</pre><h5><a name='header-n173' class='md-header-anchor '></a>3.1.8.2 问卷和问卷统计</h5><p>头文件:  #import &quot;QuestionnaireSurvey.h&quot;</p><p>路径: CCLiveCloud/Statistical-统计/QuestionnaireSurvey
+block回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n176" mdtype="fences">//关闭按钮回调
+typedef void(^CloseBlock)(void);
+//提交按钮回调
+typedef void(^CommitBlock)(NSDictionary *dic);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n178" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param closeblock 关闭视图回调
+ @param commitblock 提交回调
+ @param questionnaireDic 问卷字典
+ @param isScreenLandScape 是否全屏
+ @param isStastic 是否是统计
+ @return self
+ */
+-(instancetype)initWithCloseBlock:(CloseBlock)closeblock
+                      CommitBlock:(CommitBlock)commitblock
+                 questionnaireDic:(NSDictionary *)questionnaireDic
+                isScreenLandScape:(BOOL)isScreenLandScape
+                        isStastic:(BOOL)isStastic;
+</pre><p>提交成功</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n180" mdtype="fences">/**
+ 提交成功
+
+ @param success 提交回调调用的方法
+ */
+-(void)commitSuccess:(BOOL)success;
+</pre><h5><a name='header-n181' class='md-header-anchor '></a>3.1.8.3 问卷弹窗</h5><p>头文件:  #import &quot;QuestionnaireSurveyPopUp.h&quot;</p><p>路径: CCLiveCloud/Statistical-统计/QuestionnaireSurveyPopUp
+确认回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n184" mdtype="fences">//确认回调
+typedef void(^SureBtnBlock)(void);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n186" mdtype="fences">/**
+ 初始化方法
+
+ @param isScreenLandScape 是否是全屏
+ @param sureBtnBlock 点击确定回调
+ @return self
+ */
+-(instancetype)initIsScreenLandScape:(BOOL)isScreenLandScape
+                        SureBtnBlock:(SureBtnBlock)sureBtnBlock;
+</pre><h4><a name='header-n187' class='md-header-anchor '></a>3.1.9 签到</h4><p>头文件:  #import &quot;RollcallView.h&quot;</p><p>路径: CCLiveCloud/Sign-签到/RollcallView
+签到回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n190" mdtype="fences">//签到回调
+typedef void(^LotteryBtnClicked)(void);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n192" mdtype="fences">/**
+ 初始化签到
+
+ @param duration 签到时长
+ @param lotteryblock 签到回调
+ @param isScreenLandScape 是否全屏
+ @return self
+ */
+-(instancetype) initWithDuration:(NSInteger)duration
+                    lotteryblock:(LotteryBtnClicked)lotteryblock
+               isScreenLandScape:(BOOL)isScreenLandScape;
+</pre><h4><a name='header-n193' class='md-header-anchor '></a>3.1.10 答题卡</h4><h5><a name='header-n194' class='md-header-anchor '></a>3.1.10.1 答题卡</h5><p>头文件:  #import &quot;VoteView.h&quot;</p><p>路径: CCLiveCloud/AnswerSheet-答题卡/VoteView
+block回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n197" mdtype="fences">//单选回调
+typedef void(^VoteBtnClickedSingle)(NSInteger index);
+//多选数组回调
+typedef void(^VoteBtnClickedMultiple)(NSMutableArray *indexArray);
+//单选不发布回调
+typedef void(^VoteBtnClickedSingleNOSubmit)(NSInteger index);
+//多选不发布回调
+typedef void(^VoteBtnClickedMultipleNOSubmit)(NSMutableArray *indexArray);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n199" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param count count
+ @param single 是否是单选
+ @param voteSingleBlock 单选回调
+ @param voteMultipleBlock 多选回调
+ @param singleNOSubmit 单选不发布回调
+ @param multipleNOSubmit 多选不发布回调
+ @param isScreenLandScape 是否是全屏
+ @return self
+ */
+-(instancetype) initWithCount:(NSInteger)count
+              singleSelection:(BOOL)single
+              voteSingleBlock:(VoteBtnClickedSingle)voteSingleBlock
+            voteMultipleBlock:(VoteBtnClickedMultiple)voteMultipleBlock
+               singleNOSubmit:(VoteBtnClickedSingleNOSubmit)singleNOSubmit
+             multipleNOSubmit:(VoteBtnClickedMultipleNOSubmit)multipleNOSubmit
+            isScreenLandScape:(BOOL)isScreenLandScape;
+</pre><h5><a name='header-n200' class='md-header-anchor '></a>3.1.10.2 答题结果</h5><p>头文件:  #import &quot;VoteViewResult.h&quot;</p><p>路径: CCLiveCloud/AnswerSheet-答题卡/VoteViewResult
+初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n203" mdtype="fences">/**
+ 初始化方法
+
+ @param resultDic 答题结果字典
+ @param mySelectIndex 我选择的答案
+ @param mySelectIndexArray 我选择的答案数组
+ @param isScreenLandScape 是否全屏
+ @return self
+ */
+-(instancetype) initWithResultDic:(NSDictionary *)resultDic
+                    mySelectIndex:(NSInteger)mySelectIndex
+               mySelectIndexArray:(NSMutableArray *)mySelectIndexArray
+                isScreenLandScape:(BOOL)isScreenLandScape;
+</pre><h4><a name='header-n204' class='md-header-anchor '></a>3.1.11 公告</h4><p>头文件:  #import &quot;AnnouncementView.h&quot;</p><p>路径: CCLiveCloud/Announcement-公告/AnnouncementView
+初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n207" mdtype="fences">/**
+ 初始化方法
+
+ @param str 公告内容
+ @return self
+ */
+-(instancetype)initWithAnnouncementStr:(NSString *)str;
+</pre><p>更新公告内容</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n209" mdtype="fences">/**
+ 更新公告内容
+
+ @param str 公告内容
+ */
+-(void)updateViews:(NSString *)str;
+</pre><h4><a name='header-n210' class='md-header-anchor '></a>3.1.12 随堂测</h4><p>头文件:  #import &quot;CCClassTestView.h&quot;</p><p>路径: CCLiveCloud/ClassTest-随堂测/CCClassTestView
+block回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n213" mdtype="fences">void(^StaticBlock)(NSString *practiceId);// 获取统计回调
+void(^CommitBlock)(NSArray *arr);//提交答案回调
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n215" mdtype="fences">/**
+ 初始化方法
+
+ @param testDic 随堂测答题选项字典
+ @param isScreenLandScape 是否是全屏
+ @return self;
+ */
+-(instancetype)initWithTestDic:(NSDictionary *)testDic
+             isScreenLandScape:(BOOL)isScreenLandScape;
+</pre><p>随堂测提交结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n217" mdtype="fences">/**
+ *    @brief    随堂测提交结果
+ *    rseultDic   提交结果字典
+ */
+-(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic;
+</pre><p>答题统计</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n219" mdtype="fences">/**
+ 得到答题统计
+
+ @param resultDic 统计结果字典
+ */
+-(void)getPracticeStatisWithResultDic:(NSDictionary *)resultDic isScreen:(BOOL)isScreen;
+</pre><p>停止测试</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n221" mdtype="fences">/**
+ 停止测试
+ */
+-(void)stopTest;
+</pre><p>关闭计时器</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n223" mdtype="fences">/**
+ 关闭计时器
+ */
+-(void)stopTimer;
+</pre><h4><a name='header-n224' class='md-header-anchor '></a>3.1.13 奖杯</h4><p>头文件:  #import &quot;CCCupView.h&quot;</p><p>路径: CCLiveCloud/ClassTest-随堂测/CCCupView
+初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n227" mdtype="fences">/**
+ 奖杯初始化
+
+ @param winnerName 获胜的用户名称(为@""时默认自己胜利)
+ @param isScreen 是否是全屏
+ @return self
+ */
+-(instancetype)initWithWinnerName:(NSString *)winnerName isScreen:(BOOL)isScreen;
+</pre><h4><a name='header-n228' class='md-header-anchor '></a>3.1.14 锁屏界面播放器</h4><p>头文件:  #import &quot;CCLockView.h&quot;</p><p>路径: CCLiveCloud/Tools/CCLockView
+block回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n231" mdtype="fences">/**
+ 暂停回调
+
+ @param pause 是否暂停
+ */
+typedef void(^PauseCallBack)(BOOL pause);
+
+/**
+ 改变播放进度回调
+
+ @param time 改变后的进度时间
+ */
+typedef void(^ChangeProgress)(int time);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n233" mdtype="fences">/**
+ 初始化方法
+
+ @param roomName 房间名称
+ @param duration 视频时长
+ @return self
+ */
+-(instancetype)initWithRoomName:(NSString *)roomName duration:(int)duration;
+</pre><p>更新锁屏信息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n235" mdtype="fences">/**
+ 更新锁屏信息
+ */
+-(void)updateLockView;
+</pre><h3><a name='header-n236' class='md-header-anchor '></a>3.2 观看直播</h3><h4><a name='header-n237' class='md-header-anchor '></a>3.2.1 CCPlayerController的私有变量</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n238" mdtype="fences" style="page-break-inside: unset;">#pragma mark - 房间相关参数
+NSString                 * viewerId;//观看者的id
+NSTimer                  * userCountTimer;//计算观看人数
+NSString                 * roomName;//房间名
+RequestData              * requestData;//sdk
+#pragma mark - UI初始化
+CCPlayerView             * playerView;//视频视图
+CCInteractionView        * contentView;//互动视图
+SelectMenuView           * menuView;//选择菜单视图
+#pragma mark - 抽奖
+LotteryView              * lotteryView;//抽奖
+#pragma mark - 问卷
+NSInteger                submitedAction;//提交事件
+QuestionNaire            * questionNaire;//第三方调查问卷
+QuestionnaireSurvey      * questionnaireSurvey;//问卷视图
+QuestionnaireSurveyPopUp * questionnaireSurveyPopUp;//问卷弹窗
+#pragma mark - 签到
+RollcallView             * rollcallView;//签到
+NSInteger                duration;//签到时间
+#pragma mark - 答题卡
+VoteView                 * voteView;//答题卡
+VoteViewResult           * voteViewResult;//答题结果
+NSInteger                mySelectIndex;//答题单选答案
+NSMutableArray           * mySelectIndexArray;//答题多选答案
+#pragma mark - 公告
+NSString                 * gongGaoStr;//公告内容
+AnnouncementView         * announcementView;//公告视图
+#pragma mark - 随堂测
+CCClassTestView           * testView;//随堂测
+#pragma mark - 提示框
+CCAlertView              * alertView;//消息弹窗
+#pragma make - 锁屏界面
+CCLockView               * lockView;//锁屏视图
+
+BOOL                     isScreenLandScape;//是否横屏
+BOOL                     screenLandScape;//横屏
+BOOL                     isHomeIndicatorHidden;//隐藏home条
+NSInteger                firRoadNum;//房间线路
+NSMutableArray           * secRoadKeyArray;//清晰度数组
+BOOL                     firstUnStart;//第一次进入未开始直播
+BOOL                     pauseInBackGround;//后台播放是否暂停
+
+</pre><h4><a name='header-n239' class='md-header-anchor '></a>3.2.2 初始化所需要的roomName</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n240" mdtype="fences">//初始化
+- (instancetype)initWithRoomName:(NSString *)roomName;
+</pre><h4><a name='header-n241' class='md-header-anchor '></a>3.2.3 函数启动</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n242" mdtype="fences">//启动
+- (void)viewDidLoad{
+    [self setupUI];//创建UI
+    [self integrationSDK];//集成SDK
+    [self addObserver];//添加通知
+}
+</pre><h4><a name='header-n243' class='md-header-anchor '></a>3.2.4 视图将要消失</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n244" mdtype="fences">- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self removeObserver];//移除通知
+}
+</pre><h3><a name='header-n245' class='md-header-anchor '></a>3.3  初始化页面布局</h3><h4><a name='header-n246' class='md-header-anchor '></a>3.3.1 添加视频视图(自定义视图)</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n247" mdtype="fences">//视频视图
+    self.playerView = [[CCPlayerView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:self.playerView];
+</pre><h4><a name='header-n248' class='md-header-anchor '></a>3.3.2 互动视图(自定义视图)</h4><p><strong>互动视图包含聊天,问答,简介三个部分</strong></p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n250" mdtype="fences">//添加互动视图
+    [self.view addSubview:self.contentView];
+</pre><h4><a name='header-n251' class='md-header-anchor '></a>3.3.3 更多菜单视图 (自定义视图)</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n252" mdtype="fences">//添加更多菜单
+    [APPDelegate.window addSubview:self.menuView];
+</pre><h3><a name='header-n253' class='md-header-anchor '></a>3.4 集成SDK</h3><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n254" mdtype="fences" style="page-break-inside: unset;">/**
+ 集成sdk
+ */
+- (void)integrationSDK {
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId                 //userId
+    parameter.roomId                 //roomId
+    parameter.viewerName             //用户名
+    parameter.token                  //密码
+    parameter.playerParent           //视频视图
+    parameter.playerFrame            //视频位置,ps:起始位置为视频视图坐标
+    parameter.docParent              //文档小窗
+    parameter.docFrame               //文档位置,ps:起始位置为文档视图坐标
+    parameter.security               //是否开启https,建议开启
+    parameter.PPTScalingMode         //ppt展示模式,建议值为4
+    parameter.defaultColor           //ppt默认底色，不写默认为白色
+    parameter.scalingMode            //屏幕适配方式
+    parameter.pauseInBackGround      //后台是否继续播放
+    parameter.viewerCustomua         //自定义参数,没有的话这么写就可以
+    parameter.pptInteractionEnabled  //是否开启ppt滚动
+    parameter.DocModeType            //设置当前的文档模式
+    _requestData = [[RequestData alloc] initWithParameter:parameter];
+    _requestData.delegate = self;
+}
+</pre><h3><a name='header-n255' class='md-header-anchor '></a>3.5 必须实现的代理方法</h3><h4><a name='header-n256' class='md-header-anchor '></a>3.5.1 请求成功</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n257" mdtype="fences">/**
+ *    @brief    请求成功
+ */
+-(void)requestSucceed{
+    ps:请求成功后的操作
+}
+</pre><h4><a name='header-n258' class='md-header-anchor '></a>3.5.2 请求失败</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n259" mdtype="fences">/**
+ *    @brief    登录请求失败
+ */
+-(void)requestFailed:(NSError *)error reason:(NSString *)reason{
+    ps:请求失败后的操作
+}
+</pre><h3><a name='header-n260' class='md-header-anchor '></a>3.6 功能代理方法</h3><h4><a name='header-n261' class='md-header-anchor '></a>3.6.1 房间信息</h4><p>获取房间信息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n263" mdtype="fences">/**
+ *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
+ *	房间简介：dic[@"desc"];
+ *	房间名称：dic[@"name"];
+ *	房间模版类型：[dic[@"templateType"] integerValue];
+ *	模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
+ *	模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
+ *	模版类型为3: 聊天互动： 有 直播文档： 无 直播问答： 无
+ *	模版类型为4: 聊天互动： 有 直播文档： 有 直播问答： 无
+ *	模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
+ *	模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
+ */
+-(void)roomInfo:(NSDictionary *)dic;
+</pre><h4><a name='header-n264' class='md-header-anchor '></a>3.6.2 获取直播开始时间和直播时长</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n265" mdtype="fences">/**
+ *  @brief  获取直播开始时间和直播时长
+ *  liveDuration 直播持续时间，单位（s），直播未开始返回-1"
+ *  liveStartTime 新增开始直播时间（格式：yyyy-MM-dd HH:mm:ss），如果直播未开始，则返回空字符串
+ */
+- (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic {
+    SaveToUserDefaults(LIVE_STARTTIME, dataDic[@"liveStartTime"]);
+}
+</pre><h4><a name='header-n266' class='md-header-anchor '></a>3.6.3 在线人数</h4><p>获取在线人数</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n268" mdtype="fences">/**
+ *    @brief    收到在线人数
+ */
+- (void)onUserCount:(NSString *)count;
+</pre><h4><a name='header-n269' class='md-header-anchor '></a>3.6.4 服务器端给自己设置的信息</h4><p>获取服务器端给自己设置的信息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n271" mdtype="fences">/**
+ *    @brief    服务器端给自己设置的信息(The new method)
+ *    viewerId 服务器端给自己设置的UserId
+ *    groupId 分组id
+ *    name 用户名
+ */
+-(void)setMyViewerInfo:(NSDictionary *) infoDic{
+    [_contentView setMyViewerInfo:infoDic];
+}
+</pre><h4><a name='header-n272' class='md-header-anchor '></a>3.6.5 聊天</h4><h5><a name='header-n273' class='md-header-anchor '></a>3.6.5.1 私聊</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n274" mdtype="fences">/**
+ *    @brief    收到私聊信息
+ */
+- (void)OnPrivateChat:(NSDictionary *)dic;
+</pre><h5><a name='header-n275' class='md-header-anchor '></a>3.6.5.2 历史聊天数据</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n276" mdtype="fences">/**
+ *    @brief  历史聊天数据
+ */
+- (void)onChatLog:(NSArray *)chatLogArr;
+</pre><h5><a name='header-n277' class='md-header-anchor '></a>3.6.5.3 收到公聊消息</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n278" mdtype="fences">/**
+ *    @brief  收到公聊消息
+ */
+- (void)onPublicChatMessage:(NSDictionary *)dic;
+</pre><h5><a name='header-n279' class='md-header-anchor '></a>3.6.5.4 接收发送的广播</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n280" mdtype="fences">/**
+ *  @brief  接收到发送的广播
+ */
+- (void)broadcast_msg:(NSDictionary *)dic;
+</pre><h5><a name='header-n281' class='md-header-anchor '></a>3.6.5.5 禁言</h5><p>个人禁言</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n283" mdtype="fences">/*
+ *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
+ */
+- (void)onSilenceUserChatMessage:(NSDictionary *)message;
+</pre><p>全体禁言</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n285" mdtype="fences">/**
+ *    @brief    当主讲全体禁言时，你再发消息，会出发此代理方法，information是禁言提示信息
+ */
+- (void)information:(NSString *)information;
+</pre><h5><a name='header-n286' class='md-header-anchor '></a>3.6.5.6 聊天管理</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n287" mdtype="fences">/**
+ *    @brief    聊天管理(The new method)
+ *    status    聊天消息的状态 0 显示 1 不显示
+ *    chatIds   聊天消息的id列列表
+ */
+-(void)chatLogManage:(NSDictionary *) manageDic{
+    [_contentView chatLogManage:manageDic];
+}
+</pre><h4><a name='header-n288' class='md-header-anchor '></a>3.6.6 问答</h4><h5><a name='header-n289' class='md-header-anchor '></a>3.6.6.1 发布问题</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n290" mdtype="fences">/**
+ *  @brief  发布问题的ID
+ */
+- (void)publish_question:(NSString *)publishId;
+</pre><h5><a name='header-n291' class='md-header-anchor '></a>3.6.6.2 收到提问</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n292" mdtype="fences">/**
+ *    @brief  收到提问，用户观看时和主讲的互动问答信息
+ */
+- (void)onQuestionDic:(NSDictionary *)questionDic;
+</pre><h5><a name='header-n293' class='md-header-anchor '></a>3.6.6.3 收到回答</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n294" mdtype="fences">/**
+ *    @brief  收到回答
+ */
+- (void)onAnswerDic:(NSDictionary *)answerDic;
+</pre><h5><a name='header-n295' class='md-header-anchor '></a>3.6.6.4 收到提问和回答</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n296" mdtype="fences">/**
+ *    @brief  收到提问&amp;回答
+ */
+- (void)onQuestionArr:(NSArray *)questionArr onAnswerArr:(NSArray *)answerArr;
+</pre><h5><a name='header-n297' class='md-header-anchor '></a>3.6.6.5 主动提问</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n298" mdtype="fences">//主动调用方法
+/**
+ *    @brief    提问
+ *    @param     message 提问内容
+ */
+- (void)question:(NSString *)message{
+    //提问    调用SDK方法
+    [_requestData question:message];
+}
+</pre><h4><a name='header-n299' class='md-header-anchor '></a>3.6.7 视频线路和清晰度</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n300" mdtype="fences">/**
+ *  @brief 切换源，firRoadNum表示一共有几个源，secRoadKeyArray表示每
+ *  个源的描述数组，具体参见demo，firRoadNum是下拉列表有面的tableviewcell
+ *  的行数，secRoadKeyArray是左面的tableviewcell的描述信息数组
+ */
+- (void)firRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray;
+</pre><h4><a name='header-n301' class='md-header-anchor '></a>3.6.8 直播未开始和开始</h4><h5><a name='header-n302' class='md-header-anchor '></a>3.6.8.1 接受播放直播状态</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n303" mdtype="fences">/**
+ *	@brief  收到播放直播状态 0直播 1未直播
+ */
+- (void)getPlayStatue:(NSInteger)status;
+</pre><h5><a name='header-n304' class='md-header-anchor '></a>3.6.8.2 主讲开始推流</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n305" mdtype="fences">/**
+ *	@brief  主讲开始推流
+ */
+- (void)onLiveStatusChangeStart;
+</pre><h5><a name='header-n306' class='md-header-anchor '></a>3.6.8.3 停止直播</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n307" mdtype="fences">/**
+ *    @brief  停止直播，endNormal表示是否停止推流
+ */
+- (void)onLiveStatusChangeEnd:(BOOL)endNormal;
+</pre><h4><a name='header-n308' class='md-header-anchor '></a>3.6.9 加载视频失败</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n309" mdtype="fences">/**
+ *  @brief  加载视频失败
+ */
+- (void)play_loadVideoFail;
+</pre><h4><a name='header-n310' class='md-header-anchor '></a>3.6.10 视频或文档大窗</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n311" mdtype="fences">/**
+ *  @brief  视频或者文档大窗(The new method)
+ *  isMain 1为视频为主,0为文档为主"
+ */
+- (void)onSwitchVideoDoc:(BOOL)isMain;
+</pre><h4><a name='header-n312' class='md-header-anchor '></a>3.6.11 抽奖</h4><p>开始抽奖</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n314" mdtype="fences">/**
+ *  @brief  开始抽奖
+ */
+- (void)start_lottery;
+</pre><p>抽奖结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n316" mdtype="fences">/**
+ *  @brief  抽奖结果
+ *  remainNum   剩余奖品数
+ */
+- (void)lottery_resultWithCode:(NSString *)code
+                        myself:(BOOL)myself
+                    winnerName:(NSString *)winnerName
+                     remainNum:(NSInteger)remainNum;
+</pre><p>退出抽奖</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n318" mdtype="fences">/**
+ *  @brief  退出抽奖
+ */
+- (void)stop_lottery;
+</pre><h4><a name='header-n319' class='md-header-anchor '></a>3.6.12 问卷及问卷统计</h4><p>第三方问卷</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n321" mdtype="fences">/**
+ *  @brief  问卷功能
+ */
+- (void)questionnaireWithTitle:(NSString *)title url:(NSString *)url;
+</pre><p>提交问卷结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n323" mdtype="fences">/**
+ *  @brief  提交问卷结果（成功，失败）
+ */
+- (void)commitQuestionnaireResult:(BOOL)success;
+</pre><p>发布问卷</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n325" mdtype="fences">/**
+ *  @brief  发布问卷
+ */
+- (void)questionnaire_publish;
+</pre><p>获取问卷详细内容</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n327" mdtype="fences">/**
+ *  @brief  获取问卷详细内容
+ */
+- (void)questionnaireDetailInformation:(NSDictionary *)detailDic;
+</pre><p>结束发布问卷</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n329" mdtype="fences">/**
+ *  @brief  结束发布问卷
+ */
+- (void)questionnaire_publish_stop;
+</pre><p>获取问卷统计</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n331" mdtype="fences">- (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic;
+</pre><h4><a name='header-n332' class='md-header-anchor '></a>3.6.13 签到</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n333" mdtype="fences">/**
+  *  @brief  开始签到
+  */
+- (void)start_rollcall:(NSInteger)duration;
+</pre><h4><a name='header-n334' class='md-header-anchor '></a>3.6.14 答题卡</h4><p>开始答题</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n336" mdtype="fences">/**
+  *  @brief  开始答题
+  */
+- (void)start_vote:(NSInteger)count singleSelection:(BOOL)single;
+</pre><p>结束答题</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n338" mdtype="fences">/**
+  *  @brief  结束答题
+  */
+- (void)stop_vote;
+</pre><p>答题结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n340" mdtype="fences">/**
+  *  @brief  答题结果
+  */
+- (void)vote_result:(NSDictionary *)resultDic;
+</pre><h4><a name='header-n341' class='md-header-anchor '></a>3.6.15 公告</h4><p>获得刚进入时的公告消息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n343" mdtype="fences">/**
+ *  @brief  公告
+ */
+- (void)announcement:(NSString *)str;
+</pre><p>监听到有公告消息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n345" mdtype="fences">/**
+ *  @brief  监听到有公告消息
+ */
+- (void)on_announcement:(NSDictionary *)dict;
+</pre><h4><a name='header-n346' class='md-header-anchor '></a>3.6.16 随堂测</h4><p>接收到随堂测</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n348" mdtype="fences">/**
+ *    @brief    接收到随堂测(The new method)
+ *    rseultDic    随堂测内容
+ */
+-(void)receivePracticeWithDic:(NSDictionary *) resultDic;
+</pre><p>随堂测提交结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n350" mdtype="fences">/**
+ *    @brief    随堂测提交结果(The new method)
+ *    rseultDic    提交结果,调用commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options后执行
+ */
+-(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic;
+</pre><p>随堂测统计结果</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n352" mdtype="fences">/**
+ *    @brief    随堂测统计结果(The new method)
+ *    rseultDic    统计结果,调用getPracticeStatisWithPracticeId:(NSString *)practiceId后执行
+ */
+-(void)practiceStatisResultsWithDic:(NSDictionary *) resultDic;
+</pre><p>停止随堂测</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n354" mdtype="fences">/**
+ *    @brief    停止随堂测(The new method)
+ *    rseultDic    结果
+ */
+-(void)practiceStopWithDic:(NSDictionary *) resultDic;
+</pre><p>关闭随堂测</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n356" mdtype="fences">/**
+ *    @brief    关闭随堂测(The new method)
+ *    rseultDic    结果
+ */
+-(void)practiceCloseWithDic:(NSDictionary *) resultDic;
+</pre><p>收到奖杯</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n358" mdtype="fences">/**
+ *    @brief    收到奖杯(The new method)
+ *    dic       结果
+ *    "type":  1 奖杯 2 其他
+ */
+-(void)prize_sendWithDict:(NSDictionary *)dic;
+</pre><h4><a name='header-n359' class='md-header-anchor '></a>3.6.17 连麦</h4><p>WebRTC连接成功</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n361" mdtype="fences">/*
+ *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
+ */
+- (void)connectWebRTCSuccess;
+</pre><p>当前是否可以连麦</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n363" mdtype="fences">/*
+ *  @brief 当前是否可以连麦
+ */
+- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
+</pre><p>主播端接受连麦请求</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n365" mdtype="fences">/**
+ *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
+ *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
+ *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
+ */
+- (void)acceptSpeak:(NSDictionary *)dict;
+</pre><p>断开连麦</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n367" mdtype="fences">/*
+ *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
+ */
+-(void)speak_disconnect:(BOOL)isAllow;
+</pre><p>是否允许连麦</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n369" mdtype="fences">/*
+ *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
+ *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
+ */
+- (void)allowSpeakInteraction:(BOOL)isAllow;
+</pre><h3><a name='header-n370' class='md-header-anchor '></a>3.7 添加通知</h3><h4><a name='header-n371' class='md-header-anchor '></a>3.7.1 视频状态改变</h4><p>相关状态类型如下</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n373" mdtype="fences" style="page-break-inside: unset;">/**
+ 视频状态改变
+
+ @param notification 接收到通知
+ */
+- (void)moviePlayBackStateDidChange:(NSNotification*)notification
+{
+    //    IJKMPMoviePlaybackStateStopped,
+    //    IJKMPMoviePlaybackStatePlaying,
+    //    IJKMPMoviePlaybackStatePaused,
+    //    IJKMPMoviePlaybackStateInterrupted,
+    //    IJKMPMoviePlaybackStateSeekingForward,
+    //    IJKMPMoviePlaybackStateSeekingBackward
+}
+</pre><h4><a name='header-n374' class='md-header-anchor '></a>3.7.2 视频加载状态改变</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n375" mdtype="fences" style="page-break-inside: unset;">/**
+ 视屏加载状态改变
+
+ @param notification 接收的通知
+ */
+-(void)movieLoadStateDidChange:(NSNotification*)notification
+{
+    switch (_requestData.ijkPlayer.loadState)
+    {
+        case IJKMPMovieLoadStateStalled:
+            break;
+        case IJKMPMovieLoadStatePlayable:
+            break;
+        case IJKMPMovieLoadStatePlaythroughOK:
+            break;
+        default:
+            break;
+    }
+}
+</pre><h2><a name='header-n376' class='md-header-anchor '></a>4.观看回放</h2><p>路径: CCLiveCloud/LivePlay-观看直播</p><h3><a name='header-n378' class='md-header-anchor '></a>4.1 目录介绍</h3><h4><a name='header-n379' class='md-header-anchor '></a>4.1.1 视频视图</h4><p>头文件:  #import &quot;CCPlayBackView.h&quot;
+路径: CCLiveCloud/LivePlayBack-观看回放/Views/CCPlayBackView</p><h5><a name='header-n381' class='md-header-anchor '></a>4.1.1.1 代理方法</h5><p>返回按钮的点击事件</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n383" mdtype="fences">/**
+ 返回按钮点击代理
+
+ @param tag 1.视频为主，2.文档为主
+ */
+-(void)backBtnClicked:(NSInteger)tag;
+</pre><p>切换视频和文档</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n385" mdtype="fences">/**
+ 切换视频/文档按钮点击回调
+
+ @param tag changeBtn的tag值
+ */
+-(void)changeBtnClicked:(NSInteger)tag;
+</pre><p>点击全屏按钮</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n387" mdtype="fences">/**
+ 全屏按钮点击代理
+
+ @param tag 1视频为主，2文档为主
+ */
+-(void)quanpingBtnClicked:(NSInteger)tag;
+</pre><p>开始播放</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n389" mdtype="fences">/**
+ 开始播放时调用此方法
+ */
+-(void)timerfunc;
+</pre><h5><a name='header-n390' class='md-header-anchor '></a>4.1.1.2 block回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n391" mdtype="fences">void(^exitCallBack)(void);             //退出直播间回调
+void(^sliderCallBack)(int);            //滑块回调
+void(^sliderMoving)(void);             //滑块移动回调
+void(^changeRate)(float rate);         //改变播放器速率回调
+void(^pausePlayer)(BOOL pause);        //暂停播放器回调
+</pre><h5><a name='header-n392' class='md-header-anchor '></a>4.1.1.3 实例方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n393" mdtype="fences" style="page-break-inside: unset;">/**
+ 开始播放
+ */
+-(void)startTimer;
+
+/**
+ 停止播放
+ */
+-(void)stopTimer;
+
+/**
+ 显示加载中视图
+ */
+-(void)showLoadingView;
+
+/**
+ 移除加载中视图
+ */
+-(void)removeLoadingView;
+</pre><h4><a name='header-n394' class='md-header-anchor '></a>4.1.2 直播回放互动视图</h4><p>头文件:  #import &quot;CCPlayBackInteractionView.h&quot;
+路径: CCLiveCloud/LivePlayBack-观看回放/Views/CCPlayBackInteractionView</p><h5><a name='header-n396' class='md-header-anchor '></a>4.1.2.1 初始化方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n397" mdtype="fences">-(instancetype)initWithFrame:(CGRect)frame;
+</pre><h5><a name='header-n398' class='md-header-anchor '></a>4.1.2.2 公有方法</h5><p>房间信息</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n400" mdtype="fences">/**
+ *    @brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
+ *    房间简介：dic[@"desc"];
+ *    房间名称：dic[@"name"];
+ *    房间模版类型：[dic[@"templateType"] integerValue];
+ *    模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
+ *    模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
+ *    模版类型为3: 聊天互动： 有 直播文档： 无 直播问答： 无
+ *    模版类型为4: 聊天互动： 有 直播文档： 有 直播问答： 无
+ *    模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
+ *    模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
+ */
+-(void)roomInfo:(NSDictionary *)dic;
+</pre><p>聊天</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n402" mdtype="fences">/**
+ *    @brief    解析本房间的历史聊天数据
+ */
+-(void)onParserChat:(NSArray *)chatArr;
+/* 自定义方法 */
+/**
+ *    @brief    通过传入时间获取聊天信息
+ */
+-(void)parseChatOnTime:(int)time;
+</pre><p>问答</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n404" mdtype="fences">/**
+ *    @brief  收到提问&amp;回答
+ */
+- (void)onParserQuestionArr:(NSArray *)questionArr onParserAnswerArr:(NSArray *)answerArr;
+</pre><h4><a name='header-n405' class='md-header-anchor '></a>4.1.3 聊天视图</h4><p>头文件:   #import &quot;CCChatBaseView.h&quot;</p><p>路径: CCLiveCloud/Chat-聊天/CCChatBaseView</p><h5><a name='header-n408' class='md-header-anchor '></a>4.1.3.1 公聊消息与私聊消息回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n409" mdtype="fences" style="page-break-inside: unset;">/**
+ 公聊消息回调
+
+ @param msg 消息
+ */
+typedef void(^PublicChatBlock)(NSString *msg);
+
+/**
+ 私聊消息回调
+
+ @param anteid anteid
+ @param msg 私聊消息
+ */
+typedef void(^PrivateChatBlock)(NSString *anteid,NSString *msg);
+</pre><h5><a name='header-n410' class='md-header-anchor '></a>4.1.3.2 实例方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n411" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param block 公聊回调
+ @param input 是否有输入框
+ @return self
+ */
+-(instancetype)initWithPublicChatBlock:(PublicChatBlock)block
+                               isInput:(BOOL)input;
+
+/**
+ reload所有公聊视图
+
+ @param array 公聊数组
+ */
+-(void)reloadPublicChatArray:(NSMutableArray *)array;
+
+/**
+ 添加公聊数组，并且reload(ps:适用于直播回放加载)
+
+ @param array 直播回放的时候,每秒钟加载一些数据,用array盛放这一秒中的聊天数组
+ */
+- (void)addPublicChatArray:(NSMutableArray *)array;
+
+/**
+ 添加一条公聊聊天
+
+ @param array dataSource处理过的数组,需要处理最后一条数据，并加载
+ */
+-(void)addPublicChat:(NSMutableArray *)array;
+
+/**
+ 刷新私聊
+
+ @param dict 私聊字典
+ */
+- (void)reloadPrivateChatDict:(NSMutableDictionary *)dict anteName:anteName anteid:anteid;
+
+/**
+ 点击私聊按钮(ps:点击menuView的时候，需要主动调用此方法,用来弹出私聊视图);
+ */
+-(void)privateChatBtnClicked;
+
+/**
+ 聊天审核,刷新聊天记录
+ 
+ @param arr 需要被刷新的某一行数组
+ @param publicArr 更新过的数组
+ */
+-(void)reloadStatusWithIndexPaths:(NSMutableArray *)arr
+                        publicArr:(NSMutableArray *)publicArr;
+                        
+/**
+ 图片刷新
+ 
+ @param indexPath 需要被刷新的某一行数组
+ @param publicArr 更新过的数组
+ */
+-(void)reloadStatusWithIndexPath:(NSIndexPath *)indexPath
+                        publicArr:(NSMutableArray *)publicArr;
+</pre><h4><a name='header-n412' class='md-header-anchor '></a>4.1.4 问答</h4><p>头文件:    #import &quot;CCQuestionView.h&quot;</p><p>路径: CCLiveCloud/Question-问答/CCQuestionView</p><h5><a name='header-n415' class='md-header-anchor '></a>4.1.4.1 QuestionMessage回调</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n416" mdtype="fences">/**
+ 问答回调
+
+ @param message 问答信息
+ */
+typedef void(^QuestionBlock)(NSString *message);
+</pre><h5><a name='header-n417' class='md-header-anchor '></a>4.1.4.2 实例方法</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n418" mdtype="fences" style="page-break-inside: unset;">/**
+ 初始化方法
+
+ @param questionBlock 问答回调
+ @param input 是否输入
+ @return self
+ */
+-(instancetype)initWithQuestionBlock:(QuestionBlock)questionBlock input:(BOOL)input;
+
+/**
+ 重新加载问题信息
+
+ @param QADic 问答信息字典
+ @param keysArrAll 键值
+ */
+-(void)reloadQADic:(NSMutableDictionary *)QADic keysArrAll:(NSMutableArray *)keysArrAll;
+</pre><h4><a name='header-n419' class='md-header-anchor '></a>4.1.5 简介</h4><p>头文件:  #import &quot;CCIntroductionView.h&quot;</p><p>路径: CCLiveCloud/Introduction-简介/CCIntroductionView
+实例变量</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n422" mdtype="fences">NSString                 *roomDesc;//简介
+NSString                 *roomName;//房间名
+</pre><h4><a name='header-n423' class='md-header-anchor '></a>4.1.6 锁屏界面播放器</h4><p>头文件:  #import &quot;CCLockView.h&quot;</p><p>路径: CCLiveCloud/Tools/CCLockView
+block回调</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n426" mdtype="fences">/**
+ 暂停回调
+
+ @param pause 是否暂停
+ */
+typedef void(^PauseCallBack)(BOOL pause);
+
+/**
+ 改变播放进度回调
+
+ @param time 改变后的进度时间
+ */
+typedef void(^ChangeProgress)(int time);
+</pre><p>初始化方法</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n428" mdtype="fences">/**
+ 初始化方法
+
+ @param roomName 房间名称
+ @param duration 视频时长
+ @return self
+ */
+-(instancetype)initWithRoomName:(NSString *)roomName duration:(int)duration;
+</pre><p>更新当前的时间</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n430" mdtype="fences">/**
+ 更新当前的时间
+
+ @param currentDurtion 当前的时间
+ */
+-(void)updateCurrentDurtion:(int)currentDurtion;
+</pre><p>更新播放速率</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n432" mdtype="fences">/**
+ 更新播放速率
+
+ @param rate 播放速率
+ */
+-(void)updatePlayBackRate:(float)rate;
+</pre><p>&nbsp;</p><h3><a name='header-n434' class='md-header-anchor '></a>4.2 观看回放</h3><h4><a name='header-n435' class='md-header-anchor '></a>4.2.1 CCPlayBackController的私有变量</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n436" mdtype="fences">CCPlayBackInteractionView   * interactionView;//互动视图
+CCPlayBackView              * playerView;//视频视图
+RequestDataPlayBack         * requestDataPlayBack;//sdk
+CCLockView                  * lockView;//锁屏视图
+NSString                    * groupId;//聊天分组
+BOOL                          pauseInBackGround;//后台是否暂停
+NSString                    * roomName;//房间名
+</pre><h4><a name='header-n437' class='md-header-anchor '></a>4.2.2 函数启动</h4><p>初始化相关数据</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n439" mdtype="fences">- (void)viewDidLoad {
+    [super viewDidLoad];
+    /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
+    _pauseInBackGround = NO;
+    [self setupUI];             //初始化页面布局
+    [self addObserver];         //添加通知
+    [self integrationSDK];      //集成SDK
+}
+</pre><h3><a name='header-n440' class='md-header-anchor '></a>4.3 初始化页面布局</h3><h4><a name='header-n441' class='md-header-anchor '></a>4.3.1 添加视频视图(自定义视图)</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n442" mdtype="fences">//视频视图
+    [self.view addSubview:self.playerView];
+</pre><h4><a name='header-n443' class='md-header-anchor '></a>4.3.2 添加直播回放互动视图(自定义视图)</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n444" mdtype="fences">//互动视图
+    [self.view addSubview:self.interactionView];
+</pre><h4><a name='header-n445' class='md-header-anchor '></a>4.3.3 设置锁屏播放器界面</h4><p>当设置后台允许播放并且视频开始播放时调用</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n447" mdtype="fences" style="page-break-inside: unset;">/**
+ 设置锁屏播放器界面
+ */
+-(void)setLockView{
+    if (_lockView) {//如果当前已经初始化，return;
+        return;
+    }
+    _lockView = [[CCLockView alloc] initWithRoomName:_roomName duration:_requestDataPlayBack.ijkPlayer.duration];
+    [self.view addSubview:_lockView];
+    WS(weakSelf)
+    /*     播放/暂停回调     */
+    _lockView.pauseCallBack = ^(BOOL pause) {
+        weakSelf.playerView.pauseButton.selected = pause;
+        if (pause) {
+            [weakSelf.playerView stopTimer];
+            [weakSelf.requestDataPlayBack.ijkPlayer pause];
+        }else{
+            [weakSelf.playerView startTimer];
+            [weakSelf.requestDataPlayBack.ijkPlayer play];
+        }
+    };
+    /*     快进/快退回调     */
+    _lockView.progressBlock = ^(int time) {
+        weakSelf.requestDataPlayBack.currentPlaybackTime = time;
+        weakSelf.playerView.slider.value = time;
+        weakSelf.playerView.sliderValue = weakSelf.playerView.slider.value;
+    };
+}
+</pre><h3><a name='header-n448' class='md-header-anchor '></a>4.4 集成SDK</h3><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n449" mdtype="fences" style="page-break-inside: unset;">//集成SDK
+- (void)integrationSDK {
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId                      //userId        
+    parameter.roomId                      //roomId
+    parameter.liveId                      //LiveId
+    parameter.recordId                    //RecordId
+    parameter.viewerName                  //用户名
+    parameter.token                       //密码
+    parameter.docParent                   //文档小窗
+    parameter.docFrame                    //文档位置,ps:起始位置为文档视图坐标
+    parameter.playerParent                //视频视图
+    parameter.playerFrame                 //视频位置,ps:起始位置为视频视图坐标
+    parameter.security                    //是否开启https,建议开启
+    parameter.PPTScalingMode              //ppt展示模式,建议值为4
+    parameter.pauseInBackGround           //后台是否继续播放
+    parameter.defaultColor                //ppt默认底色，不写默认为白色
+    parameter.scalingMode                 //屏幕适配方式
+    parameter.pptInteractionEnabled       //是否开启ppt滚动
+    _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
+    _requestDataPlayBack.delegate = self;
+}
+</pre><h3><a name='header-n450' class='md-header-anchor '></a>4.5 必须实现的代理方法</h3><h4><a name='header-n451' class='md-header-anchor '></a>4.5.1 请求成功</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n452" mdtype="fences">/**
+ *    @brief    请求成功
+ */
+-(void)requestSucceed{
+    ps:请求成功后的操作
+}
+</pre><h4><a name='header-n453' class='md-header-anchor '></a>4.5.2 请求失败</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n454" mdtype="fences">/**
+ *    @brief    登录请求失败
+ */
+-(void)requestFailed:(NSError *)error reason:(NSString *)reason{
+    ps:请求失败后的操作
+}
+</pre><h3><a name='header-n455' class='md-header-anchor '></a>4.6 功能代理方法</h3><p>功能代理方法 用哪个实现哪个</p><h4><a name='header-n457' class='md-header-anchor '></a>4.6.1 房间信息</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n458" mdtype="fences">/**
+ *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
+ *	房间简介：dic[@"desc"];
+ *	房间名称：dic[@"name"];
+ *	房间模版类型：[dic[@"templateType"] integerValue];
+ *	模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
+ *	模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
+ *	模版类型为3: 聊天互动： 有 直播文档： 无 直播问答： 无
+ *	模版类型为4: 聊天互动： 有 直播文档： 有 直播问答： 无
+ *	模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
+ *	模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
+ */
+-(void)roomInfo:(NSDictionary *)dic;
+</pre><h4><a name='header-n459' class='md-header-anchor '></a>4.6.2 聊天</h4><h5><a name='header-n460' class='md-header-anchor '></a>4.6.2.1 解析本房间历史聊天数据</h5><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n461" mdtype="fences">/**
+ *	@brief	解析本房间的历史聊天数据
+ */
+-(void)onParserChat:(NSArray *)arr;
+</pre><h4><a name='header-n462' class='md-header-anchor '></a>4.6.3 问答</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n463" mdtype="fences">/**
+ *	@brief	收到本房间的历史提问&amp;回答
+ */
+- (void)onParserQuestionArr:(NSArray *)questionArr onParserAnswerArr:(NSArray *)answerArr;
+</pre><h3><a name='header-n464' class='md-header-anchor '></a>4.7 添加通知</h3><h4><a name='header-n465' class='md-header-anchor '></a>4.7.1 播放状态发生改变</h4><p>当视频处于播放状态并且支持后台播放时，初始化锁屏播放器</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n467" mdtype="fences" style="page-break-inside: unset;">/**
+ 视频状态改变
+
+ @param notification 接收到通知
+ */
+- (void)moviePlayBackStateDidChange:(NSNotification*)notification
+{
+    IJKMPMoviePlaybackStateStopped             //播放停止
+    IJKMPMoviePlaybackStatePlaying             //播放
+    IJKMPMoviePlaybackStatePaused              //暂停
+    IJKMPMoviePlaybackStateInterrupted         //打断（停止，中断）
+    IJKMPMoviePlaybackStateSeekingForward      //向前拖动
+    IJKMPMoviePlaybackStateSeekingBackward     //向后拖动
+    
+}
+</pre><h4><a name='header-n468' class='md-header-anchor '></a>4.7.2 视频加载状态改变</h4><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n469" mdtype="fences" style="page-break-inside: unset;">//监听播放状态
+-(void)movieLoadStateDidChange:(NSNotification*)notification
+{
+ps:类型说明
+     //IJKMPMovieLoadStateStalled       正在加载
+    //IJKMPMovieLoadStatePlayable      可以播放
+    //IJKMPMovieLoadStatePlaythroughOK 已经缓存完成,如果设置了自动播放,这时会自                                         动播放
+    
+    switch (_requestDataPlayBack.ijkPlayer.loadState)
+    {
+        case IJKMPMovieLoadStateStalled:
+            break;
+        case IJKMPMovieLoadStatePlayable:
+            break;
+        case IJKMPMovieLoadStatePlaythroughOK:
+            break;
+        default:
+            break;
+    }
+}
+</pre><h4><a name='header-n470' class='md-header-anchor '></a>4.7.3 进入前台通知</h4><p>app将要进入前台</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n472" mdtype="fences">/**
+ APP将要进入前台
+ */
+- (void)appWillEnterForegroundNotification {
+    //开始播放
+    [self.playerView startTimer];
+}
+</pre><h4><a name='header-n473' class='md-header-anchor '></a>4.7.4 进入后台通知</h4><p>app将要进入后台</p><pre spellcheck="false" class="md-fences mock-cm md-end-block" lang="" contenteditable="false" cid="n475" mdtype="fences" style="page-break-inside: unset;">/**
+ APP将要进入后台
+ */
+- (void)appWillEnterBackgroundNotification {
+    UIApplication *app = [UIApplication sharedApplication];
+    UIBackgroundTaskIdentifier taskID = 0;
+    taskID = [app beginBackgroundTaskWithExpirationHandler:^{
+        [app endBackgroundTask:taskID];
+    }];
+    if (taskID == UIBackgroundTaskInvalid) {
+        return;
+    }
+    [self.playerView stopTimer];
+}
+</pre><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+</body>
+</html>

@@ -23,6 +23,10 @@
     }
     return self;
 }
+- (void)dealloc
+{
+//    NSLog(@"移除回放互动视图");
+}
 #pragma mark - 设置UI布局
 -(void)setUpUI{
     //UISegmentedControl,功能控制,聊天文档等
@@ -81,7 +85,7 @@
  *    模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
  *    模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
  */
--(void)roomInfo:(NSDictionary *)dic{
+-(void)roomInfo:(NSDictionary *)dic playerView:(nonnull CCPlayBackView *)playerView{
     NSArray *array = [_introductionView subviews];
     for(UIView *view in array) {
         [view removeFromSuperview];
@@ -104,8 +108,8 @@
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0] + [self.segment widthForSegmentAtIndex:1]+[self.segment widthForSegmentAtIndex:2]/4, shadowViewY, [self.segment widthForSegmentAtIndex:2]/2, 2);
         int py = _scrollView.contentOffset.y;
         [_scrollView setContentOffset:CGPointMake(SCREEN_WIDTH * 2, py)];
-        self.smallVideoView.hidden = YES;
-        self.playerView.changeButton.hidden = YES;
+        playerView.changeButton.hidden = YES;
+        playerView.smallVideoView.hidden = YES;
     } else if (_templateType == 2) {
         //聊天互动： 有 直播文档： 无 直播问答： 有
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:0];
@@ -115,9 +119,8 @@
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
         [_scrollView setContentOffset:CGPointMake(SCREEN_WIDTH*0, py)];
-        self.smallVideoView.hidden = YES;
-        self.playerView.changeButton.hidden = YES;
-        
+        playerView.changeButton.hidden = YES;
+        playerView.smallVideoView.hidden = YES;
     } else if (_templateType == 3) {
         //聊天互动： 有 直播文档： 无 直播问答： 无
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:0];
@@ -127,9 +130,8 @@
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
         [_scrollView setContentOffset:CGPointMake(SCREEN_WIDTH*0, py)];
-        self.smallVideoView.hidden = YES;
-        self.playerView.changeButton.hidden = YES;
-        
+        playerView.changeButton.hidden = YES;
+        playerView.smallVideoView.hidden = YES;
     } else if (_templateType == 4) {
         //聊天互动： 有 直播文档： 有 直播问答： 无
         _segment.selectedSegmentIndex = 0;
@@ -137,8 +139,8 @@
         [_segment setWidth:0.0f forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:2];
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:0]/2, 2);
-        self.smallVideoView.hidden = NO;
-        self.playerView.changeButton.hidden = NO;
+        playerView.changeButton.hidden = NO;
+        playerView.smallVideoView.hidden = NO;
     } else if (_templateType == 5) {
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:0];
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:1];
@@ -146,8 +148,8 @@
         _segment.selectedSegmentIndex = 0;
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:0]/2, 2);
         //聊天互动： 有 直播文档： 有 直播问答： 有
-        self.smallVideoView.hidden = NO;
-        self.playerView.changeButton.hidden = NO;
+        playerView.changeButton.hidden = NO;
+        playerView.smallVideoView.hidden = NO;
     }else if(_templateType == 6) {
         //聊天互动： 无 直播文档： 无 直播问答： 有
         _segment.selectedSegmentIndex = 1;
@@ -157,8 +159,8 @@
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]+[self.segment widthForSegmentAtIndex:1]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
         [_scrollView setContentOffset:CGPointMake(SCREEN_WIDTH * 1, py)];
-        self.smallVideoView.hidden = YES;
-        self.playerView.changeButton.hidden = YES;
+        playerView.changeButton.hidden = YES;
+        playerView.smallVideoView.hidden = YES;
     }
 }
 #pragma mark- 聊天

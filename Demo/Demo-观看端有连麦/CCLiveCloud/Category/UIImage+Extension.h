@@ -13,4 +13,13 @@
 // 图片拉伸
 + (UIImage *)resizableImageWithName:(NSString *)imageName;
 
+
+/**
+ color转image
+ 
+ @param color color
+ @return image
+ */
++(UIImage*)imageWithColor:(UIColor*) color;
+
 @end

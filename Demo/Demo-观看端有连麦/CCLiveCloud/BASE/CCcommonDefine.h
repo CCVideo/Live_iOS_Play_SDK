@@ -280,7 +280,7 @@ typedef NS_ENUM(NSInteger, NSContentType) {
 #define QUESTION_CHECK @"您尚有部分题目未回答，请检查。"
 #define QUESTION_CLOSE @"问卷已停止回收，点击确定后关闭问卷"
 //抽奖相关
-#define LOTTERY_WINNER(myself) (myself ? @"lottery_win" : @"哎呀,就差一点!")
+#define LOTTERY_WINNER(myself) (myself ? @"恭喜您中奖啦!" : @"哎呀,就差一点!")
 #define LOTTERY_RESULT @"抽奖结果"
 #define LOTTERY_ALERT(str) (str ? @"请牢记您的中奖码" : @"中奖者")
 //登录界面
@@ -298,6 +298,7 @@ typedef NS_ENUM(NSInteger, NSContentType) {
 #define CANCEL @"取消"
 #define LOGIN_PLAY @"观看直播"
 #define LOGIN_LOADING @"正在登录"
+#define ALERT_KICKOUT @"您已被踢出直播间"
 //观看直播输入框text 和 placeHolder
 #define LOGIN_TEXT_USERID @"CC账号ID"
 #define LOGIN_TEXT_USERID_PLACEHOLDER @"16位账号ID"
@@ -374,4 +375,5 @@ typedef NS_ENUM(NSInteger, NSContentType) {
 //第三方问卷
 #define QUESTIONNAIRE_TITLE @"问卷调查"
 #define QUESTIONNAIRE_OPEN @"打开问卷"
+
 #endif /* CCcommonDefine_h */

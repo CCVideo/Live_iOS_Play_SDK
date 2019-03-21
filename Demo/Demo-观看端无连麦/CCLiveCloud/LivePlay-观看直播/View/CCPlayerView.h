@@ -75,6 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 //meauView点击方法
 -(void)menuViewSelected:(BOOL)selected;
 
+
 #pragma mark - 直播状态相关代理
 /**
  *    @brief  收到播放直播状态 0直播 1未直播

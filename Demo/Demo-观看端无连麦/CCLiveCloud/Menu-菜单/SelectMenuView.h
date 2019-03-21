@@ -30,6 +30,7 @@ typedef void(^AnnouncementBlock)(void);
 @property (nonatomic, copy) PrivateBlock             privateBlock;
 //公告点击回调
 @property (nonatomic, copy) AnnouncementBlock        announcementBlock;
+
 /**
  隐藏btn方法
 
@@ -37,6 +38,20 @@ typedef void(^AnnouncementBlock)(void);
  */
 -(void)hiddenAllBtns:(BOOL)hidden;
 
+/**
+ 隐藏menuView
+ 
+ @param hidden 是否隐藏
+ */
+-(void)hiddenMenuViews:(BOOL)hidden;
+
+
+/**
+ 隐藏私聊按钮(适配无聊天的房间类型)
+ */
+-(void)hiddenPrivateBtn;
+
+#pragma mark - 新消息提醒
 /**
  新消息提示
 
@@ -53,6 +68,7 @@ typedef void(^AnnouncementBlock)(void);
  移除新消息
  */
 -(void)removeAllInformationView;
+
 @end
 
 NS_ASSUME_NONNULL_END

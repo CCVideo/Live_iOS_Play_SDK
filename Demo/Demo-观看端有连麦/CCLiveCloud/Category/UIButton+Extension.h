@@ -11,6 +11,9 @@
 
 @interface UIButton (Extension)
 
+/** 设置图片和选择后的图片 **/
++(instancetype) buttonWithImageName:(NSString *)imageName selectedImageName:(NSString *)selectedImageName tag:(NSInteger)tag target:(id)target sel:(SEL)sel;
+
 /** 标题和背景 */
 + (instancetype) buttonWithTitle:(NSString*) title backGroudColor:(UIColor*) color;
 

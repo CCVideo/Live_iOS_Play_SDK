@@ -98,8 +98,22 @@ typedef void(^InsertDanMuBlock)(NSString *msg);//发送弹幕回调
  @return 返回值
  */
 -(BOOL)existImageWithUrl:(NSString *)url;
+#pragma mark - 添加一条私聊下载图片
+/**
+ 添加一条私聊下载图片
 
+ @param url url
+ @param size 图片大小
+ */
+-(void)setURL:(NSString *)url withImageSize:(CGSize)size;
 
+/**
+ 返回一个下载过的图片大小
+
+ @param msg 未处理的url
+ @return 图片大小
+ */
+-(CGSize)getImageSizeWithMsg:(NSString *)msg;
 /**
  移除缓存的数据
  */

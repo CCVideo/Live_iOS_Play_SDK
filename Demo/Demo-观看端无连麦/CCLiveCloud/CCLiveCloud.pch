@@ -18,4 +18,8 @@
 #import "UIImageView+WebCache.h"
 #import "NSString+CCSwitchTime.h"
 #import "CCAlertView.h"
+//添加全局分类
+#import "UILabel+Extension.h"
+#import "UIImage+Extension.h"
+
 #endif /* CCLiveCloud_pch */

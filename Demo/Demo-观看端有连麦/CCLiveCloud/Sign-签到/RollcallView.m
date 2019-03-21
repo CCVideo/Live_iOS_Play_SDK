@@ -32,7 +32,7 @@
                isScreenLandScape:(BOOL)isScreenLandScape{
     self = [super init];
     if(self) {
-        _duration = duration;
+        _duration = duration + 2;
         self.isScreenLandScape = isScreenLandScape;
         self.lotteryblock = lotteryblock;
         self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];//签到倒计时
@@ -46,7 +46,7 @@
  */
 -(void)timerfunc {
     WS(ws)
-    _duration = _duration-1;
+    _duration = _duration - 1;
 //    NSLog(@"_duration = %d",(int)_duration);
     if(_duration == 0) {//签到时间为零时,设置视图样式
         self.lotteryBtn.enabled = YES;//设置签到按钮不可点击

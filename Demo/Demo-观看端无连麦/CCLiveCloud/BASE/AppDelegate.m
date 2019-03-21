@@ -79,7 +79,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [Bugly startWithAppId:@"144af8c8e4"];
+//    [Bugly startWithAppId:@"144af8c8e4"];
     _window = [[UIWindow alloc] init];
     _window.backgroundColor = [UIColor whiteColor];
     _window.frame = [UIScreen mainScreen].bounds;

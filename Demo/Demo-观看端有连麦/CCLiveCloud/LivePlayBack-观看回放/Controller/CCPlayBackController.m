@@ -11,14 +11,18 @@
 #import "CCSDK/RequestDataPlayBack.h"//sdk
 #import "CCSDK/SaveLogUtil.h"//日志
 #import "CCPlayBackInteractionView.h"//回放互动视图
+#import "CCLockView.h"//锁屏
+#import <AVFoundation/AVFoundation.h>
 
 @interface CCPlayBackController ()<RequestDataPlayBackDelegate,UIScrollViewDelegate, CCPlayBackViewDelegate>
 
 @property (nonatomic,strong)CCPlayBackInteractionView   * interactionView;//互动视图
 @property (nonatomic,strong)CCPlayBackView              * playerView;//视频视图
 @property (nonatomic,strong)RequestDataPlayBack         * requestDataPlayBack;//sdk
-
+@property (nonatomic,strong)CCLockView                  * lockView;//锁屏视图
+@property (nonatomic,assign) BOOL                       pauseInBackGround;//后台是否暂停
 @property (nonatomic,copy)  NSString                    * groupId;//聊天分组
+@property (nonatomic,copy)  NSString                    * roomName;//房间名
 @end
 
 @implementation CCPlayBackController
@@ -28,12 +32,12 @@
     //初始化背景颜色，设置状态栏样式
     self.view.backgroundColor = [UIColor blackColor];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    
+    /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
+    _pauseInBackGround = NO;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
 }
-
 //集成SDK
 - (void)integrationSDK {
     PlayParameter *parameter = [[PlayParameter alloc] init];
@@ -49,7 +53,7 @@
     parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
     parameter.security = YES;//是否开启https,建议开启
     parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
-    parameter.pauseInBackGround = YES;//后台是否暂停
+    parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
     parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
     parameter.scalingMode = 1;//屏幕适配方式
     parameter.pptInteractionEnabled = NO;//是否开启ppt滚动
@@ -73,12 +77,13 @@
  *    @brief    登录请求失败
  */
 -(void)requestFailed:(NSError *)error reason:(NSString *)reason {
-    NSString *message = nil;
-    if (reason == nil) {
-        message = [error localizedDescription];
-    } else {
-        message = reason;
-    }
+//    NSString *message = nil;
+//    if (reason == nil) {
+//        message = [error localizedDescription];
+//    } else {
+//        message = reason;
+//    }
+    //  NSLog(@"请求失败:%@", message);
 }
 
 #pragma mark-----------------------功能代理方法 用哪个实现哪个-------------------------------
@@ -112,10 +117,11 @@
  *    模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
  */
 -(void)roomInfo:(NSDictionary *)dic {
+    _roomName = dic[@"name"];
     //设置房间标题
     self.playerView.titleLabel.text = dic[@"name"];
     //配置互动视图的信息
-    [self.interactionView roomInfo:dic];
+    [self.interactionView roomInfo:dic playerView:self.playerView];
 }
 #pragma mark- 回放的开始时间和结束时间
 /**
@@ -174,10 +180,25 @@
                 [_requestDataPlayBack pausePlayer];
             }
             if(self.playerView.loadingView && ![self.playerView.timer isValid]) {
+                
+                //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
                 [self.playerView startTimer];
+                if (_pauseInBackGround == NO) {//后台支持播放
+                    [self setLockView];//设置锁屏界面
+                }
                 [self.playerView removeLoadingView];//移除加载视图
+                /*      保存日志     */
                 [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
+                
+                /*   从0秒开始加载文档  */
                 [_requestDataPlayBack continueFromTheTime:0];
+                /*   Ps:从100秒开始加载视频  */
+//                [_requestDataPlayBack continueFromTheTime:100];
+            }
+            /*    当视频被打断时,校对播放时间   */
+            if (_requestDataPlayBack.currentPlaybackTime == 0 && _playerView.slider.value != 0 && _lockView) {
+                _requestDataPlayBack.currentPlaybackTime = _playerView.slider.value;
+                [_lockView updateLockView];
             }
             break;
         }
@@ -195,6 +216,7 @@
 }
 //移除通知
 - (void)dealloc {
+//    NSLog(@"移除回放控制器");
     [self removeObserver];
 }
 #pragma mark - 设置UI
@@ -204,6 +226,47 @@
  */
 - (void)setupUI {
     //添加视频播放视图
+    _playerView = [[CCPlayBackView alloc] initWithFrame:CGRectZero];
+    _playerView.delegate = self;
+    
+    //退出直播间回调
+    WS(weakSelf)
+    _playerView.exitCallBack = ^{
+        [weakSelf.requestDataPlayBack requestCancel];
+        weakSelf.requestDataPlayBack = nil;
+        [weakSelf dismissViewControllerAnimated:YES completion:nil];
+    };
+    //滑块滑动完成回调
+    _playerView.sliderCallBack = ^(int duration) {
+        weakSelf.requestDataPlayBack.currentPlaybackTime = duration;
+        /*  校对锁屏播放器进度 */
+        [weakSelf.lockView updateCurrentDurtion:weakSelf.requestDataPlayBack.currentPlaybackTime];
+        if (weakSelf.requestDataPlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePlaying) {
+            [weakSelf.requestDataPlayBack startPlayer];
+            [weakSelf.playerView startTimer];
+        }
+    };
+    //滑块移动回调
+    _playerView.sliderMoving = ^{
+        if (weakSelf.requestDataPlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePaused) {
+            [weakSelf.requestDataPlayBack pausePlayer];
+            [weakSelf.playerView stopTimer];
+        }
+    };
+    //更改播放器速率回调
+    _playerView.changeRate = ^(float rate) {
+        weakSelf.requestDataPlayBack.ijkPlayer.playbackRate = rate;
+    };
+    //暂停/开始播放回调
+    _playerView.pausePlayer = ^(BOOL pause) {
+        if (pause) {
+            [weakSelf.playerView stopTimer];
+            [weakSelf.requestDataPlayBack pausePlayer];
+        }else{
+            [weakSelf.playerView startTimer];
+            [weakSelf.requestDataPlayBack startPlayer];
+        }
+    };
     [self.view addSubview:self.playerView];
     [self.playerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.view);
@@ -214,55 +277,100 @@
     
     //添加互动视图
     self.interactionView = [[CCPlayBackInteractionView alloc] initWithFrame:CGRectMake(0, CCGetRealFromPt(462)+SCREEN_STATUS, SCREEN_WIDTH,IS_IPHONE_X ? CCGetRealFromPt(835) + 90:CCGetRealFromPt(835))];
-    self.interactionView.smallVideoView = self.playerView.smallVideoView;
-    self.interactionView.playerView = self.playerView;
     [self.view addSubview:self.interactionView];
 }
-#pragma mark - playViewDelegate
 
+/**
+ 设置锁屏播放器界面
+ */
+-(void)setLockView{
+    if (_lockView) {//如果当前已经初始化，return;
+        return;
+    }
+    _lockView = [[CCLockView alloc] initWithRoomName:_roomName duration:_requestDataPlayBack.ijkPlayer.duration];
+    [self.view addSubview:_lockView];
+    [_requestDataPlayBack.ijkPlayer setPauseInBackground:self.pauseInBackGround];
+    WS(weakSelf)
+    /*     播放/暂停回调     */
+    _lockView.pauseCallBack = ^(BOOL pause) {
+        weakSelf.playerView.pauseButton.selected = pause;
+        if (pause) {
+            [weakSelf.playerView stopTimer];
+            [weakSelf.requestDataPlayBack.ijkPlayer pause];
+        }else{
+            [weakSelf.playerView startTimer];
+            [weakSelf.requestDataPlayBack.ijkPlayer play];
+        }
+    };
+    /*     快进/快退回调     */
+    _lockView.progressBlock = ^(int time) {
+//        NSLog(@"---playBack快进/快退至%d秒", time);
+        weakSelf.requestDataPlayBack.currentPlaybackTime = time;
+        weakSelf.playerView.slider.value = time;
+        weakSelf.playerView.sliderValue = weakSelf.playerView.slider.value;
+    };
+}
+#pragma mark - playViewDelegate
 /**
  开始播放时
  */
 -(void)timerfunc{
+    /*  当视频播放被打断时，重新加载视频  */
+    if (!self.requestDataPlayBack.ijkPlayer.playbackState) {
+        [self.requestDataPlayBack replayPlayer];
+        return;
+    }
     if([_requestDataPlayBack isPlaying]) {
         [self.playerView removeLoadingView];
     }
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        //获取当前播放时间和视频总时长
         NSTimeInterval position = (int)round(self.requestDataPlayBack.currentPlaybackTime);
         NSTimeInterval duration = (int)round(self.requestDataPlayBack.playerDuration);
         //存在播放器最后一点不播放的情况，所以把进度条的数据对到和最后一秒想同就可以了
         if(duration - position == 1 && (self.playerView.sliderValue == position || self.playerView.sliderValue == duration)) {
             position = duration;
         }
-        //            NSLog(@"---%f",_requestDataPlayBack.currentPlaybackTime);
+//                    NSLog(@"---%f",_requestDataPlayBack.currentPlaybackTime);
         
+        //设置plaerView的滑块和右侧时间Label
         self.playerView.slider.maximumValue = (int)duration;
         self.playerView.rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
         
+        //校对SDK当前播放时间
         if(position == 0 && self.playerView.sliderValue != 0) {
             self.requestDataPlayBack.currentPlaybackTime = self.playerView.sliderValue;
-            position = self.playerView.sliderValue;
+//            position = self.playerView.sliderValue;
             self.playerView.slider.value = self.playerView.sliderValue;
-        } else if(fabs(position - self.playerView.slider.value) > 10) {
-            self.requestDataPlayBack.currentPlaybackTime = self.playerView.slider.value;
-            position = self.playerView.slider.value;
-            self.playerView.sliderValue = self.playerView.slider.value;
+//        } else if(fabs(position - self.playerView.slider.value) > 10) {
+//            self.requestDataPlayBack.currentPlaybackTime = self.playerView.slider.value;
+////            position = self.playerView.slider.value;
+//            self.playerView.sliderValue = self.playerView.slider.value;
         } else {
             self.playerView.slider.value = position;
             self.playerView.sliderValue = self.playerView.slider.value;
         }
         
+        //校对本地显示速率和播放器播放速率
         if(self.requestDataPlayBack.ijkPlayer.playbackRate != self.playerView.playBackRate) {
             self.requestDataPlayBack.ijkPlayer.playbackRate = self.playerView.playBackRate;
+            //校对锁屏播放器播放速率
+            [_lockView updatePlayBackRate:self.requestDataPlayBack.ijkPlayer.playbackRate];
             [self.playerView startTimer];
         }
         if(self.playerView.pauseButton.selected == NO && self.requestDataPlayBack.ijkPlayer.playbackState == IJKMPMoviePlaybackStatePaused) {
+            //开启播放视频
             [self.requestDataPlayBack startPlayer];
         }
+        /* 获取当前时间段的文档数据  time：从直播开始到现在的秒数，SDK会在画板上绘画出来相应的图形 */
         [self.requestDataPlayBack continueFromTheTime:self.playerView.sliderValue];
+        
+        /*  加载聊天数据 */
         [self parseChatOnTime:(int)self.playerView.sliderValue];
+        //更新左侧label
         self.playerView.leftTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(self.playerView.sliderValue / 60), (int)(self.playerView.sliderValue) % 60];
+        /*  校对锁屏播放器进度 */
+        [_lockView updateCurrentDurtion:_requestDataPlayBack.currentPlaybackTime];
     });
 }
 /**
@@ -354,12 +462,18 @@
     
     [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerLoadStateDidChangeNotification object:nil];
 }
-
 /**
  APP将要进入前台
  */
 - (void)appWillEnterForegroundNotification {
-    [self.playerView startTimer];
+    /*  当视频播放被打断时，重新加载视频  */
+    if (!self.requestDataPlayBack.ijkPlayer.playbackState) {
+        [self.requestDataPlayBack replayPlayer];
+        [self.lockView updateLockView];
+    }
+    if (self.playerView.pauseButton.selected == NO) {
+        [self.playerView startTimer];
+    }
 }
 
 /**
@@ -375,47 +489,6 @@
         return;
     }
     [self.playerView stopTimer];
-}
-#pragma mark - 懒加载
--(CCPlayBackView *)playerView{
-    if (!_playerView) {
-         _playerView = [[CCPlayBackView alloc] initWithFrame:CGRectZero];
-        _playerView.delegate = self;
-        
-        //退出直播间回调
-        WS(weakSelf)
-        _playerView.exitCallBack = ^{
-            [weakSelf.requestDataPlayBack requestCancel];
-            weakSelf.requestDataPlayBack = nil;
-            [weakSelf dismissViewControllerAnimated:YES completion:nil];
-        };
-        //滑块滑动完成回调
-        _playerView.sliderCallBack = ^(int duration) {
-            weakSelf.requestDataPlayBack.currentPlaybackTime = duration;
-            if (weakSelf.requestDataPlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePlaying) {
-                [weakSelf.requestDataPlayBack startPlayer];
-            }
-        };
-        //滑块移动回调
-        _playerView.sliderMoving = ^{
-            if (weakSelf.requestDataPlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePaused) {
-                [weakSelf.requestDataPlayBack pausePlayer];
-            }
-        };
-        //更改播放器速率回调
-        _playerView.changeRate = ^(float rate) {
-            weakSelf.requestDataPlayBack.ijkPlayer.playbackRate = rate;
-        };
-        //暂停/开始播放回调
-        _playerView.pausePlayer = ^(BOOL pause) {
-            if (pause) {
-                [weakSelf.requestDataPlayBack pausePlayer];
-            }else{
-                [weakSelf.requestDataPlayBack startPlayer];
-            }
-        };
-    }
-    return _playerView;
 }
 #pragma mark - 横竖屏旋转设置
 //旋转方向

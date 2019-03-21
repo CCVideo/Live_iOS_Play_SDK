@@ -19,8 +19,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CCPlayBackInteractionView : UIView
-@property (nonatomic,strong)CCPlayBackView              * playerView;//视频视图
-@property (nonatomic,strong)UIView                      * smallVideoView;//文档或者小图
 @property (nonatomic,assign)BOOL                          isScreenLandScape;//是否横屏
 @property (nonatomic,assign)float                         playBackRate;//播放速率
 @property (nonatomic,strong)UIView                      * shadowView;//滚动条
@@ -63,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
  *    模版类型为5: 聊天互动： 有 直播文档： 有 直播问答： 有
  *    模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
  */
--(void)roomInfo:(NSDictionary *)dic;
+-(void)roomInfo:(NSDictionary *)dic playerView:(CCPlayBackView *)playerView;
 #pragma mark- 聊天
 /**
  *    @brief    解析本房间的历史聊天数据

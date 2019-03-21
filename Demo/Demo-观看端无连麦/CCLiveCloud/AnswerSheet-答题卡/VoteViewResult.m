@@ -401,6 +401,7 @@
  */
 -(void)addProgressViewWithLeftStr:(NSString *)leftStr rightStr:(NSString *)rightStr index:(NSInteger)index     percent:(CGFloat)percent{
     //过滤rightStr
+//TODO下面两行
     [self filterWithStr:rightStr filterStr:@"(0.0%)"];
     [self filterWithStr:rightStr filterStr:@"(100.0%)"];
     
@@ -447,9 +448,12 @@
     [self layoutIfNeeded];
     [progressBgView layoutIfNeeded];
     
+    
+    //判断当前选项是否是正确答案
+    
     //添加进度条
     UIView *progressView = [UIView new];
-    progressView.backgroundColor = [UIColor colorWithHexString:@"#ff643d" alpha:1.f];
+    progressView.backgroundColor = [self getColorWithProgressIndex:index];
     [self.view addSubview:progressView];
     progressView.frame = CGRectMake(CCGetRealFromPt(85), progressBgView.frame.origin.y, 0, CCGetRealFromPt(30));
     [progressView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -461,6 +465,29 @@
     [UIView animateWithDuration:0.7 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         progressView.frame = CGRectMake(CCGetRealFromPt(85), progressBgView.frame.origin.y, progressBgView.frame.size.width * percent / 100.0f, CCGetRealFromPt(30));
     } completion:nil];
+}
+
+/**
+ 获取进度条的背景颜色
+
+ @param index 进度条颜色下标
+ @return 进度条的颜色
+ */
+-(UIColor *)getColorWithProgressIndex:(NSInteger)index{
+    UIColor *color = [UIColor colorWithHexString:@"#ff643d" alpha:1.f];
+    if([self.resultDic[@"correctOption"] isKindOfClass:[NSNumber class]]) {//如果是单选
+        if ([self.resultDic[@"correctOption"] integerValue] == index - 1) {//判断此条数据是否是正确答案
+            return [UIColor colorWithHexString:@"#17bc2f" alpha:1.f];//返回正确答案的颜色
+        }
+    } else {
+        NSArray *arr = self.resultDic[@"correctOption"];
+        for (int i = 0; i < arr.count; i++) {
+            if ([arr[i]integerValue] == index - 1) {
+                return [UIColor colorWithHexString:@"#17bc2f" alpha:1.f];//返回正确答案的颜色
+            }
+        }
+    }
+    return color;
 }
 /**
  添加leftLabel

@@ -75,7 +75,6 @@
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
 
 
-
 @end
 
 @interface OfflinePlayBack : NSObject
@@ -186,6 +185,5 @@
  -6 -dst存在但并不是加密文件格式;
  */
 - (int)DecompressZipWithDec:(NSString *)dst dir:(NSString *)dir;
-
 
 @end

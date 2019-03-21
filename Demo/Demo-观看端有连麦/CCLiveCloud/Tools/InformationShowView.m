@@ -26,7 +26,39 @@
     // Drawing code
 }
 */
-
+-(instancetype)initWithFrame:(CGRect)frame WithLabel:(NSString *)str{
+    self = [super initWithFrame:frame];
+    if (self) {
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealSingleTap:)];
+        [self addGestureRecognizer:singleTap];
+        
+        self.userInteractionEnabled = YES;
+        CGSize size = [self getTitleSizeByFont:str font:[UIFont systemFontOfSize:FontSize_28]];
+        
+        [self addSubview:self.centerView];
+        [self.centerView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.mas_equalTo(self);
+            make.top.mas_equalTo(self.mas_top);
+            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(130) + size.width,CCGetRealFromPt(82) + size.height));
+        }];
+        
+        [self.centerView addSubview:self.label];
+        [self.label setText:str];
+        [self.label mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(self.centerView);
+        }];
+        self.centerView.alpha=0.0;
+        [self layoutIfNeeded];
+        
+        //动画--淡入
+        [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveLinear  animations:^{
+            self.centerView.alpha=1.0;
+        } completion:^(BOOL finished) {
+            [self hiddenAnimation];
+        }];
+    }
+    return self;
+}
 -(instancetype)initWithLabel:(NSString *)str {
     self = [super init];
     if(self) {

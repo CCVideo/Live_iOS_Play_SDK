@@ -9,7 +9,7 @@
 #import "CCPlayerView.h"
 #import "Utility.h"
 #import "InformationShowView.h"
-
+#import "CCProxy.h"
 @interface CCPlayerView ()<UITextFieldDelegate, LianMaiDelegate>
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -336,7 +336,8 @@
     [self addGestureRecognizer:_TapGesture];
 //隐藏导航
     [self stopPlayerTimer];
-    self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:weakObject selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
     
     //   视频小窗
     [self setSmallVideoView];
@@ -434,10 +435,10 @@
  @param secRoadKeyArray 清晰度
  */
 - (void)SelectLinesWithFirRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray {
-    
-    if (firRoadNum >3) {
-        firRoadNum = 3;
-    }
+//
+//    if (firRoadNum >3) {
+//        firRoadNum = 3;
+//    }
     /*
      ps:此处注释的代码为线路切换功能,默认隐藏了切换清晰度的btn(self.qingXiButton),如果想要打开线路切换功能，解开这个方法的注释,并且在- (void)layouUI:(BOOL)screenLandScape;方法中,将_qingXiButton.hidden = NO;
         默认只有横屏状态下显示清晰度切换按钮.
@@ -678,13 +679,14 @@
 @param sender 点击按钮
 */
 -(void)backBtnClick:(UIButton *)sender{
+    [self endEditing:YES];
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
         sender.tag = 1;
         [UIApplication sharedApplication].statusBarHidden = NO;
         self.selectedIndexView.hidden = YES;
-        [self endEditing:NO];
+//        [self endEditing:NO];
         self.contentView.hidden = YES;
         UIView *view = [self superview];
         [self mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -726,6 +728,7 @@
  @param sender 切换
  */
 -(void)changeBtnClick:(UIButton *)sender{
+    [self endEditing:YES];
     if (_smallVideoView.hidden && !_changeButton.hidden) {
         NSString *title = _changeButton.tag == 1 ? PLAY_CHANGEDOC : PLAY_CHANGEVIDEO;
         [_changeButton setTitle:title forState:UIControlStateNormal];
@@ -880,7 +883,7 @@
  */
 -(void)removeInformationViewPop {
     [_informationViewPop removeFromSuperview];
-    _informationViewPop = nil;
+//    _informationViewPop = nil;
 }
 
 /**
@@ -952,7 +955,8 @@
  */
 - (void)startDanMuTimer {
     [self stopDanMuTimer];
-    _danMuTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(makeTheRightAction) userInfo:nil repeats:YES];
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    _danMuTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:weakObject selector:@selector(makeTheRightAction) userInfo:nil repeats:YES];
 }
 
 /**
@@ -991,7 +995,7 @@
 /**
  添加弹幕
 
- @param str <#str description#>
+ @param str 弹幕内容
  */
 - (void)insertStr:(NSString *)str{
     if ([_danMuTimer isValid]) {
@@ -1098,6 +1102,7 @@
 }
 
 -(void)dealloc {
+//    NSLog(@"移除直播视频视图");
     [self removeObserver];
     [self stopPlayerTimer];
     [self stopDanMuTimer];
@@ -1245,7 +1250,7 @@
         [self switchVideoDoc:_isMain];
     }
     [_loadingView removeFromSuperview];
-    _loadingView = nil;
+//    _loadingView = nil;
 }
 /**
  *    @brief  主讲开始推流
@@ -1253,7 +1258,7 @@
 - (void)onLiveStatusChangeStart{
     _endNormal = NO;
     [_loadingView removeFromSuperview];
-    _loadingView = nil;
+//    _loadingView = nil;
     self.liveUnStart.hidden = YES;
     if (_templateType == 4 || _templateType == 5) {
         self.smallVideoView.hidden = NO;
@@ -1283,14 +1288,14 @@
     self.quanpingButton.hidden = YES;
     [self bringSubviewToFront:_liveUnStart];
     [_loadingView removeFromSuperview];
-    _loadingView = nil;
+//    _loadingView = nil;
 }
 /**
  *  @brief  加载视频失败
  */
 - (void)play_loadVideoFail{
     [_loadingView removeFromSuperview];
-    _loadingView = nil;
+//    _loadingView = nil;
     _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -1374,8 +1379,8 @@
     if(!_lianMaiView) {
         [APPDelegate.window addSubview:self.lianMaiView];
 
-        AVAuthorizationStatus statusVideo = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-        AVAuthorizationStatus statusAudio = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+//        AVAuthorizationStatus statusVideo = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+//        AVAuthorizationStatus statusAudio = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
 
             if (granted) {
@@ -1490,7 +1495,7 @@
         _lianMaiView = nil;
     }
     [_remoteView removeFromSuperview];
-    _remoteView = nil;
+//    _remoteView = nil;
 
     //挂断后移除连麦视图,并关闭更多菜单
     if (_lianMaiView) {

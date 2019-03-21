@@ -11,7 +11,7 @@
 #import "PlayParameter.h"
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
-#define SDKVersion @"3.2.0"
+#define SDKVersion @"3.3.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -338,8 +338,12 @@
  *    rseult    playing/paused
  */
 -(void)videoStateChangeWithString:(NSString *) result;
-
-
+/**
+ *    @brief    收到奖杯(The new method)
+ *    dic       结果
+ *    "type":  1 奖杯 2 其他
+ */
+-(void)prize_sendWithDict:(NSDictionary *)dic;
 
 //#ifdef LIANMAI_WEBRTC
 /**
@@ -537,13 +541,12 @@
  *      @param     practiceId  随堂测ID
  */
 -(void)getPracticeRankWithPracticeId:(NSString *)practiceId;
+
 /**
  *    @brief     获取随堂测(The new method)
  *      @param     practiceId  随堂测ID(没有传@"")
  */
 -(void)getPracticeInfo:(NSString *)practiceId;
-
-
 
 //#ifdef LIANMAI_WEBRTC
 /**

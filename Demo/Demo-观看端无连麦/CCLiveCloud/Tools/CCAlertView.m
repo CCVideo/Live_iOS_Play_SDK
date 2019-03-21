@@ -241,9 +241,10 @@
 #pragma mark - tableViewDelegate And DataSource
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellId = @"DefaultBaseCellIdentifier";
-    if ([self.titleArr count] - 1 < (long)indexPath.row) {
-        return nil;//防止数组越界
-    }
+    //TODO
+//    if ([self.titleArr count] - 1 < (long)indexPath.row) {
+//        return nil;//防止数组越界
+//    }
     NSString *title = [self.titleArr objectAtIndex:indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellId];
     if (cell == nil) {

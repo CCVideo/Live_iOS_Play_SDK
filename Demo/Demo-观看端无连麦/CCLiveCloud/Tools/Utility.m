@@ -27,7 +27,7 @@
     NSError *error = nil;
     NSRegularExpression *re = [NSRegularExpression regularExpressionWithPattern:regex_emoji options:NSRegularExpressionCaseInsensitive error:&error];
     if (!re) {
-        NSLog(@"%@", [error localizedDescription]);
+//        NSLog(@"%@", [error localizedDescription]);
         return attributeString;
     }
     
@@ -85,7 +85,7 @@
     NSError *error = nil;
     NSRegularExpression *re = [NSRegularExpression regularExpressionWithPattern:string options:NSRegularExpressionCaseInsensitive error:&error];
     if (!re) {
-        NSLog(@"%@", [error localizedDescription]);
+//        NSLog(@"%@", [error localizedDescription]);
         return attributeString;
     }
     

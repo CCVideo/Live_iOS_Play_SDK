@@ -13,6 +13,8 @@
 #import "Utility.h"
 //#import "CCPush/CCPushUtil.h"
 #import "InformationShowView.h"
+#import "CCPrivateChatViewCell.h"
+#import "CCChatViewDataSourceManager.h"
 
 @interface PrivateChatViewForOne()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
@@ -61,6 +63,7 @@
 -(instancetype)initWithCloseBlock:(CloseBtnClicked)closeBlock ChatClicked:(ChatIcBtnClicked)chatBlock isResponseBlock:(IsResponseBlock)isResponseBlock isNotResponseBlock:(IsNotResponseBlock)isNotResponseBlock dataArrayForOne:(NSMutableArray *)dataArrayForOne anteid:(NSString *)anteid anteName:(NSString *)anteName isScreenLandScape:(BOOL)isScreenLandScape {
     self = [super init];
     if(self) {
+//        NSLog(@"创建私聊forOne");
         self.isScreenLandScape = isScreenLandScape;
         self.anteid = anteid;
         self.anteName = anteName;
@@ -99,6 +102,7 @@
  */
 -(void)dealloc {
     [self removeObserver];//移除通知
+//    NSLog(@"移除私聊forOne");
 }
 #pragma mark - 设置UI布局
 
@@ -235,6 +239,7 @@
  */
 -(void)returnBtnClicked {
     [_chatTextField resignFirstResponder];
+//    [self removeFromSuperview];
     if(self.chatBlock) {
         self.chatBlock();//聊天回调
     }
@@ -314,6 +319,11 @@
 //计算行高
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     Dialogue *dialog = [_dataArrayForOne objectAtIndex:indexPath.row];
+    BOOL haveImage = [dialog.msg containsString:@"[img_"];
+    if (haveImage) {
+        CGSize imageSize = [[CCChatViewDataSourceManager sharedManager] getImageSizeWithMsg:dialog.msg];
+        return imageSize.height + 40;
+    }
     //设置文字最大宽度
     float textMaxWidth = CCGetRealFromPt(438);
     NSMutableAttributedString *textAttri = [Utility emotionStrWithString:dialog.msg y:-8];
@@ -340,38 +350,48 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"PrivateCellChatView";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    CCPrivateChatViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
+        cell = [[CCPrivateChatViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
     } else {
-        for(UIView *cellView in cell.subviews){
-            [cellView removeFromSuperview];
-        }
+//        for(UIView *cellView in cell.subviews){
+//            [cellView removeFromSuperview];
+//        }
     }
     [cell setBackgroundColor:[UIColor clearColor]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     //设置cel的样式
-    [self initCell:cell indexPath:indexPath];
-
+    Dialogue *model = [_dataArrayForOne objectAtIndex:indexPath.row];
+    [cell setModel:model WithIndexPath:indexPath];
+//    [self initCell:cell indexPath:indexPath];
+    WS(weakSelf)
+    cell.reloadIndexPath = ^(NSIndexPath * _Nonnull indexPath) {
+        [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        //判断当前行数是否是最后一行，如果是,刷新至最后一行
+        NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.dataArrayForOne.count - 1) inSection:0];
+        if (indexPath.row == indexPathLast.row) {
+            [self.tableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];;
+        }
+    };
     return cell;
 }
 
-/**
- 生成一个指定样式的图片，视图转图片
-
- @param v 需要处理的视图
- @return 处理后的图片
- */
--(UIImage*)convertViewToImage:(UIView*)v{
-    CGSize s = v.bounds.size;
-    // 下面方法，第一个参数表示区域大小。第二个参数表示是否是非透明的。如果需要显示半透明效果，需要传NO，否则传YES。第三个参数就是屏幕密度了
-    UIGraphicsBeginImageContextWithOptions(s, NO, [UIScreen mainScreen].scale);
-    [v.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
-}
+///**
+// 生成一个指定样式的图片，视图转图片
+//
+// @param v 需要处理的视图
+// @return 处理后的图片
+// */
+//-(UIImage*)convertViewToImage:(UIView*)v{
+//    CGSize s = v.bounds.size;
+//    // 下面方法，第一个参数表示区域大小。第二个参数表示是否是非透明的。如果需要显示半透明效果，需要传NO，否则传YES。第三个参数就是屏幕密度了
+//    UIGraphicsBeginImageContextWithOptions(s, NO, [UIScreen mainScreen].scale);
+//    [v.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    return image;
+//}
 //返回Section数目
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -388,175 +408,180 @@
 }
 #pragma mark - 设置cell的布局
 
-/**
- 初始化头像的布局
-
- @param cell cell
- @param fromSelf 是否是自己
- @param fromuserrole 身份
- @return 头像
- */
--(UIImageView *)addHeadView:(UITableViewCell *)cell mySelf:(BOOL)fromSelf fromuserrole:(NSString *)fromuserrole{
-    UIImageView *head = [[UIImageView alloc] init];
-    head.backgroundColor = CCClearColor;
-    head.contentMode = UIViewContentModeScaleAspectFit;
-    head.userInteractionEnabled = NO;
-    //设置头像的图片
-    //处理图片
-    NSArray *arr = [self dealWithFromuserrole:fromuserrole];
-    head.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@", arr[1]]];
-    
-    UIImageView * imageid= [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@", arr[0]]]];
-    [head addSubview:imageid];
-    [imageid mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(head);
-    }];
-    //设置头像的图片-----end
-    [cell addSubview:head];
-    if(fromSelf) {//消息方是自己,头像居右
-        [head mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(30));
-            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(20));
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
-        }];
-    } else {//消息方不是自己，头像居左
-        [head mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
-            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(20));
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
-        }];
-    }
-    return head;
-}
-
-/**
- 根据身份处理图片
- 
- @param fromuserrole fromuserrole description
- */
--(NSArray *)dealWithFromuserrole:(NSString *)fromuserrole{
-    NSString * str;//身份标识
-    NSString *headImgName;//头像名称
-    if ([fromuserrole isEqualToString:@"publisher"]) {//主讲
-        str = @"lecturer_nor";
-        headImgName = @"chatHead_lecturer";
-    } else if ([fromuserrole isEqualToString:@"student"]) {//学生或观众
-        str = @"role_floorplan";
-        headImgName = @"chatHead_student";
-    } else if ([fromuserrole isEqualToString:@"host"]) {//主持人
-        str = @"compere_nor";
-        headImgName = @"chatHead_compere";
-    } else if ([fromuserrole isEqualToString:@"unknow"]) {//其他没有角色
-        str = @"role_floorplan";
-        headImgName = [NSString stringWithFormat:@"用户%d", arc4random_uniform(5) + 1];
-    } else if ([fromuserrole isEqualToString:@"teacher"]) {//助教
-        str = @"assistant_nor";
-        headImgName = @"chatHead_assistant";
-    }
-    NSArray *arr = [NSArray arrayWithObjects:str, headImgName, nil];
-    return arr;
-}
-//设置cell样式
--(void)initCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath{
-    Dialogue *dialog = [_dataArrayForOne objectAtIndex:indexPath.row];
-    BOOL fromSelf = [dialog.fromuserid isEqualToString:dialog.myViwerId];
-    //添加head
-    UIImageView *head = [self addHeadView:cell mySelf:fromSelf fromuserrole:dialog.fromuserrole];
-    NSMutableAttributedString *textAttri = [Utility emotionStrWithString:dialog.msg y:-8];
-    CGSize textSize = [self getCGSizeWithAttriStr:textAttri];
-    
-    //设置气泡
-    UIButton *bgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cell addSubview:bgButton];
-    
-    //计算label的高度
-    CGFloat height = textSize.height + CCGetRealFromPt(18) * 2;
-    UILabel *contentLabel = [UILabel new];
-    contentLabel.numberOfLines = 0;
-    contentLabel.backgroundColor = CCClearColor;
-    contentLabel.textAlignment = NSTextAlignmentLeft;
-    contentLabel.userInteractionEnabled = NO;
-    contentLabel.attributedText = textAttri;
-    [bgButton addSubview:contentLabel];
-    if(fromSelf) {
-        contentLabel.textColor = [UIColor colorWithHexString:@"#ffffff" alpha:1.f];
-    }else{
-        contentLabel.textColor = [UIColor colorWithHexString:@"#1e1f21" alpha:1.f];
-    }
-    float width = textSize.width + CCGetRealFromPt(30) + CCGetRealFromPt(20);
-    height = height < CCGetRealFromPt(60)?CCGetRealFromPt(60):(textSize.height + CCGetRealFromPt(18) * 2);
-    [bgButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        if(fromSelf){//判断是否是自己
-            make.right.mas_equalTo(head.mas_left).offset(-CCGetRealFromPt(22));
-        }else{
-            make.left.mas_equalTo(head.mas_right).offset(CCGetRealFromPt(22));
-        }
-        make.top.mas_equalTo(head);
-        make.size.mas_equalTo(CGSizeMake(width, height));
-    }];
-    [bgButton layoutIfNeeded];
-    //设置contentLabel的约束
-    float offset = fromSelf?CCGetRealFromPt(20):CCGetRealFromPt(30);
-    [contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(bgButton).offset(offset);
-        make.centerY.mas_equalTo(bgButton).offset(-1);
-        make.size.mas_equalTo(CGSizeMake(textSize.width, textSize.height + 1));
-    }];
-    //处理气泡显示样式
-    [self dealWithBgBtn:bgButton fromSelf:fromSelf];
-}
-
-/**
- 计算文字的大小
-
- @param textAttri 富文本
- @return 计算过的文字宽高
- */
--(CGSize)getCGSizeWithAttriStr:(NSMutableAttributedString *)textAttri{
-    float textMaxWidth = CCGetRealFromPt(438);
-    [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(51, 51, 51) range:NSMakeRange(0, textAttri.length)];
-    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    style.minimumLineHeight = CCGetRealFromPt(36);
-    style.maximumLineHeight = CCGetRealFromPt(60);
-    style.alignment = NSTextAlignmentLeft;
-    style.lineBreakMode = NSLineBreakByCharWrapping;
-    NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_26],NSParagraphStyleAttributeName:style};
-    [textAttri addAttributes:dict range:NSMakeRange(0, textAttri.length)];
-    
-    CGSize textSize = [textAttri boundingRectWithSize:CGSizeMake(textMaxWidth, CGFLOAT_MAX)
-                                              options:NSStringDrawingUsesLineFragmentOrigin
-                                              context:nil].size;
-    textSize.width = ceilf(textSize.width);
-    textSize.height = ceilf(textSize.height);// + 1;
-    return textSize;
-}
-
-/**
- 处理气泡显示样式
-
- @param bgButton 气泡btn
- @param fromSelf 是否是自己
- */
--(void)dealWithBgBtn:(UIButton *)bgButton fromSelf:(BOOL)fromSelf{
-    UIImage *bgImage = nil;
-    UIView * bgView = [[UIView alloc] init];
-    bgView.backgroundColor = [UIColor whiteColor];
-    if (fromSelf) {
-        bgView.backgroundColor = [UIColor colorWithHexString:@"#ff8e47" alpha:1.f];
-    }
-    bgView.frame = bgButton.frame;
-    //设置所需的圆角位置以及大小
-    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:bgView.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight | (fromSelf ?UIRectCornerTopLeft:UIRectCornerTopRight) cornerRadii:CGSizeMake(10, 10)];
-    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-    maskLayer.frame = bgView.bounds;
-    maskLayer.path = maskPath.CGPath;
-    bgView.layer.mask = maskLayer;
-    bgImage = [self convertViewToImage:bgView];
-    [bgButton setBackgroundImage:bgImage forState:UIControlStateDisabled];
-    [bgButton setBackgroundImage:bgImage forState:UIControlStateNormal];
-    bgButton.userInteractionEnabled = YES;
-    bgButton.enabled = NO;
-}
+///**
+// 初始化头像的布局
+//
+// @param cell cell
+// @param fromSelf 是否是自己
+// @param fromuserrole 身份
+// @return 头像
+// */
+//-(UIImageView *)addHeadView:(UITableViewCell *)cell mySelf:(BOOL)fromSelf fromuserrole:(NSString *)fromuserrole{
+//    UIImageView *head = [[UIImageView alloc] init];
+//    head.backgroundColor = CCClearColor;
+//    head.contentMode = UIViewContentModeScaleAspectFit;
+//    head.userInteractionEnabled = NO;
+//    //设置头像的图片
+//    //处理图片
+//    NSArray *arr = [self dealWithFromuserrole:fromuserrole];
+//    head.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@", arr[1]]];
+//    
+//    UIImageView * imageid= [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@", arr[0]]]];
+//    [head addSubview:imageid];
+//    [imageid mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.edges.equalTo(head);
+//    }];
+//    //设置头像的图片-----end
+//    [cell addSubview:head];
+//    if(fromSelf) {//消息方是自己,头像居右
+//        [head mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.right.mas_equalTo(cell).offset(-CCGetRealFromPt(30));
+//            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(20));
+//            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
+//        }];
+//    } else {//消息方不是自己，头像居左
+//        [head mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.left.mas_equalTo(cell).offset(CCGetRealFromPt(30));
+//            make.top.mas_equalTo(cell).offset(CCGetRealFromPt(20));
+//            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
+//        }];
+//    }
+//    return head;
+//}
+//
+///**
+// 根据身份处理图片
+// 
+// @param fromuserrole fromuserrole description
+// */
+//-(NSArray *)dealWithFromuserrole:(NSString *)fromuserrole{
+//    NSString * str;//身份标识
+//    NSString *headImgName;//头像名称
+//    if ([fromuserrole isEqualToString:@"publisher"]) {//主讲
+//        str = @"lecturer_nor";
+//        headImgName = @"chatHead_lecturer";
+//    } else if ([fromuserrole isEqualToString:@"student"]) {//学生或观众
+//        str = @"role_floorplan";
+//        headImgName = @"chatHead_student";
+//    } else if ([fromuserrole isEqualToString:@"host"]) {//主持人
+//        str = @"compere_nor";
+//        headImgName = @"chatHead_compere";
+//    } else if ([fromuserrole isEqualToString:@"unknow"]) {//其他没有角色
+//        str = @"role_floorplan";
+//        headImgName = [NSString stringWithFormat:@"用户%d", arc4random_uniform(5) + 1];
+//    } else if ([fromuserrole isEqualToString:@"teacher"]) {//助教
+//        str = @"assistant_nor";
+//        headImgName = @"chatHead_assistant";
+//    }
+//    NSArray *arr = [NSArray arrayWithObjects:str, headImgName, nil];
+//    return arr;
+//}
+////设置cell样式
+//-(void)initCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath{
+//    Dialogue *dialog = [_dataArrayForOne objectAtIndex:indexPath.row];
+//    BOOL fromSelf = [dialog.fromuserid isEqualToString:dialog.myViwerId];
+//    //添加head
+//    UIImageView *head = [self addHeadView:cell mySelf:fromSelf fromuserrole:dialog.fromuserrole];
+//    
+//    //设置气泡
+//    UIButton *bgButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [cell addSubview:bgButton];
+//    
+//    //判断是否有图片
+//    BOOL haveImg = [dialog.msg containsString:@"[img_"];
+//    if (haveImg) {
+//        dialog.msg = @"[图片]";
+//    }
+//    NSMutableAttributedString *textAttri = [Utility emotionStrWithString:dialog.msg y:-8];
+//    CGSize textSize = [self getCGSizeWithAttriStr:textAttri];
+//    //计算label的高度
+//    CGFloat height = textSize.height + CCGetRealFromPt(18) * 2;
+//    UILabel *contentLabel = [UILabel new];
+//    contentLabel.numberOfLines = 0;
+//    contentLabel.backgroundColor = CCClearColor;
+//    contentLabel.textAlignment = NSTextAlignmentLeft;
+//    contentLabel.userInteractionEnabled = NO;
+//    contentLabel.attributedText = textAttri;
+//    [bgButton addSubview:contentLabel];
+//    if(fromSelf) {
+//        contentLabel.textColor = [UIColor colorWithHexString:@"#ffffff" alpha:1.f];
+//    }else{
+//        contentLabel.textColor = [UIColor colorWithHexString:@"#1e1f21" alpha:1.f];
+//    }
+//    float width = textSize.width + CCGetRealFromPt(30) + CCGetRealFromPt(20);
+//    height = height < CCGetRealFromPt(60)?CCGetRealFromPt(60):(textSize.height + CCGetRealFromPt(18) * 2);
+//    [bgButton mas_makeConstraints:^(MASConstraintMaker *make) {
+//        if(fromSelf){//判断是否是自己
+//            make.right.mas_equalTo(head.mas_left).offset(-CCGetRealFromPt(22));
+//        }else{
+//            make.left.mas_equalTo(head.mas_right).offset(CCGetRealFromPt(22));
+//        }
+//        make.top.mas_equalTo(head);
+//        make.size.mas_equalTo(CGSizeMake(width, height));
+//    }];
+//    [bgButton layoutIfNeeded];
+//    //设置contentLabel的约束
+//    float offset = fromSelf?CCGetRealFromPt(20):CCGetRealFromPt(30);
+//    [contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.mas_equalTo(bgButton).offset(offset);
+//        make.centerY.mas_equalTo(bgButton).offset(-1);
+//        make.size.mas_equalTo(CGSizeMake(textSize.width, textSize.height + 1));
+//    }];
+//    //处理气泡显示样式
+//    [self dealWithBgBtn:bgButton fromSelf:fromSelf];
+//}
+//
+///**
+// 计算文字的大小
+//
+// @param textAttri 富文本
+// @return 计算过的文字宽高
+// */
+//-(CGSize)getCGSizeWithAttriStr:(NSMutableAttributedString *)textAttri{
+//    float textMaxWidth = CCGetRealFromPt(438);
+//    [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(51, 51, 51) range:NSMakeRange(0, textAttri.length)];
+//    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+//    style.minimumLineHeight = CCGetRealFromPt(36);
+//    style.maximumLineHeight = CCGetRealFromPt(60);
+//    style.alignment = NSTextAlignmentLeft;
+//    style.lineBreakMode = NSLineBreakByCharWrapping;
+//    NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_26],NSParagraphStyleAttributeName:style};
+//    [textAttri addAttributes:dict range:NSMakeRange(0, textAttri.length)];
+//    
+//    CGSize textSize = [textAttri boundingRectWithSize:CGSizeMake(textMaxWidth, CGFLOAT_MAX)
+//                                              options:NSStringDrawingUsesLineFragmentOrigin
+//                                              context:nil].size;
+//    textSize.width = ceilf(textSize.width);
+//    textSize.height = ceilf(textSize.height);// + 1;
+//    return textSize;
+//}
+//
+///**
+// 处理气泡显示样式
+//
+// @param bgButton 气泡btn
+// @param fromSelf 是否是自己
+// */
+//-(void)dealWithBgBtn:(UIButton *)bgButton fromSelf:(BOOL)fromSelf{
+//    UIImage *bgImage = nil;
+//    UIView * bgView = [[UIView alloc] init];
+//    bgView.backgroundColor = [UIColor whiteColor];
+//    if (fromSelf) {
+//        bgView.backgroundColor = [UIColor colorWithHexString:@"#ff8e47" alpha:1.f];
+//    }
+//    bgView.frame = bgButton.frame;
+//    //设置所需的圆角位置以及大小
+//    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:bgView.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight | (fromSelf ?UIRectCornerTopLeft:UIRectCornerTopRight) cornerRadii:CGSizeMake(10, 10)];
+//    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+//    maskLayer.frame = bgView.bounds;
+//    maskLayer.path = maskPath.CGPath;
+//    bgView.layer.mask = maskLayer;
+//    bgImage = [self convertViewToImage:bgView];
+//    [bgButton setBackgroundImage:bgImage forState:UIControlStateDisabled];
+//    [bgButton setBackgroundImage:bgImage forState:UIControlStateNormal];
+//    bgButton.userInteractionEnabled = YES;
+//    bgButton.enabled = NO;
+//}
 #pragma mark - 键盘将要返回
 //键盘将要返回时
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -633,6 +658,9 @@
 }
 
 - (void)keyboardWillHide:(NSNotification *)notif {
+    //todo 多个人发送私聊，公聊中点击某个人头像，然后公聊发送消息，回调用此方法，导致发送公聊，私聊列表弹出。
+    //初步判断，内存泄露，没有及时释放某个1V1私聊，导致走了这个回调
+//    NSLog(@"私聊显示:%d", self.hidden?1:0);
     if(self.isNotResponseBlock) {
         self.isNotResponseBlock();
     }

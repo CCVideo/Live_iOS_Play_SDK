@@ -544,6 +544,8 @@
         _selectQuestionCount ++;
     } else if([opthionsDic[@"type"] intValue] == 2) {
         centerStr = @"问答";
+    } else{
+        centerStr = @"UNKNOW";
     }
     
     //初始化问题类型label

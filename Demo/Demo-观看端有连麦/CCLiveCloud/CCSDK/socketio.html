@@ -6474,6 +6474,10 @@
             socket.on('practice_close', function(data){
                        socket_message('practice_close', data);
             });
+            //48 关闭随堂测事件prize_send
+            socket.on('prize_send', function(data){
+                       socket_message('prize_send', data);
+            });
      
         }
 

@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.1</string>
+	<string>1.2.2</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -29,6 +29,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>需要获取您的相机权限, 开启后才可以进行扫码和视频直播</string>
+	<key>NSContactsUsageDescription</key>
+	<string>是否允许获取联系人</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>需要获取您的麦克风权限, 开启后连麦时才会有声音</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -39,6 +41,7 @@
 	<array>
 		<string>audio</string>
 		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

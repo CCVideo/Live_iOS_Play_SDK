@@ -392,6 +392,8 @@
                 keyName = PLAYBACK_LIVEID;
             } else if ([s containsString:@"recordid"]) {
                 keyName = PLAYBACK_RECORDID;
+            } else {
+                keyName = @"UNKNOW";
             }
             s = [s substringFromIndex:([s rangeOfString:@"="].location + 1)];
             SaveToUserDefaults(keyName,s);
@@ -479,6 +481,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     if(_photoNotPermissionVC) {
         _photoNotPermissionVC = nil;
         [self singleTap];

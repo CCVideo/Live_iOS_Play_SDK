@@ -38,7 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
  开始播放时调用此方法
  */
 -(void)timerfunc;
+
 @end
+
 @interface CCPlayBackView : UIView
 @property (nonatomic,assign)BOOL                          isScreenLandScape;//是否横屏
 @property (nonatomic,assign)float                         playBackRate;//播放速率

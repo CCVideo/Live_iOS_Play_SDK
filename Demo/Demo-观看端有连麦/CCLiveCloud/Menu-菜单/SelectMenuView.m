@@ -32,6 +32,10 @@
     }
     return self;
 }
+- (void)dealloc
+{
+//    NSLog(@"销毁menuView");
+}
 #pragma mark - 初始化UI
 -(void)initUI{
     self.layer.cornerRadius = CCGetRealFromPt(35);
@@ -94,6 +98,10 @@
 -(BOOL)existLianmai{
     return _lianmaiBtn?YES:NO;
 }
+#pragma mark - 判断有无私聊
+-(BOOL)existPrivate{
+    return _privateChatBtn?YES:NO;
+}
 #pragma mark - 点击事件
 
 /**
@@ -111,10 +119,7 @@
  */
 -(void)privateChatBtnClicked:(UIButton *)btn{
     [self hiddenAllBtns:YES];
-    if (_privateBgBtn) {//如果有新消息，去除新私聊消息
-        [_privateBgBtn removeFromSuperview];
-        _privateBgBtn = nil;
-    }
+//    [self removeNewPrivateMsg];
     if (_privateBlock) {
         _privateBlock();
     }
@@ -157,7 +162,9 @@
 -(void)hiddenAllBtns:(BOOL)hidden{
     //判断是否有连麦视图，根据此值(haveLianmai)加载不同的样式
     BOOL haveLianmai = [self existLianmai];
+    BOOL havePrivate = [self existPrivate];
     CGFloat height = haveLianmai?0:50;
+    height += havePrivate?0:50;
     //加载打开和关闭菜单的动画
     if (hidden) {//收回菜单
         [UIView animateKeyframesWithDuration:0.3 delay:0 options:UIViewKeyframeAnimationOptionBeginFromCurrentState animations:^{
@@ -190,6 +197,12 @@
     _lianmaiLabel.hidden = hidden;
     _lianmaiBtn.hidden = hidden;
     //#endif
+}
+-(void)hiddenPrivateBtn{
+    [_privateChatBtn removeFromSuperview];
+    _privateChatBtn = nil;
+    [_privateLabel removeFromSuperview];
+    _privateLabel = nil;
 }
 #pragma mark - 新消息提醒
 
@@ -296,6 +309,16 @@
         [_privateBgBtn removeFromSuperview];
         _privateBgBtn = nil;
     }
+}
+/**
+ 隐藏menuView
+ 
+ @param hidden 是否隐藏
+ */
+-(void)hiddenMenuViews:(BOOL)hidden{
+    self.hidden = hidden;
+    self.privateBgBtn.hidden = hidden;
+    self.announcementBgBtn.hidden = hidden;
 }
 #pragma mark - 添加通知
 -(void)addObserver{

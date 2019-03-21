@@ -75,4 +75,12 @@ typedef void(^CheckDotBlock)(BOOL flag);//新消息标记
  */
 -(void)showTableView;
 
+
+/**
+ 隐藏或显示私聊视图
+
+ @param hidden 是否隐藏
+ */
+-(void)hiddenPrivateViewForOne:(BOOL)hidden;
+
 @end

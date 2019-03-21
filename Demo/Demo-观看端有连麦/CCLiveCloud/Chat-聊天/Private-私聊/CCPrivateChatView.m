@@ -28,7 +28,7 @@
 @property(nonatomic,copy)CheckDotBlock              checkDotBlock;//新消息标记
 @property(nonatomic,copy)UIView                     *bottomLine;//底部分界线
 @property(nonatomic,copy)UIView                     *topLine;//顶部分界线
-
+//@property(nonatomic,assign)BOOL                     hiddenPrivateForOne;//隐藏私聊视图
 @end
 
 @implementation CCPrivateChatView
@@ -58,7 +58,9 @@
     return self;
 }
 #pragma mark - 设置UI布局
-
+-(void)dealloc{
+//    NSLog(@"销毁私聊");
+}
 /**
  设置UI布局
  */
@@ -204,12 +206,6 @@
 //设置cell
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     Dialogue *privateDialogue = [self.dataArray objectAtIndex:indexPath.row];
-    NSString *anteid = nil;
-    if([privateDialogue.fromuserid isEqualToString:privateDialogue.myViwerId]) {
-        anteid = privateDialogue.touserid;
-    } else {
-        anteid = privateDialogue.fromuserid;
-    }
 
     static NSString *identifier = @"PrivateChatCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
@@ -256,6 +252,9 @@
     } else if ([fromuserrole isEqualToString:@"teacher"]) {//助教
         str = @"assistant_nor";
         headImgName = @"chatHead_assistant";
+    } else {
+        str = @"role_floorplan";
+        headImgName = [NSString stringWithFormat:@"用户%d", arc4random_uniform(5) + 1];
     }
     headImage.image = [UIImage imageNamed:headImgName];
     //头像的标识
@@ -301,7 +300,12 @@
  @return 消息视图
  */
 -(UILabel *)createMsgLabel:(Dialogue *)privateDialogue tag:(NSInteger)tag{
-    NSMutableAttributedString *textAttri = [Utility emotionStrWithString:privateDialogue.msg y:-8];
+    NSString *msg = privateDialogue.msg;
+    BOOL haveImage = [privateDialogue.msg containsString:@"[img_"];
+    if (haveImage) {
+        msg = @"[图片]";
+    }
+    NSMutableAttributedString *textAttri = [Utility emotionStrWithString:msg y:-8];
     [textAttri addAttribute:NSForegroundColorAttributeName value:CCRGBColor(102,102,102) range:NSMakeRange(0, textAttri.length)];
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     style.alignment = NSTextAlignmentLeft;
@@ -423,12 +427,12 @@
             ws.closeBlock();
         }
         ws.tableView.hidden = NO;
-        [self checkDot];
+        [ws checkDot];
     } ChatClicked:^{
         [ws.privateChatViewForOne removeFromSuperview];
-        ws.privateChatViewForOne = nil;
+//        ws.privateChatViewForOne = nil;
         ws.tableView.hidden = NO;
-        [self checkDot];
+        [ws checkDot];
     } isResponseBlock:^(CGFloat y) {
         if(ws.isResponseBlock) {
             ws.isResponseBlock(y);
@@ -452,7 +456,7 @@
 {
     if(_privateChatViewForOne) {
         [_privateChatViewForOne removeFromSuperview];
-        _privateChatViewForOne = nil;
+//        _privateChatViewForOne = nil;
     }
     Dialogue *globalDialogue = [self.dataArray objectAtIndex:indexPath.row];
     globalDialogue.isNew = NO;
@@ -488,7 +492,7 @@
 -(void)selectByClickHead:(Dialogue *)dialogue {
     if(_privateChatViewForOne) {
         [_privateChatViewForOne removeFromSuperview];
-        _privateChatViewForOne = nil;
+//        _privateChatViewForOne = nil;
     }
     NSString *anteName = nil;
     NSString *anteid = nil;
@@ -568,15 +572,27 @@
  检测是否是新消息
  */
 -(void)checkDot {
-    BOOL flag = NO;
+    /*   旧版本回调的消息标识回调        */
+//    BOOL flag = NO;
+//    for (Dialogue *dia in self.dataArray) {
+//        if(dia.isNew == YES) {
+//            flag = YES;
+//            return;
+//        }
+//    }
+//    if(self.checkDotBlock) {
+//        self.checkDotBlock(flag);//新消息标识回调
+//    }
+    /*  新版本menuView新私聊消息回调   */
+    int i = 0;
     for (Dialogue *dia in self.dataArray) {
-        if(dia.isNew == YES) {
-            flag = YES;
-            break;
+        if (dia.isNew == NO) {
+            i++;//判断i最终是否和dataArray count是否相等
         }
     }
-    if(self.checkDotBlock) {
-        self.checkDotBlock(flag);//新消息标识回调
+    if (i == [self.dataArray count]) {
+        //发送通知，移除新消息视图
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"remove_newPrivateMsg" object:self];
     }
 }
 
@@ -588,5 +604,20 @@
 -(void)setCheckDotBlock1:(CheckDotBlock)block {
     self.checkDotBlock = block;
 }
-
+/**
+ 隐藏或显示私聊视图
+ 
+ @param hidden 是否隐藏
+ */
+-(void)hiddenPrivateViewForOne:(BOOL)hidden{
+//    self.hiddenPrivateForOne = hidden;
+}
+-(void)setHidden:(BOOL)hidden{
+    [super setHidden:hidden];
+    //todo 横竖屏旋转时私聊视图frame被更改
+    CGRect rect = [UIScreen mainScreen].bounds;
+    CGFloat width = rect.size.width > rect.size.height ? rect.size.height : rect.size.width;
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, width, IS_IPHONE_X ? CCGetRealFromPt(835) + 90:CCGetRealFromPt(835));
+//    NSLog(@"私聊视图的frame:%@", self);
+}
 @end

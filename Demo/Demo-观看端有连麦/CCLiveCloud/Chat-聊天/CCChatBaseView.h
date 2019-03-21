@@ -49,9 +49,9 @@ typedef void(^PrivateChatBlock)(NSString *anteid,NSString *msg);//私聊发送�
 /**
  添加一条公聊聊天
 
- @param array dataSource处理过的数组,需要处理最后一条数据，并加载
+ @param object dataSource处理过的数组,需要处理最后一条数据，并加载
  */
--(void)addPublicChat:(NSMutableArray *)array;
+-(void)addPublicChat:(id)object;
 
 /**
  刷新私聊

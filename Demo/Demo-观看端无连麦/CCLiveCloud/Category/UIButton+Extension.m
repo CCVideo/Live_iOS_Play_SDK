@@ -11,8 +11,15 @@
 
 
 @implementation UIButton (Extension)
-
-
+/** 设置图片和选择后的图片 **/
++ (instancetype)buttonWithImageName:(NSString *)imageName selectedImageName:(NSString *)selectedImageName tag:(NSInteger)tag target:(id)target sel:(SEL)sel{
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+    [btn setImage:[UIImage imageNamed:selectedImageName] forState:UIControlStateSelected];
+    btn.tag = tag;
+    [btn addTarget:target action:sel forControlEvents:UIControlEventTouchUpInside];
+    return btn;
+}
 /** 普通标题和背景颜色 */
 + (instancetype) buttonWithTitle:(NSString*) title backGroudColor:(UIColor*) color
 {

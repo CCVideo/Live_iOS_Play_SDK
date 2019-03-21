@@ -10,7 +10,7 @@
 #import "Utility.h"
 #import "InformationShowView.h"
 #import "CCAlertView.h"//提示框
-
+#import "CCProxy.h"
 
 @interface CCPlayBackView()<UITextFieldDelegate>
 
@@ -37,7 +37,7 @@
  视图销毁时去掉timer
  */
 -(void)dealloc {
-    [self stopPlayerTimer];
+//    NSLog(@"移除回放视频视图");
 }
 
 //滑动事件
@@ -75,7 +75,6 @@
  隐藏导航
  */
 - (void)LatencyHiding {
-
     if (self.bottomShadowView.hidden == NO) {
         self.bottomShadowView.hidden = YES;
         self.topShadowView.hidden = YES;
@@ -250,7 +249,7 @@
     [_slider setThumbImage:[UIImage imageNamed:@"progressBar"] forState:UIControlStateNormal];
     //对滑动条添加事件函数
     [_slider addTarget:self action:@selector(durationSliderMoving:) forControlEvents:UIControlEventValueChanged];
-    [_slider addTarget:self action:@selector(durationSliderDone:) forControlEvents:UIControlEventTouchUpInside];
+    [_slider addTarget:self action:@selector(durationSliderDone:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchCancel | UIControlEventTouchUpOutside];
     [_slider addTarget:self action:@selector(UIControlEventTouchDown:) forControlEvents:UIControlEventTouchDown];
     [self.bottomShadowView addSubview:_slider];
 
@@ -295,7 +294,9 @@
 
     //隐藏导航
     [self stopPlayerTimer];
-    self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
+    
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:weakObject selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
     
     //新加属性
     [self.backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -352,7 +353,8 @@
     }
     
     [self stopTimer];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
 }
 
 /**
@@ -463,9 +465,10 @@
 //创建提示窗
 -(void)creatAlertController_alert {
     //设置提示弹窗
+    WS(weakSelf)
     CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:ALERT_EXITPLAYBACK sureAction:SURE cancelAction:CANCEL sureBlock:^{
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self exitPlayBack];
+            [weakSelf exitPlayBack];
         });
     }];
     [APPDelegate.window addSubview:alertView];
@@ -473,8 +476,12 @@
 //退出直播回放
 -(void)exitPlayBack{
     [self.smallVideoView removeFromSuperview];
+    [self stopTimer];
+    [self stopPlayerTimer];
 //    NSLog(@"退出直播回放");
-    self.exitCallBack();//退出回放回调
+    if (self.exitCallBack) {
+        self.exitCallBack();//退出回放回调
+    }
 }
 #pragma mark - 播放和根据时间添加数据
 //播放和根据时间添加数据
@@ -487,7 +494,8 @@
 //开始播放
 -(void)startTimer {
     [self stopTimer];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:self selector:@selector(timerfunc) userInfo:nil repeats:YES];
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
 }
 //停止播放
 -(void) stopTimer {

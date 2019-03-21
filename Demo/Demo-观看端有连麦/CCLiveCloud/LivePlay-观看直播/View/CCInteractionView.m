@@ -19,14 +19,16 @@
 @property (strong, nonatomic) NSMutableArray         * keysArrAll;//问答数组
 @property (nonatomic,strong)NSMutableDictionary      * QADic;//问答字典
 @property (nonatomic,strong)UIScrollView             * scrollView;//文档聊天等视图
-@property (nonatomic,strong)NSMutableArray           * publicChatArray;//公聊
 @property (nonatomic,strong)NSMutableDictionary      * userDic;//聊天字典
 @property (nonatomic,strong)NSMutableDictionary      * dataPrivateDic;//私聊
 @property (nonatomic,strong)UIView                   * lineView;//分割线
 @property (nonatomic,strong)UIView                   * line;//分割线
 @property (nonatomic,strong)UIView                   * shadowView;//滚动条
 @property (nonatomic,assign)NSInteger                  templateType;//房间类型
-@property(nonatomic,copy)   NSString                 * viewerId;
+@property (nonatomic,copy)   NSString                 * viewerId;
+@property (nonatomic,strong)NSMutableArray           * chatArr;//聊天数组
+@property (nonatomic,assign)NSInteger                  lastTime;//最后一条消息
+@property (nonatomic,strong)NSTimer                  * updateTimer;//更新计时器
 
 @property (nonatomic,copy) HiddenMenuViewBlock       hiddenMenuViewBlock;//隐藏菜单按钮
 @property (nonatomic,copy) ChatMessageBlock          chatMessageBlock;//公聊回调
@@ -35,6 +37,11 @@
 @end
 #define IMGURL @"[img_"
 @implementation CCInteractionView
+- (void)dealloc
+{
+//    NSLog(@"移除互动视图");
+    [_updateTimer invalidate];
+}
 -(instancetype)initWithFrame:(CGRect)frame
               hiddenMenuView:(nonnull HiddenMenuViewBlock)block
                    chatBlock:(nonnull ChatMessageBlock)chatBlock
@@ -48,6 +55,11 @@
         _privateChatBlock = privateChatBlock;
         _questionBlock = questionBlock;
         [self setUpUI];
+        NSDate *currentDate = [NSDate date];
+        NSDateFormatter *dataFormatter = [[NSDateFormatter alloc]init];
+        [dataFormatter setDateFormat:@"HH:mm:ss"];
+        NSString *dateString = [dataFormatter stringFromDate:currentDate];
+        _lastTime = [NSString timeSwitchTimestamp:dateString andFormatter:@"HH:mm:ss"];
     }
     return self;
 }
@@ -269,14 +281,13 @@
 -(void)chatLogManage:(NSDictionary *) manageDic{
     //遍历数组,取出每一条聊天信息
     NSMutableArray *reloadArr = [NSMutableArray array];
-    NSMutableArray *newPublicChatArr = [NSMutableArray array];
-    newPublicChatArr = [self.publicChatArray mutableCopy];
-    for (Dialogue *model in self.publicChatArray) {
+    NSMutableArray *newPublicChatArr = [self.manager.publicChatArray mutableCopy];
+    for (Dialogue *model in self.manager.publicChatArray) {
         //找到需要更改状态的那条信息
         if ([manageDic[@"chatIds"] containsObject:model.chatId]) {
             //            NSLog(@"model.chatId 当前的位置");
             //找到消息的位置
-            NSUInteger index = [self.publicChatArray indexOfObject:model];
+            NSUInteger index = [self.manager.publicChatArray indexOfObject:model];
             //更改消息的状态码
             model.status = manageDic[@"status"];
             //更新公聊数组状态
@@ -289,8 +300,8 @@
     }
     //调用chatView的方法,更新聊天状态,并且刷新某一行
     [self.chatView reloadStatusWithIndexPaths:reloadArr publicArr:newPublicChatArr];
-    [self.publicChatArray removeAllObjects];
-    self.publicChatArray = [newPublicChatArr mutableCopy];
+    [self.manager.publicChatArray removeAllObjects];
+    self.manager.publicChatArray = [newPublicChatArr mutableCopy];
 }
 #pragma mark- 聊天
 /**
@@ -315,13 +326,19 @@
     dialogue.fromuserid = dic[@"fromuserid"];
     dialogue.username = dic[@"fromusername"];
     dialogue.fromusername = dic[@"fromusername"];
-    dialogue.fromuserrole = dic[@"fromuserrole"];
     dialogue.useravatar = dic[@"useravatar"];
     dialogue.touserid = dic[@"touserid"];
     dialogue.msg = dic[@"msg"];
     dialogue.time = dic[@"time"];
     dialogue.tousername = self.userDic[dialogue.touserid];
     dialogue.myViwerId = _viewerId;
+    //判断是否有fromuserrole这个字段，如果没有，给他赋值
+    if (![[dic allKeys] containsObject:@"fromuserrole"]) {
+//        NSLog(@"没有身份标识");
+        dialogue.fromuserrole = @"host";
+    }else{
+        dialogue.fromuserrole = dic[@"fromuserrole"];
+    }
     
     NSString *anteName = nil;
     NSString *anteid = nil;
@@ -358,7 +375,34 @@
         //弹幕
         [ws.playerView insertDanmuString:msg];
     }];
-    [self.chatView addPublicChat:self.manager.publicChatArray];
+    //判断时间
+    NSString *publistTime = dic[@"time"];
+    NSInteger publish = [NSString timeSwitchTimestamp:publistTime andFormatter:@"HH:mm:ss"];
+    if (_lastTime == publish) {
+        //添加数组
+        [self.chatArr addObject:[self.manager.publicChatArray lastObject]];
+//        NSLog(@"同一秒，添加至数组");
+        [_updateTimer invalidate];
+        WS(weakSelf)
+        _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:NO block:^(NSTimer * _Nonnull timer) {
+            if (weakSelf.chatArr.count != 0) {
+                [weakSelf.chatView addPublicChatArray:weakSelf.chatArr];
+                [weakSelf.chatArr removeAllObjects];
+//                NSLog(@"延迟数据校对");
+            }
+        }];
+    }else{
+        if (self.chatArr.count != 0) {
+            [self.chatView addPublicChatArray:self.chatArr];
+            [self.chatArr removeAllObjects];
+//            NSLog(@"将数组中的元素添加至消息中");
+        }
+        [self.chatView addPublicChat:[self.manager.publicChatArray lastObject]];
+        _lastTime = publish;
+//        NSLog(@"+++++++++++++++++");
+    }
+    
+//    [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
 }
 /**
  *  @brief  接收到发送的广播
@@ -366,7 +410,7 @@
 - (void)broadcast_msg:(NSDictionary *)dic {
     //解析广播消息
     [self.manager addRadioMessage:dic];
-    [self.chatView addPublicChat:self.manager.publicChatArray];
+    [self.chatView addPublicChat:[self.manager.publicChatArray lastObject]];
 }
 /*
  *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
@@ -445,7 +489,7 @@
 - (void)onAnswerDic:(NSDictionary *)answerDic
 {
     
-    if ([answerDic count] == 0) answerDic = nil ;
+    if ([answerDic count] == 0) return;
     
     if (answerDic) {
         Dialogue *dialog = [[Dialogue alloc] init];
@@ -581,8 +625,9 @@
 //创建问答视图
 -(CCQuestionView *)questionChatView {
     if(!_questionChatView) {
+        WS(weakSelf)
         _questionChatView = [[CCQuestionView alloc] initWithQuestionBlock:^(NSString *message) {
-            [self question:message];
+            [weakSelf question:message];
         } input:YES];
         _questionChatView.backgroundColor = [UIColor grayColor];
     }
@@ -604,16 +649,20 @@
 //创建聊天视图
 -(CCChatBaseView *)chatView {
     if(!_chatView) {
+        WS(weakSelf)
         //公聊发消息回调
         _chatView = [[CCChatBaseView alloc] initWithPublicChatBlock:^(NSString * _Nonnull msg) {
             // 发送公聊信息
-            _chatMessageBlock(msg);
+            if (weakSelf.chatMessageBlock) {
+                weakSelf.chatMessageBlock(msg);
+            }
         } isInput:YES];
         //私聊发消息回调
-        WS(ws)
         _chatView.privateChatBlock = ^(NSString * _Nonnull anteid, NSString * _Nonnull msg) {
             // 发送私聊信息
-            ws.privateChatBlock(anteid, msg);
+            if (weakSelf.privateChatBlock) {
+                weakSelf.privateChatBlock(anteid, msg);
+            }
         };
         _chatView.backgroundColor = CCRGBColor(250,250,250);
     }
@@ -641,12 +690,6 @@
     }
     return _dataPrivateDic;
 }
--(NSMutableArray *)publicChatArray {
-    if(!_publicChatArray) {
-        _publicChatArray = [[NSMutableArray alloc] init];
-    }
-    return _publicChatArray;
-}
 //滚动条
 -(UIView *)shadowView {
     if (!_shadowView) {
@@ -654,6 +697,13 @@
         _shadowView.backgroundColor = CCRGBColor(255,102,51);
     }
     return _shadowView;
+}
+//聊天数组
+-(NSMutableArray *)chatArr{
+    if (!_chatArr) {
+        _chatArr = [NSMutableArray array];
+    }
+    return _chatArr;
 }
 #pragma mark - CCChatViewDataSourceDelegate
 - (void)updateIndexPath:(nonnull NSIndexPath *)indexPath chatArr:(nonnull NSMutableArray *)chatArr {
