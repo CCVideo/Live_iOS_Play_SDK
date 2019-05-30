@@ -67,7 +67,7 @@
 /**
  *  @brief 是否使用https
  */
-@property(nonatomic,assign)BOOL                         security;//是否使用https(已弃用!现在均为https)
+@property(nonatomic,assign)BOOL                         security;//是否使用https(已弃用!)
 /**
  *  @brief
  * 0:IJKMPMovieScalingModeNone

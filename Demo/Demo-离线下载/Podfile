@@ -1,8 +1,0 @@
-platform :ios, '7.0'
-
-target 'Test' do
-	pod 'Masonry'
-	pod 'SDWebImage'
-	pod 'SSZipArchive'
-end
-

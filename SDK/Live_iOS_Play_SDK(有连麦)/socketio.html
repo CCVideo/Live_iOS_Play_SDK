@@ -6233,7 +6233,12 @@
             socket.emit(emitAction, emitValue);
         }
         function socketClose() {
-            socket.disconnect();
+         try{
+         socket.disconnect();
+         }catch(e){
+         console.log('socket close error')
+         }
+     
         }
         function socketIOEmitWithOutBuffer(emitAction, emitValue) {
             socket.emitWithoutBuffer(emitAction, emitValue);
@@ -6478,6 +6483,10 @@
             socket.on('prize_send', function(data){
                        socket_message('prize_send', data);
             });
+     
+        }
+        function socket_message(type,data){
+                window.webkit.messageHandlers.socket_message.postMessage({"type":type,param:data});
      
         }
 
