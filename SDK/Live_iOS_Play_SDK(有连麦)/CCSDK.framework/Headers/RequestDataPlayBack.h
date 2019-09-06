@@ -13,7 +13,7 @@
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
-#define SDKVersion @"3.4.0"
+#define SDKVersion @"3.4.1"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -215,5 +215,12 @@
  *	@brief  设置后台是否可播放
  */
 - (void)setpauseInBackGround:(BOOL)pauseInBackGround;
+
+/**
+ 改变文档背景颜色
+ 
+ @param hexColor 字符串,传颜色的HEXColor 如:#000000
+ */
+- (void)changeDocWebColor:(NSString *)hexColor;
 
 @end

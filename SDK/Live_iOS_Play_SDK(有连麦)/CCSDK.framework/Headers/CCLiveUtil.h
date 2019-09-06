@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     PRACTICECOMMIT = 1014,//@"提交随堂测试"
     PRACTICESTATIS = 1015,//@"获取随堂测统计"
     PRACTICERANK = 1016,//@"获取随堂测排名"
-
+    ERROR_SOCKET = 1017,//@"socket加载失败"
 
 };
 

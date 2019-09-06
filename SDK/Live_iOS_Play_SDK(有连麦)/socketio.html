@@ -6231,6 +6231,8 @@
         var socket;
         function socketIOEmit(emitAction, emitValue) {
             socket.emit(emitAction, emitValue);
+     console.log('参数'+emitAction+'代理'+emitValue)
+
         }
         function socketClose() {
          try{
