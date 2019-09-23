@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.4.1"
+#define SDKVersion @"3.4.2"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -337,7 +337,6 @@
  *    "type":  1 奖杯 2 其他
  */
 -(void)prize_sendWithDict:(NSDictionary *)dic;
-#if __has_include(<WebRTC/WebRTC.h>)
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
@@ -363,7 +362,6 @@
  */
 - (void)allowSpeakInteraction:(BOOL)isAllow;
 //#endif
-#endif
 
 @end
 
@@ -552,7 +550,6 @@
  @param hexColor 字符串,传颜色的HEXColor 如:#000000
  */
 - (void)changeDocWebColor:(NSString *)hexColor;
-#if __has_include(<WebRTC/WebRTC.h>)
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法
@@ -585,5 +582,4 @@
 -(void)gotoConnectWebRTC;
 
 //#endif
-#endif
 @end
