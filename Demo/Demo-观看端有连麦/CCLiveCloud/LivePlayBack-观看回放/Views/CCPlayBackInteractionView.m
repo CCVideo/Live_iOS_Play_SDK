@@ -166,11 +166,11 @@
         //聊天互动： 有 直播文档： 有 直播问答： 无
         _segment.selectedSegmentIndex = 0;
         CGFloat count = _isSmallDocView ? 2 : 3;
-        CGFloat docWidth = _isSmallDocView ? 0 : self.segment.frame.size.width / count;
+//        CGFloat docWidth = _isSmallDocView ? 0 : self.segment.frame.size.width / count;
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:2];
-        [_segment setWidth:docWidth forSegmentAtIndex:3];
+//        [_segment setWidth:docWidth forSegmentAtIndex:3];
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:0]/2, 2);
         
         /*  如果文档在下，隐藏切换按钮   */
@@ -180,11 +180,11 @@
         }
     } else if (_templateType == 5) {
         CGFloat count = _isSmallDocView ? 3 : 4;
-        CGFloat docWidth = _isSmallDocView ? 0 : self.segment.frame.size.width / count;
+//        CGFloat docWidth = _isSmallDocView ? 0 : self.segment.frame.size.width / count;
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:0];
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:2];
-        [_segment setWidth:docWidth forSegmentAtIndex:3];
+//        [_segment setWidth:docWidth forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 0;
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:0]/2, 2);
         //聊天互动： 有 直播文档： 有 直播问答： 有
@@ -427,7 +427,7 @@
 //创建聊天问答等功能选择
 -(UISegmentedControl *)segment {
     if(!_segment) {
-        NSArray *segmentedArray = [[NSArray alloc] initWithObjects:@"聊天",@"问答",@"简介", @"文档", nil];
+        NSArray *segmentedArray = [[NSArray alloc] initWithObjects:@"聊天",@"问答",@"简介", nil];
         _segment = [[UISegmentedControl alloc] initWithItems:segmentedArray];
         //文字设置
         NSMutableDictionary *attDicNormal = [NSMutableDictionary dictionary];

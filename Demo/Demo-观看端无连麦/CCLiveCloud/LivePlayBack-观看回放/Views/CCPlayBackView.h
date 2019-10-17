@@ -107,6 +107,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)turnRight;
 //转为竖屏
 -(void)turnPortrait;
+//添加小窗
+- (void)addSmallView;
 @end
 
 NS_ASSUME_NONNULL_END

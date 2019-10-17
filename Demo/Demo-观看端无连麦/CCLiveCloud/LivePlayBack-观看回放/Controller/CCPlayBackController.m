@@ -50,14 +50,99 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     //初始化背景颜色，设置状态栏样式
-    self.view.backgroundColor = [UIColor blackColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
-    _pauseInBackGround = NO;
+    _pauseInBackGround = YES;
     _isSmallDocView = YES;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
+    
+//    UILabel * label = [[UILabel alloc] init];
+//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
+//    label.textColor = [UIColor redColor];
+//    label.frame = CGRectMake(100, 100, 200, 40);
+//    [self.view addSubview:label];
+    
+//    UIButton *btn = [[UIButton alloc] init];
+//    btn.tag = 1;
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(100, 100, 100, 100);
+//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
+//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
+////
+//    UIButton *btn1 = [[UIButton alloc] init];
+//    [btn1 setBackgroundColor:[UIColor greenColor]];
+//    [self.view addSubview:btn1];
+//    btn1.frame = CGRectMake(200, 100, 100, 100);
+//    [btn1 setTitle:@"默认" forState:UIControlStateNormal];
+//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+////
+//    UIButton *btn2 = [[UIButton alloc] init];
+//    [btn2 setBackgroundColor:[UIColor grayColor]];
+//    [self.view addSubview:btn2];
+//    btn2.frame = CGRectMake(300, 100, 100, 100);
+//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
+//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
+//
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 100, 200, 100);
+//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
+
+}
+- (void)publish_stream {
+//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
+}
+- (void)onPageChange:(NSDictionary *)dictionary {
+    
+}
+
+- (void)docLoadCompleteWithIndex:(NSInteger)index {
+//    if (index == 0) {
+//        [self.requestDataPlayBack changeDocWebColor:@"#000000"];
+////    }
+//    if (index != 0) {
+//        CGFloat ratio = [_requestDataPlayBack getDocAspectRatio];
+//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
+//        self.label.text = str;
+//    }
+}
+- (void)changedoc2 {
+//    [self changedoc1];
+//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+//    if (ratio!=0 && self.playerView.height!=0) {
+//        CGAffineTransform  tran = CGAffineTransformIdentity;
+//        if (ratio>self.playerView.width/self.playerView.height) {
+//            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
+//        }else{
+//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
+//        }
+//        self.playerView.transform = tran;
+//    }
+
+}
+- (void)changedoc1 {
+//    self.playerView.transform = CGAffineTransformIdentity;
+//    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
+}
+- (void)changedoc:(UIButton *)sender {
+//    [self changedoc1];
+//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+//    if (ratio!=0 && self.playerView.height!=0) {
+//        CGAffineTransform  tran = CGAffineTransformIdentity;
+//        if (ratio>self.playerView.width/self.playerView.height) {
+//            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
+//        }else{
+//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
+//        }
+//        self.playerView.transform = tran;
+//    }
+//    [self.requestDataPlayBack changeDocWebColor:@"#000000"];
 }
 //集成SDK
 - (void)integrationSDK {
@@ -196,6 +281,7 @@
  */
 -(void)roomInfo:(NSDictionary *)dic {
     _roomName = dic[@"name"];
+    [self.playerView addSmallView];
     //设置房间标题
     self.playerView.titleLabel.text = dic[@"name"];
     //配置互动视图的信息
@@ -232,20 +318,37 @@
 //监听播放状态
 -(void)movieLoadStateDidChange:(NSNotification*)notification
 {
+//    NSLog(@"当前状态是%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
+//    if (_requestDataPlayBack.ijkPlayer.loadState == 4) {
+//        [self.playerView showLoadingView];
+//    } else if (_requestDataPlayBack.ijkPlayer.loadState == 3) {
+//        [self.playerView removeLoadingView];
+//    }
     switch (_requestDataPlayBack.ijkPlayer.loadState)
     {
         case IJKMPMovieLoadStateStalled:
+//            NSLog(@"当前状态是a%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
+
             break;
         case IJKMPMovieLoadStatePlayable:
+//            NSLog(@"当前状态是b%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
+
             break;
         case IJKMPMovieLoadStatePlaythroughOK:
+//            NSLog(@"当前状态是c%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
+
+            break;
+            //IJKMPMovieLoadStateUnknown
+        case IJKMPMovieLoadStateUnknown:
+//            NSLog(@"当前状态是d%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
+            
             break;
         default:
             break;
     }
 }
 - (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification {
-//    NSLog(@"播放完成");
+    NSLog(@"播放完成");
 }
 //回放速率改变
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification
@@ -262,6 +365,8 @@
                 [_requestDataPlayBack pausePlayer];
             }
             if(self.playerView.loadingView && ![self.playerView.timer isValid]) {
+//            if(![self.playerView.timer isValid]) {
+
 //                NSLog(@"__test 重新开始播放视频, slider.value = %f", _playerView.slider.value);
 //#ifdef LockView
                 if (_pauseInBackGround == NO) {//后台支持播放

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,19 +13,6 @@
 		5202E5CC21A3B01A00C13EF9 /* CCPlayBackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5CB21A3B01A00C13EF9 /* CCPlayBackController.m */; };
 		5202E5D121A3DDC500C13EF9 /* CCPlayBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5D021A3DDC500C13EF9 /* CCPlayBackView.m */; };
 		5202E5D421A3E83200C13EF9 /* MySlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5202E5D321A3E83200C13EF9 /* MySlider.m */; };
-		521631F32322005700D011FE /* socketio.html in Resources */ = {isa = PBXBuildFile; fileRef = 521631EE2322005700D011FE /* socketio.html */; };
-		521631F42322005700D011FE /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631EF2322005700D011FE /* CCSDK.framework */; };
-		521631F52322005700D011FE /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F02322005700D011FE /* IJKMediaFramework.framework */; };
-		521631F62322005700D011FE /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F12322005700D011FE /* WebRTC.framework */; };
-		521631F72322005700D011FE /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F22322005700D011FE /* DWDrmServer.framework */; };
-		521631F82322006200D011FE /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631EF2322005700D011FE /* CCSDK.framework */; };
-		521631F92322006200D011FE /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 521631EF2322005700D011FE /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		521631FA2322006200D011FE /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F22322005700D011FE /* DWDrmServer.framework */; };
-		521631FB2322006200D011FE /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F22322005700D011FE /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		521631FC2322006200D011FE /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F02322005700D011FE /* IJKMediaFramework.framework */; };
-		521631FD2322006200D011FE /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F02322005700D011FE /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		521631FE2322006200D011FE /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F12322005700D011FE /* WebRTC.framework */; };
-		521631FF2322006200D011FE /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 521631F12322005700D011FE /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5216B4B622E558E000917DED /* NSDictionary+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 5216B4B522E558E000917DED /* NSDictionary+Log.m */; };
 		52275E2421ED7BC500C265D7 /* CustomTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 52275E2121ED7BC500C265D7 /* CustomTextField.m */; };
 		52275E2521ED7BC500C265D7 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 52275E2221ED7BC500C265D7 /* Utility.m */; };
@@ -50,6 +37,9 @@
 		5287D2B4217ECD870030AFB6 /* UIBarButtonItem+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5287D2B3217ECD870030AFB6 /* UIBarButtonItem+Extension.m */; };
 		5287D2B7217ECDB50030AFB6 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5287D2B5217ECDB50030AFB6 /* UIView+Extension.m */; };
 		528C514721BE175C0016FCD2 /* NSString+CCSwitchTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 528C514621BE175C0016FCD2 /* NSString+CCSwitchTime.m */; };
+		528EA1FC234D76A000E8BD7D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FB234D76A000E8BD7D /* AVFoundation.framework */; };
+		528EA1FE234D76AF00E8BD7D /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FD234D76AF00E8BD7D /* CoreTelephony.framework */; };
+		528EA200234D77F000E8BD7D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FF234D77F000E8BD7D /* AudioToolbox.framework */; };
 		529D53832179750C0093F724 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53822179750C0093F724 /* AppDelegate.m */; };
 		529D538B2179750D0093F724 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529D538A2179750D0093F724 /* Assets.xcassets */; };
 		529D53912179750D0093F724 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53902179750D0093F724 /* main.m */; };
@@ -57,6 +47,19 @@
 		529D53A62179750E0093F724 /* CCLiveCloudUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53A52179750E0093F724 /* CCLiveCloudUITests.m */; };
 		529D53C82179832F0093F724 /* CCEntranceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53C72179832F0093F724 /* CCEntranceViewController.m */; };
 		52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B9173A21DDD8CF00C3AE9D /* VideoToolbox.framework */; };
+		52C4610923580EC400450384 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610423580EC400450384 /* IJKMediaFramework.framework */; };
+		52C4610A23580EC400450384 /* socketio.html in Resources */ = {isa = PBXBuildFile; fileRef = 52C4610523580EC400450384 /* socketio.html */; };
+		52C4610B23580EC400450384 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610623580EC400450384 /* WebRTC.framework */; };
+		52C4610C23580EC400450384 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610723580EC400450384 /* CCSDK.framework */; };
+		52C4610D23580EC400450384 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610823580EC400450384 /* DWDrmServer.framework */; };
+		52C4610E23580ED000450384 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610723580EC400450384 /* CCSDK.framework */; };
+		52C4610F23580ED000450384 /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610723580EC400450384 /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52C4611023580ED000450384 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610823580EC400450384 /* DWDrmServer.framework */; };
+		52C4611123580ED000450384 /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610823580EC400450384 /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52C4611223580ED100450384 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610423580EC400450384 /* IJKMediaFramework.framework */; };
+		52C4611323580ED100450384 /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610423580EC400450384 /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52C4611423580ED100450384 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610623580EC400450384 /* WebRTC.framework */; };
+		52C4611523580ED100450384 /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4610623580EC400450384 /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */; };
 		52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D55EF32189ABC9008387DC /* CCPlayerView.m */; };
 		52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D76A6421AE416F00F968D0 /* CCNAVController.m */; };
@@ -155,10 +158,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				521631FD2322006200D011FE /* IJKMediaFramework.framework in Embed Frameworks */,
-				521631FB2322006200D011FE /* DWDrmServer.framework in Embed Frameworks */,
-				521631F92322006200D011FE /* CCSDK.framework in Embed Frameworks */,
-				521631FF2322006200D011FE /* WebRTC.framework in Embed Frameworks */,
+				52C4611323580ED100450384 /* IJKMediaFramework.framework in Embed Frameworks */,
+				52C4611123580ED000450384 /* DWDrmServer.framework in Embed Frameworks */,
+				52C4610F23580ED000450384 /* CCSDK.framework in Embed Frameworks */,
+				52C4611523580ED100450384 /* WebRTC.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,11 +192,6 @@
 		5202E5D021A3DDC500C13EF9 /* CCPlayBackView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayBackView.m; sourceTree = "<group>"; };
 		5202E5D221A3E83200C13EF9 /* MySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MySlider.h; sourceTree = "<group>"; };
 		5202E5D321A3E83200C13EF9 /* MySlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MySlider.m; sourceTree = "<group>"; };
-		521631EE2322005700D011FE /* socketio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = socketio.html; sourceTree = "<group>"; };
-		521631EF2322005700D011FE /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
-		521631F02322005700D011FE /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
-		521631F12322005700D011FE /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
-		521631F22322005700D011FE /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
 		5216B4B422E558E000917DED /* NSDictionary+Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Log.h"; sourceTree = "<group>"; };
 		5216B4B522E558E000917DED /* NSDictionary+Log.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Log.m"; sourceTree = "<group>"; };
 		52275E1E21ED7BC400C265D7 /* CustomTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTextField.h; sourceTree = "<group>"; };
@@ -244,6 +242,13 @@
 		5287D2B6217ECDB50030AFB6 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		528C514521BE175C0016FCD2 /* NSString+CCSwitchTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+CCSwitchTime.h"; sourceTree = "<group>"; };
 		528C514621BE175C0016FCD2 /* NSString+CCSwitchTime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+CCSwitchTime.m"; sourceTree = "<group>"; };
+		528EA1F9234D769000E8BD7D /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
+		528EA1FB234D76A000E8BD7D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		528EA1FD234D76AF00E8BD7D /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		528EA1FF234D77F000E8BD7D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		528EA201234D77FE00E8BD7D /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		528EA203234D780E00E8BD7D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		528EA206234D782A00E8BD7D /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		529D537E2179750C0093F724 /* CCLiveCloud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CCLiveCloud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		529D53812179750C0093F724 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		529D53822179750C0093F724 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -261,6 +266,11 @@
 		52B9173621DDD8A800C3AE9D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		52B9173821DDD8B700C3AE9D /* libz.1.1.3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.1.3.tbd; path = usr/lib/libz.1.1.3.tbd; sourceTree = SDKROOT; };
 		52B9173A21DDD8CF00C3AE9D /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		52C4610423580EC400450384 /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
+		52C4610523580EC400450384 /* socketio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = socketio.html; sourceTree = "<group>"; };
+		52C4610623580EC400450384 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
+		52C4610723580EC400450384 /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
+		52C4610823580EC400450384 /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
 		52CB6A3721F9BE280037AE94 /* UIView+GetVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+GetVC.h"; sourceTree = "<group>"; };
 		52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+GetVC.m"; sourceTree = "<group>"; };
 		52D55EF22189ABC9008387DC /* CCPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPlayerView.h; sourceTree = "<group>"; };
@@ -404,19 +414,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				521631FC2322006200D011FE /* IJKMediaFramework.framework in Frameworks */,
-				521631F42322005700D011FE /* CCSDK.framework in Frameworks */,
+				52C4610D23580EC400450384 /* DWDrmServer.framework in Frameworks */,
+				52C4610B23580EC400450384 /* WebRTC.framework in Frameworks */,
+				52C4610923580EC400450384 /* IJKMediaFramework.framework in Frameworks */,
+				52C4611223580ED100450384 /* IJKMediaFramework.framework in Frameworks */,
+				52C4611423580ED100450384 /* WebRTC.framework in Frameworks */,
+				52C4610E23580ED000450384 /* CCSDK.framework in Frameworks */,
+				528EA200234D77F000E8BD7D /* AudioToolbox.framework in Frameworks */,
+				528EA1FE234D76AF00E8BD7D /* CoreTelephony.framework in Frameworks */,
+				52C4610C23580EC400450384 /* CCSDK.framework in Frameworks */,
+				528EA1FC234D76A000E8BD7D /* AVFoundation.framework in Frameworks */,
 				52E908132320DA3000A40F92 /* MediaPlayer.framework in Frameworks */,
-				521631FE2322006200D011FE /* WebRTC.framework in Frameworks */,
-				521631FA2322006200D011FE /* DWDrmServer.framework in Frameworks */,
 				52F8BBEA2231268B00B7CC1B /* libz.tbd in Frameworks */,
-				521631F52322005700D011FE /* IJKMediaFramework.framework in Frameworks */,
 				52F8BBE92231268300B7CC1B /* libz.1.1.3.tbd in Frameworks */,
-				521631F62322005700D011FE /* WebRTC.framework in Frameworks */,
 				7052B44A222FBF6900CF8656 /* SystemConfiguration.framework in Frameworks */,
 				52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */,
-				521631F72322005700D011FE /* DWDrmServer.framework in Frameworks */,
-				521631F82322006200D011FE /* CCSDK.framework in Frameworks */,
+				52C4611023580ED000450384 /* DWDrmServer.framework in Frameworks */,
 				6E1E7835921085EF61E23DB4 /* Pods_CCLiveCloud.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,6 +454,13 @@
 		4EB56FFF876AA38305857105 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				528EA206234D782A00E8BD7D /* Accelerate.framework */,
+				528EA203234D780E00E8BD7D /* libresolv.tbd */,
+				528EA201234D77FE00E8BD7D /* CoreMedia.framework */,
+				528EA1FF234D77F000E8BD7D /* AudioToolbox.framework */,
+				528EA1FD234D76AF00E8BD7D /* CoreTelephony.framework */,
+				528EA1FB234D76A000E8BD7D /* AVFoundation.framework */,
+				528EA1F9234D769000E8BD7D /* CoreML.framework */,
 				52E908122320DA3000A40F92 /* MediaPlayer.framework */,
 				52F8BBDD2231243900B7CC1B /* libc++.tbd */,
 				7052B449222FBF6900CF8656 /* SystemConfiguration.framework */,
@@ -500,11 +520,11 @@
 		522F4ED1217D606D001B078F /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
-				521631EF2322005700D011FE /* CCSDK.framework */,
-				521631F22322005700D011FE /* DWDrmServer.framework */,
-				521631F02322005700D011FE /* IJKMediaFramework.framework */,
-				521631EE2322005700D011FE /* socketio.html */,
-				521631F12322005700D011FE /* WebRTC.framework */,
+				52C4610723580EC400450384 /* CCSDK.framework */,
+				52C4610823580EC400450384 /* DWDrmServer.framework */,
+				52C4610423580EC400450384 /* IJKMediaFramework.framework */,
+				52C4610523580EC400450384 /* socketio.html */,
+				52C4610623580EC400450384 /* WebRTC.framework */,
 			);
 			path = CCSDK;
 			sourceTree = "<group>";
@@ -1085,7 +1105,7 @@
 				70480D55223A4D6500368084 /* gift_loading_gif@2x.gif in Resources */,
 				70E04F5C228517DD00A735FC /* chaoren_right@2x.png in Resources */,
 				70E04F61228517DD00A735FC /* chaoren_left@2x.png in Resources */,
-				521631F32322005700D011FE /* socketio.html in Resources */,
+				52C4610A23580EC400450384 /* socketio.html in Resources */,
 				529D538B2179750D0093F724 /* Assets.xcassets in Resources */,
 				70480D57223A4D8C00368084 /* gift_loading_gif@3x.gif in Resources */,
 				70E04F5F228517DD00A735FC /* noble_background_image@2x.png in Resources */,
@@ -1132,27 +1152,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
-				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/MJExtension/MJExtension.framework",
-				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
-				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJExtension.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1413,6 +1422,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = P92BH8WWP5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1466,6 +1476,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = P92BH8WWP5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (

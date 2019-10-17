@@ -6316,6 +6316,7 @@
             //8
             socket.on('page_change', function (data) {
                 socket_message('page_change', data);
+                      console.log("接受数据");
             });
             //9
             socket.on('draw', function (data) {
@@ -6484,6 +6485,10 @@
             //48 关闭随堂测事件prize_send
             socket.on('prize_send', function(data){
                        socket_message('prize_send', data);
+            });
+            //49 收到关闭连麦
+            socket.on('speak_disconnect_third_party', function(data){
+                       socket_message('speak_disconnect_third_party', data);
             });
      
         }

@@ -12,9 +12,7 @@
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
 //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
 #import "LianmaiView.h"//连麦
-#endif
 //#endif
 #import "CCDocView.h"//文档视图
 NS_ASSUME_NONNULL_BEGIN
@@ -76,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign)NSInteger                  templateType;//房间类型
 @property(nonatomic,strong)InformationShowView      *informationViewPop;
 //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
+
 @property(nonatomic,strong)LianmaiView              *lianMaiView;//连麦
 @property(assign,nonatomic)BOOL                     isAllow;
 @property(assign,nonatomic)BOOL                     needReloadLianMainView;
@@ -90,7 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy) void(^setRemoteView)(CGRect frame);//设置连麦视图回调
 @property(nonatomic,copy) void(^connectSpeak)(BOOL connect);//是否断开连麦
 //#endif
-#endif
 
 
 /**
@@ -106,7 +103,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 //#ifdef LIANMAI_WEBRTC
 #pragma mark - 连麦相关
-#if __has_include(<WebRTC/WebRTC.h>)
 //连麦点击
 -(void)lianmaiBtnClicked;
 /*
@@ -139,8 +135,6 @@ NS_ASSUME_NONNULL_BEGIN
 //移除远程视图
 -(void)removeRmoteView;
 //#endif
-#endif
-
 #pragma mark - 直播状态相关代理
 /**
  *    @brief  收到播放直播状态 0直播 1未直播
@@ -179,6 +173,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param model 弹幕消息模型
  */
 - (void)insertDanmuModel:(CCPublicChatModel *)model;
+/**
+小窗添加
+ 
+ */
+- (void)addSmallView;
 
 @end
 

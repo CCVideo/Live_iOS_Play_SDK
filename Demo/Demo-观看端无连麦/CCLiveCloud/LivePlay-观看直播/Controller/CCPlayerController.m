@@ -38,11 +38,6 @@
 *******************************************************
 */
 @interface CCPlayerController ()<RequestDataDelegate,
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-LianMaiDelegate,
-#endif
-//#endif
 UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark - 房间相关参数
 @property (nonatomic,copy)  NSString                 * viewerId;//观看者的id
@@ -117,6 +112,34 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
+//    UIButton *btn = [[UIButton alloc] init];
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(100, 100, 100, 100);
+//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
+//    self.jjjj = 0;
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 100, 200, 100);
+//    
+}
+
+
+-(void)docLoadCompleteWithIndex:(NSInteger)index {
+//        [self.requestData changeDocWebColor:@"#000000"];
+//
+//    if (index != 0) {
+//        CGFloat ratio = [_requestData getDocAspectRatio];
+//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
+//        self.label.text = str;
+////        NSLog(@"宽高比是%f",ratio);
+//    }
+}
+- (void)changedoc {
+//    [self.requestData changeDocWebColor:@"#000000"];
+//    [_requestData getDocAspectRatio];
+//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -143,8 +166,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     
     //添加互动视图
     [self.view addSubview:self.contentView];
-    //添加更多菜单
-    [APPDelegate.window addSubview:self.menuView];
     
     //设置视频视图和互动视图的相关属性
     _playerView.menuView = _menuView;
@@ -293,6 +314,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         }
     }else if( sender.tag == 1){//结束直播
         [self creatAlertController_alert];
+//        [self dismissViewControllerAnimated:YES completion:nil];
+
     }
 }
 //隐藏其他视图,当点击全屏和退出全屏时调用此方法
@@ -396,17 +419,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
         [_requestData changeDocParent:_contentView.docView];
         [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        if([_playerView exsitRmoteView]) {
-            [_playerView removeRmoteView];
-            [_playerView addSubview:_playerView.remoteView];
-            _playerView.remoteView.frame = [_playerView calculateRemoteVIdeoRect:CGRectMake(0, 0, _playerView.frame.size.width, _playerView.frame.size.height)];
-            // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-            [_requestData setRemoteVideoFrameA:_playerView.remoteView.frame];
-        }
-#endif
-        //#endif
     }else{
         _screenLandScape = YES;
         _isScreenLandScape = YES;
@@ -430,17 +442,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
         [_requestData changePlayerParent:_oncePlayerView];
         [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        if([_playerView exsitRmoteView]) {
-            [_playerView removeRmoteView];
-            [_oncePlayerView addSubview:_playerView.remoteView];
-            _playerView.remoteView.frame = [_playerView calculateRemoteVIdeoRect:CGRectMake(0, 0, _oncePlayerView.frame.size.width, _oncePlayerView.frame.size.height)];
-            // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-            [_requestData setRemoteVideoFrameA:_playerView.remoteView.frame];
-        }
-#endif
-        //#endif
+
     }
 }
 #pragma mark- 房间信息
@@ -458,8 +460,14 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 -(void)roomInfo:(NSDictionary *)dic {
     _roomName = dic[@"name"];
+    
+    //添加更多菜单
+    [APPDelegate.window addSubview:self.menuView];
     self.playerView.titleLabel.text = _roomName;
     NSInteger type = [dic[@"templateType"] integerValue];
+    if (type == 4 || type == 5) {
+        [self.playerView addSmallView];
+    }
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
     _playerView.templateType = type;
@@ -642,6 +650,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)onLiveStatusChangeStart {
     [_playerView onLiveStatusChangeStart];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.playerView addSmallView];
+    });
 }
 /**
  *    @brief  停止直播，endNormal表示是否停止推流
@@ -953,63 +964,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     CCCupView *cupView = [[CCCupView alloc] initWithWinnerName:name isScreen:self.screenLandScape];
     [APPDelegate.window addSubview:cupView];
 }
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-#pragma mark - SDK连麦代理
-/*
- *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
- */
-- (void)connectWebRTCSuccess {
-    [self.playerView connectWebRTCSuccess];
-}
-/*
- *  @brief 当前是否可以连麦
- */
-- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect {
-    [self.playerView whetherOrNotConnectWebRTCNow:YES];
-    if (connect) {
-        /*
-         * 当观看端主动申请连麦时，需要调用这个接口，并把本地连麦预览窗口传给SDK，SDK会在这个view上
-         * 进行远程画面渲染
-         * param localView:本地预览窗口，传入本地view，连麦准备时间将会自动绘制预览画面在此view上
-         * param isAudioVideo:是否是音视频连麦，不是音视频即是纯音频连麦(YES表示音视频连麦，NO表示音频连麦)
-         */
-        [_requestData requestAVMessageWithLocalView:nil isAudioVideo:self.playerView.isAudioVideo];
-    }
-}
-/**
- *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
- *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
- *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
- */
-- (void)acceptSpeak:(NSDictionary *)dict {
-    [self.playerView acceptSpeak:dict];
-    if(self.playerView.isAudioVideo) {
-        /*
-         * 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法
-         * dict 正是- (void)acceptSpeak:(NSDictionary *)dict;接收到的的参数
-         * remoteView 是远程连麦页面的view，需要自己设置并发给SDK，SDK将要在这个view上进行远程画面渲染
-         */
-        [_requestData saveUserInfo:dict remoteView:self.playerView.remoteView];
-    } else {
-        [_requestData saveUserInfo:dict remoteView:nil];
-    }
-}
-/*
- *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
- */
--(void)speak_disconnect:(BOOL)isAllow {
-    [self.playerView speak_disconnect:isAllow];
-}
-/*
- *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
- *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
- */
-- (void)allowSpeakInteraction:(BOOL)isAllow {
-    [self.playerView allowSpeakInteraction:isAllow];
-}
-//#endif
-#endif
+
 #pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -1040,12 +995,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:IJKMPMovieNaturalSizeAvailableNotification
                                                   object:nil];
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    //删除菜单按钮的selected属性监听
-    [self.menuView.menuBtn removeObserver:self forKeyPath:@"selected"];
-    //#endif
-#endif
+
 }
 /**
  APP将要进入后台
@@ -1071,6 +1021,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  @param notification 接收到通知
  */
 -(void)movieNaturalSizeAvailableNotification:(NSNotification *)notification {
+//    IJKFFMoviePlayerController *info = [notification object];
+//    _requestData.ijkPlayer.naturalSize;
+//    NSLog(@"%@",NSStringFromCGSize(_requestData.ijkPlayer.naturalSize));
     
 }
 /**
@@ -1185,22 +1138,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         _playerView.sendChatMessage = ^(NSString * sendChatMessage) {
             [weakSelf sendChatMessageWithStr:sendChatMessage];
         };
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        //是否是请求连麦
-        _playerView.connectSpeak = ^(BOOL connect) {
-            if (connect) {
-                [weakSelf.requestData gotoConnectWebRTC];
-            }else{
-                [weakSelf.requestData disConnectSpeak];
-            }
-        };
-        //设置连麦视图
-        _playerView.setRemoteView = ^(CGRect frame) {
-            [weakSelf.requestData setRemoteVideoFrameA:frame];
-        };
-#endif
-        //#endif
     }
     return _playerView;
 }
@@ -1276,15 +1213,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [ws.contentView.chatView privateChatBtnClicked];
             [APPDelegate.window bringSubviewToFront:ws.contentView.chatView.ccPrivateChatView];
         };
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        //连麦按钮回调
-        _menuView.lianmaiBlock = ^{
-            [ws.playerView lianmaiBtnClicked];
-        };
-        [_menuView.menuBtn addObserver:self forKeyPath:@"selected" options:NSKeyValueObservingOptionNew context:nil];
-        //#endif
-#endif
         //公告按钮回调
         _menuView.announcementBlock = ^{
             [ws announcementBtnClicked];
@@ -1295,24 +1223,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 //收回菜单
 -(void)hiddenMenuView{
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    //如果菜单是展开状态,切换时关闭菜单
-    if (!_menuView.lianmaiBtn.hidden) {
-        [_menuView hiddenAllBtns:YES];
-    }
-#endif
-    //#endif
+
 }
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-//监听菜单按钮的selected属性
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
-    BOOL hidden = change[@"new"] == 0 ? YES: NO;
-    [_playerView menuViewSelected:hidden];
-}
-//#endif
-#endif
 //公告
 -(AnnouncementView *)announcementView{
     if (!_announcementView) {

@@ -12,11 +12,9 @@
 #import "CCProxy.h"
 #import "CCBarrage.h"
 @interface CCPlayerView ()<UITextFieldDelegate
-#if __has_include(<WebRTC/WebRTC.h>)
 //#ifdef LIANMAI_WEBRTC
 , LianMaiDelegate
 //#endif
-#endif
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -644,7 +642,6 @@
         make.height.mas_equalTo(SCREENH_HEIGHT);
     }];
     [self layoutIfNeeded];//
-#if __has_include(<WebRTC/WebRTC.h>)
     //#ifdef LIANMAI_WEBRTC
     //如果正在连麦，更改连麦视图大小,并且设置连麦窗口
     if(_remoteView) {
@@ -668,7 +665,6 @@
             self.setRemoteView(self.remoteView.frame);
         }
     }
-#endif
 //    #endif
     
     //隐藏其他视图
@@ -679,12 +675,10 @@
     }
     
     //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
     //隐藏连麦
     if (_lianMaiView) {
         _lianMaiView.hidden = YES;
     }
-#endif
     //#endif
 }
 /**
@@ -709,7 +703,6 @@
             make.top.equalTo(view).offset(SCREEN_STATUS);
         }];
         [self layoutIfNeeded];
-#if __has_include(<WebRTC/WebRTC.h>)
         //#ifdef LIANMAI_WEBRTC
             if(_remoteView) {//设置竖屏状态下连麦窗口
                 [_remoteView removeFromSuperview];
@@ -726,19 +719,16 @@
                 self.setRemoteView(self.remoteView.frame);
             }
         //#endif
-#endif
         CGRect rect = [UIScreen mainScreen].bounds;
         if (_isSmallDocView) {
             [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
         }
         [self layouUI:NO];
         //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
         //连麦视图显示
         if (_lianMaiView) {
             _lianMaiView.hidden = NO;
         }
-#endif
         //#endif
     }
 }
@@ -760,7 +750,6 @@
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
         //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
         if(_remoteView) {//设置竖屏状态下连麦窗口
             // 防止没有移除
             [_remoteView removeFromSuperview];
@@ -770,12 +759,10 @@
             self.setRemoteView(self.remoteView.frame);
         }
         //#endif
-#endif
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
         //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
         if(_remoteView) {//设置竖屏状态下连麦窗口
             //todo 防止没有移除
             [_remoteView removeFromSuperview];
@@ -784,7 +771,6 @@
             // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
             self.setRemoteView(self.remoteView.frame);
         }
-#endif
         //#endif
     }
     if (self.delegate) {//changeBtn按钮点击代理
@@ -1025,12 +1011,10 @@
 
 -(void)dealloc {
     //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
     //连麦视图显示
     if (_lianMaiView) {
         [_lianMaiView removeFromSuperview];
     }
-#endif
     //#endif
     [self removeObserver];
     [self stopPlayerTimer];
@@ -1076,11 +1060,18 @@
         _smallVideoView.hiddenSmallVideoBlock = ^{
             [weakSelf hiddenSmallVideoview];
         };
-        [APPDelegate.window addSubview:_smallVideoView];
     }
 }
+/**
+ 小窗添加
+ */
+- (void)addSmallView{
+    [APPDelegate.window addSubview:_smallVideoView];
+//    [[UIApplication sharedApplication].keyWindow addSubview: _smallVideoView];
+
+}
 -(void)hiddenSmallVideoview{
-    _smallVideoView.hidden = YES;
+    self.smallVideoView.hidden = YES;
     NSString *title = _changeButton.tag == 1 ? PLAY_SHOWDOC : PLAY_SHOWVIDEO;
     [_changeButton setTitle:title forState:UIControlStateNormal];
 }
@@ -1091,7 +1082,7 @@
 - (void)getPlayStatue:(NSInteger)status{
     if(status == 1) {
         self.liveUnStart.hidden = NO;
-        self.smallVideoView.hidden = YES;
+//        self.smallVideoView.hidden = YES;
         self.changeButton.hidden = YES;
         self.unStart.text = PLAY_UNSTART;
         _endNormal = YES;
@@ -1112,7 +1103,10 @@
 //    _loadingView = nil;
     self.liveUnStart.hidden = YES;
     if ((_templateType == 4 || _templateType == 5) && _isSmallDocView) {
-        self.smallVideoView.hidden = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.smallVideoView.hidden = NO;
+        });
+//        [self addSmallView];
         self.changeButton.hidden = NO;
     }
     if (_endNormal == NO) {
@@ -1133,7 +1127,10 @@
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal{
     _endNormal = endNormal;
     self.liveUnStart.hidden = NO;
-    self.smallVideoView.hidden = YES;
+    [self.smallVideoView removeFromSuperview];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.smallVideoView.hidden = YES;
+//    });
     self.changeButton.hidden = YES;
     self.unStart.text = PLAY_OVER;
     self.quanpingButton.hidden = YES;
@@ -1163,9 +1160,9 @@
     _isMain = isMain;
     [self switchVideoDoc:_isMain];
     if (_endNormal) {
-        _smallVideoView.hidden = YES;
+//        _smallVideoView.hidden = YES;
     }else{
-        _smallVideoView.hidden = NO;
+//        _smallVideoView.hidden = NO;
     }
 }
 #pragma mark - 初始化直播间状态（私有调用方法)
@@ -1191,7 +1188,6 @@
     [self changeBtnClick:self.changeButton];
 }
 //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
 #pragma mark - lianmaiView
 //连麦
 -(LianmaiView *)lianMaiView {
@@ -1376,12 +1372,12 @@
     [_lianMaiView connectWebRTCSuccess];
     WS(ws)
     //添加连麦中视图
-    [APPDelegate.window addSubview:self.connectingImage];
-    [_connectingImage mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(ws.menuView.mas_bottom).offset(CCGetRealFromPt(10));
-        make.centerX.mas_equalTo(ws.menuView);
-        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(110), CCGetRealFromPt(40)));
-    }];
+//    [APPDelegate.window addSubview:self.connectingImage];
+//    [_connectingImage mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.mas_equalTo(ws.menuView.mas_bottom).offset(CCGetRealFromPt(10));
+//        make.centerX.mas_equalTo(ws.menuView);
+//        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(110), CCGetRealFromPt(40)));
+//    }];
 
     //添加提示信息
     UILabel *connectingLabel = [UILabel new];
@@ -1498,5 +1494,4 @@
     return remoteVideoRect;
 }
 //#endif
-#endif
 @end

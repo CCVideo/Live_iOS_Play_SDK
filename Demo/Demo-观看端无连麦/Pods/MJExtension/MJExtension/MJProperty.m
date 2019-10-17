@@ -10,10 +10,13 @@
 #import "MJFoundation.h"
 #import "MJExtensionConst.h"
 #import <objc/message.h>
+#include "TargetConditionals.h"
 
 @interface MJProperty()
 @property (strong, nonatomic) NSMutableDictionary *propertyKeysDict;
 @property (strong, nonatomic) NSMutableDictionary *objectClassInArrayDict;
+@property (strong, nonatomic) dispatch_semaphore_t propertyKeysLock;
+@property (strong, nonatomic) dispatch_semaphore_t objectClassInArrayLock;
 @end
 
 @implementation MJProperty
@@ -24,6 +27,8 @@
     if (self = [super init]) {
         _propertyKeysDict = [NSMutableDictionary dictionary];
         _objectClassInArrayDict = [NSMutableDictionary dictionary];
+        _propertyKeysLock = dispatch_semaphore_create(1);
+        _objectClassInArrayLock = dispatch_semaphore_create(1);
     }
     return self;
 }
@@ -31,15 +36,12 @@
 #pragma mark - 缓存
 + (instancetype)cachedPropertyWithProperty:(objc_property_t)property
 {
-    MJExtensionSemaphoreCreate
-    MJExtensionSemaphoreWait
     MJProperty *propertyObj = objc_getAssociatedObject(self, property);
     if (propertyObj == nil) {
         propertyObj = [[self alloc] init];
         propertyObj.property = property;
         objc_setAssociatedObject(self, property, propertyObj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
-    MJExtensionSemaphoreSignal
     return propertyObj;
 }
 
@@ -72,7 +74,19 @@
 - (id)valueForObject:(id)object
 {
     if (self.type.KVCDisabled) return [NSNull null];
-    return [object valueForKey:self.name];
+    
+    id value = [object valueForKey:self.name];
+    
+    // 32位BOOL类型转换json后成Int类型
+    /** https://github.com/CoderMJLee/MJExtension/issues/545 */
+    // 32 bit device OR 32 bit Simulator
+#if defined(__arm__) || (TARGET_OS_SIMULATOR && !__LP64__)
+    if (self.type.isBoolType) {
+        value = @([(NSNumber *)value boolValue]);
+    }
+#endif
+    
+    return value;
 }
 
 /**
@@ -156,17 +170,20 @@
     NSString *key = NSStringFromClass(c);
     if (!key) return;
     
-    MJExtensionSemaphoreCreate
-    MJExtensionSemaphoreWait
+    MJ_LOCK(self.propertyKeysLock);
     self.propertyKeysDict[key] = propertyKeys;
-    MJExtensionSemaphoreSignal
+    MJ_UNLOCK(self.propertyKeysLock);
 }
 
 - (NSArray *)propertyKeysForClass:(Class)c
 {
     NSString *key = NSStringFromClass(c);
     if (!key) return nil;
-    return self.propertyKeysDict[key];
+    
+    MJ_LOCK(self.propertyKeysLock);
+    NSArray *propertyKeys = self.propertyKeysDict[key];
+    MJ_UNLOCK(self.propertyKeysLock);
+    return propertyKeys;
 }
 
 /** 模型数组中的模型类型 */
@@ -176,16 +193,19 @@
     NSString *key = NSStringFromClass(c);
     if (!key) return;
     
-    MJExtensionSemaphoreCreate
-    MJExtensionSemaphoreWait
+    MJ_LOCK(self.objectClassInArrayLock);
     self.objectClassInArrayDict[key] = objectClass;
-    MJExtensionSemaphoreSignal
+    MJ_UNLOCK(self.objectClassInArrayLock);
 }
 
 - (Class)objectClassInArrayForClass:(Class)c
 {
     NSString *key = NSStringFromClass(c);
     if (!key) return nil;
-    return self.objectClassInArrayDict[key];
+    
+    MJ_LOCK(self.objectClassInArrayLock);
+    Class objectClass = self.objectClassInArrayDict[key];
+    MJ_UNLOCK(self.objectClassInArrayLock);
+    return objectClass;
 }
 @end

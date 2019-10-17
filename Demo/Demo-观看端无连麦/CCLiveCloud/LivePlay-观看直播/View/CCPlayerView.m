@@ -12,11 +12,7 @@
 #import "CCProxy.h"
 #import "CCBarrage.h"
 @interface CCPlayerView ()<UITextFieldDelegate
-#if __has_include(<WebRTC/WebRTC.h>)
-//#ifdef LIANMAI_WEBRTC
-, LianMaiDelegate
-//#endif
-#endif
+
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -644,32 +640,6 @@
         make.height.mas_equalTo(SCREENH_HEIGHT);
     }];
     [self layoutIfNeeded];//
-#if __has_include(<WebRTC/WebRTC.h>)
-    //#ifdef LIANMAI_WEBRTC
-    //如果正在连麦，更改连麦视图大小,并且设置连麦窗口
-    if(_remoteView) {
-        //判断当前是否是正在申请连麦
-        BOOL connecting = !_lianMaiView.cancelLianmainBtn.hidden;
-        if (connecting) {//如果当前是正在申请连麦
-            [_remoteView removeFromSuperview];
-            _remoteView = nil;
-        }else{
-            [_remoteView removeFromSuperview];
-            if (_changeButton.tag == 2) {
-                [self.smallVideoView addSubview:self.remoteView];
-                self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
-            }else{
-                [self addSubview:self.remoteView];
-                self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-            }
-            [self bringSubviewToFront:self.topShadowView];
-            [self bringSubviewToFront:self.bottomShadowView];
-            // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-            self.setRemoteView(self.remoteView.frame);
-        }
-    }
-#endif
-//    #endif
     
     //隐藏其他视图
     [self layouUI:YES];
@@ -678,14 +648,6 @@
         [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
     
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    //隐藏连麦
-    if (_lianMaiView) {
-        _lianMaiView.hidden = YES;
-    }
-#endif
-    //#endif
 }
 /**
 //结束直播和退出全屏
@@ -709,37 +671,12 @@
             make.top.equalTo(view).offset(SCREEN_STATUS);
         }];
         [self layoutIfNeeded];
-#if __has_include(<WebRTC/WebRTC.h>)
-        //#ifdef LIANMAI_WEBRTC
-            if(_remoteView) {//设置竖屏状态下连麦窗口
-                [_remoteView removeFromSuperview];
-                if (_changeButton.tag == 2) {//如果是视频小窗
-                    [self.smallVideoView addSubview:self.remoteView];
-                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
-                }else{
-                    [self addSubview:self.remoteView];
-                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-                }
-                [self bringSubviewToFront:self.topShadowView];
-                [self bringSubviewToFront:self.bottomShadowView];
-                // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-                self.setRemoteView(self.remoteView.frame);
-            }
-        //#endif
-#endif
+    
         CGRect rect = [UIScreen mainScreen].bounds;
         if (_isSmallDocView) {
             [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
         }
         [self layouUI:NO];
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        //连麦视图显示
-        if (_lianMaiView) {
-            _lianMaiView.hidden = NO;
-        }
-#endif
-        //#endif
     }
 }
 /**
@@ -759,33 +696,10 @@
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        if(_remoteView) {//设置竖屏状态下连麦窗口
-            // 防止没有移除
-            [_remoteView removeFromSuperview];
-            [self.smallVideoView addSubview:self.remoteView];
-            self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
-            // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-            self.setRemoteView(self.remoteView.frame);
-        }
-        //#endif
-#endif
+
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
-        //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-        if(_remoteView) {//设置竖屏状态下连麦窗口
-            //todo 防止没有移除
-            [_remoteView removeFromSuperview];
-            [self addSubview:self.remoteView];
-            self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-            // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-            self.setRemoteView(self.remoteView.frame);
-        }
-#endif
-        //#endif
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -1024,14 +938,6 @@
 }
 
 -(void)dealloc {
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    //连麦视图显示
-    if (_lianMaiView) {
-        [_lianMaiView removeFromSuperview];
-    }
-#endif
-    //#endif
     [self removeObserver];
     [self stopPlayerTimer];
 }
@@ -1076,11 +982,18 @@
         _smallVideoView.hiddenSmallVideoBlock = ^{
             [weakSelf hiddenSmallVideoview];
         };
-        [APPDelegate.window addSubview:_smallVideoView];
     }
 }
+/**
+ 小窗添加
+ */
+- (void)addSmallView{
+    [APPDelegate.window addSubview:_smallVideoView];
+//    [[UIApplication sharedApplication].keyWindow addSubview: _smallVideoView];
+
+}
 -(void)hiddenSmallVideoview{
-    _smallVideoView.hidden = YES;
+    self.smallVideoView.hidden = YES;
     NSString *title = _changeButton.tag == 1 ? PLAY_SHOWDOC : PLAY_SHOWVIDEO;
     [_changeButton setTitle:title forState:UIControlStateNormal];
 }
@@ -1091,7 +1004,7 @@
 - (void)getPlayStatue:(NSInteger)status{
     if(status == 1) {
         self.liveUnStart.hidden = NO;
-        self.smallVideoView.hidden = YES;
+//        self.smallVideoView.hidden = YES;
         self.changeButton.hidden = YES;
         self.unStart.text = PLAY_UNSTART;
         _endNormal = YES;
@@ -1112,7 +1025,10 @@
 //    _loadingView = nil;
     self.liveUnStart.hidden = YES;
     if ((_templateType == 4 || _templateType == 5) && _isSmallDocView) {
-        self.smallVideoView.hidden = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.smallVideoView.hidden = NO;
+        });
+//        [self addSmallView];
         self.changeButton.hidden = NO;
     }
     if (_endNormal == NO) {
@@ -1133,7 +1049,10 @@
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal{
     _endNormal = endNormal;
     self.liveUnStart.hidden = NO;
-    self.smallVideoView.hidden = YES;
+    [self.smallVideoView removeFromSuperview];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.smallVideoView.hidden = YES;
+//    });
     self.changeButton.hidden = YES;
     self.unStart.text = PLAY_OVER;
     self.quanpingButton.hidden = YES;
@@ -1163,9 +1082,9 @@
     _isMain = isMain;
     [self switchVideoDoc:_isMain];
     if (_endNormal) {
-        _smallVideoView.hidden = YES;
+//        _smallVideoView.hidden = YES;
     }else{
-        _smallVideoView.hidden = NO;
+//        _smallVideoView.hidden = NO;
     }
 }
 #pragma mark - 初始化直播间状态（私有调用方法)
@@ -1190,313 +1109,4 @@
     }
     [self changeBtnClick:self.changeButton];
 }
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-#pragma mark - lianmaiView
-//连麦
--(LianmaiView *)lianMaiView {
-    if(!_lianMaiView) {
-        _lianMaiView = [[LianmaiView alloc] init];
-        // 阴影颜色
-        _lianMaiView.layer.shadowColor = [UIColor grayColor].CGColor;
-        // 阴影偏移，默认(0, -3)
-        _lianMaiView.layer.shadowOffset = CGSizeMake(0, 3);
-        // 阴影透明度，默认0.7
-        _lianMaiView.layer.shadowOpacity = 0.2f;
-        // 阴影半径，默认3
-        _lianMaiView.layer.shadowRadius = 3;
-        _lianMaiView.contentMode = UIViewContentModeScaleAspectFit;
-        _lianMaiView.delegate = self;
-    }
-    return _lianMaiView;
-}
-//连麦中提示
--(UIImageView *)connectingImage{
-    if (!_connectingImage) {
-        _connectingImage = [[UIImageView alloc] init];
-        _connectingImage.image = [UIImage imageNamed:@"lianmai_connecting"];
-    }
-    return _connectingImage;
-}
-#pragma mark - 连麦相关
--(void)menuViewSelected:(BOOL)selected{
-    if (_lianMaiView) {
-        _lianMaiView.hidden = !selected;
-    }
-}
-//连麦点击
--(void)lianmaiBtnClicked {
-    if(!_isAllow) {
-        //未开启连麦功能提示
-        [_informationViewPop removeFromSuperview];
-        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_LIANMAIFAILED];
-        [APPDelegate.window addSubview:_informationViewPop];
-        [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
-        }];
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationViewPop) userInfo:nil repeats:NO];
-        [_lianMaiView removeFromSuperview];
-        _lianMaiView = nil;
-        return;
-    }
-    if(!_lianMaiView) {
-        [APPDelegate.window addSubview:self.lianMaiView];
-
-//        AVAuthorizationStatus statusVideo = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-//        AVAuthorizationStatus statusAudio = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-
-            if (granted) {
-                _videoType = 3;
-                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (granted) {
-                            _audoType = 3;
-
-                            [self judgeLianMaiLocationWithVideoPermission:_videoType AudioPermission:_audoType];
-                            [self.lianMaiView initUIWithVideoPermission:_videoType AudioPermission:_audoType];
-                        } else {
-                            _audoType = 2;
-
-                            [self judgeLianMaiLocationWithVideoPermission:_videoType AudioPermission:_audoType];
-                            [self.lianMaiView initUIWithVideoPermission:_videoType AudioPermission:_audoType];
-                        }
-                    });
-                }];
-            } else {
-                _videoType = 2;
-                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (granted) {
-                            _audoType = 3;
-
-                            [self judgeLianMaiLocationWithVideoPermission:_videoType AudioPermission:_audoType];
-                            [self.lianMaiView initUIWithVideoPermission:_videoType AudioPermission:_audoType];
-                        } else {
-                            _audoType = 2;
-
-                            [self judgeLianMaiLocationWithVideoPermission:_videoType AudioPermission:_audoType];
-                            [self.lianMaiView initUIWithVideoPermission:_videoType AudioPermission:_audoType];
-                        }
-                    });
-                }];
-            }
-        }];
-    } else if(_lianMaiView && _lianMaiView.hidden == NO && _lianMaiView.needToRemoveLianMaiView == YES) {
-        [_lianMaiView removeFromSuperview];
-        _lianMaiView = nil;
-    } else {
-        BOOL hidden = self.lianMaiView.hidden;
-        self.lianMaiView.hidden = !hidden;
-    }
-}
-- (void) getType{
-    [self judgeLianMaiLocationWithVideoPermission:_videoType AudioPermission:_audoType];
-    [self.lianMaiView initUIWithVideoPermission:_videoType AudioPermission:_audoType];
-
-}
--(void)judgeLianMaiLocationWithVideoPermission:(AVAuthorizationStatus)statusVideo AudioPermission:(AVAuthorizationStatus)statusAudio {
-    UIView *view = [self superview];
-    AVAuthorizationStatus statusVideo1 = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-    AVAuthorizationStatus statusAudio1 = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        WS(ws)
-        if(_screenLandScape) {//横屏模式
-            if (statusVideo1 == AVAuthorizationStatusAuthorized && statusAudio1 == AVAuthorizationStatusAuthorized) {
-                [_lianMaiView mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.left.mas_equalTo(ws).offset(CCGetRealFromPt(308));
-//                    make.top.mas_equalTo(ws.contentView.segment.mas_bottom).offset(CCGetRealFromPt(361));
-                    make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(343), CCGetRealFromPt(211)));
-                }];
-            } else {
-                _lianMaiView.frame = CGRectMake(CCGetRealFromPt(114), CCGetRealFromPt(270), CCGetRealFromPt(390), CCGetRealFromPt(280));
-            }
-        } else {//竖屏模式
-            if (statusVideo1 == AVAuthorizationStatusAuthorized && statusAudio1 == AVAuthorizationStatusAuthorized) {
-                [_lianMaiView mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.right.mas_equalTo(view).offset(-CCGetRealFromPt(99));
-                    make.bottom.mas_equalTo(view).offset(-CCGetRealFromPt(240)-kScreenBottom);
-                    make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(343), CCGetRealFromPt(211)));
-                }];
-            } else {
-                [_lianMaiView mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.right.mas_equalTo(view).offset(-CCGetRealFromPt(99));
-                    make.bottom.mas_equalTo(view).offset(-CCGetRealFromPt(170)-kScreenBottom);
-                    make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(403), CCGetRealFromPt(281)));
-                }];
-            }
-        }
-
-//    });
-
-}
-#pragma mark - 连麦代理
--(void)requestLianmaiBtnClicked:(BOOL)isVideo {
-    _isAudioVideo = isVideo;
-    //将要连接WebRTC
-    self.connectSpeak(YES);
-}
-// 观看端主动断开连麦时候需要调用的接口
-//取消连麦点击
--(void)cancelLianmainBtnClicked {
-//断开连麦
-    self.connectSpeak(NO);
-    [self disconnectWithUI];
-}
-//挂断连麦点击
--(void)hungupLianmainiBtnClicked {
-    //断开连麦
-    self.connectSpeak(NO);
-    [self disconnectWithUI];
-}
-
--(void)disconnectWithUI {
-    if(_lianMaiView && _lianMaiView.audioBtn.hidden == YES &&_lianMaiView.videoBtn.hidden == YES && (_lianMaiView.cancelLianmainBtn.hidden == NO || _lianMaiView.hungupLianmainBtn.hidden == NO)) {
-        [_lianMaiView initialState];
-    } else if(_lianMaiView.audioBtn.hidden != NO && _lianMaiView.videoBtn.hidden != NO) {
-        [_lianMaiView removeFromSuperview];
-        _lianMaiView = nil;
-    }
-    [_remoteView removeFromSuperview];
-    _remoteView = nil;
-
-    //挂断后移除连麦视图,并关闭更多菜单
-    if (_lianMaiView) {
-        [_lianMaiView removeFromSuperview];
-        _lianMaiView = nil;
-    }
-    //收回菜单视图
-//    [self hiddenMenuView];
-}
-#pragma mark - sdk连麦代理事件
-/*
- *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
- */
-- (void)connectWebRTCSuccess {
-    [_lianMaiView connectWebRTCSuccess];
-    WS(ws)
-    //添加连麦中视图
-    [APPDelegate.window addSubview:self.connectingImage];
-    [_connectingImage mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(ws.menuView.mas_bottom).offset(CCGetRealFromPt(10));
-        make.centerX.mas_equalTo(ws.menuView);
-        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(110), CCGetRealFromPt(40)));
-    }];
-
-    //添加提示信息
-    UILabel *connectingLabel = [UILabel new];
-    connectingLabel.text = @"连麦中";
-    connectingLabel.font = [UIFont systemFontOfSize:FontSize_24];
-    connectingLabel.textColor = [UIColor colorWithHexString:@"#12ad1a" alpha:1.f];
-    [self.connectingImage addSubview:connectingLabel];
-    [connectingLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(ws.connectingImage);
-        make.left.mas_equalTo(ws.connectingImage).offset(CCGetRealFromPt(27));
-        make.right.mas_equalTo(ws.connectingImage);
-    }];
-}
-
-/*
- *  @brief 当前是否可以连麦
- */
-- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect {
-    if(connect == YES) {
-        [_lianMaiView connectingToRTC];
-        if(_isAudioVideo == YES) {
-            if (_changeButton.tag == 2 && _isSmallDocView) {
-                [self.smallVideoView addSubview:self.remoteView];
-                [self.smallVideoView sendSubviewToBack:self.remoteView];
-            }else{
-                [self addSubview:self.remoteView];
-                [self sendSubviewToBack:self.remoteView];
-            }
-            [self bringSubviewToFront:self.topShadowView];
-            [self bringSubviewToFront:self.bottomShadowView];
-        }
-    } else {
-        [_lianMaiView hasNoNetWork];
-    }
-}
-/**
- *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
- *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
- *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
- */
-- (void)acceptSpeak:(NSDictionary *)dict {
-    _videosizeStr = dict[@"videosize"];
-    if(_isAudioVideo) {
-        if (_changeButton.tag == 2) {
-            self.remoteView.frame = [self calculateRemoteVIdeoRect:self.smallVideoView.frame];
-        }else{
-            self.remoteView.frame = [self calculateRemoteVIdeoRect:self.frame];
-        }
-    }
-}
-
-/*
- *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
- */
--(void)speak_disconnect:(BOOL)isAllow {
-    [_connectingImage removeFromSuperview];
-    [self disconnectWithUI];
-}
-/*
- *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
- *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
- */
-- (void)allowSpeakInteraction:(BOOL)isAllow {
-    _isAllow = isAllow;
-    if(!_isAllow) {
-        [_lianMaiView removeFromSuperview];
-        _lianMaiView = nil;
-    }
-}
-//设置远程视图
--(UIView *)remoteView {
-    if(!_remoteView) {
-        _remoteView = [UIView new];
-        _remoteView.backgroundColor = CCClearColor;
-    }
-    return _remoteView;
-}
--(BOOL)exsitRmoteView{
-    if (_remoteView) {
-        return YES;
-    }
-    return NO;
-}
--(void)removeRmoteView{
-    [_remoteView removeFromSuperview];
-//    _remoteView = nil;
-}
--(CGRect) calculateRemoteVIdeoRect:(CGRect)rect {
-    /*
-     ****************************************************
-     *    连麦申请中调用，主播关闭连麦，此时_videosizeStr为空, *
-     *    调用_remoteView.frame时会造成崩溃，              *
-     *    在这里需要判断_videoSzieStr是否为空               *
-     ****************************************************
-     */
-    if (!_videosizeStr) {
-        return CGRectMake(0, 0, 0, 0);
-    }
-    //字符串是否包含有某字符串
-    NSRange range = [_videosizeStr rangeOfString:@"x"];
-    float remoteSizeWHPercent = [[_videosizeStr substringToIndex:range.location] floatValue] / [[_videosizeStr substringFromIndex:(range.location + 1)] floatValue];
-
-    float videoParentWHPercent = rect.size.width / rect.size.height;
-
-    CGSize remoteVideoSize = CGSizeZero;
-
-    if(remoteSizeWHPercent > videoParentWHPercent) {
-        remoteVideoSize = CGSizeMake(rect.size.width, rect.size.width / remoteSizeWHPercent);
-    } else {
-        remoteVideoSize = CGSizeMake(rect.size.height * remoteSizeWHPercent, rect.size.height);
-    }
-
-    CGRect remoteVideoRect = CGRectMake((rect.size.width - remoteVideoSize.width) / 2, (rect.size.height - remoteVideoSize.height) / 2, remoteVideoSize.width, remoteVideoSize.height);
-    return remoteVideoRect;
-}
-//#endif
-#endif
 @end

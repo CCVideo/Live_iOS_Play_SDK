@@ -314,7 +314,6 @@
 //    CGRect rect = [UIScreen mainScreen].bounds;
 //    CGRect smallVideoRect = CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(202), CCGetRealFromPt(152));
     _smallVideoView = [[CCDocView alloc] initWithType:_isSmallDocView];
-    [APPDelegate.window addSubview:_smallVideoView];
     __weak typeof(self)weakSelf = self;
     _smallVideoView.hiddenSmallVideoBlock = ^{
         [weakSelf hiddenSmallVideoview];
@@ -346,6 +345,9 @@
     self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(271), 100, 30);
     
     
+}
+- (void)addSmallView {
+    [APPDelegate.window addSubview:_smallVideoView];
 }
 #pragma mark - btn点击事件
 

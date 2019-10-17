@@ -31,7 +31,6 @@
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserName;//用户名
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserPassword;//密码
 @property (nonatomic, strong)InformationShowView  * informationView;//提示
-
 @end
 
 @implementation CCPlayLoginController
@@ -155,6 +154,7 @@
     playForPCVC.modalPresentationStyle = 0;
     [self presentViewController:playForPCVC animated:YES completion:^{
     }];
+//    [self.navigationController pushViewController:playForPCVC animated:YES];
 }
 /**
  *    @brief    登录请求失败

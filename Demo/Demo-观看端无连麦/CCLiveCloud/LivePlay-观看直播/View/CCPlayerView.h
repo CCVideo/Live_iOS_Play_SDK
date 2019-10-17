@@ -11,11 +11,6 @@
 #import "InformationShowView.h"//提示框
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-#import "LianmaiView.h"//连麦
-#endif
-//#endif
 #import "CCDocView.h"//文档视图
 NS_ASSUME_NONNULL_BEGIN
 
@@ -75,22 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign)BOOL                     endNormal;//是否直播结束
 @property (nonatomic,assign)NSInteger                  templateType;//房间类型
 @property(nonatomic,strong)InformationShowView      *informationViewPop;
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-@property(nonatomic,strong)LianmaiView              *lianMaiView;//连麦
-@property(assign,nonatomic)BOOL                     isAllow;
-@property(assign,nonatomic)BOOL                     needReloadLianMainView;
-@property(nonatomic,assign)BOOL                     lianMaiHidden;
-@property(nonatomic, assign)NSInteger               videoType;
-@property(nonatomic,assign)NSInteger                audoType;
-@property(copy,nonatomic)  NSString                 *videosizeStr;
-@property(nonatomic,assign)BOOL                     isAudioVideo;//YES表示音视频连麦，NO表示音频连麦
-@property(strong,nonatomic)UIView                   *remoteView;//远程连麦视图
-@property(nonatomic,strong)UIImageView              *connectingImage;//连麦中提示信息
-@property(nonatomic,copy) void(^setRemoteView)(CGRect frame);//设置连麦视图回调
-@property(nonatomic,copy) void(^connectSpeak)(BOOL connect);//是否断开连麦
-//#endif
-#endif
+
 
 
 /**
@@ -104,42 +84,6 @@ NS_ASSUME_NONNULL_BEGIN
 //meauView点击方法
 -(void)menuViewSelected:(BOOL)selected;
 
-//#ifdef LIANMAI_WEBRTC
-#pragma mark - 连麦相关
-#if __has_include(<WebRTC/WebRTC.h>)
-//连麦点击
--(void)lianmaiBtnClicked;
-/*
- *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
- */
-- (void)connectWebRTCSuccess;
-/*
- *  @brief 当前是否可以连麦
- */
-- (void)whetherOrNotConnectWebRTCNow:(BOOL)connect;
-
-/**
- *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
- *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
- *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
- */
-- (void)acceptSpeak:(NSDictionary *)dict;
-/*
- *  @brief 主播端发送断开连麦的消息，收到此消息后做断开连麦操作
- */
--(void)speak_disconnect:(BOOL)isAllow;
-/*
- *  @brief 本房间为允许连麦的房间，会回调此方法，在此方法中主要设置UI的逻辑，
- *  在断开推流,登录进入直播间和改变房间是否允许连麦状态的时候，都会回调此方法
- */
-- (void)allowSpeakInteraction:(BOOL)isAllow;
--(CGRect) calculateRemoteVIdeoRect:(CGRect)rect;
-//是否存在远程视图
--(BOOL)exsitRmoteView;
-//移除远程视图
--(void)removeRmoteView;
-//#endif
-#endif
 
 #pragma mark - 直播状态相关代理
 /**
@@ -179,6 +123,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param model 弹幕消息模型
  */
 - (void)insertDanmuModel:(CCPublicChatModel *)model;
+/**
+小窗添加
+ 
+ */
+- (void)addSmallView;
 
 @end
 

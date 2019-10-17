@@ -12,11 +12,7 @@
     
 @property (nonatomic, strong) UILabel          *announcementLabel;//公告
 @property (nonatomic, strong) UILabel          *privateLabel;//私聊
-#if __has_include(<WebRTC/WebRTC.h>)
-//#ifdef LIANMAI_WEBRTC
-@property (nonatomic, strong) UILabel          *lianmaiLabel;//连麦
-//#endif
-#endif
+
 
 @property (nonatomic, strong) UIImageView      *lineView;//分割线
 
@@ -64,20 +60,6 @@
     [_announcementBtn addTarget:self action:@selector(announcementBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     _announcementLabel = [self labelWithTitle:@"公告" andBtn:self.announcementBtn];
     
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    //添加连麦按钮
-    self.lianmaiBtn = [self buttonWithNormalImage:@"lianmai" andSelectedImage:@"lianmai_new"];
-    [self addSubview:self.lianmaiBtn];
-    [_lianmaiBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(self);
-        make.bottom.mas_equalTo(self).offset(-CCGetRealFromPt(227));
-        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(50), CCGetRealFromPt(50)));
-    }];
-    [_lianmaiBtn addTarget:self action:@selector(lianmaiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    _lianmaiLabel = [self labelWithTitle:@"连麦" andBtn:_lianmaiBtn];
-    //#endif
-#endif
     
     BOOL haveLianmai = [self existLianmai];
     CGFloat bottom = haveLianmai?327:227;
@@ -128,20 +110,6 @@
         _privateBlock();
     }
 }
-//#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-/**
- 点击连麦按钮
-
- @param btn lianmaiBtn
- */
--(void)lianmaiBtnClicked:(UIButton *)btn{
-    if (_lianmaiBlock) {
-        _lianmaiBlock();//连麦按钮点击回调
-    }
-}
-//#endif
-#endif
 
 /**
  点击公告按钮
@@ -199,12 +167,6 @@
     _privateLabel.hidden = hidden;
     _announcementBtn.hidden = hidden;
     _announcementLabel.hidden = hidden;
-    //#ifdef LIANMAI_WEBRTC
-#if __has_include(<WebRTC/WebRTC.h>)
-    _lianmaiLabel.hidden = hidden;
-    _lianmaiBtn.hidden = hidden;
-    //#endif
-#endif
 }
 -(void)hiddenPrivateBtn{
     [_privateChatBtn removeFromSuperview];

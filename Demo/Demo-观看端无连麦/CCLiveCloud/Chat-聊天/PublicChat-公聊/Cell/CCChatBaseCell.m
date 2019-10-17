@@ -342,9 +342,12 @@
     //userName时特定表情时会崩溃  redRange会显示不确定的大小
     [textAttri addAttribute:NSForegroundColorAttributeName value:textColor range:redRange];
     //url增加颜色
-    for(NSValue *value in urlArr) {
-        NSRange range=[value rangeValue];
-        [textAttri addAttribute:NSForegroundColorAttributeName value:[UIColor blueColor] range:NSMakeRange(range.location+redRange.length, range.length)];
+    if (model.typeState != 2) {//如果是图片的话,过滤掉消息
+        
+        for(NSValue *value in urlArr) {
+            NSRange range=[value rangeValue];
+            [textAttri addAttribute:NSForegroundColorAttributeName value:[UIColor blueColor] range:NSMakeRange(range.location+redRange.length, range.length)];
+        }
     }
     
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
