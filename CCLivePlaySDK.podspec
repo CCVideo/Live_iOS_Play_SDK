@@ -22,6 +22,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/CCVideo/Live_iOS_Play_SDK.git", :tag => s.version.to_s }
 
   s.vendored_frameworks = 'SDK/Live_iOS_Play_SDK(无连麦)/*.{framework}'
- s.resource = 'SDK/Live_iOS_Play_SDK(无连麦)/socketio.html'
+ s.resource = 'SDK/Live_iOS_Play_SDK(无连麦)/CCBundle.bundle'
 
 end
