@@ -1,0 +1,6 @@
+framework module DWDrmServer {
+  umbrella header "DWDrmServer.h"
+
+  export *
+  module * { export * }
+}

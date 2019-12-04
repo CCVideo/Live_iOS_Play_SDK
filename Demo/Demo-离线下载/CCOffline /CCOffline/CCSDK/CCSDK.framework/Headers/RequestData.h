@@ -12,7 +12,6 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.4.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -125,9 +124,7 @@
 -(void)loginFailed:(NSError *)error reason:(NSString *)reason;
 
 /**
- *  @brief 切换源，firRoadNum表示一共有几个源，secRoadKeyArray表示每
- *  个源的描述数组，具体参见demo，firRoadNum是下拉列表有面的tableviewcell
- *  的行数，secRoadKeyArray是左面的tableviewcell的描述信息数组
+ *  @brief 切换源，firRoadNum表示一共有几个线路，secRoadKeyArray表示每个线路对应的清晰度
  */
 - (void)firRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray;
 /**
@@ -212,12 +209,6 @@
  *  @brief  问卷功能
  */
 - (void)questionnaireWithTitle:(NSString *)title url:(NSString *)url;
-/**
- *  @brief  收到最后一条广播
- *  content 广播内容
- *  time 发布时间(单位:秒)
- */
-- (void)broadcastHistory_msg:(NSArray *)History_msg;
 
 /**
  *    @brief     双击ppt
@@ -272,31 +263,31 @@
  */
 - (void)onSwitchVideoDoc:(BOOL)isMain;
 /**
- *    @brief    服务器端给自己设置的信息(The new method)
+ *    @brief    服务器端给自己设置的信息
  *    viewerId 服务器端给自己设置的UserId
  *    groupId 分组id
  *    name 用户名
  */
 -(void)setMyViewerInfo:(NSDictionary *) infoDic;
 /**
- *    @brief    收到聊天禁言(The new method)
+ *    @brief    收到聊天禁言
  *    mode 禁言类型 1：个人禁言  2：全员禁言
  */
 -(void)onBanChat:(NSDictionary *) modeDic;
 /**
- *    @brief    收到解除禁言事件(The new method)
+ *    @brief    收到解除禁言事件
  *    mode 禁言类型 1：个人禁言  2：全员禁言
  */
 -(void)onUnBanChat:(NSDictionary *) modeDic;
 /**
- *    @brief    聊天管理(The new method)
+ *    @brief    聊天管理
  *    status    聊天消息的状态 0 显示 1 不显示
  *    chatIds   聊天消息的id列列表
  */
 -(void)chatLogManage:(NSDictionary *) manageDic;
 
 /**
- *    @brief    文档加载状态(The new method)
+ *    @brief    文档加载状态
  *    index
  *      0 文档组件初始化完成
  *      1 动画文档加载完成
@@ -305,47 +296,77 @@
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
 
 /**
- *    @brief    接收到随堂测(The new method)
+ *    @brief    接收到随堂测
  *    rseultDic    随堂测内容
  */
 -(void)receivePracticeWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    随堂测提交结果(The new method)
+ *    @brief    随堂测提交结果
  *    rseultDic    提交结果,调用commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options后执行
  */
 -(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    随堂测统计结果(The new method)
+ *    @brief    随堂测统计结果
  *    rseultDic    统计结果,调用getPracticeStatisWithPracticeId:(NSString *)practiceId后执行
  */
 -(void)practiceStatisResultsWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    随堂测排名结果(The new method)
+ *    @brief    随堂测排名结果
  *    rseultDic    排名结果,调用getPracticeRankWithPracticeId:(NSString *)practiceId后执行
  */
 -(void)practiceRankResultsWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    停止随堂测(The new method)
+ *    @brief    停止随堂测
  *    rseultDic    结果
  */
 -(void)practiceStopWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    关闭随堂测(The new method)
+ *    @brief    关闭随堂测
  *    rseultDic    结果
  */
 -(void)practiceCloseWithDic:(NSDictionary *) resultDic;
 /**
- *    @brief    视频状态(The new method)
- *    rseult    playing/paused
+ *    @brief    视频状态
+ *    rseult    playing/paused/loading
  */
 -(void)videoStateChangeWithString:(NSString *) result;
 /**
- *    @brief    收到奖杯(The new method)
+ *    @brief    收到奖杯
  *    dic       结果
  *    "type":  1 奖杯 2 其他
  */
 -(void)prize_sendWithDict:(NSDictionary *)dic;
-
+/**
+ *    @brief    收到开始打卡
+ *    dic {
+     "punchId": "punchId",
+     "expireTime": "2019-10-26 10:00:00",
+     "remainDuration": 124
+    }
+ *    当没有设置时长，即无过期时间时
+ *    {
+     "punchId": "asasdasdasdasd",
+     "remainDuration": -1 //其中-1表示剩余无限时间。
+ }
+ */
+-(void)hdReceivedStartPunchWithDict:(NSDictionary *)dic;
+/**
+ *    @brief    收到结束打卡
+ *    dic{
+     "punchId": "punchId"
+ }
+ */
+-(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic;
+/**
+ *    @brief    收到打卡提交结果
+ *    dic{
+     "success": true,
+     "data": {
+         "isRepeat": false//是否重复提交打卡
+     }
+ }
+ */
+-(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic;
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
@@ -425,7 +446,7 @@
  */
 - (void)privateChatWithTouserid:(NSString *)touserid msg:(NSString *)msg;
 /**
- *	@brief	销毁文档和视频，清除视频和文档的时候需要调用,推出播放页面的时候也需要调用
+ *	@brief	销毁文档和视频，清除视频和文档的时候需要调用,退出播放页面的时候也需要调用
  */
 - (void)requestCancel;
 /**
@@ -469,9 +490,9 @@
  */
 - (void)stopPlayer;
 /**
- *	@brief   切换播放线路
- *  firIndex表示第几个源
- *  key表示该源对应的描述信息
+ *	@brief   切换播放线路和清晰度
+ *  firIndex表示第几个线路
+ *  key表示该线路对应的secRoadKeyArray里面的元素
  */
 - (void)switchToPlayUrlWithFirIndex:(NSInteger)firIndex key:(NSString *)key;
 /**
@@ -527,28 +548,48 @@
 - (void)changePageToNumWithDocId:(NSString *)docId pageIndex:(NSInteger)pageIndex;
 
 /**
- *    @brief     提交随堂测(The new method)
+ *    @brief     提交随堂测
  *      @param     practiceId  随堂测ID
  *      @param     options   选项ID
  */
 - (void)commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options;
 /**
- *    @brief     获取随堂测统计信息(可多次调用)(The new method)
+ *    @brief     获取随堂测统计信息(可多次调用)
  *      @param     practiceId  随堂测ID
  */
 -(void)getPracticeStatisWithPracticeId:(NSString *)practiceId;
 /**
- *    @brief     获取随堂测排名(可多次调用)(The new method)
+ *    @brief     获取随堂测排名(可多次调用)
  *      @param     practiceId  随堂测ID
  */
 -(void)getPracticeRankWithPracticeId:(NSString *)practiceId;
 
 /**
- *    @brief     获取随堂测(The new method)
+ *    @brief     获取随堂测
  *      @param     practiceId  随堂测ID(没有传@"")
  */
--(void)getPracticeInfo:(NSString *)practiceId;
+-(void)getPracticeInformation:(NSString *)practiceId;
+/**
+ * 获取ppt列表(只能在登陆成功后调用)
+ */
+- (void)getDocsList;
 
+/**
+ 改变文档背景颜色
+
+ @param hexColor 字符串,传颜色的HEXColor 如:#000000
+ */
+- (void)changeDocWebColor:(NSString *)hexColor;
+/**
+查询打卡信息
+*/
+- (void)hdInquirePunchInformation;
+/**
+提交打卡
+
+@param punchId 打卡id
+*/
+- (void)hdCommitPunchWithPunchId:(NSString *)punchId;
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法
@@ -581,5 +622,4 @@
 -(void)gotoConnectWebRTC;
 
 //#endif
-
 @end

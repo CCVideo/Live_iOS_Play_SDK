@@ -41,7 +41,8 @@
 @property (nonatomic,assign)BOOL                        isSmallDocView;//是否是文档小屏
 @property (nonatomic,strong)UIView                      * onceDocView;//临时DocView(双击ppt进入横屏调用)
 @property (nonatomic,strong)UIView                      * oncePlayerView;//临时playerView(双击ppt进入横屏调用)
-@property (nonatomic,strong)UILabel                  *label;
+@property (nonatomic,strong)UILabel                     *label;
+@property (nonatomic,assign)CGFloat                        playTime;
 
 
 @end
@@ -99,7 +100,9 @@
 - (void)onPageChange:(NSDictionary *)dictionary {
     
 }
-
+- (void)videoStateChangeWithString:(NSString *)result {
+    NSLog(@"---状态是%@",result);
+}
 - (void)docLoadCompleteWithIndex:(NSInteger)index {
 //    if (index == 0) {
 //        [self.requestDataPlayBack changeDocWebColor:@"#000000"];
@@ -143,6 +146,7 @@
 //        self.playerView.transform = tran;
 //    }
 //    [self.requestDataPlayBack changeDocWebColor:@"#000000"];
+//    [_requestDataPlayBack getPracticeInformation];
 }
 //集成SDK
 - (void)integrationSDK {
@@ -324,35 +328,52 @@
 //    } else if (_requestDataPlayBack.ijkPlayer.loadState == 3) {
 //        [self.playerView removeLoadingView];
 //    }
+//    NSLog(@"当前状态啊啊啊啊啊%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
+
     switch (_requestDataPlayBack.ijkPlayer.loadState)
     {
+            
         case IJKMPMovieLoadStateStalled:
 //            NSLog(@"当前状态是a%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"数据缓冲已经停止状态");
             break;
         case IJKMPMovieLoadStatePlayable:
 //            NSLog(@"当前状态是b%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"数据缓冲到足够开始播放状态");
             break;
         case IJKMPMovieLoadStatePlaythroughOK:
 //            NSLog(@"当前状态是c%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"缓冲完成状态");
             break;
             //IJKMPMovieLoadStateUnknown
         case IJKMPMovieLoadStateUnknown:
 //            NSLog(@"当前状态是d%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-            
+//            NSLog(@"数据缓冲变成了未知状态");
             break;
         default:
             break;
     }
+    
+//    IJKMPMovieLoadState loadState = _requestDataPlayBack.ijkPlayer.loadState;
+//
+//        if ((loadState & IJKMPMovieLoadStatePlaythroughOK) != 0) {  // 缓冲缓冲结束
+//            NSLog(@"对啊缓冲结束");
+//        } else if ((loadState & IJKMPMovieLoadStateStalled) != 0) {    // 开始缓冲
+//            NSLog(@"对啊开始缓冲");
+//        }
+
+    
+    
+    
 }
 - (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification {
-    NSLog(@"播放完成");
+//    NSLog(@"播放完成");
 }
 //回放速率改变
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification
 {
+//    NSLog(@"当前状态%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
+
     switch (_requestDataPlayBack.ijkPlayer.playbackState)
     {
         case IJKMPMoviePlaybackStateStopped: {
@@ -374,8 +395,6 @@
                 }
 //#endif
                 [self.playerView removeLoadingView];//移除加载视图
-                /*      保存日志     */ 
-                [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
                 
                 
                 /* 当视频被打断时，重新开启视频需要校对时间 */
@@ -404,6 +423,7 @@
             break;
         }
         case IJKMPMoviePlaybackStateInterrupted: {
+//            NSLog(@"播放中断");
             break;
         }
         case IJKMPMoviePlaybackStateSeekingForward:
@@ -528,7 +548,9 @@
     if([_requestDataPlayBack isPlaying]) {
         [self.playerView removeLoadingView];
     }
+
     dispatch_async(dispatch_get_main_queue(), ^{
+//        NSLog(@"%f---%f",_requestDataPlayBack.ijkPlayer.playableDuration,_requestDataPlayBack.ijkPlayer.currentPlaybackTime);
         //获取当前播放时间和视频总时长
         NSTimeInterval position = (int)round(self.requestDataPlayBack.currentPlaybackTime);
         NSTimeInterval duration = (int)round(self.requestDataPlayBack.playerDuration);
@@ -541,7 +563,12 @@
         //设置plaerView的滑块和右侧时间Label
         self.playerView.slider.maximumValue = (int)duration;
         self.playerView.rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
+//        NSLog(@"是不是%f---%f",self.requestDataPlayBack.ijkPlayer.currentPlaybackTime,self.playTime);
+//        if (self.requestDataPlayBack.ijkPlayer.currentPlaybackTime < self.playTime) {
+//            NSLog(@"是不是卡了");
+//        }
         
+        self.playTime = self.requestDataPlayBack.ijkPlayer.currentPlaybackTime;
         //校对SDK当前播放时间
         if(position == 0 && self.playerView.sliderValue != 0) {
             self.requestDataPlayBack.currentPlaybackTime = self.playerView.sliderValue;

@@ -25,7 +25,6 @@
 		52524D85229F8B8300491342 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D80229F8B8200491342 /* IJKMediaFramework.framework */; };
 		52524D86229F8B8300491342 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D81229F8B8200491342 /* CCSDK.framework */; };
 		52524D87229F8B8300491342 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D82229F8B8200491342 /* DWDrmServer.framework */; };
-		52524D88229F8B8300491342 /* socketio.html in Resources */ = {isa = PBXBuildFile; fileRef = 52524D83229F8B8200491342 /* socketio.html */; };
 		52524D89229F8B8300491342 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D84229F8B8200491342 /* WebRTC.framework */; };
 		52524D8A229F8B9000491342 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D81229F8B8200491342 /* CCSDK.framework */; };
 		52524D8B229F8B9000491342 /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52524D81229F8B8200491342 /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -41,6 +40,7 @@
 		52BD12FC22891F0100FCC0B5 /* CCDownloadSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52BD12F722891F0100FCC0B5 /* CCDownloadSessionManager.m */; };
 		52BD12FF22893E9D00FCC0B5 /* CCDownloadUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 52BD12FE22893E9D00FCC0B5 /* CCDownloadUtility.m */; };
 		52BD13522289525A00FCC0B5 /* UIButton+UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 52BD13502289525900FCC0B5 /* UIButton+UserInfo.m */; };
+		52DC49C7238D2A6A00153F80 /* CCBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 52DC49C6238D2A6A00153F80 /* CCBundle.bundle */; };
 		70E04FF822897C6300A735FC /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 70E04FC522897C6300A735FC /* LICENSE */; };
 		70E04FF922897C6300A735FC /* UIScrollView+MJRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E04FC722897C6300A735FC /* UIScrollView+MJRefresh.m */; };
 		70E04FFA22897C6300A735FC /* MJRefreshConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E04FC822897C6300A735FC /* MJRefreshConst.m */; };
@@ -176,7 +176,6 @@
 		52524D80229F8B8200491342 /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
 		52524D81229F8B8200491342 /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
 		52524D82229F8B8200491342 /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
-		52524D83229F8B8200491342 /* socketio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = socketio.html; sourceTree = "<group>"; };
 		52524D84229F8B8200491342 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
 		52BD12F122891F0100FCC0B5 /* CCDownloadModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCDownloadModel.h; sourceTree = "<group>"; };
 		52BD12F222891F0100FCC0B5 /* CCDownloadSessionManager+File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CCDownloadSessionManager+File.m"; sourceTree = "<group>"; };
@@ -190,6 +189,7 @@
 		52BD12FE22893E9D00FCC0B5 /* CCDownloadUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCDownloadUtility.m; sourceTree = "<group>"; };
 		52BD13502289525900FCC0B5 /* UIButton+UserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+UserInfo.m"; sourceTree = "<group>"; };
 		52BD13512289525A00FCC0B5 /* UIButton+UserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+UserInfo.h"; sourceTree = "<group>"; };
+		52DC49C6238D2A6A00153F80 /* CCBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CCBundle.bundle; sourceTree = "<group>"; };
 		70E04FC522897C6300A735FC /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		70E04FC722897C6300A735FC /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
 		70E04FC822897C6300A735FC /* MJRefreshConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshConst.m; sourceTree = "<group>"; };
@@ -512,10 +512,10 @@
 		52F418E32285296E00AD19FD /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
+				52DC49C6238D2A6A00153F80 /* CCBundle.bundle */,
 				52524D81229F8B8200491342 /* CCSDK.framework */,
 				52524D82229F8B8200491342 /* DWDrmServer.framework */,
 				52524D80229F8B8200491342 /* IJKMediaFramework.framework */,
-				52524D83229F8B8200491342 /* socketio.html */,
 				52524D84229F8B8200491342 /* WebRTC.framework */,
 			);
 			path = CCSDK;
@@ -903,8 +903,8 @@
 			files = (
 				521E16EC22828BFE00F675CC /* LaunchScreen.storyboard in Resources */,
 				70E04FFC22897C6300A735FC /* MJRefresh.bundle in Resources */,
+				52DC49C7238D2A6A00153F80 /* CCBundle.bundle in Resources */,
 				70E0500E22897C6300A735FC /* README.md in Resources */,
-				52524D88229F8B8300491342 /* socketio.html in Resources */,
 				521E16E922828BFE00F675CC /* Assets.xcassets in Resources */,
 				521E16E722828BFD00F675CC /* Main.storyboard in Resources */,
 				70E04FF822897C6300A735FC /* LICENSE in Resources */,
@@ -1230,7 +1230,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TX67Q8A5U5;
+				DEVELOPMENT_TEAM = P92BH8WWP5;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1257,7 +1257,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = TX67Q8A5U5;
+				DEVELOPMENT_TEAM = P92BH8WWP5;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (

@@ -125,7 +125,7 @@
         [_segment setWidth:0.0f forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width forSegmentAtIndex:2];
-        [_segment setWidth:0.0f forSegmentAtIndex:3];
+//        [_segment setWidth:0.0f forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 2;
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0] + [self.segment widthForSegmentAtIndex:1]+[self.segment widthForSegmentAtIndex:2]/4, shadowViewY, [self.segment widthForSegmentAtIndex:2]/2, 2);
         int py = _scrollView.contentOffset.y;
@@ -139,7 +139,7 @@
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:0];
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:2];
-        [_segment setWidth:0.0f forSegmentAtIndex:3];
+//        [_segment setWidth:0.0f forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 0;
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
@@ -153,7 +153,7 @@
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:2];
-        [_segment setWidth:0.0f forSegmentAtIndex:3];
+//        [_segment setWidth:self.segment.frame.size.width/3 forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 0;
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
@@ -200,7 +200,7 @@
         [_segment setWidth:0.0f forSegmentAtIndex:0];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:2];
-        [_segment setWidth:0.0f forSegmentAtIndex:3];
+//        [_segment setWidth:0.0f forSegmentAtIndex:3];
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]+[self.segment widthForSegmentAtIndex:1]/4, shadowViewY, [self.segment widthForSegmentAtIndex:1]/2, 2);
         int py = _scrollView.contentOffset.y;
         [_scrollView setContentOffset:CGPointMake(SCREEN_WIDTH * 1, py)];

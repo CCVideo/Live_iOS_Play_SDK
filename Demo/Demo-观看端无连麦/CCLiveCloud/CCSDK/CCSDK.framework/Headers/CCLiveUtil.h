@@ -21,7 +21,8 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     PRACTICESTATIS = 1015,//@"获取随堂测统计"
     PRACTICERANK = 1016,//@"获取随堂测排名"
     ERROR_SOCKET = 1017,//@"socket加载失败"
-
+    ERROR_PUNCH = 1018,//@"获取打卡信息失败"
+    ERROR_PUNCHCOMMIT = 1019,//@"获取打卡提交结果失败"
 };
 
 

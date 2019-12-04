@@ -13,7 +13,6 @@
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
-#define SDKVersion @"3.4.0"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -103,6 +102,16 @@
  *      2 非动画文档加载完成
  */
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
+/**
+ *    @brief    接收到随堂测
+ *    rseultDic    随堂测内容
+ */
+-(void)receivePracticeWithDic:(NSDictionary *) resultDic;
+/**
+ *    @brief    视频状态
+ *    rseult    playing/paused/loading
+ */
+-(void)videoStateChangeWithString:(NSString *) result;
 
 @end
 
@@ -215,5 +224,16 @@
  *	@brief  设置后台是否可播放
  */
 - (void)setpauseInBackGround:(BOOL)pauseInBackGround;
+
+/**
+ 改变文档背景颜色
+ 
+ @param hexColor 字符串,传颜色的HEXColor 如:#000000
+ */
+- (void)changeDocWebColor:(NSString *)hexColor;
+/**
+ 获取随堂测信息
+ */
+-(void)getPracticeInformation;
 
 @end

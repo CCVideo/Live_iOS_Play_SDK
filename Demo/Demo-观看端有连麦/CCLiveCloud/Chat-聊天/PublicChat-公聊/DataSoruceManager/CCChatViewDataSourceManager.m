@@ -233,6 +233,9 @@
  @param model 消息模型
  */
 -(void)inserDanMuBlock:(InsertDanMuBlock)block WithModel:(CCPublicChatModel *)model {
+    if (model == nil) {
+        return;
+    }
     //判断消息方是否是自己
     BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
     BOOL haveImg = [model.msg containsString:IMGURL];//是否含有图片

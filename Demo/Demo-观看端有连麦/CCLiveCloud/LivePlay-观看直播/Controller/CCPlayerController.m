@@ -26,6 +26,7 @@
 #import "CCProxy.h"
 #import "CCClassTestView.h"//随堂测
 #import "CCCupView.h"//奖杯
+#import "CCPunchView.h"
 //#ifdef LockView
 #import "CCLockView.h"//锁屏界面
 //#endif
@@ -71,8 +72,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 @property(nonatomic,strong)AnnouncementView          * announcementView;//公告视图
 
 #pragma mark - 随堂测
-@property(nonatomic,weak)CCClassTestView           * testView;//随堂测
-
+@property(nonatomic,weak)CCClassTestView             * testView;//随堂测
+#pragma mark - 打卡视图
+@property(nonatomic,strong)CCPunchView                 * punchView;//打卡
 #pragma mark - 提示框
 @property (nonatomic,strong)CCAlertView              * alertView;//消息弹窗
 //#ifdef LockView
@@ -115,35 +117,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
-//    UIButton *btn = [[UIButton alloc] init];
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 100, 100, 100);
-//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
-//    self.jjjj = 0;
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//    
 }
 
-
--(void)docLoadCompleteWithIndex:(NSInteger)index {
-//        [self.requestData changeDocWebColor:@"#000000"];
-//
-//    if (index != 0) {
-//        CGFloat ratio = [_requestData getDocAspectRatio];
-//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
-//        self.label.text = str;
-////        NSLog(@"宽高比是%f",ratio);
-//    }
-}
-- (void)changedoc {
-//    [self.requestData changeDocWebColor:@"#000000"];
-//    [_requestData getDocAspectRatio];
-//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
-
-}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -380,9 +355,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self stopTimer];
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
     _userCountTimer = [NSTimer scheduledTimerWithTimeInterval:15.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
-    if (!_testView) {//如果已经存在随堂测视图，避免断网重连
-        [_requestData getPracticeInfo:@""];
-    }
+   
 }
 
 /**
@@ -396,7 +369,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         message = reason;
     }
     // 添加提示窗,提示message
-    [self addBanAlertView:message];
+//    [self addBanAlertView:message];
 }
 
 #pragma mark- 功能代理方法 用哪个实现哪个-----
@@ -499,6 +472,56 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     if (type == 6) {//去除私聊按钮
         [_menuView hiddenPrivateBtn];
     }
+}
+#pragma mark - 打卡功能
+/// 打卡功能
+/// @param dic 打卡数据
+- (void)hdReceivedStartPunchWithDict:(NSDictionary *)dic {
+    
+    if (_punchView) {
+        [_punchView removeFromSuperview];
+    }
+    WS(weakSelf)
+    self.punchView = [[CCPunchView alloc] initWithDict:dic punchBlock:^(NSString * punchid) {
+        [weakSelf.requestData hdCommitPunchWithPunchId:punchid];
+        NSLog(@"点击打卡");
+    } isScreenLandScape:self.isScreenLandScape];
+    self.punchView.commitSuccess = ^(BOOL success) {
+        [weakSelf removePunchView];
+    };
+    [APPDelegate.window addSubview:self.punchView];
+    _punchView.frame = [UIScreen mainScreen].bounds;
+    
+    
+    
+    
+    [self showRollCallView];
+}
+/**
+ *    @brief    收到结束打卡
+ *    dic{
+ "punchId": "punchId"
+ }
+ */
+-(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
+    [self removePunchView];
+}
+/**
+ *    @brief    收到打卡提交结果
+ *    dic{
+ "success": true,
+ "data": {
+ "isRepeat": false//是否重复提交打卡
+ }
+ }
+ */
+-(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic{
+    [self.punchView updateUIWithDic:dic];
+}
+//移除打卡视图
+-(void)removePunchView {
+    [_punchView removeFromSuperview];
+    _punchView = nil;
 }
 #pragma mark- 获取直播开始时间和直播时长
 /**
@@ -662,9 +685,17 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [forMatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSString *dateStr = [forMatter stringFromDate:date];
         SaveToUserDefaults(LIVE_STARTTIME, dateStr);
+        
+    }
+    if (status == 0) {
+        if (!_testView) {//如果已经存在随堂测视图，避免断网重连
+            [_requestData getPracticeInformation:@""];
+        }
+        if (!_punchView) {
+                [_requestData hdInquirePunchInformation];
+        }
     }
 }
-
 /**
  *    @brief  主讲开始推流
  */
@@ -678,6 +709,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  *    @brief  停止直播，endNormal表示是否停止推流
  */
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal {
+    if (self.punchView) {
+        [self removePunchView];
+    }
     [_playerView onLiveStatusChangeEnd:endNormal];
 }
 #pragma mark- 加载视频失败
@@ -1172,6 +1206,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             break;
     }
 }
+
 #pragma mark - 添加弹窗类事件
 -(void)addAlerView:(UIView *)view{
     [APPDelegate.window addSubview:view];
@@ -1294,6 +1329,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [APPDelegate.window bringSubviewToFront:_rollcallView];
     }
 }
+
+
 //更多菜单
 -(SelectMenuView *)menuView{
     if (!_menuView) {

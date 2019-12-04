@@ -12,7 +12,6 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.5.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -328,7 +327,7 @@
 -(void)practiceCloseWithDic:(NSDictionary *) resultDic;
 /**
  *    @brief    视频状态
- *    rseult    playing/paused
+ *    rseult    playing/paused/loading
  */
 -(void)videoStateChangeWithString:(NSString *) result;
 /**
@@ -337,6 +336,37 @@
  *    "type":  1 奖杯 2 其他
  */
 -(void)prize_sendWithDict:(NSDictionary *)dic;
+/**
+ *    @brief    收到开始打卡
+ *    dic {
+     "punchId": "punchId",
+     "expireTime": "2019-10-26 10:00:00",
+     "remainDuration": 124
+    }
+ *    当没有设置时长，即无过期时间时
+ *    {
+     "punchId": "asasdasdasdasd",
+     "remainDuration": -1 //其中-1表示剩余无限时间。
+ }
+ */
+-(void)hdReceivedStartPunchWithDict:(NSDictionary *)dic;
+/**
+ *    @brief    收到结束打卡
+ *    dic{
+     "punchId": "punchId"
+ }
+ */
+-(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic;
+/**
+ *    @brief    收到打卡提交结果
+ *    dic{
+     "success": true,
+     "data": {
+         "isRepeat": false//是否重复提交打卡
+     }
+ }
+ */
+-(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic;
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
@@ -538,7 +568,7 @@
  *    @brief     获取随堂测
  *      @param     practiceId  随堂测ID(没有传@"")
  */
--(void)getPracticeInfo:(NSString *)practiceId;
+-(void)getPracticeInformation:(NSString *)practiceId;
 /**
  * 获取ppt列表(只能在登陆成功后调用)
  */
@@ -550,6 +580,16 @@
  @param hexColor 字符串,传颜色的HEXColor 如:#000000
  */
 - (void)changeDocWebColor:(NSString *)hexColor;
+/**
+查询打卡信息
+*/
+- (void)hdInquirePunchInformation;
+/**
+提交打卡
+
+@param punchId 打卡id
+*/
+- (void)hdCommitPunchWithPunchId:(NSString *)punchId;
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法

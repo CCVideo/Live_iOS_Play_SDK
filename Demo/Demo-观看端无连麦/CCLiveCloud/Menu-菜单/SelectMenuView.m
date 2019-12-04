@@ -60,7 +60,6 @@
     [_announcementBtn addTarget:self action:@selector(announcementBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     _announcementLabel = [self labelWithTitle:@"公告" andBtn:self.announcementBtn];
     
-    
     BOOL haveLianmai = [self existLianmai];
     CGFloat bottom = haveLianmai?327:227;
     //添加私聊按钮
@@ -110,6 +109,7 @@
         _privateBlock();
     }
 }
+
 
 /**
  点击公告按钮

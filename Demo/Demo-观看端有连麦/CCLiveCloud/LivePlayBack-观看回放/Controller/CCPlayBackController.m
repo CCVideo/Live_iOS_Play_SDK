@@ -41,7 +41,8 @@
 @property (nonatomic,assign)BOOL                        isSmallDocView;//是否是文档小屏
 @property (nonatomic,strong)UIView                      * onceDocView;//临时DocView(双击ppt进入横屏调用)
 @property (nonatomic,strong)UIView                      * oncePlayerView;//临时playerView(双击ppt进入横屏调用)
-@property (nonatomic,strong)UILabel                  *label;
+@property (nonatomic,strong)UILabel                     *label;
+@property (nonatomic,assign)CGFloat                        playTime;
 
 
 @end
@@ -58,92 +59,9 @@
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-    
-//    UILabel * label = [[UILabel alloc] init];
-//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
-//    label.textColor = [UIColor redColor];
-//    label.frame = CGRectMake(100, 100, 200, 40);
-//    [self.view addSubview:label];
-    
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 100, 100, 100);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
-////
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(200, 100, 100, 100);
-//    [btn1 setTitle:@"默认" forState:UIControlStateNormal];
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-////
-//    UIButton *btn2 = [[UIButton alloc] init];
-//    [btn2 setBackgroundColor:[UIColor grayColor]];
-//    [self.view addSubview:btn2];
-//    btn2.frame = CGRectMake(300, 100, 100, 100);
-//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
-//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
-//
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
-
-}
-- (void)publish_stream {
-//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
-}
-- (void)onPageChange:(NSDictionary *)dictionary {
-    
+ 
 }
 
-- (void)docLoadCompleteWithIndex:(NSInteger)index {
-//    if (index == 0) {
-//        [self.requestDataPlayBack changeDocWebColor:@"#000000"];
-////    }
-//    if (index != 0) {
-//        CGFloat ratio = [_requestDataPlayBack getDocAspectRatio];
-//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
-//        self.label.text = str;
-//    }
-}
-- (void)changedoc2 {
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
-//        }
-//        self.playerView.transform = tran;
-//    }
-
-}
-- (void)changedoc1 {
-//    self.playerView.transform = CGAffineTransformIdentity;
-//    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
-}
-- (void)changedoc:(UIButton *)sender {
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
-//        }
-//        self.playerView.transform = tran;
-//    }
-//    [self.requestDataPlayBack changeDocWebColor:@"#000000"];
-}
 //集成SDK
 - (void)integrationSDK {
     UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
@@ -324,35 +242,52 @@
 //    } else if (_requestDataPlayBack.ijkPlayer.loadState == 3) {
 //        [self.playerView removeLoadingView];
 //    }
+//    NSLog(@"当前状态啊啊啊啊啊%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
+
     switch (_requestDataPlayBack.ijkPlayer.loadState)
     {
+            
         case IJKMPMovieLoadStateStalled:
 //            NSLog(@"当前状态是a%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"数据缓冲已经停止状态");
             break;
         case IJKMPMovieLoadStatePlayable:
 //            NSLog(@"当前状态是b%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"数据缓冲到足够开始播放状态");
             break;
         case IJKMPMovieLoadStatePlaythroughOK:
 //            NSLog(@"当前状态是c%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-
+//            NSLog(@"缓冲完成状态");
             break;
             //IJKMPMovieLoadStateUnknown
         case IJKMPMovieLoadStateUnknown:
 //            NSLog(@"当前状态是d%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-            
+//            NSLog(@"数据缓冲变成了未知状态");
             break;
         default:
             break;
     }
+    
+//    IJKMPMovieLoadState loadState = _requestDataPlayBack.ijkPlayer.loadState;
+//
+//        if ((loadState & IJKMPMovieLoadStatePlaythroughOK) != 0) {  // 缓冲缓冲结束
+//            NSLog(@"对啊缓冲结束");
+//        } else if ((loadState & IJKMPMovieLoadStateStalled) != 0) {    // 开始缓冲
+//            NSLog(@"对啊开始缓冲");
+//        }
+
+    
+    
+    
 }
 - (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification {
-    NSLog(@"播放完成");
+//    NSLog(@"播放完成");
 }
 //回放速率改变
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification
 {
+//    NSLog(@"当前状态%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
+
     switch (_requestDataPlayBack.ijkPlayer.playbackState)
     {
         case IJKMPMoviePlaybackStateStopped: {
@@ -374,8 +309,6 @@
                 }
 //#endif
                 [self.playerView removeLoadingView];//移除加载视图
-                /*      保存日志     */ 
-                [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
                 
                 
                 /* 当视频被打断时，重新开启视频需要校对时间 */
@@ -404,6 +337,7 @@
             break;
         }
         case IJKMPMoviePlaybackStateInterrupted: {
+//            NSLog(@"播放中断");
             break;
         }
         case IJKMPMoviePlaybackStateSeekingForward:
@@ -528,7 +462,9 @@
     if([_requestDataPlayBack isPlaying]) {
         [self.playerView removeLoadingView];
     }
+
     dispatch_async(dispatch_get_main_queue(), ^{
+//        NSLog(@"%f---%f",_requestDataPlayBack.ijkPlayer.playableDuration,_requestDataPlayBack.ijkPlayer.currentPlaybackTime);
         //获取当前播放时间和视频总时长
         NSTimeInterval position = (int)round(self.requestDataPlayBack.currentPlaybackTime);
         NSTimeInterval duration = (int)round(self.requestDataPlayBack.playerDuration);
@@ -541,7 +477,12 @@
         //设置plaerView的滑块和右侧时间Label
         self.playerView.slider.maximumValue = (int)duration;
         self.playerView.rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
+//        NSLog(@"是不是%f---%f",self.requestDataPlayBack.ijkPlayer.currentPlaybackTime,self.playTime);
+//        if (self.requestDataPlayBack.ijkPlayer.currentPlaybackTime < self.playTime) {
+//            NSLog(@"是不是卡了");
+//        }
         
+        self.playTime = self.requestDataPlayBack.ijkPlayer.currentPlaybackTime;
         //校对SDK当前播放时间
         if(position == 0 && self.playerView.sliderValue != 0) {
             self.requestDataPlayBack.currentPlaybackTime = self.playerView.sliderValue;

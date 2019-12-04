@@ -60,4 +60,8 @@
 + (NSDictionary *)parsePlayInfoResponse:(NSDictionary *)response;
 
 
+//http替换成https
++ (NSString *)customSchemeURL:(NSString *)string;
+
+
 @end
