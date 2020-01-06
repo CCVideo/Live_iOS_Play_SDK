@@ -119,7 +119,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self addObserver];//添加通知
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
@@ -127,6 +126,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self removeObserver];//移除通知
+    
+}
+//获取视频截图
+- (void)thumbnailImageAtCurrentTime {
+   UIImage *image =  [self.requestData.ijkPlayer thumbnailImageAtCurrentTime];
+    NSLog(@"获取视频截图%@",image);
 }
 /**
  创建UI
@@ -473,56 +478,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [_menuView hiddenPrivateBtn];
     }
 }
-#pragma mark - 打卡功能
-/// 打卡功能
-/// @param dic 打卡数据
-- (void)hdReceivedStartPunchWithDict:(NSDictionary *)dic {
-    
-    if (_punchView) {
-        [_punchView removeFromSuperview];
-    }
-    WS(weakSelf)
-    self.punchView = [[CCPunchView alloc] initWithDict:dic punchBlock:^(NSString * punchid) {
-        [weakSelf.requestData hdCommitPunchWithPunchId:punchid];
-        NSLog(@"点击打卡");
-    } isScreenLandScape:self.isScreenLandScape];
-    self.punchView.commitSuccess = ^(BOOL success) {
-        [weakSelf removePunchView];
-    };
-    [APPDelegate.window addSubview:self.punchView];
-    _punchView.frame = [UIScreen mainScreen].bounds;
-    
-    
-    
-    
-    [self showRollCallView];
-}
-/**
- *    @brief    收到结束打卡
- *    dic{
- "punchId": "punchId"
- }
- */
--(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
-    [self removePunchView];
-}
-/**
- *    @brief    收到打卡提交结果
- *    dic{
- "success": true,
- "data": {
- "isRepeat": false//是否重复提交打卡
- }
- }
- */
--(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic{
-    [self.punchView updateUIWithDic:dic];
-}
-//移除打卡视图
--(void)removePunchView {
-    [_punchView removeFromSuperview];
-    _punchView = nil;
-}
 #pragma mark- 获取直播开始时间和直播时长
 /**
  *  @brief  获取直播开始时间和直播时长
@@ -544,8 +499,60 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 - (void)onUserCount:(NSString *)count {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playerView.userCountLabel.text = count;
+//        NSLog(@"在下按人数%@",count);
     });
 }
+
+#pragma mark - 打卡功能
+//移除打卡视图
+-(void)removePunchView {
+    [_punchView removeFromSuperview];
+    _punchView = nil;
+}
+/// 打卡功能
+/// @param dic 打卡数据
+- (void)hdReceivedStartPunchWithDict:(NSDictionary *)dic {
+    
+    if (_punchView) {
+        [_punchView removeFromSuperview];
+    }
+    WS(weakSelf)
+    self.punchView = [[CCPunchView alloc] initWithDict:dic punchBlock:^(NSString * punchid) {
+        [weakSelf.requestData hdCommitPunchWithPunchId:punchid];
+    } isScreenLandScape:self.isScreenLandScape];
+    self.punchView.commitSuccess = ^(BOOL success) {
+        [weakSelf removePunchView];
+    };
+    [APPDelegate.window addSubview:self.punchView];
+    _punchView.frame = [UIScreen mainScreen].bounds;
+    
+  
+    
+    
+    [self showRollCallView];
+}
+/**
+ *    @brief    收到结束打卡
+ *    dic{
+     "punchId": "punchId"
+ }
+ */
+-(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
+    [self removePunchView];
+}
+/**
+ *    @brief    收到打卡提交结果
+ *    dic{
+     "success": true,
+     "data": {
+         "isRepeat": false//是否重复提交打卡
+     }
+ }
+ */
+-(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic{
+    [self.punchView updateUIWithDic:dic];
+}
+
 #pragma mark - 服务器端给自己设置的信息
 /**
  *    @brief    服务器端给自己设置的信息(The new method)
@@ -694,6 +701,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         if (!_punchView) {
                 [_requestData hdInquirePunchInformation];
         }
+    } else {
+        [self.playerView.smallVideoView removeFromSuperview];
     }
 }
 /**
@@ -701,9 +710,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)onLiveStatusChangeStart {
     [_playerView onLiveStatusChangeStart];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.playerView addSmallView];
-    });
+    if (_playerView.templateType == 4 || _playerView.templateType == 5) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.playerView addSmallView];
+        });
+    }
 }
 /**
  *    @brief  停止直播，endNormal表示是否停止推流

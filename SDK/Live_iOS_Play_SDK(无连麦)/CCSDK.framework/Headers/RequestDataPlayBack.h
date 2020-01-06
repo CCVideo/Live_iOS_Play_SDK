@@ -13,6 +13,7 @@
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
+#define SDKVersion @"3.7.0"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**

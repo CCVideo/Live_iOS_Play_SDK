@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CustomTextField.h"//输入框
+#import "PPStickerTextView.h"//薪输入框
 NS_ASSUME_NONNULL_BEGIN
 typedef void(^CCSendMessageBlock)(void);//发送消息回调
 
@@ -29,8 +30,8 @@ typedef void(^CCSendMessageBlock)(void);//发送消息回调
 @end
 @interface CCChatContentView : UIView
 
-@property (nonatomic, strong)CustomTextField       *chatTextField;//聊天文本框
-
+@property (nonatomic, strong)PPStickerTextView       *textView;//聊天文本框
+@property (nonatomic, strong, readonly) NSString *plainText;
 @property (nonatomic, copy) CCSendMessageBlock     sendMessageBlock;//发送信息回调
 
 @property (nonatomic, weak)id<CCChatContentViewDelegate> delegate;//代理

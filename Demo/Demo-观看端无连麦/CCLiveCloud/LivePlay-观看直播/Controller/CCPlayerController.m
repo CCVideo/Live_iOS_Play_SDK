@@ -39,6 +39,7 @@
 *******************************************************
 */
 @interface CCPlayerController ()<RequestDataDelegate,
+
 UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark - 房间相关参数
 @property (nonatomic,copy)  NSString                 * viewerId;//观看者的id
@@ -114,133 +115,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
-//    UIButton *btn = [[UIButton alloc] init];
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 100, 100, 100);
-//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
-//    self.jjjj = 0;
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//
-
 }
-
--(void)docLoadCompleteWithIndex:(NSInteger)index {
-//        [self.requestData changeDocWebColor:@"#000000"];
-//
-//    if (index != 0) {
-//        CGFloat ratio = [_requestData getDocAspectRatio];
-//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
-//        self.label.text = str;
-////        NSLog(@"宽高比是%f",ratio);
-//    }
+//获取视频截图
+- (void)thumbnailImageAtCurrentTime {
+    UIImage *image =  [self.requestData.ijkPlayer thumbnailImageAtCurrentTime];
+    NSLog(@"获取视频截图%@",image);
 }
-- (void)changedoc {
-//    [self.requestData changeDocWebColor:@"#000000"];
-//    [_requestData getDocAspectRatio];
-//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
-    
-    UIImageView *vc = [[UIImageView alloc] init];
-    vc.backgroundColor = [UIColor lightGrayColor];
-    for (UIView *view in self.playerView.subviews) {
-        if ([view isEqual:@"IJKSDLGLView"]) {
-            NSLog(@"哈哈哈哈哈哈哈哈哈哈哈");
-        }
-    }
-    UIImage * image = [self convertViewToImage:self.playerView];
-    vc.image = image;
-    vc.frame = CGRectMake(0, 400, 200, 200);
-    [self.view addSubview:vc];
-    if (image != nil) {
-         //保存图片到相册
-         UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
-     }
-}
-
--(UIImage *)convertViewToImage:(UIView*)v{
-    CGSize s = v.bounds.size;
-    // 下面方法，第一个参数表示区域大小。第二个参数表示是否是非透明的。如果需要显示半透明效果，需要传NO，否则传YES。第三个参数就是屏幕密度了，调整清晰度。
-    UIGraphicsBeginImageContextWithOptions(s, NO, [UIScreen mainScreen].scale);
-    [v.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    if (image != nil) {
-        //保存图片到相册
-//        UIImageWriteToSavedPhotosAlbum(image, self, nil, NULL);
-        UIImageWriteToSavedPhotosAlbum(image, NULL, nil, NULL);
-    }
-    return image;
-}
-- (void)image: (UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-NSString *msg = nil ;
-if(error != NULL){
-    msg = @"保存图片失败" ;
-}else{
-    msg = @"保存图片成功，可到相册查看" ;
-}
-UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:self cancelButtonTitle:@"确定"  otherButtonTitles:nil];
-[alert show];
-}
-
--(void)videoStateChangeWithString:(NSString *)result {
-    NSLog(@"状态是%@",result);
-}
-//移除打卡视图
--(void)removePunchView {
-    [_punchView removeFromSuperview];
-    _punchView = nil;
-}
-
-#pragma mark - 打卡功能
-/// 打卡功能
-/// @param dic 打卡数据
-- (void)hdReceivedStartPunchWithDict:(NSDictionary *)dic {
-    
-    if (_punchView) {
-        [_punchView removeFromSuperview];
-    }
-    WS(weakSelf)
-    self.punchView = [[CCPunchView alloc] initWithDict:dic punchBlock:^(NSString * punchid) {
-        [weakSelf.requestData hdCommitPunchWithPunchId:punchid];
-        NSLog(@"点击打卡");
-    } isScreenLandScape:self.isScreenLandScape];
-    self.punchView.commitSuccess = ^(BOOL success) {
-        [weakSelf removePunchView];
-    };
-    [APPDelegate.window addSubview:self.punchView];
-    _punchView.frame = [UIScreen mainScreen].bounds;
-    
-  
-    
-    
-    [self showRollCallView];
-}
-/**
- *    @brief    收到结束打卡
- *    dic{
-     "punchId": "punchId"
- }
- */
--(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
-    [self removePunchView];
-}
-/**
- *    @brief    收到打卡提交结果
- *    dic{
-     "success": true,
-     "data": {
-         "isRepeat": false//是否重复提交打卡
-     }
- }
- */
--(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic{
-    [self.punchView updateUIWithDic:dic];
-}
-
-
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
@@ -516,6 +396,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
         [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
         [_requestData changeDocParent:_contentView.docView];
         [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
+       
     }else{
         _screenLandScape = YES;
         _isScreenLandScape = YES;
@@ -539,6 +420,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
         [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
         [_requestData changePlayerParent:_oncePlayerView];
         [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
+      
     }
 }
 #pragma mark- 房间信息
@@ -597,8 +479,60 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
 - (void)onUserCount:(NSString *)count {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playerView.userCountLabel.text = count;
+//        NSLog(@"在下按人数%@",count);
     });
 }
+
+#pragma mark - 打卡功能
+//移除打卡视图
+-(void)removePunchView {
+    [_punchView removeFromSuperview];
+    _punchView = nil;
+}
+/// 打卡功能
+/// @param dic 打卡数据
+- (void)hdReceivedStartPunchWithDict:(NSDictionary *)dic {
+    
+    if (_punchView) {
+        [_punchView removeFromSuperview];
+    }
+    WS(weakSelf)
+    self.punchView = [[CCPunchView alloc] initWithDict:dic punchBlock:^(NSString * punchid) {
+        [weakSelf.requestData hdCommitPunchWithPunchId:punchid];
+    } isScreenLandScape:self.isScreenLandScape];
+    self.punchView.commitSuccess = ^(BOOL success) {
+        [weakSelf removePunchView];
+    };
+    [APPDelegate.window addSubview:self.punchView];
+    _punchView.frame = [UIScreen mainScreen].bounds;
+    
+  
+    
+    
+    [self showRollCallView];
+}
+/**
+ *    @brief    收到结束打卡
+ *    dic{
+     "punchId": "punchId"
+ }
+ */
+-(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
+    [self removePunchView];
+}
+/**
+ *    @brief    收到打卡提交结果
+ *    dic{
+     "success": true,
+     "data": {
+         "isRepeat": false//是否重复提交打卡
+     }
+ }
+ */
+-(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic{
+    [self.punchView updateUIWithDic:dic];
+}
+
 #pragma mark - 服务器端给自己设置的信息
 /**
  *    @brief    服务器端给自己设置的信息(The new method)
@@ -747,6 +681,8 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
         if (!_punchView) {
                 [_requestData hdInquirePunchInformation];
         }
+    } else {
+        [self.playerView.smallVideoView removeFromSuperview];
     }
 }
 /**
@@ -754,9 +690,12 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
  */
 - (void)onLiveStatusChangeStart {
     [_playerView onLiveStatusChangeStart];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.playerView addSmallView];
-    });
+    if (_playerView.templateType == 4 || _playerView.templateType == 5) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.playerView addSmallView];
+        });
+    }
 }
 /**
  *    @brief  停止直播，endNormal表示是否停止推流
@@ -1071,6 +1010,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
     CCCupView *cupView = [[CCCupView alloc] initWithWinnerName:name isScreen:self.screenLandScape];
     [APPDelegate.window addSubview:cupView];
 }
+
 #pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -1101,7 +1041,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:IJKMPMovieNaturalSizeAvailableNotification
                                                   object:nil];
-
+    
 }
 /**
  APP将要进入后台
@@ -1245,7 +1185,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
         _playerView.sendChatMessage = ^(NSString * sendChatMessage) {
             [weakSelf sendChatMessageWithStr:sendChatMessage];
         };
-
+        
     }
     return _playerView;
 }
@@ -1323,7 +1263,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
             [ws.contentView.chatView privateChatBtnClicked];
             [APPDelegate.window bringSubviewToFront:ws.contentView.chatView.ccPrivateChatView];
         };
-
+        
         //公告按钮回调
         _menuView.announcementBlock = ^{
             [ws announcementBtnClicked];
@@ -1334,7 +1274,7 @@ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate
 }
 //收回菜单
 -(void)hiddenMenuView{
-
+    
 }
 
 //公告

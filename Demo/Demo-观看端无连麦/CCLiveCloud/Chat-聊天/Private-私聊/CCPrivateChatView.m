@@ -496,6 +496,9 @@
     }
     NSString *anteName = nil;
     NSString *anteid = nil;
+    if (dialogue == nil) {
+        return;
+    }
     if([dialogue.fromuserid isEqualToString:dialogue.myViwerId]) {
         anteid = dialogue.touserid;
         anteName = dialogue.tousername;

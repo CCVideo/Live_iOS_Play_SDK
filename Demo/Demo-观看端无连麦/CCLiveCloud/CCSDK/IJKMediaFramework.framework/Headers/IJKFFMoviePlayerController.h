@@ -90,7 +90,7 @@ typedef enum IJKLogLevel {
 - (long long)audioCachedDuration;
 - (int64_t)trafficStatistic;
 - (float)dropFrameRate;
-
+- (UIImage *)thumbnailImageAtCurrentTime;
 - (void)setPauseInBackground:(BOOL)pause;
 - (BOOL)isVideoToolboxOpen;
 

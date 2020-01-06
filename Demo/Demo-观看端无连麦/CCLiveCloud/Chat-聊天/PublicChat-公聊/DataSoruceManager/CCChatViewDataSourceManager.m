@@ -219,9 +219,13 @@
         model.msg = url;
         model.typeState = ImageState;
         model.cellHeight = [self getImageCellHeightWith:model];
+//        model.imageSize = CGSizeMake(50, 50);
+//        model.textSize = CGSizeZero;
+//        model.cellHeight = 80;
     }else{//纯文本消息
         model.cellHeight = [self getTextCellHeightWith:model];
         model.typeState = TextState;
+        model.imageSize = CGSizeMake(0, 0);
     }
 }
 #pragma mark - 添加弹幕消息
@@ -500,7 +504,9 @@
 }
 #pragma mark - 清理缓存
 -(void)removeData{
-    [self.publicChatArray removeAllObjects];
+    if (self.publicChatArray != nil) {
+        [self.publicChatArray removeAllObjects];
+    }
 //    [self.downloadDic removeAllObjects];
 }
 #pragma mark - 懒加载

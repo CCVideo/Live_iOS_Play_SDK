@@ -11,6 +11,7 @@
 #import "InformationShowView.h"//提示框
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
+
 #import "CCDocView.h"//文档视图
 NS_ASSUME_NONNULL_BEGIN
 
@@ -83,7 +84,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame docViewType:(BOOL)isSmallDocView;
 //meauView点击方法
 -(void)menuViewSelected:(BOOL)selected;
-
 
 #pragma mark - 直播状态相关代理
 /**

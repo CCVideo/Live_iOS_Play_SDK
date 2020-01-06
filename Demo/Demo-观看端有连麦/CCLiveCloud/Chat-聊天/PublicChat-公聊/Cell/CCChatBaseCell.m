@@ -9,7 +9,7 @@
 #import "CCChatBaseCell.h"
 #import "Utility.h"
 #import "UIImage+animatedGIF.h"
-#import "CCImageView.h"
+
 #import "CCChatViewDataSourceManager.h"
 @interface CCChatBaseCell ()
 #pragma mark - 广播
@@ -23,8 +23,8 @@
 @property (nonatomic, strong) UILabel     *contentLabel;//消息文本
 @property (nonatomic, strong) NSString    *URL;//链接
 @property (nonatomic, strong) NSArray     *urlArr;//链接数组
-#pragma mark - 图片消息
-@property (nonatomic, strong) CCImageView *smallImageView;//图片视图
+@property (nonatomic, strong) NSOperationQueue *queue;
+
 @end
 
 @implementation CCChatBaseCell
@@ -38,6 +38,10 @@
         [self setUpUI];
     }
     return self;
+}
+- (NSOperationQueue *)queue {
+    if (!_queue) _queue = [[NSOperationQueue alloc] init];
+    return _queue;
 }
 #pragma mark - 设置UI布局
 -(void)setUpUI{
@@ -292,15 +296,18 @@
     }
     //判断用户是否有头像，如果有,用网络头像，如果没有,用本地头像
     if(StrNotEmpty(model.useravatar) && [model.useravatar containsString:@"http"]) {
-        dispatch_async(dispatch_queue_create("useravatar", NULL), ^{
-            
-            NSData *data = [NSData  dataWithContentsOfURL:[NSURL URLWithString:model.useravatar]];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                UIImage *image =  [UIImage imageWithData:data];
-                [_headBtn setBackgroundImage:image forState:UIControlStateNormal];
-            });
-        });
+        [self.queue addOperationWithBlock: ^{
+               NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:model.useravatar]]; //得到图像数据
+               UIImage *image = [UIImage imageWithData:imgData];
         
+               //在主线程中更新UI
+               [[NSOperationQueue mainQueue] addOperationWithBlock: ^{
+                   //通过修改模型, 来修改数据
+                   [_headBtn setBackgroundImage:image forState:UIControlStateNormal];
+                   //刷新指定表格行
+//                   [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+               }];
+           }];
     } else {
         [_headBtn setBackgroundImage:[UIImage imageNamed:model.headImgName] forState:UIControlStateNormal];
     }

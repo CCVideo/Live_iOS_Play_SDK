@@ -14,11 +14,11 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - Bugly (2.5.0)
+  - Bugly (2.5.2)
   - Masonry (1.1.0)
   - MBProgressHUD (1.1.0)
   - MJExtension (3.2.1)
-  - MJRefresh (3.2.0)
+  - MJRefresh (3.2.3)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
@@ -44,11 +44,11 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
+  Bugly: dbac48b55ad469a97cc4321045cd50df8f63d44f
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   MJExtension: 635f2c663dcb1bf76fa4b715b2570a5710aec545
-  MJRefresh: ed450d6eb9d3346a2cb033ab7eb6de090aeef437
+  MJRefresh: 2b1214a2dc8f4df4c5dcb028ea2ad4e245425fb7
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
 
 PODFILE CHECKSUM: 6e1a5ed2c89a84584553abdf248400fe7d2ed198

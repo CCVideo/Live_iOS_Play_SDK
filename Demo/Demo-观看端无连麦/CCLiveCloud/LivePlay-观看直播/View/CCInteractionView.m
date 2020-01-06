@@ -361,7 +361,7 @@
         }
     }
     if (!reloadArr.count) {
-//        NSLog(@"找不到聊天审核的信息");
+        NSLog(@"找不到聊天审核的信息");
         return;
     }
     //调用chatView的方法,更新聊天状态,并且刷新某一行

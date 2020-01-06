@@ -59,95 +59,59 @@
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-    
-//    UILabel * label = [[UILabel alloc] init];
-//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
-//    label.textColor = [UIColor redColor];
-//    label.frame = CGRectMake(100, 100, 200, 40);
-//    [self.view addSubview:label];
-    
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 100, 100, 100);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
-////
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(200, 100, 100, 100);
-//    [btn1 setTitle:@"默认" forState:UIControlStateNormal];
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-////
-//    UIButton *btn2 = [[UIButton alloc] init];
-//    [btn2 setBackgroundColor:[UIColor grayColor]];
-//    [self.view addSubview:btn2];
-//    btn2.frame = CGRectMake(300, 100, 100, 100);
-//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
-//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
-//
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
+}
+//获取视频截图
+- (void)thumbnailImageAtCurrentTime {
+    UIImage *image =  [self.requestDataPlayBack.ijkPlayer thumbnailImageAtCurrentTime];
+    NSLog(@"获取视频截图%@",image);
+}
+/**
+ 切换回放,需要重新配置参数
+ ps:切换频率不能过快
+ */
+- (void)changeVideo {
+        [self deleteData];
+        _pauseInBackGround = YES;
+        _isSmallDocView = YES;
+        [self setupUI];//设置UI布局
+        [self addObserver];//添加通知
+        UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
+        PlayParameter *parameter = [[PlayParameter alloc] init];
+        parameter.userId = @"";//userId
+        parameter.roomId = @"";//roomId
+        parameter.liveId = @"";//liveId
+        parameter.recordId = @"";//回放Id
+        parameter.viewerName = @"";//用户名
+        parameter.token = @"";//密码
+        parameter.docParent = docView;//文档小窗
+        parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
+        parameter.playerParent = self.playerView;//视频视图
+        parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
+        parameter.security = YES;//是否开启https,建议开启
+        parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+        parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
+        parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
+        parameter.scalingMode = 1;//屏幕适配方式
+        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+    //        parameter.groupid = self.groupId;//用户的groupId
+        _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
+        _requestDataPlayBack.delegate = self;
+        
+        /* 设置playerView */
+        [self.playerView showLoadingView];//显示视频加载中提示
+}
+- (void)deleteData {
+    [self.playerView.smallVideoView removeFromSuperview];
+    if (_requestDataPlayBack) {
+        [_requestDataPlayBack requestCancel];
+        _requestDataPlayBack = nil;
+    }
+    [self removeObserver];
+    [self.playerView removeFromSuperview];
+    [self.interactionView removeData];
+    [self.interactionView removeFromSuperview];
+}
 
-}
-- (void)publish_stream {
-//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
-}
-- (void)onPageChange:(NSDictionary *)dictionary {
-    
-}
-- (void)videoStateChangeWithString:(NSString *)result {
-    NSLog(@"---状态是%@",result);
-}
-- (void)docLoadCompleteWithIndex:(NSInteger)index {
-//    if (index == 0) {
-//        [self.requestDataPlayBack changeDocWebColor:@"#000000"];
-////    }
-//    if (index != 0) {
-//        CGFloat ratio = [_requestDataPlayBack getDocAspectRatio];
-//        NSString *str = [NSString stringWithFormat:@"宽高比是:%f",ratio];
-//        self.label.text = str;
-//    }
-}
-- (void)changedoc2 {
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
-//        }
-//        self.playerView.transform = tran;
-//    }
-
-}
-- (void)changedoc1 {
-//    self.playerView.transform = CGAffineTransformIdentity;
-//    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
-}
-- (void)changedoc:(UIButton *)sender {
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
-//        }
-//        self.playerView.transform = tran;
-//    }
-//    [self.requestDataPlayBack changeDocWebColor:@"#000000"];
-//    [_requestDataPlayBack getPracticeInformation];
-}
 //集成SDK
 - (void)integrationSDK {
     UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;

@@ -59,7 +59,57 @@
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
- 
+}
+//获取视频截图
+- (void)thumbnailImageAtCurrentTime {
+    UIImage *image =  [self.requestDataPlayBack.ijkPlayer thumbnailImageAtCurrentTime];
+    NSLog(@"获取视频截图%@",image);
+}
+/**
+ 切换回放,需要重新配置参数
+ ps:切换频率不能过快
+ */
+- (void)changeVideo {
+        [self deleteData];
+        _pauseInBackGround = YES;
+        _isSmallDocView = YES;
+        [self setupUI];//设置UI布局
+        [self addObserver];//添加通知
+        UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
+        PlayParameter *parameter = [[PlayParameter alloc] init];
+        parameter.userId = @"";//userId
+        parameter.roomId = @"";//roomId
+        parameter.liveId = @"";//liveId
+        parameter.recordId = @"";//回放Id
+        parameter.viewerName = @"";//用户名
+        parameter.token = @"";//密码
+        parameter.docParent = docView;//文档小窗
+        parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
+        parameter.playerParent = self.playerView;//视频视图
+        parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
+        parameter.security = YES;//是否开启https,建议开启
+        parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+        parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
+        parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
+        parameter.scalingMode = 1;//屏幕适配方式
+        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+    //        parameter.groupid = self.groupId;//用户的groupId
+        _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
+        _requestDataPlayBack.delegate = self;
+        
+        /* 设置playerView */
+        [self.playerView showLoadingView];//显示视频加载中提示
+}
+- (void)deleteData {
+    [self.playerView.smallVideoView removeFromSuperview];
+    if (_requestDataPlayBack) {
+        [_requestDataPlayBack requestCancel];
+        _requestDataPlayBack = nil;
+    }
+    [self removeObserver];
+    [self.playerView removeFromSuperview];
+    [self.interactionView removeData];
+    [self.interactionView removeFromSuperview];
 }
 
 //集成SDK

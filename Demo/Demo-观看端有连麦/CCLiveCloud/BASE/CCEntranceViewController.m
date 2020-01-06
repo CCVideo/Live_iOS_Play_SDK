@@ -14,6 +14,7 @@
 #import "CCPalyBackLoginController.h"
 #import "CCPlayerController.h"
 #import "CCPlayBackController.h"
+#import "CCcommonDefine.h"
 @interface CCEntranceViewController ()
 
 
@@ -93,6 +94,15 @@
     }];
     [palyBackButton addTarget:self action:@selector(palyBackButtonClick) forControlEvents:UIControlEventTouchUpInside];
     palyBackButton.layer.cornerRadius = 25;
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.text = @"版本: hd_sdk_v3.7.0";
+    label.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:label];
+    [label mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.view);
+        make.bottom.equalTo(self.view).offset(-30);
+    }];
 }
 
 /**

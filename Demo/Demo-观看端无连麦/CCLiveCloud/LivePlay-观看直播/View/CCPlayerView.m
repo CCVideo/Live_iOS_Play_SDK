@@ -12,6 +12,7 @@
 #import "CCProxy.h"
 #import "CCBarrage.h"
 @interface CCPlayerView ()<UITextFieldDelegate
+
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -647,7 +648,6 @@
     if (_isSmallDocView) {
         [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
-    
 }
 /**
 //结束直播和退出全屏
@@ -671,7 +671,7 @@
             make.top.equalTo(view).offset(SCREEN_STATUS);
         }];
         [self layoutIfNeeded];
-       
+
         CGRect rect = [UIScreen mainScreen].bounds;
         if (_isSmallDocView) {
             [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
@@ -697,7 +697,7 @@
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
-
+       
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
@@ -939,6 +939,7 @@
 }
 
 -(void)dealloc {
+  
     [self removeObserver];
     [self stopPlayerTimer];
 }

@@ -12,6 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
+#define SDKVersion @"3.7.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -327,7 +328,7 @@
 -(void)practiceCloseWithDic:(NSDictionary *) resultDic;
 /**
  *    @brief    视频状态
- *    rseult    playing/paused/loading
+ *    rseult    playing/paused/loading/buffing
  */
 -(void)videoStateChangeWithString:(NSString *) result;
 /**
@@ -367,6 +368,30 @@
  }
  */
 -(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic;
+/**
+收到老师列表
+ teachers =     (
+             {
+         id = "";//老师id
+         ip = "";//IP地址
+         name = "";老师昵称
+         role = teacher;//角色
+     }
+ );
+*/
+-(void)onOnlineTeachers:(NSDictionary *)dic;
+/**
+ *    @brief    房间设置信息
+ *    dic{
+      "allow_chat" = true;//是否允许聊天
+      "allow_question" = true;//是否允许问答
+      "room_base_user_count" = 0;//房间基础在线人数
+      "source_type" = 0;//对应receivedSwitchSource方法的source_type
+}
+ *ps:当房间类型没有聊天或者问答时,对应的字段默认为true
+*/
+-(void)roomSettingInfo:(NSDictionary *)dic;
+
 
 
 @end
@@ -566,5 +591,9 @@
 @param punchId 打卡id
 */
 - (void)hdCommitPunchWithPunchId:(NSString *)punchId;
+/**
+获取老师列表
+*/
+- (void)getOnlineTeachers;
 
 @end

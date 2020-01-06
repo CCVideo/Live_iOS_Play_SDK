@@ -8,12 +8,17 @@
 
 #import "CCChatContentView.h"
 #import "InformationShowView.h"//提示信息视图
-@interface CCChatContentView ()<UITextFieldDelegate>
+#import "PPUtil.h"
+#import "PPStickerKeyboard.h"
+#import "PPStickerDataManager.h"
+@interface CCChatContentView ()<UITextFieldDelegate,PPStickerKeyboardDelegate,UITextViewDelegate>
 @property(nonatomic,strong)UIButton                     *rightView;//右侧按钮
 @property(nonatomic,strong)InformationShowView          *informationView;//提示视图
 @property(nonatomic,strong)UIView                       *emojiView;//表情键盘
 @property(nonatomic,assign)CGRect                       keyboardRect;//键盘尺寸
 @property(nonatomic,assign)BOOL                         keyboardHidden;//是否隐藏键盘
+//新聊天
+@property (nonatomic, strong) PPStickerKeyboard *stickerKeyboard;
 @end
 
 @implementation CCChatContentView
@@ -28,16 +33,23 @@
             make.height.mas_equalTo(1);
         }];
         
-        [self addSubview:self.chatTextField];
+        [self addSubview:self.textView];
 //        self.chatTextField.backgroundColor = [UIColor blueColor];
-        [_chatTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self).offset(CCGetRealFromPt(10));
+        [_textView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(self).offset(CCGetRealFromPt(20));
             make.left.mas_equalTo(self).offset(CCGetRealFromPt(24));
-            make.right.mas_equalTo(self).offset(-CCGetRealFromPt(24));
-            make.height.mas_equalTo(CCGetRealFromPt(90));
+            make.right.mas_equalTo(self).offset(-CCGetRealFromPt(84));
+            make.height.mas_equalTo(CCGetRealFromPt(70));
             
         }];
-        
+        [self addSubview:self.rightView];
+        [_rightView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(self).offset(CCGetRealFromPt(20));
+            make.left.equalTo(self.textView.mas_right);
+            make.right.mas_equalTo(self).offset(-CCGetRealFromPt(10));
+            make.height.mas_equalTo(CCGetRealFromPt(70));
+            
+        }];
         UIView * line1 = [[UIView alloc] init];
         line1.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
         [self addSubview:line1];
@@ -50,34 +62,7 @@
     }
     return self;
 }
-#pragma mark - 懒加载
-//聊天输入框
--(CustomTextField *)chatTextField{
-    if (!_chatTextField) {
-        _chatTextField = [[CustomTextField alloc] init];
-        _chatTextField.delegate = self;
-        _chatTextField.layer.cornerRadius = CCGetRealFromPt(45);
-        [_chatTextField addTarget:self action:@selector(chatTextFieldChange) forControlEvents:UIControlEventEditingChanged];
-        _chatTextField.rightView = self.rightView;
-    }
-    return _chatTextField;
-}
-//聊天输入中
--(void)chatTextFieldChange {
-    
-    if(_chatTextField.text.length > 300) {
-        //        [self endEditing:YES];
-        _chatTextField.text = [_chatTextField.text substringToIndex:300];
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-        
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
-    }
-}
+
 //右侧表情键盘按钮
 -(UIButton *)rightView {
     if(!_rightView) {
@@ -96,115 +81,19 @@
     BOOL selected = !_rightView.selected;
     _rightView.selected = selected;
     
+    [self. textView becomeFirstResponder];
     if(selected) {
-        [_chatTextField setInputView:self.emojiView];
+//        [_chatTextField setInputView:self.emojiView];
+        self.textView.inputView = self.stickerKeyboard;         // 切换到自定义的表情键盘
+              [self.textView reloadInputViews];
     } else {
-        [_chatTextField setInputView:nil];
-    }
-    
-    [_chatTextField becomeFirstResponder];
-    [_chatTextField reloadInputViews];
-}
-//表情视图
--(UIView *)emojiView {
-    if(!_emojiView) {
-        
-        if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
-            _keyboardRect = CGRectMake(0, 0, SCREEN_WIDTH, 271);
-        }
-        _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
-        _emojiView.backgroundColor = CCRGBColor(255,255,255);
-        
-        UIImage *image = [UIImage imageNamed:@"01"];
-        //        CGFloat faceIconSize = CCGetRealFromPt(60);
-        CGFloat faceIconSize = image.size.width;
-        CGFloat xspace = (_keyboardRect.size.width - FACE_COUNT_CLU * faceIconSize) / (FACE_COUNT_CLU + 1);
-        CGFloat yspace = (_keyboardRect.size.height - 26 - FACE_COUNT_ROW * faceIconSize) / (FACE_COUNT_ROW + 1);
-        
-        for (int i = 0; i < FACE_COUNT_ALL; i++) {
-            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            faceButton.tag = i + 1;
-            
-            [faceButton addTarget:self action:@selector(faceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            //            计算每一个表情按钮的坐标和在哪一屏
-            CGFloat x = (i % FACE_COUNT_CLU + 1) * xspace + (i % FACE_COUNT_CLU) * faceIconSize;
-            CGFloat y = (i / FACE_COUNT_CLU + 1) * yspace + (i / FACE_COUNT_CLU) * faceIconSize;
-            
-            faceButton.frame = CGRectMake(x, y, faceIconSize, faceIconSize);
-            faceButton.backgroundColor = CCClearColor;
-            [faceButton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%02d", i+1]]
-                        forState:UIControlStateNormal];
-            faceButton.contentMode = UIViewContentModeScaleAspectFit;
-            [_emojiView addSubview:faceButton];
-        }
-        //删除键
-        UIButton *button14 = (UIButton *)[_emojiView viewWithTag:14];
-        UIButton *button20 = (UIButton *)[_emojiView viewWithTag:20];
-        
-        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
-        back.contentMode = UIViewContentModeScaleAspectFit;
-        [back setImage:[UIImage imageNamed:@"chat_btn_facedel"] forState:UIControlStateNormal];
-        [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
-        [_emojiView addSubview:back];
-        
-        [back mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(button14);
-            make.centerY.mas_equalTo(button20);
-        }];
-    }
-    return _emojiView;
-}
-
-- (void) backFace {
-    NSString *inputString = _chatTextField.text;
-    if ( [inputString length] > 0) {
-        NSString *string = nil;
-        NSInteger stringLength = [inputString length];
-        if (stringLength >= FACE_NAME_LEN) {
-            string = [inputString substringFromIndex:stringLength - FACE_NAME_LEN];
-            NSRange range = [string rangeOfString:FACE_NAME_HEAD];
-            if ( range.location == 0 ) {
-                string = [inputString substringToIndex:[inputString rangeOfString:FACE_NAME_HEAD options:NSBackwardsSearch].location];
-            } else {
-                string = [inputString substringToIndex:stringLength - 1];
-            }
-        }
-        else {
-            string = [inputString substringToIndex:stringLength - 1];
-        }
-        _chatTextField.text = string;
+//        [_chatTextField setInputView:nil];
+        //收表情键盘
+              self.textView.inputView = nil;                          // 切换到系统键盘
+              [self.textView reloadInputViews];
     }
 }
 
-- (void)faceButtonClicked:(id)sender {
-    NSInteger i = ((UIButton*)sender).tag;
-    
-    NSMutableString *faceString = [[NSMutableString alloc]initWithString:_chatTextField.text];
-    [faceString appendString:[NSString stringWithFormat:@"[em2_%02d]",(int)i]];
-    _chatTextField.text = faceString;
-    [self chatTextFieldChange];
-}
-#pragma mark - TextFieldDelegate
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-        
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
-        return YES;
-    }
-    //发送消息回调
-    if (_sendMessageBlock) {
-        _sendMessageBlock();
-    }
-    _chatTextField.text = nil;
-    [_chatTextField resignFirstResponder];
-    return YES;
-}
 #pragma mark - 移除提示视图
 -(void)informationViewRemove {
     [_informationView removeFromSuperview];
@@ -234,13 +123,12 @@
     NSDictionary *userInfo = [noti userInfo];
     self.keyboardHidden = [userInfo[@"keyBorad_hidden"] boolValue];
 }
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    self.chatTextField.userInteractionEnabled = NO;
-    return YES;
+- (void)sendAction{
+    self.sendMessageBlock();
+//    [self sendBtnEnable:NO];
 }
 //键盘将要出现
 - (void)keyboardWillShow:(NSNotification *)noti {
-    self.chatTextField.userInteractionEnabled = YES;
     NSDictionary *userInfo = [noti userInfo];
     NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
     _keyboardRect = [aValue CGRectValue];
@@ -266,5 +154,178 @@
 }
 -(void)dealloc{
     [self removeObserver];
+}
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    if (self.plainText.length>300) {
+        [_informationView removeFromSuperview];
+           _informationView = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
+           [APPDelegate.window addSubview:_informationView];
+           [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+           }];
+
+           [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+
+    if ([@"\n" isEqualToString:text]) {
+        [self sendAction];
+        _textView.text = nil;
+        [_textView resignFirstResponder];
+        
+        return NO;
+    }
+
+    return YES;
+}
+
+- (NSString *)plainText
+{
+    return [self.textView.attributedText pp_plainTextForRange:NSMakeRange(0, self.textView.attributedText.length)];
+}
+- (void)refreshTextUI
+{
+    if (!self.textView.text.length) {
+        return;
+    }
+
+    UITextRange *markedTextRange = [self.textView markedTextRange];
+    UITextPosition *position = [self.textView positionFromPosition:markedTextRange.start offset:0];
+    if (position) {
+        return;     // 正处于输入拼音还未点确定的中间状态
+    }
+
+    NSRange selectedRange = self.textView.selectedRange;
+
+    NSMutableAttributedString *attributedComment = [[NSMutableAttributedString alloc] initWithString:self.plainText attributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:16.0], NSForegroundColorAttributeName:[UIColor colorWithHexString:@"#333333" alpha:1.0f]}];
+
+    // 匹配表情
+    [PPStickerDataManager.sharedInstance replaceEmojiForAttributedString:attributedComment font:[UIFont systemFontOfSize:16.0]];
+
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 5.0;
+    [attributedComment addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:attributedComment.pp_rangeOfAll];
+
+    NSUInteger offset = self.textView.attributedText.length - attributedComment.length;
+    self.textView.attributedText = attributedComment;
+    self.textView.selectedRange = NSMakeRange(selectedRange.location - offset, 0);
+}
+- (void)textViewDidChange:(UITextView *)textView
+{
+    [self refreshTextUI];
+
+}
+
+
+//聊天输入框
+
+- (PPStickerTextView *)textView
+{
+    if (!_textView) {
+        _textView = [[PPStickerTextView alloc] init];//WithFrame:CGRectMake(0, 80, 300, 60)];
+        _textView.delegate = self;
+        _textView.backgroundColor = [UIColor clearColor];
+        _textView.font = [UIFont systemFontOfSize:18.0f];
+        _textView.scrollsToTop = NO;
+        _textView.returnKeyType = UIReturnKeySend;
+        _textView.enablesReturnKeyAutomatically = YES;
+        _textView.placeholder = @"在这里和老师互动哦";
+        _textView.placeholderColor = [UIColor colorWithHexString:@"999999" alpha:0.8f];
+        _textView.textContainerInset = UIEdgeInsetsMake(7, 0, 0, 0);
+        _textView.layer.cornerRadius = 35 / 2.0;
+        _textView.layer.masksToBounds = YES;
+        _textView.layer.borderWidth = 0.5;
+        _textView.layer.borderColor = [UIColor colorWithRed:221/255.0 green:221/255.0 blue:221/255.0 alpha:1].CGColor;
+//        _textView.inputAccessoryView = self.rightView;
+        if (@available(iOS 11.0, *)) {
+            _textView.textDragInteraction.enabled = NO;
+        }
+    }
+    return _textView;
+}
+#pragma mark - PPStickerKeyboardDelegate
+
+- (void)stickerKeyboard:(PPStickerKeyboard *)stickerKeyboard didClickEmoji:(PPEmoji *)emoji
+{
+    if (!emoji) {
+        return;
+    }
+
+    UIImage *emojiImage = [UIImage imageNamed:[@"Emotion.bundle" stringByAppendingPathComponent:emoji.imageName]];
+    if (!emojiImage) {
+        return;
+    }
+
+    NSRange selectedRange = self.textView.selectedRange;
+    NSString *emojiString = [NSString stringWithFormat:@"[%@]", emoji.imageTag];
+    NSMutableAttributedString *emojiAttributedString = [[NSMutableAttributedString alloc] initWithString:emojiString];
+    [emojiAttributedString pp_setTextBackedString:[PPTextBackedString stringWithString:emojiString] range:emojiAttributedString.pp_rangeOfAll];
+
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.textView.attributedText];
+    [attributedText replaceCharactersInRange:selectedRange withAttributedString:emojiAttributedString];
+    self.textView.attributedText = attributedText;
+    self.textView.selectedRange = NSMakeRange(selectedRange.location + emojiAttributedString.length, 0);
+
+    [self textViewDidChange:self.textView];
+}
+
+- (void)stickerKeyboardDidClickDeleteButton:(PPStickerKeyboard *)stickerKeyboard
+{
+    NSRange selectedRange = self.textView.selectedRange;
+    if (selectedRange.location == 0 && selectedRange.length == 0) {
+        return;
+    }
+
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.textView.attributedText];
+    if (selectedRange.length > 0) {
+        [attributedText deleteCharactersInRange:selectedRange];
+        self.textView.attributedText = attributedText;
+        self.textView.selectedRange = NSMakeRange(selectedRange.location, 0);
+    } else {
+        NSUInteger deleteCharactersCount = 1;
+
+        // 下面这段正则匹配是用来匹配文本中的所有系统自带的 emoji 表情，以确认删除按钮将要删除的是否是 emoji。这个正则匹配可以匹配绝大部分的 emoji，得到该 emoji 的正确的 length 值；不过会将某些 combined emoji（如 👨‍👩‍👧‍👦 👨‍👩‍👧‍👦 👨‍👨‍👧‍👧），这种几个 emoji 拼在一起的 combined emoji 则会被匹配成几个个体，删除时会把 combine emoji 拆成个体。瑕不掩瑜，大部分情况下表现正确，至少也不会出现删除 emoji 时崩溃的问题了。
+        NSString *emojiPattern1 = @"[\\u2600-\\u27BF\\U0001F300-\\U0001F77F\\U0001F900-\\U0001F9FF]";
+        NSString *emojiPattern2 = @"[\\u2600-\\u27BF\\U0001F300-\\U0001F77F\\U0001F900–\\U0001F9FF]\\uFE0F";
+        NSString *emojiPattern3 = @"[\\u2600-\\u27BF\\U0001F300-\\U0001F77F\\U0001F900–\\U0001F9FF][\\U0001F3FB-\\U0001F3FF]";
+        NSString *emojiPattern4 = @"[\\rU0001F1E6-\\U0001F1FF][\\U0001F1E6-\\U0001F1FF]";
+        NSString *pattern = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@", emojiPattern4, emojiPattern3, emojiPattern2, emojiPattern1];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:NULL];
+        NSArray<NSTextCheckingResult *> *matches = [regex matchesInString:attributedText.string options:kNilOptions range:NSMakeRange(0, attributedText.string.length)];
+        for (NSTextCheckingResult *match in matches) {
+            if (match.range.location + match.range.length == selectedRange.location) {
+                deleteCharactersCount = match.range.length;
+                break;
+            }
+        }
+
+        [attributedText deleteCharactersInRange:NSMakeRange(selectedRange.location - deleteCharactersCount, deleteCharactersCount)];
+        self.textView.attributedText = attributedText;
+        self.textView.selectedRange = NSMakeRange(selectedRange.location - deleteCharactersCount, 0);
+    }
+
+    [self textViewDidChange:self.textView];
+}
+
+- (void)stickerKeyboardDidClickSendButton:(PPStickerKeyboard *)stickerKeyboard
+{
+//发送按钮
+    [self sendAction];
+    _textView.text = nil;
+    [_textView resignFirstResponder];
+}
+- (PPStickerKeyboard *)stickerKeyboard
+{
+    if (!_stickerKeyboard) {
+        _stickerKeyboard = [[PPStickerKeyboard alloc] init];
+        _stickerKeyboard.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), [self.stickerKeyboard heightThatFits]);
+        _stickerKeyboard.delegate = self;
+    }
+    return _stickerKeyboard;
 }
 @end

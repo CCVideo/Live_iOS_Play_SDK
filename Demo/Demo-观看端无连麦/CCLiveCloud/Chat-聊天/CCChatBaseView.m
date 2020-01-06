@@ -20,6 +20,7 @@
 @property (nonatomic, assign) BOOL                privateHidden;//是否隐藏私聊视图
 @property (nonatomic, copy)   PublicChatBlock     publicChatBlock;//公聊回调
 @property (nonatomic, strong) UILabel             * freshLabel;//刷新提示文字
+@property (nonatomic, assign) BOOL                 keyboardShow;
 @end
 
 @implementation CCChatBaseView
@@ -106,6 +107,7 @@
     }
     
     
+    
     if ([CCChatViewDataSourceManager sharedManager].publicChatArray.count > self.publicChatArray.count) {
         NSMutableArray *arr = [CCChatViewDataSourceManager sharedManager].publicChatArray;
         NSInteger selfCount = self.publicChatArray.count;
@@ -117,6 +119,9 @@
             [self.publicChatArray insertObject:arr[i-1] atIndex:0];
         }
         //        NSLog(@"刷新了%d条数据,总条数%d, 目前条数%d", insertCount, arr.count, self.publicChatArray.count);
+        if (self.keyboardShow == YES) {
+            return;
+        }
         [self.publicTableView reloadData];
         [self.publicTableView.mj_header endRefreshing];
     }else{
@@ -196,6 +201,8 @@
 #pragma mark - inputView deleaget输入键盘的代理
 //键盘将要出现
 -(void)keyBoardWillShow:(CGFloat)height endEditIng:(BOOL)endEditIng{
+    self.keyboardShow = YES;
+
     //防止图片和键盘弹起冲突
     if (endEditIng == YES) {
         [self endEditing:YES];
@@ -219,18 +226,23 @@
     [UIView animateWithDuration:0.25f animations:^{
         [self layoutIfNeeded];
     } completion:^(BOOL finished) {
-        if (self.publicChatArray != nil && [self.publicChatArray count] != 0 ) {
-            NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.publicChatArray.count - 1) inSection:0];
-            if ([self.publicTableView cellForRowAtIndexPath:indexPathLast] == nil) {
-                return;//防止刷新过快，数组越界
-            }
-            [self.publicTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-        }
+//                [self.publicTableView setContentOffset:CGPointMake(0, self.publicTableView.contentSize.height -self.publicTableView.bounds.size.height) animated:YES];
+//        if (self.publicChatArray != nil && [self.publicChatArray count] != 0 ) {
+//            NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.publicChatArray.count - 1) inSection:0];
+//            if ([self.publicTableView cellForRowAtIndexPath:indexPathLast] == nil) {
+//                return;//防止刷新过快，数组越界
+//            }
+//            [self.publicTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+//        }
+
     }];
-    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.keyboardShow = NO;
+    });
 }
 //隐藏键盘
 -(void)hiddenKeyBoard{
+    self.keyboardShow = NO;
     NSInteger tabheight = IS_IPHONE_X ?178:110;
     [_inputView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.right.and.left.and.bottom.mas_equalTo(self);
@@ -272,11 +284,17 @@
         //加载广播消息
         [cell setRadioModel:model];
     }else if (model.typeState == TextState){//纯文本消息
+        cell.smallImageView.image = nil;
         //加载纯文本cell
         [cell setTextModel:model isInput:self.input indexPath:indexPath];
+//        NSLog(@"数据是%@",model.msg);
     }else if(model.typeState == ImageState){//图片cell
+//        cell.smallImageView.hidden = NO;
+
         //加载图片cell
         [cell setImageModel:model isInput:self.input indexPath:indexPath];
+//        NSLog(@"数据是%@",model.msg);
+
     }
     cell.headBtnClick = ^(UIButton * _Nonnull btn) {
         [ws headBtnClicked:btn];
@@ -302,6 +320,7 @@
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+//    NSLog(@"聊天数%zd",self.publicChatArray.count);
     return [self.publicChatArray count];
 }
 #pragma mark - 公有调用方法
@@ -310,6 +329,9 @@
     //    NSLog(@"array = %@",array);
     self.publicChatArray = [array mutableCopy];
     //    NSLog(@"self.publicChatArray = %@",self.publicChatArray);
+    if (self.keyboardShow == YES) {
+        return;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.publicTableView reloadData];
         
@@ -328,12 +350,12 @@
 -(void)addPublicChatArray:(NSMutableArray *)array{
     if([array count] == 0) return;
     //让每秒钟发送消息超过10条时，取最新的十条
-    if (array.count > 10 && self.input == YES ) {
-//        NSInteger count = array.count;
-        NSRange range = NSMakeRange(0, array.count - 10);
-        [array removeObjectsInRange:range];
-//        NSLog(@"每秒钟数据%d个,加载最新10条, 目前消息数%lu", count, self.publicChatArray.count);
-    }
+//    if (array.count > 10 && self.input == YES ) {
+////        NSInteger count = array.count;
+//        NSRange range = NSMakeRange(0, array.count - 10);
+//        [array removeObjectsInRange:range];
+////        NSLog(@"每秒钟数据%d个,加载最新10条, 目前消息数%lu", count, self.publicChatArray.count);
+//    }
     
     NSInteger preIndex = [self.publicChatArray count];
     [self.publicChatArray addObjectsFromArray:[array mutableCopy]];
@@ -344,19 +366,23 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(row-1) inSection:0];
         [indexPaths addObject: indexPath];
     }
+    if (self.keyboardShow == YES) {
+        return;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.publicTableView reloadData];
+        [self.publicTableView setContentOffset:CGPointMake(0, self.publicTableView.contentSize.height -self.publicTableView.bounds.size.height) animated:YES];
         //防止越界
-        NSIndexPath *lastIndexPath = [indexPaths lastObject];
-        if ((long)lastIndexPath.row > self.publicChatArray.count) {
-            return;
-        }
-//        [self.publicTableView beginUpdates];
-//        [self.publicTableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-//        [self.publicTableView endUpdates];
-        if (indexPaths != nil && [indexPaths count] != 0 ) {
-            [self.publicTableView scrollToRowAtIndexPath:[indexPaths lastObject] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-        }
+//        NSIndexPath *lastIndexPath = [indexPaths lastObject];
+//        if ((long)lastIndexPath.row > self.publicChatArray.count) {
+//            return;
+//        }
+////        [self.publicTableView beginUpdates];
+////        [self.publicTableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+////        [self.publicTableView endUpdates];
+//        if (indexPaths != nil && [indexPaths count] != 0 ) {
+//            [self.publicTableView scrollToRowAtIndexPath:[indexPaths lastObject] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+//        }
     });
 }
 
@@ -367,13 +393,16 @@
  */
 -(void)addPublicChat:(id)object{
     //当前cell数量大于60时，加载最新20条，下拉刷新从单例数组中取
-    if (self.publicChatArray.count > 60) {
-        NSRange range =NSMakeRange(0, self.publicChatArray.count - 20);
-        [self.publicChatArray removeObjectsInRange:range];
-//        NSLog(@"count大于60,返回最新20条,目前消息条数%lu", self.publicChatArray.count);
-    }
+//    if (self.publicChatArray.count > 60) {
+//        NSRange range =NSMakeRange(0, self.publicChatArray.count - 20);
+//        [self.publicChatArray removeObjectsInRange:range];
+////        NSLog(@"count大于60,返回最新20条,目前消息条数%lu", self.publicChatArray.count);
+//    }
     [self.publicChatArray addObject:object];
 //    NSLog(@"publicCount = %ld", self.publicChatArray.count);
+    if (self.keyboardShow == YES) {
+        return;
+    }
         dispatch_async(dispatch_get_main_queue(), ^{
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:(self.publicChatArray.count - 1) inSection:0];
 //            NSLog(@"indexPath = %ld", (long)indexPath.row);
@@ -402,6 +431,9 @@
     }
     [self.publicChatArray removeAllObjects];
     self.publicChatArray = [publicArr mutableCopy];
+    if (self.keyboardShow == YES) {
+        return;
+    }
     [self.publicTableView reloadData];
 //    [self.publicTableView reloadRowsAtIndexPaths:reloadArr withRowAnimation:UITableViewRowAnimationNone];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -413,7 +445,7 @@
 //刷新图片
 -(void)reloadStatusWithIndexPath:(NSIndexPath *)indexPath publicArr:(NSMutableArray *)publicArr{
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.publicTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [self.publicTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
         //判断当前行数是否是最后一行，如果是,刷新至最后一行
         NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.publicChatArray.count - 1) inSection:0];
         if (indexPath.row == indexPathLast.row) {
@@ -424,7 +456,7 @@
 #pragma mark - 私有方法
 //发送公聊信息
 -(void)chatSendMessage{
-    NSString *str = _inputView.chatTextField.text;
+    NSString *str = _inputView.plainText;
     if(str == nil || str.length == 0) {
         return;
     }
@@ -433,8 +465,8 @@
         self.publicChatBlock(str);
     }
     
-    _inputView.chatTextField.text = nil;
-    [_inputView.chatTextField resignFirstResponder];
+    _inputView.textView.text = nil;
+    [_inputView.textView resignFirstResponder];
 }
 #pragma mark - 点击头像
 //点击头像事件

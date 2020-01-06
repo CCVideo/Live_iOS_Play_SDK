@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B209CD923B0618B0017A6E3 /* Emotion.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4B209CBA23B0618A0017A6E3 /* Emotion.bundle */; };
+		4B209CE823B0618B0017A6E3 /* Emotions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4B209CD523B0618A0017A6E3 /* Emotions.plist */; };
+		4B209D0B23B062A00017A6E3 /* PPSticker.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CEA23B0629E0017A6E3 /* PPSticker.m */; };
+		4B209D0C23B062A00017A6E3 /* PPEmoji.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CEC23B0629E0017A6E3 /* PPEmoji.m */; };
+		4B209D0D23B062A00017A6E3 /* PPTextBackedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF023B0629E0017A6E3 /* PPTextBackedString.m */; };
+		4B209D0E23B062A00017A6E3 /* PPEmojiPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF123B0629E0017A6E3 /* PPEmojiPreviewView.m */; };
+		4B209D0F23B062A00017A6E3 /* UIButton+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF223B0629E0017A6E3 /* UIButton+PPAddition.m */; };
+		4B209D1023B062A00017A6E3 /* UIScreen+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF523B0629E0017A6E3 /* UIScreen+PPAddition.m */; };
+		4B209D1123B062A00017A6E3 /* UIScrollView+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF623B0629E0017A6E3 /* UIScrollView+PPAddition.m */; };
+		4B209D1223B062A00017A6E3 /* NSAttributedString+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF723B0629E0017A6E3 /* NSAttributedString+PPAddition.m */; };
+		4B209D1323B062A00017A6E3 /* PPQueuingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF823B0629E0017A6E3 /* PPQueuingScrollView.m */; };
+		4B209D1423B062A00017A6E3 /* NSString+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CF923B0629F0017A6E3 /* NSString+PPAddition.m */; };
+		4B209D1523B062A00017A6E3 /* UIColor+PPAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CFB23B0629F0017A6E3 /* UIColor+PPAddition.m */; };
+		4B209D1623B062A00017A6E3 /* PPSlideLineButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209CFC23B0629F0017A6E3 /* PPSlideLineButton.m */; };
+		4B209D1723B062A00017A6E3 /* PPStickerPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209D0223B0629F0017A6E3 /* PPStickerPageView.m */; };
+		4B209D1823B062A00017A6E3 /* PPStickerKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209D0323B0629F0017A6E3 /* PPStickerKeyboard.m */; };
+		4B209D1923B062A00017A6E3 /* PPStickerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209D0523B0629F0017A6E3 /* PPStickerDataManager.m */; };
+		4B209D1A23B062A00017A6E3 /* PPStickerTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B209D0623B0629F0017A6E3 /* PPStickerTextView.m */; };
 		4B297A14235D4FC300A5300B /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1F9234D769000E8BD7D /* CoreML.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4B3D61EB236BDC230053AC52 /* CCPunchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3D61EA236BDC230053AC52 /* CCPunchView.m */; };
 		4B3D61F2236C2E900053AC52 /* CCAnimationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3D61F1236C2E900053AC52 /* CCAnimationView.m */; };
@@ -28,6 +46,8 @@
 		522A764621D3216D00C871B2 /* SelectMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A764421D3216D00C871B2 /* SelectMenuView.m */; };
 		522A764F21D321BA00C871B2 /* RollcallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A764D21D321B900C871B2 /* RollcallView.m */; };
 		522A766321D4A4D200C871B2 /* LianmaiView.m in Sources */ = {isa = PBXBuildFile; fileRef = 522A766221D4A4D200C871B2 /* LianmaiView.m */; };
+		522F4ED9217D606D001B078F /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED4217D606D001B078F /* DWDrmServer.framework */; };
+		522F4EDF217D6079001B078F /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED4217D606D001B078F /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		522F4EE7217D612D001B078F /* CCPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4EE6217D612D001B078F /* CCPlayerController.m */; };
 		522F4F3A217DB62F001B078F /* UIButton+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4F38217DB62F001B078F /* UIButton+Extension.m */; };
 		522F4F3E217DBA90001B078F /* UIColor+RCColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 522F4F3D217DBA90001B078F /* UIColor+RCColor.m */; };
@@ -40,6 +60,9 @@
 		5287D2B4217ECD870030AFB6 /* UIBarButtonItem+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5287D2B3217ECD870030AFB6 /* UIBarButtonItem+Extension.m */; };
 		5287D2B7217ECDB50030AFB6 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5287D2B5217ECDB50030AFB6 /* UIView+Extension.m */; };
 		528C514721BE175C0016FCD2 /* NSString+CCSwitchTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 528C514621BE175C0016FCD2 /* NSString+CCSwitchTime.m */; };
+		528C768323C313C8000D409A /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C768223C313C8000D409A /* CCSDK.framework */; };
+		528C768423C313EA000D409A /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528C768223C313C8000D409A /* CCSDK.framework */; };
+		528C768523C313EA000D409A /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 528C768223C313C8000D409A /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		528EA1FC234D76A000E8BD7D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FB234D76A000E8BD7D /* AVFoundation.framework */; };
 		528EA1FE234D76AF00E8BD7D /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FD234D76AF00E8BD7D /* CoreTelephony.framework */; };
 		528EA200234D77F000E8BD7D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA1FF234D77F000E8BD7D /* AudioToolbox.framework */; };
@@ -57,17 +80,10 @@
 		52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */; };
 		52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D55EF32189ABC9008387DC /* CCPlayerView.m */; };
 		52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D76A6421AE416F00F968D0 /* CCNAVController.m */; };
-		52DC4AB82394EAB300153F80 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB42394EAB200153F80 /* IJKMediaFramework.framework */; };
-		52DC4AB92394EAB300153F80 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB52394EAB300153F80 /* CCSDK.framework */; };
-		52DC4ABA2394EAB300153F80 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB62394EAB300153F80 /* DWDrmServer.framework */; };
-		52DC4ABB2394EAB300153F80 /* CCBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 52DC4AB72394EAB300153F80 /* CCBundle.bundle */; };
-		52DC4ABC2394EB0D00153F80 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB52394EAB300153F80 /* CCSDK.framework */; };
-		52DC4ABD2394EB0D00153F80 /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB52394EAB300153F80 /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		52DC4ABE2394EB0D00153F80 /* DWDrmServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB62394EAB300153F80 /* DWDrmServer.framework */; };
-		52DC4ABF2394EB0D00153F80 /* DWDrmServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB62394EAB300153F80 /* DWDrmServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		52DC4AC02394EB0D00153F80 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB42394EAB200153F80 /* IJKMediaFramework.framework */; };
-		52DC4AC12394EB0D00153F80 /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC4AB42394EAB200153F80 /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		52DC4972238543E700153F80 /* CCBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 52DC4971238543E700153F80 /* CCBundle.bundle */; };
 		52E1CDF1222629B0008DA93D /* UILabel+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 52E1CDF0222629B0008DA93D /* UILabel+Extension.m */; };
+		52E6AAB622F190A500B5EB11 /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED5217D606D001B078F /* IJKMediaFramework.framework */; };
+		52E6AAB722F190A500B5EB11 /* IJKMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 522F4ED5217D606D001B078F /* IJKMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		52E908132320DA3000A40F92 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E908122320DA3000A40F92 /* MediaPlayer.framework */; };
 		52F344A52186A7B1006F1E7B /* CCPlayLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344A42186A7B1006F1E7B /* CCPlayLoginController.m */; };
 		52F344A82186B227006F1E7B /* TextFieldUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344A62186B227006F1E7B /* TextFieldUserInfo.m */; };
@@ -162,9 +178,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				52DC4AC12394EB0D00153F80 /* IJKMediaFramework.framework in Embed Frameworks */,
-				52DC4ABF2394EB0D00153F80 /* DWDrmServer.framework in Embed Frameworks */,
-				52DC4ABD2394EB0D00153F80 /* CCSDK.framework in Embed Frameworks */,
+				52E6AAB722F190A500B5EB11 /* IJKMediaFramework.framework in Embed Frameworks */,
+				528C768523C313EA000D409A /* CCSDK.framework in Embed Frameworks */,
+				522F4EDF217D6079001B078F /* DWDrmServer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -183,6 +199,42 @@
 
 /* Begin PBXFileReference section */
 		15335BC7E9C5F18881A471DB /* Pods-CCLiveCloud.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CCLiveCloud.release.xcconfig"; path = "Pods/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud.release.xcconfig"; sourceTree = "<group>"; };
+		4B209CBA23B0618A0017A6E3 /* Emotion.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Emotion.bundle; sourceTree = "<group>"; };
+		4B209CD523B0618A0017A6E3 /* Emotions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Emotions.plist; sourceTree = "<group>"; };
+		4B209CE923B0629E0017A6E3 /* PPSticker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPSticker.h; sourceTree = "<group>"; };
+		4B209CEA23B0629E0017A6E3 /* PPSticker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPSticker.m; sourceTree = "<group>"; };
+		4B209CEB23B0629E0017A6E3 /* UIScreen+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+PPAddition.h"; sourceTree = "<group>"; };
+		4B209CEC23B0629E0017A6E3 /* PPEmoji.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPEmoji.m; sourceTree = "<group>"; };
+		4B209CED23B0629E0017A6E3 /* PPUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPUtil.h; sourceTree = "<group>"; };
+		4B209CEE23B0629E0017A6E3 /* PPEmoji.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPEmoji.h; sourceTree = "<group>"; };
+		4B209CEF23B0629E0017A6E3 /* NSAttributedString+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PPAddition.h"; sourceTree = "<group>"; };
+		4B209CF023B0629E0017A6E3 /* PPTextBackedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPTextBackedString.m; sourceTree = "<group>"; };
+		4B209CF123B0629E0017A6E3 /* PPEmojiPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPEmojiPreviewView.m; sourceTree = "<group>"; };
+		4B209CF223B0629E0017A6E3 /* UIButton+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CF323B0629E0017A6E3 /* PPStickerPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPStickerPageView.h; sourceTree = "<group>"; };
+		4B209CF423B0629E0017A6E3 /* PPStickerKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPStickerKeyboard.h; sourceTree = "<group>"; };
+		4B209CF523B0629E0017A6E3 /* UIScreen+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CF623B0629E0017A6E3 /* UIScrollView+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CF723B0629E0017A6E3 /* NSAttributedString+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CF823B0629E0017A6E3 /* PPQueuingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPQueuingScrollView.m; sourceTree = "<group>"; };
+		4B209CF923B0629F0017A6E3 /* NSString+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CFA23B0629F0017A6E3 /* PPStickerTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPStickerTextView.h; sourceTree = "<group>"; };
+		4B209CFB23B0629F0017A6E3 /* UIColor+PPAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+PPAddition.m"; sourceTree = "<group>"; };
+		4B209CFC23B0629F0017A6E3 /* PPSlideLineButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPSlideLineButton.m; sourceTree = "<group>"; };
+		4B209CFD23B0629F0017A6E3 /* PPSlideLineButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPSlideLineButton.h; sourceTree = "<group>"; };
+		4B209CFE23B0629F0017A6E3 /* PPStickerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPStickerDataManager.h; sourceTree = "<group>"; };
+		4B209CFF23B0629F0017A6E3 /* PPReusablePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPReusablePage.h; sourceTree = "<group>"; };
+		4B209D0023B0629F0017A6E3 /* PPTextBackedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPTextBackedString.h; sourceTree = "<group>"; };
+		4B209D0123B0629F0017A6E3 /* UIColor+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+PPAddition.h"; sourceTree = "<group>"; };
+		4B209D0223B0629F0017A6E3 /* PPStickerPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPStickerPageView.m; sourceTree = "<group>"; };
+		4B209D0323B0629F0017A6E3 /* PPStickerKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPStickerKeyboard.m; sourceTree = "<group>"; };
+		4B209D0423B0629F0017A6E3 /* UIButton+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+PPAddition.h"; sourceTree = "<group>"; };
+		4B209D0523B0629F0017A6E3 /* PPStickerDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPStickerDataManager.m; sourceTree = "<group>"; };
+		4B209D0623B0629F0017A6E3 /* PPStickerTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPStickerTextView.m; sourceTree = "<group>"; };
+		4B209D0723B0629F0017A6E3 /* PPEmojiPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPEmojiPreviewView.h; sourceTree = "<group>"; };
+		4B209D0823B062A00017A6E3 /* NSString+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+PPAddition.h"; sourceTree = "<group>"; };
+		4B209D0923B062A00017A6E3 /* PPQueuingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPQueuingScrollView.h; sourceTree = "<group>"; };
+		4B209D0A23B062A00017A6E3 /* UIScrollView+PPAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+PPAddition.h"; sourceTree = "<group>"; };
 		4B3D61E9236BDC230053AC52 /* CCPunchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPunchView.h; sourceTree = "<group>"; };
 		4B3D61EA236BDC230053AC52 /* CCPunchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPunchView.m; sourceTree = "<group>"; };
 		4B3D61F0236C2E900053AC52 /* CCAnimationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCAnimationView.h; sourceTree = "<group>"; };
@@ -223,6 +275,8 @@
 		522A764E21D321BA00C871B2 /* RollcallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RollcallView.h; sourceTree = "<group>"; };
 		522A766121D4A4D200C871B2 /* LianmaiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LianmaiView.h; sourceTree = "<group>"; };
 		522A766221D4A4D200C871B2 /* LianmaiView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LianmaiView.m; sourceTree = "<group>"; };
+		522F4ED4217D606D001B078F /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
+		522F4ED5217D606D001B078F /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
 		522F4EE5217D612D001B078F /* CCPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCPlayerController.h; sourceTree = "<group>"; };
 		522F4EE6217D612D001B078F /* CCPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayerController.m; sourceTree = "<group>"; };
 		522F4F38217DB62F001B078F /* UIButton+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Extension.m"; sourceTree = "<group>"; };
@@ -249,6 +303,7 @@
 		5287D2B6217ECDB50030AFB6 /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		528C514521BE175C0016FCD2 /* NSString+CCSwitchTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+CCSwitchTime.h"; sourceTree = "<group>"; };
 		528C514621BE175C0016FCD2 /* NSString+CCSwitchTime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+CCSwitchTime.m"; sourceTree = "<group>"; };
+		528C768223C313C8000D409A /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
 		528EA1F9234D769000E8BD7D /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
 		528EA1FB234D76A000E8BD7D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		528EA1FD234D76AF00E8BD7D /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
@@ -279,10 +334,7 @@
 		52D55EF32189ABC9008387DC /* CCPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayerView.m; sourceTree = "<group>"; };
 		52D76A6321AE416F00F968D0 /* CCNAVController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCNAVController.h; sourceTree = "<group>"; };
 		52D76A6421AE416F00F968D0 /* CCNAVController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCNAVController.m; sourceTree = "<group>"; };
-		52DC4AB42394EAB200153F80 /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
-		52DC4AB52394EAB300153F80 /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
-		52DC4AB62394EAB300153F80 /* DWDrmServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DWDrmServer.framework; sourceTree = "<group>"; };
-		52DC4AB72394EAB300153F80 /* CCBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CCBundle.bundle; sourceTree = "<group>"; };
+		52DC4971238543E700153F80 /* CCBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CCBundle.bundle; sourceTree = "<group>"; };
 		52E1CDEF222629B0008DA93D /* UILabel+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+Extension.h"; sourceTree = "<group>"; };
 		52E1CDF0222629B0008DA93D /* UILabel+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+Extension.m"; sourceTree = "<group>"; };
 		52E908122320DA3000A40F92 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
@@ -420,25 +472,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52DC4ABA2394EAB300153F80 /* DWDrmServer.framework in Frameworks */,
 				528EA207234D782A00E8BD7D /* Accelerate.framework in Frameworks */,
 				528EA205234D781B00E8BD7D /* libc++.tbd in Frameworks */,
-				52DC4AC02394EB0D00153F80 /* IJKMediaFramework.framework in Frameworks */,
 				528EA204234D780E00E8BD7D /* libresolv.tbd in Frameworks */,
-				52DC4AB92394EAB300153F80 /* CCSDK.framework in Frameworks */,
-				52DC4AB82394EAB300153F80 /* IJKMediaFramework.framework in Frameworks */,
 				528EA202234D77FE00E8BD7D /* CoreMedia.framework in Frameworks */,
 				528EA200234D77F000E8BD7D /* AudioToolbox.framework in Frameworks */,
 				528EA1FE234D76AF00E8BD7D /* CoreTelephony.framework in Frameworks */,
+				528C768323C313C8000D409A /* CCSDK.framework in Frameworks */,
 				528EA1FC234D76A000E8BD7D /* AVFoundation.framework in Frameworks */,
-				52DC4ABE2394EB0D00153F80 /* DWDrmServer.framework in Frameworks */,
 				52E908132320DA3000A40F92 /* MediaPlayer.framework in Frameworks */,
 				4B297A14235D4FC300A5300B /* CoreML.framework in Frameworks */,
 				52F8BBEA2231268B00B7CC1B /* libz.tbd in Frameworks */,
-				52DC4ABC2394EB0D00153F80 /* CCSDK.framework in Frameworks */,
 				52F8BBE92231268300B7CC1B /* libz.1.1.3.tbd in Frameworks */,
 				7052B44A222FBF6900CF8656 /* SystemConfiguration.framework in Frameworks */,
+				528C768423C313EA000D409A /* CCSDK.framework in Frameworks */,
+				52E6AAB622F190A500B5EB11 /* IJKMediaFramework.framework in Frameworks */,
 				52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */,
+				522F4ED9217D606D001B078F /* DWDrmServer.framework in Frameworks */,
 				6E1E7835921085EF61E23DB4 /* Pods_CCLiveCloud.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,6 +510,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B209CB223B0618A0017A6E3 /* newEmoji */ = {
+			isa = PBXGroup;
+			children = (
+				4B209CEF23B0629E0017A6E3 /* NSAttributedString+PPAddition.h */,
+				4B209CF723B0629E0017A6E3 /* NSAttributedString+PPAddition.m */,
+				4B209D0823B062A00017A6E3 /* NSString+PPAddition.h */,
+				4B209CF923B0629F0017A6E3 /* NSString+PPAddition.m */,
+				4B209CEE23B0629E0017A6E3 /* PPEmoji.h */,
+				4B209CEC23B0629E0017A6E3 /* PPEmoji.m */,
+				4B209D0723B0629F0017A6E3 /* PPEmojiPreviewView.h */,
+				4B209CF123B0629E0017A6E3 /* PPEmojiPreviewView.m */,
+				4B209D0923B062A00017A6E3 /* PPQueuingScrollView.h */,
+				4B209CF823B0629E0017A6E3 /* PPQueuingScrollView.m */,
+				4B209CFF23B0629F0017A6E3 /* PPReusablePage.h */,
+				4B209CFD23B0629F0017A6E3 /* PPSlideLineButton.h */,
+				4B209CFC23B0629F0017A6E3 /* PPSlideLineButton.m */,
+				4B209CE923B0629E0017A6E3 /* PPSticker.h */,
+				4B209CEA23B0629E0017A6E3 /* PPSticker.m */,
+				4B209CFE23B0629F0017A6E3 /* PPStickerDataManager.h */,
+				4B209D0523B0629F0017A6E3 /* PPStickerDataManager.m */,
+				4B209CF423B0629E0017A6E3 /* PPStickerKeyboard.h */,
+				4B209D0323B0629F0017A6E3 /* PPStickerKeyboard.m */,
+				4B209CF323B0629E0017A6E3 /* PPStickerPageView.h */,
+				4B209D0223B0629F0017A6E3 /* PPStickerPageView.m */,
+				4B209CFA23B0629F0017A6E3 /* PPStickerTextView.h */,
+				4B209D0623B0629F0017A6E3 /* PPStickerTextView.m */,
+				4B209D0023B0629F0017A6E3 /* PPTextBackedString.h */,
+				4B209CF023B0629E0017A6E3 /* PPTextBackedString.m */,
+				4B209CED23B0629E0017A6E3 /* PPUtil.h */,
+				4B209D0423B0629F0017A6E3 /* UIButton+PPAddition.h */,
+				4B209CF223B0629E0017A6E3 /* UIButton+PPAddition.m */,
+				4B209D0123B0629F0017A6E3 /* UIColor+PPAddition.h */,
+				4B209CFB23B0629F0017A6E3 /* UIColor+PPAddition.m */,
+				4B209CEB23B0629E0017A6E3 /* UIScreen+PPAddition.h */,
+				4B209CF523B0629E0017A6E3 /* UIScreen+PPAddition.m */,
+				4B209D0A23B062A00017A6E3 /* UIScrollView+PPAddition.h */,
+				4B209CF623B0629E0017A6E3 /* UIScrollView+PPAddition.m */,
+				4B209CD523B0618A0017A6E3 /* Emotions.plist */,
+				4B209CBA23B0618A0017A6E3 /* Emotion.bundle */,
+			);
+			path = newEmoji;
+			sourceTree = "<group>";
+		};
 		4B3D61E8236BDBF60053AC52 /* Punch-打卡 */ = {
 			isa = PBXGroup;
 			children = (
@@ -540,10 +633,10 @@
 		522F4ED1217D606D001B078F /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
-				52DC4AB72394EAB300153F80 /* CCBundle.bundle */,
-				52DC4AB52394EAB300153F80 /* CCSDK.framework */,
-				52DC4AB62394EAB300153F80 /* DWDrmServer.framework */,
-				52DC4AB42394EAB200153F80 /* IJKMediaFramework.framework */,
+				528C768223C313C8000D409A /* CCSDK.framework */,
+				52DC4971238543E700153F80 /* CCBundle.bundle */,
+				522F4ED4217D606D001B078F /* DWDrmServer.framework */,
+				522F4ED5217D606D001B078F /* IJKMediaFramework.framework */,
 			);
 			path = CCSDK;
 			sourceTree = "<group>";
@@ -770,6 +863,7 @@
 		529D53C221797CEA0093F724 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				4B209CB223B0618A0017A6E3 /* newEmoji */,
 				70E04F48228517DC00A735FC /* OCBarrage-弹幕库 */,
 				70E04F34228517DC00A735FC /* OtherDescriptorAndCells-弹幕扩展样式 */,
 				70480D522239F11B00368084 /* CCLockView.h */,
@@ -1123,8 +1217,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				70480D55223A4D6500368084 /* gift_loading_gif@2x.gif in Resources */,
+				4B209CD923B0618B0017A6E3 /* Emotion.bundle in Resources */,
 				70E04F5C228517DD00A735FC /* chaoren_right@2x.png in Resources */,
-				52DC4ABB2394EAB300153F80 /* CCBundle.bundle in Resources */,
+				4B209CE823B0618B0017A6E3 /* Emotions.plist in Resources */,
+				52DC4972238543E700153F80 /* CCBundle.bundle in Resources */,
 				70E04F61228517DD00A735FC /* chaoren_left@2x.png in Resources */,
 				529D538B2179750D0093F724 /* Assets.xcassets in Resources */,
 				70480D57223A4D8C00368084 /* gift_loading_gif@3x.gif in Resources */,
@@ -1193,10 +1289,12 @@
 			files = (
 				5286A67621916B0C00912BC2 /* CCQuestionView.m in Sources */,
 				52275E2521ED7BC500C265D7 /* Utility.m in Sources */,
+				4B209D1723B062A00017A6E3 /* PPStickerPageView.m in Sources */,
 				5287D2B7217ECDB50030AFB6 /* UIView+Extension.m in Sources */,
 				5202E5C6219D233100C13EF9 /* UITouchView.m in Sources */,
 				70E04F69228517DD00A735FC /* OCBarrageTextDescriptor.m in Sources */,
 				70EE24A32224E7B300F19560 /* TopView.m in Sources */,
+				4B209D0C23B062A00017A6E3 /* PPEmoji.m in Sources */,
 				7075867521EB825500047711 /* CCPrivateChatView.m in Sources */,
 				52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */,
 				7075867421EB825500047711 /* PrivateChatViewForOne.m in Sources */,
@@ -1205,10 +1303,12 @@
 				7008A63C22327B9C00CECD43 /* CCImageView.m in Sources */,
 				522A753221CB78F300C871B2 /* UIButton+UserInfo.m in Sources */,
 				70EE249C222396A300F19560 /* CCProxy.m in Sources */,
+				4B209D1323B062A00017A6E3 /* PPQueuingScrollView.m in Sources */,
 				7008A63F22327B9C00CECD43 /* CCPublicChatModel.m in Sources */,
 				7008A63B22327B9C00CECD43 /* CCChatViewDataSourceManager.m in Sources */,
 				70116F2A22437BE300387F25 /* CCDocView.m in Sources */,
 				70E04F6C228517DD00A735FC /* OCBarrageTrackInfo.m in Sources */,
+				4B209D0E23B062A00017A6E3 /* PPEmojiPreviewView.m in Sources */,
 				52FFD8B22187117A00DEEF4F /* CCPalyBackLoginController.m in Sources */,
 				52F8BBDC22311DF700B7CC1B /* LotteryView.m in Sources */,
 				52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */,
@@ -1218,9 +1318,11 @@
 				708683F422267FEB003DAC8E /* CCClassTestProgressView.m in Sources */,
 				70EE2498221F978F00F19560 /* CCPrivateChatViewCell.m in Sources */,
 				52F344A82186B227006F1E7B /* TextFieldUserInfo.m in Sources */,
+				4B209D1423B062A00017A6E3 /* NSString+PPAddition.m in Sources */,
 				52F344B42186F0F6006F1E7B /* PhotoNotPermissionVC.m in Sources */,
 				5286A67C21916BF100912BC2 /* Dialogue.m in Sources */,
 				7017513021C89FB200558FA2 /* UIImage+animatedGIF.m in Sources */,
+				4B209D1923B062A00017A6E3 /* PPStickerDataManager.m in Sources */,
 				526B650121FAED4D000676B7 /* CCAlertView.m in Sources */,
 				522A74C821C8E7E800C871B2 /* UIImage+animatedGIF.m in Sources */,
 				522A764F21D321BA00C871B2 /* RollcallView.m in Sources */,
@@ -1243,6 +1345,7 @@
 				52F344B32186F0F6006F1E7B /* ScanViewController.m in Sources */,
 				52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */,
 				70E04F6A228517DD00A735FC /* CALayer+OCBarrage.m in Sources */,
+				4B209D1523B062A00017A6E3 /* UIColor+PPAddition.m in Sources */,
 				70E04F62228517DD00A735FC /* OCBarrageGradientBackgroundColorDescriptor.m in Sources */,
 				7008A63E22327B9C00CECD43 /* CCPhotoBrowser.m in Sources */,
 				522A766321D4A4D200C871B2 /* LianmaiView.m in Sources */,
@@ -1256,11 +1359,13 @@
 				70E04F5E228517DD00A735FC /* OCBarrageVerticalAnimationCell.m in Sources */,
 				529D53832179750C0093F724 /* AppDelegate.m in Sources */,
 				52F344A52186A7B1006F1E7B /* CCPlayLoginController.m in Sources */,
+				4B209D0B23B062A00017A6E3 /* PPSticker.m in Sources */,
 				70E04F6B228517DD00A735FC /* OCBarrageManager.m in Sources */,
 				708683F1222678C7003DAC8E /* NSString+Extension.m in Sources */,
 				522A753321CB78F300C871B2 /* UITextView+UserInfo.m in Sources */,
 				52F344B22186F0F6006F1E7B /* ScanOverViewController.m in Sources */,
 				7017513F21C9137C00558FA2 /* UIButton+UserInfo.m in Sources */,
+				4B209D1223B062A00017A6E3 /* NSAttributedString+PPAddition.m in Sources */,
 				7058893121D0AC460046A03B /* SelectMenuView.m in Sources */,
 				70E04F64228517DD00A735FC /* OCBarrageBecomeNobleCell.m in Sources */,
 				70480D532239F11B00368084 /* CCLockView.m in Sources */,
@@ -1270,14 +1375,21 @@
 				70E04F7522852B6C00A735FC /* OCBarrageWalkBannerCell.m in Sources */,
 				7008A63D22327B9C00CECD43 /* CCChatBaseCell.m in Sources */,
 				5286A67F21916C3B00912BC2 /* UIImage+Extension.m in Sources */,
+				4B209D1023B062A00017A6E3 /* UIScreen+PPAddition.m in Sources */,
 				70E04F67228517DD00A735FC /* OCBarrageDescriptor.m in Sources */,
+				4B209D0F23B062A00017A6E3 /* UIButton+PPAddition.m in Sources */,
+				4B209D1123B062A00017A6E3 /* UIScrollView+PPAddition.m in Sources */,
 				5287D2B4217ECD870030AFB6 /* UIBarButtonItem+Extension.m in Sources */,
+				4B209D0D23B062A00017A6E3 /* PPTextBackedString.m in Sources */,
 				703384E621F98A2B00BA3EBC /* UIView+GetVC.m in Sources */,
 				522F4EE7217D612D001B078F /* CCPlayerController.m in Sources */,
 				70E04F5B228517DD00A735FC /* OCBarrageGradientBackgroundColorCell.m in Sources */,
+				4B209D1823B062A00017A6E3 /* PPStickerKeyboard.m in Sources */,
 				70EE24A62225098200F19560 /* UILabel+Extension.m in Sources */,
 				70767A682215416200A6A0EE /* CCQuestionViewCell.m in Sources */,
 				5216B4B622E558E000917DED /* NSDictionary+Log.m in Sources */,
+				4B209D1A23B062A00017A6E3 /* PPStickerTextView.m in Sources */,
+				4B209D1623B062A00017A6E3 /* PPSlideLineButton.m in Sources */,
 				70EE24A0222413BA00F19560 /* CCClassTestView.m in Sources */,
 				4B3D61EB236BDC230053AC52 /* CCPunchView.m in Sources */,
 				70E04F65228517DD00A735FC /* OCBarrageVerticalTextDescriptor.m in Sources */,
@@ -1460,7 +1572,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.6;
+				MARKETING_VERSION = 1.2.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1515,7 +1627,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.6;
+				MARKETING_VERSION = 1.2.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

@@ -6,6 +6,8 @@
 	<string>18F132</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>CCBundle</string>
 	<key>CFBundleIdentifier</key>
 	<string>cn.CCBundle</string>
 	<key>CFBundleInfoDictionaryVersion</key>
