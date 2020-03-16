@@ -4,74 +4,6 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>CCBundle.bundle/Contents/Info.plist</key>
-		<data>
-		sLfUvuBnIDFR+jdhROkkx51steA=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/barrage.js</key>
-		<data>
-		xV3BD8CVQ4XMqFLQfu6Rjedz3Dg=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/config.js</key>
-		<data>
-		24B1BYLBwe0e/tjaFWtNTLKVNOw=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/d.png</key>
-		<data>
-		xiPe7h7I/xsYh84DFixZ2E5Kffg=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/db.js</key>
-		<data>
-		6JXvPG6uX67YFpXZNzjM2DtEkMI=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/dp.js</key>
-		<data>
-		aHKhfT7N+qODnVQcL7iXg+egxWg=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/f.js</key>
-		<data>
-		JBAzffm7HJNe5epLnMdnwBFlloQ=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/index.html</key>
-		<data>
-		IBpIuthN3P65Esh/BXleorsk4jo=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/marquee.js</key>
-		<data>
-		p8/006ZCaOAQ7Fy3dEChRFlEzPY=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/pc.js</key>
-		<data>
-		4NdGBGgVv20eRdwR5QiNcvQdwqw=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/socketio.html</key>
-		<data>
-		Edn5Xyp3RXt7AEopx2vssH8556w=
-		</data>
-		<key>CCBundle.bundle/Contents/Resources/utils.js</key>
-		<data>
-		ylv9aFk2jDAuAowCtVs7LLheTQU=
-		</data>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeDirectory</key>
-		<data>
-		PGzZJgpQ4g/qN7wdLE6asbq0yX4=
-		</data>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeRequirements</key>
-		<data>
-		X77gkeBTw56SN36x6LQ+QTk4avw=
-		</data>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeRequirements-1</key>
-		<data>
-		jyuajo5pGhR4UuRox4bu2CQyDqU=
-		</data>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeResources</key>
-		<data>
-		K0aQsTONY8p7qUrZs034IT+2UkQ=
-		</data>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeSignature</key>
-		<data>
-		1xEAc+d/yYV9x4ee36c0OX8gvwY=
-		</data>
 		<key>Headers/CCLiveUtil.h</key>
 		<data>
 		LoqCScmRVpKEwX5VdZ5UlQuc0Xg=
@@ -86,15 +18,15 @@
 		</data>
 		<key>Headers/RequestData.h</key>
 		<data>
-		mMsn08ZQ9R6StmfWm0C/ZTntYN4=
+		a8NJcHPZmMju8dRvH5v9XFAjqAY=
 		</data>
 		<key>Headers/RequestDataPlayBack.h</key>
 		<data>
-		VYuXFFLwHwLG4k9l4AYpHOLuDDw=
+		x/cThukjIk6E3xRJKMq0TtWFiyU=
 		</data>
 		<key>Headers/SaveLogUtil.h</key>
 		<data>
-		g0NsMER6bLw5Lj+iMYcDOj0GcXw=
+		aaoLegf++m0JC8SvtNJ/ekc22hw=
 		</data>
 		<key>Info.plist</key>
 		<data>
@@ -103,193 +35,6 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>CCBundle.bundle/Contents/Info.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			sLfUvuBnIDFR+jdhROkkx51steA=
-			</data>
-			<key>hash2</key>
-			<data>
-			lN7ONT1g2/8LSQ4MyDPoKsRbCHBLaOkOgkcWUf/xjSE=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/barrage.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			xV3BD8CVQ4XMqFLQfu6Rjedz3Dg=
-			</data>
-			<key>hash2</key>
-			<data>
-			yvg/u5M7Otk9inO6CgvHiZuKgeNvWVD18PnXlj7k2KU=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/config.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			24B1BYLBwe0e/tjaFWtNTLKVNOw=
-			</data>
-			<key>hash2</key>
-			<data>
-			nbA0R4c01DVr322bb6qWclYS4E2GKq1cIUV5/bidC/0=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/d.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			xiPe7h7I/xsYh84DFixZ2E5Kffg=
-			</data>
-			<key>hash2</key>
-			<data>
-			xMF4Xt78TjFGQ+q9ZssuDhjydSknMUENb+Un2TJtfrc=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/db.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			6JXvPG6uX67YFpXZNzjM2DtEkMI=
-			</data>
-			<key>hash2</key>
-			<data>
-			8XqhRm1tIIZYU0PMW8ALM7EzRPFsrZG7WpKe8+Fo1TI=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/dp.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			aHKhfT7N+qODnVQcL7iXg+egxWg=
-			</data>
-			<key>hash2</key>
-			<data>
-			oroL2Q8TlKupetHRmsbvRaU2romY8ymhqmVjHAZdm5A=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/f.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			JBAzffm7HJNe5epLnMdnwBFlloQ=
-			</data>
-			<key>hash2</key>
-			<data>
-			VxFB9jAKukBDfRH2a4nrF91T1bTeeOI5AHXbTT+e9X4=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/index.html</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			IBpIuthN3P65Esh/BXleorsk4jo=
-			</data>
-			<key>hash2</key>
-			<data>
-			jNTYn2GztR6gbHZbiX3E3kNPqfRkR6U+XMIqUFHy3NY=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/marquee.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			p8/006ZCaOAQ7Fy3dEChRFlEzPY=
-			</data>
-			<key>hash2</key>
-			<data>
-			A4ZexQzXWGfDvIL32db/LUN//HuGb/y2I3R/RVQW8Zg=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/pc.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			4NdGBGgVv20eRdwR5QiNcvQdwqw=
-			</data>
-			<key>hash2</key>
-			<data>
-			jy5R1a5h2XYIHS29QwTITtju9hTziZlwGdTeJqvzVIk=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/socketio.html</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Edn5Xyp3RXt7AEopx2vssH8556w=
-			</data>
-			<key>hash2</key>
-			<data>
-			5Fm+Z2KzoEaRO/YpgM/N9q0wLryXtV52hB/rW8RII18=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/Resources/utils.js</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ylv9aFk2jDAuAowCtVs7LLheTQU=
-			</data>
-			<key>hash2</key>
-			<data>
-			osfJ6tMsN/M6Dve8MW8RhnCSBvW48+QyEk3rImDtCuU=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeDirectory</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			PGzZJgpQ4g/qN7wdLE6asbq0yX4=
-			</data>
-			<key>hash2</key>
-			<data>
-			0C3RgBOO3/x4u9Kiyjn2hs4HFtGWqy7tAvYHQOlMiEo=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeRequirements</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			X77gkeBTw56SN36x6LQ+QTk4avw=
-			</data>
-			<key>hash2</key>
-			<data>
-			kWmD6TnEyq+QapF88lFNrSbR4Od04vDkrApC1TxA6D8=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeRequirements-1</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			jyuajo5pGhR4UuRox4bu2CQyDqU=
-			</data>
-			<key>hash2</key>
-			<data>
-			z8gs6HBk399WM6PUB8ptDsLSL9wMInqx5/6gAVyJuCE=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeResources</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			K0aQsTONY8p7qUrZs034IT+2UkQ=
-			</data>
-			<key>hash2</key>
-			<data>
-			D761OhVT7AWogTKfqOKYMwIbNIKhyyM87uozmjtrBYY=
-			</data>
-		</dict>
-		<key>CCBundle.bundle/Contents/_CodeSignature/CodeSignature</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			1xEAc+d/yYV9x4ee36c0OX8gvwY=
-			</data>
-			<key>hash2</key>
-			<data>
-			29cY+kteqJXA2kdoxahmJQy/MM9noB+dmO64PEr5rx0=
-			</data>
-		</dict>
 		<key>Headers/CCLiveUtil.h</key>
 		<dict>
 			<key>hash</key>
@@ -327,33 +72,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			mMsn08ZQ9R6StmfWm0C/ZTntYN4=
+			a8NJcHPZmMju8dRvH5v9XFAjqAY=
 			</data>
 			<key>hash2</key>
 			<data>
-			xwpd+X36/wY25avot11C/2pH8dD6WAIop+MHAH6aKFk=
+			+Gx+CzzJ+roexRPnZOSb4XQii+rWCY9KCZytDcmgcok=
 			</data>
 		</dict>
 		<key>Headers/RequestDataPlayBack.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			VYuXFFLwHwLG4k9l4AYpHOLuDDw=
+			x/cThukjIk6E3xRJKMq0TtWFiyU=
 			</data>
 			<key>hash2</key>
 			<data>
-			6gk3hfZ++I5U9NBcH9OgvtjeRQdu3/S+YA1WJ4hxXnw=
+			mxuB0Rk7VXYfNdpfnhy+r/5R7OEjva5xyqBG42puQi4=
 			</data>
 		</dict>
 		<key>Headers/SaveLogUtil.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			g0NsMER6bLw5Lj+iMYcDOj0GcXw=
+			aaoLegf++m0JC8SvtNJ/ekc22hw=
 			</data>
 			<key>hash2</key>
 			<data>
-			/OD5nMQDVSX3XwxrXYL5JTp+aQXIwSQSTzcTMlsmcok=
+			KhKSHHD1dvAyec73pniYOPBqPktppUKSJO/SP5pw2+4=
 			</data>
 		</dict>
 	</dict>

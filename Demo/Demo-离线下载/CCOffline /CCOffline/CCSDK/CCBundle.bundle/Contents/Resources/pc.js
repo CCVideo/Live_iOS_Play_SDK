@@ -532,6 +532,7 @@
       myImg.src = url + '?x-oss-process=image/auto-orient,1/resize,m_lfit,w_' + w + '/quality,q_50'
       var limitUrl = url.split('/')
       if (limitUrl.length >= 7 && limitUrl[limitUrl.length - 2].length >= 32) {
+        url=url.replace(/http:/g,"https:")
         myImg.src = url
       }
       myImg.style = 'z-index:10;display:none;'
@@ -762,6 +763,7 @@
       this.current.isReadyTriggerAnimation = true//解决从图片切换至当前动画页时切换下个动画无效。
     } else {
       this.clearDoc()
+      u = u.replace(/http:/g,"https:")
       ifr.setAttribute('src', u)
 /////////////////////小班课定制当文档加载失败跳转只失败页面//////////////////////////////////////
       // Utils.ajax({

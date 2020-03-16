@@ -13,6 +13,7 @@
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
+#define SDKVersion @"3.7.1"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -112,6 +113,10 @@
  *    rseult    playing/paused/loading
  */
 -(void)videoStateChangeWithString:(NSString *) result;
+/**
+ *    @brief    跑马灯信息,需要开启跑马灯功能且iOS 9.0以上
+*/
+-(void)receivedMarqueeInfo:(NSDictionary *)dic;
 
 @end
 

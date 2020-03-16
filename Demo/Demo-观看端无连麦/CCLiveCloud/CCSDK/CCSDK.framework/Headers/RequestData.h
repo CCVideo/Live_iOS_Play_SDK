@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.7.0"
+#define SDKVersion @"3.7.1"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -276,6 +276,11 @@
  */
 -(void)onBanChat:(NSDictionary *) modeDic;
 /**
+ *    @brief    收到聊天禁言并删除聊天记录
+ *    viewerId 禁言用户id,是自己的话别删除聊天历史,其他人需要删除该用户的聊天
+ */
+-(void)onBanDeleteChat:(NSDictionary *) viewerDic;
+/**
  *    @brief    收到解除禁言事件
  *    mode 禁言类型 1：个人禁言  2：全员禁言
  */
@@ -391,7 +396,10 @@
  *ps:当房间类型没有聊天或者问答时,对应的字段默认为true
 */
 -(void)roomSettingInfo:(NSDictionary *)dic;
-
+/**
+ *    @brief    跑马灯信息,需要开启跑马灯功能且iOS 9.0以上
+*/
+-(void)receivedMarqueeInfo:(NSDictionary *)dic;
 
 
 @end
@@ -442,6 +450,12 @@
  *	@param 	message  发送的消息内容
  */
 - (void)chatMessage:(NSString *)message;
+/**
+ *    @brief    发送公聊信息
+ *    @param     message  发送的消息内容
+ *               completion 发送回调 成功或者失败
+ */
+- (void)sendChatMessage:(NSString *)message completion:(void (^)(BOOL success))completion;
 /**
  *	@brief  发送私聊信息
  */

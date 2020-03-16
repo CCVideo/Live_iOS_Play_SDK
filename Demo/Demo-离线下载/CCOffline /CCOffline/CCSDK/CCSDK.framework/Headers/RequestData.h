@@ -12,6 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
+#define SDKVersion @"3.7.1"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -275,6 +276,11 @@
  */
 -(void)onBanChat:(NSDictionary *) modeDic;
 /**
+ *    @brief    收到聊天禁言并删除聊天记录
+ *    viewerId 禁言用户id,是自己的话别删除聊天历史,其他人需要删除该用户的聊天
+ */
+-(void)onBanDeleteChat:(NSDictionary *) viewerDic;
+/**
  *    @brief    收到解除禁言事件
  *    mode 禁言类型 1：个人禁言  2：全员禁言
  */
@@ -327,7 +333,7 @@
 -(void)practiceCloseWithDic:(NSDictionary *) resultDic;
 /**
  *    @brief    视频状态
- *    rseult    playing/paused/loading
+ *    rseult    playing/paused/loading/buffing
  */
 -(void)videoStateChangeWithString:(NSString *) result;
 /**
@@ -367,6 +373,34 @@
  }
  */
 -(void)hdReceivedPunchResultWithDict:(NSDictionary *)dic;
+/**
+收到老师列表
+ teachers =     (
+             {
+         id = "";//老师id
+         ip = "";//IP地址
+         name = "";老师昵称
+         role = teacher;//角色
+     }
+ );
+*/
+-(void)onOnlineTeachers:(NSDictionary *)dic;
+/**
+ *    @brief    房间设置信息
+ *    dic{
+      "allow_chat" = true;//是否允许聊天
+      "allow_question" = true;//是否允许问答
+      "room_base_user_count" = 0;//房间基础在线人数
+      "source_type" = 0;//对应receivedSwitchSource方法的source_type
+}
+ *ps:当房间类型没有聊天或者问答时,对应的字段默认为true
+*/
+-(void)roomSettingInfo:(NSDictionary *)dic;
+/**
+ *    @brief    跑马灯信息,需要开启跑马灯功能且iOS 9.0以上
+*/
+-(void)receivedMarqueeInfo:(NSDictionary *)dic;
+
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief WebRTC连接成功，在此代理方法中主要做一些界面的更改
@@ -441,6 +475,12 @@
  *	@param 	message  发送的消息内容
  */
 - (void)chatMessage:(NSString *)message;
+/**
+ *    @brief    发送公聊信息
+ *    @param     message  发送的消息内容
+ *               completion 发送回调 成功或者失败
+ */
+- (void)sendChatMessage:(NSString *)message completion:(void (^)(BOOL success))completion;
 /**
  *	@brief  发送私聊信息
  */
@@ -590,6 +630,10 @@
 @param punchId 打卡id
 */
 - (void)hdCommitPunchWithPunchId:(NSString *)punchId;
+/**
+获取老师列表
+*/
+- (void)getOnlineTeachers;
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法

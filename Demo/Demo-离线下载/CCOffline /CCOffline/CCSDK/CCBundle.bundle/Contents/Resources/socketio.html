@@ -6493,6 +6493,14 @@
             //50 结束打卡stop_punch
             socket.on('stop_punch', function(data){
                      socket_message('stop_punch', data);
+            });//
+            //51  讲师列表room_teachers
+            socket.on('room_teachers', function(data){
+                     socket_message('room_teachers', data);
+            });
+            //52  聊天禁言删除历史记录ban_delete_chat
+            socket.on('ban_delete_chat', function(data){
+                    socket_message('ban_delete_chat', data);
             });
      
         }
