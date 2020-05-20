@@ -20,19 +20,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 初始化方法
-
- @param testDic 随堂测答题选项字典
- @param isScreenLandScape 是否是全屏
- @return self;
+ *    @brief    初始化方法
+ *    @param testDic 随堂测答题选项字典 testDic[@"practice"][@"Type"] :0 判断，1 单选，2 多选
+ *    @param isScreenLandScape 是否是全屏
+ *    @return self;
  */
 -(instancetype)initWithTestDic:(NSDictionary *)testDic
              isScreenLandScape:(BOOL)isScreenLandScape;
 
 /**
- 得到答题统计
-
- @param resultDic 统计结果字典
+ *    @brief    得到答题统计
+ *    @param    resultDic 统计结果字典
+ *    @param    isScreen  是否全屏
  */
 -(void)getPracticeStatisWithResultDic:(NSDictionary *)resultDic isScreen:(BOOL)isScreen;
 /**

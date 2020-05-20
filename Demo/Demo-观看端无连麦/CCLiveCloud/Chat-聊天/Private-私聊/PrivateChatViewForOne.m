@@ -15,16 +15,18 @@
 #import "InformationShowView.h"
 #import "CCPrivateChatViewCell.h"
 #import "CCChatViewDataSourceManager.h"
+#import "CCChatContentView.h"
 
-@interface PrivateChatViewForOne()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
+@interface PrivateChatViewForOne()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate,CCChatContentViewDelegate>
 
 @property(nonatomic,strong)UIView                   *topView;//顶部视图
 @property(nonatomic,strong)UILabel                  *titleLabel;//标题文本
 @property(nonatomic,strong)UIButton                 *closeButton;//关闭按钮
 @property(nonatomic,strong)UIButton                 *returnButton;//返回按钮
 @property(nonatomic,strong)UITableView              *tableView;//私聊tableView
-@property(nonatomic,strong)UIView                   *contentView;//输入框视图
-@property(nonatomic,strong)UIButton                 *rightView;//右侧表情按钮
+//@property(nonatomic,strong)UIView                   *contentView;//输入框视图
+//@property(nonatomic,strong)UIButton                 *rightView;//右侧表情按钮
+@property(nonatomic,strong)CCChatContentView        * inputView;//输入框视图
 
 @property(nonatomic,strong)UIView                   *emojiView;//表情输入视图
 @property(nonatomic,assign)CGRect                   keyboardRect;//键盘
@@ -42,6 +44,7 @@
 @property(nonatomic, copy)UIView                    *bottomLine;//底部视图
 @property(nonatomic, copy)UIView                    *topLine;//顶部分界线
 @property(nonatomic,strong)InformationShowView      *informationView;//提示视图
+@property(nonatomic,assign)BOOL                     keyboardShow;
 
 @end
 
@@ -75,7 +78,7 @@
         
         self.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5" alpha:1.f];
         [self addSubviews];
-        [self addObserver];
+//        [self addObserver];
     }
 
     return self;
@@ -101,7 +104,7 @@
  视图销毁
  */
 -(void)dealloc {
-    [self removeObserver];//移除通知
+//    [self removeObserver];//移除通知
 //    NSLog(@"移除私聊forOne");
 }
 #pragma mark - 设置UI布局
@@ -153,32 +156,25 @@
         make.height.mas_equalTo(1);
     }];
     //添加输入视图
-    [self addSubview:self.contentView];
-    [_contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.right.mas_equalTo(ws);
-        make.bottom.mas_equalTo(ws).offset(-CCGetRealFromPt(4));
-        make.height.mas_equalTo(CCGetRealFromPt(90));
+    self.inputView = [[CCChatContentView alloc] init];
+    [self addSubview:self.inputView];
+    self.inputView.delegate = self;
+    NSInteger tabheight = IS_IPHONE_X?178:110;
+    [_inputView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.and.right.and.left.mas_equalTo(self);
+        make.height.mas_equalTo(CCGetRealFromPt(tabheight));
     }];
-    //添加输入框
-    [self.contentView addSubview:self.chatTextField];
-    [_chatTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        if(!ws.isScreenLandScape) {
-            make.top.mas_equalTo(ws.contentView).offset(CCGetRealFromPt(10));
-            make.left.mas_equalTo(ws.contentView).offset(CCGetRealFromPt(20));
-            make.right.mas_equalTo(ws.contentView).offset(-CCGetRealFromPt(20));
-            make.height.mas_equalTo(CCGetRealFromPt(70));
-        } else {
-            make.centerY.mas_equalTo(ws.contentView.mas_centerY);
-            make.left.mas_equalTo(ws.contentView).offset(CCGetRealFromPt(30));
-            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(1134), CCGetRealFromPt(84)));
-        }
-    }];
+    WS(weakSelf)
+    //聊天回调
+    self.inputView.sendMessageBlock = ^{
+        [weakSelf chatSendMessage];
+    };
     //添加私聊视图
     [self addSubview:self.tableView];
     [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.and.right.mas_equalTo(ws);
         make.top.mas_equalTo(ws.bottomLine.mas_bottom);
-        make.bottom.mas_equalTo(ws.contentView.mas_top);
+        make.bottom.mas_equalTo(ws.inputView.mas_top);
     }];
     
     //刷新消息，回到最后一行
@@ -228,7 +224,7 @@
  点击关闭按钮
  */
 -(void)closeBtnClicked {
-    [_chatTextField resignFirstResponder];
+    [_inputView resignFirstResponder];
     if(self.closeBlock) {
         self.closeBlock();//关闭回调
     }
@@ -238,7 +234,7 @@
  点击返回按钮
  */
 -(void)returnBtnClicked {
-    [_chatTextField resignFirstResponder];
+    [_inputView resignFirstResponder];
 //    [self removeFromSuperview];
     if(self.chatBlock) {
         self.chatBlock();//聊天回调
@@ -584,27 +580,27 @@
 //}
 #pragma mark - 键盘将要返回
 //键盘将要返回时
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {//如果消息为空,弹出提示
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-        //2.0秒后移除弹窗视图
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
-        return YES;
-    }
-    [self chatSendMessage];
-    return YES;
-}
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+//    if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {//如果消息为空,弹出提示
+//        [_informationView removeFromSuperview];
+//        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
+//        [APPDelegate.window addSubview:_informationView];
+//        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+//        }];
+//        //2.0秒后移除弹窗视图
+//        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
+//        return YES;
+//    }
+//    [self chatSendMessage];
+//    return YES;
+//}
 
 /**
  发送聊天
  */
 -(void)chatSendMessage {
-    NSString *str = _chatTextField.text;
+    NSString *str = _inputView.plainText;
     if(str == nil || str.length == 0) {
         return;
     }
@@ -616,188 +612,241 @@
     //发送通知
     [[NSNotificationCenter defaultCenter] postNotificationName:@"private_Chat" object:dic];
     
-    _chatTextField.text = nil;
-    [_chatTextField resignFirstResponder];
+    _inputView.textView.text = nil;
+    [_inputView resignFirstResponder];
 }
-#pragma mark - 添加通知
--(void)addObserver {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-}
+//#pragma mark - 添加通知
+//-(void)addObserver {
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(keyboardWillShow:)
+//                                                 name:UIKeyboardWillShowNotification
+//                                               object:nil];
+//    
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(keyboardWillHide:)
+//                                                 name:UIKeyboardWillHideNotification
+//                                               object:nil];
+//}
+//
+//-(void)removeObserver {
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+//    
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+//}
 
--(void)removeObserver {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-}
+//#pragma mark keyboard notification
+//- (void)keyboardWillShow:(NSNotification *)notif {
+//    if(![self.chatTextField isFirstResponder]) {
+//        return;
+//    }
+//    NSDictionary *userInfo = [notif userInfo];
+//    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+//    _keyboardRect = [aValue CGRectValue];
+//    CGFloat y = _keyboardRect.size.height;
+////    CGFloat x = _keyboardRect.size.width;
+////    NSLog(@"键盘高度是  %d",(int)y);
+////    NSLog(@"键盘宽度是  %d",(int)x);
+//    WS(ws)
+////    NSLog(@"PrivateChatViewForOne isResponseBlock");
+//    if(ws.isResponseBlock) {
+//        ws.isResponseBlock(y);
+//    }
+//}
+//
+//- (void)keyboardWillHide:(NSNotification *)notif {
+//    //todo 多个人发送私聊，公聊中点击某个人头像，然后公聊发送消息，回调用此方法，导致发送公聊，私聊列表弹出。
+//    //初步判断，内存泄露，没有及时释放某个1V1私聊，导致走了这个回调
+////    NSLog(@"私聊显示:%d", self.hidden?1:0);
+//    if(self.isNotResponseBlock) {
+//        self.isNotResponseBlock();
+//    }
+//}
 
-#pragma mark keyboard notification
-- (void)keyboardWillShow:(NSNotification *)notif {
-    if(![self.chatTextField isFirstResponder]) {
+#pragma mark - inputView deleaget输入键盘的代理
+//键盘将要出现
+-(void)keyBoardWillShow:(CGFloat)height endEditIng:(BOOL)endEditIng{
+    self.keyboardShow = YES;
+
+    //防止图片和键盘弹起冲突
+    if (endEditIng == YES) {
+        [self endEditing:YES];
         return;
     }
-    NSDictionary *userInfo = [notif userInfo];
-    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    _keyboardRect = [aValue CGRectValue];
-    CGFloat y = _keyboardRect.size.height;
-//    CGFloat x = _keyboardRect.size.width;
-//    NSLog(@"键盘高度是  %d",(int)y);
-//    NSLog(@"键盘宽度是  %d",(int)x);
-    WS(ws)
-//    NSLog(@"PrivateChatViewForOne isResponseBlock");
-    if(ws.isResponseBlock) {
-        ws.isResponseBlock(y);
-    }
-}
 
-- (void)keyboardWillHide:(NSNotification *)notif {
-    //todo 多个人发送私聊，公聊中点击某个人头像，然后公聊发送消息，回调用此方法，导致发送公聊，私聊列表弹出。
-    //初步判断，内存泄露，没有及时释放某个1V1私聊，导致走了这个回调
-//    NSLog(@"私聊显示:%d", self.hidden?1:0);
-    if(self.isNotResponseBlock) {
-        self.isNotResponseBlock();
-    }
+    NSInteger selfHeight = self.frame.size.height - height;
+    NSInteger contentHeight = selfHeight>CCGetRealFromPt(110)?(-height):(CCGetRealFromPt(110)-self.frame.size.height);
+    [_inputView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.right.left.equalTo(self);
+        make.bottom.equalTo(self.mas_bottom).offset(contentHeight);
+        make.height.mas_equalTo(CCGetRealFromPt(110));
+    }];
+    [_tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.and.right.mas_equalTo(self);
+        make.top.mas_equalTo(self.bottomLine.mas_bottom);
+        make.bottom.equalTo(self.inputView.mas_top);
+    }];
+
+    [UIView animateWithDuration:0.25f animations:^{
+        [self layoutIfNeeded];
+    } completion:^(BOOL finished) {
+
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.keyboardShow = NO;
+    });
+}
+//隐藏键盘
+-(void)hiddenKeyBoard{
+    self.keyboardShow = NO;
+    NSInteger tabheight = IS_IPHONE_X ?178:110;
+    [_inputView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.right.and.left.and.bottom.mas_equalTo(self);
+        make.height.mas_equalTo(CCGetRealFromPt(tabheight));
+    }];
+    
+    [_tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.and.right.mas_equalTo(self);
+        make.top.mas_equalTo(self.bottomLine.mas_bottom);
+        make.bottom.equalTo(self.inputView.mas_top);
+    }];
+    
+    [UIView animateWithDuration:0.25f animations:^{
+        [self layoutIfNeeded];
+    } completion:nil];
 }
 
 #pragma mark - 懒加载
 //输入视图
--(UIView *)contentView {
-    if(!_contentView) {
-        _contentView = [[UIView alloc] init];
-        _contentView.backgroundColor = CCRGBAColor(171,179,189,0.30);
-    }
-    return _contentView;
-}
+//-(UIView *)contentView {
+//    if(!_contentView) {
+//        _contentView = [[UIView alloc] init];
+//        _contentView.backgroundColor = CCRGBAColor(171,179,189,0.30);
+//    }
+//    return _contentView;
+//}
 //聊天输入框
--(CustomTextField *)chatTextField {
-    if(!_chatTextField) {
-        _chatTextField = [[CustomTextField alloc] init];
-        _chatTextField.delegate = self;
-        _chatTextField.placeholder = PRIVATE_PLACEHOLDER;
-         _chatTextField.layer.cornerRadius = CCGetRealFromPt(35);
-        [_chatTextField addTarget:self action:@selector(chatTextFieldChange) forControlEvents:UIControlEventEditingChanged];
-        _chatTextField.rightView = self.rightView;
-    }
-    return _chatTextField;
-}
+//-(CustomTextField *)chatTextField {
+//    if(!_chatTextField) {
+//        _chatTextField = [[CustomTextField alloc] init];
+//        _chatTextField.delegate = self;
+//        _chatTextField.placeholder = PRIVATE_PLACEHOLDER;
+//         _chatTextField.layer.cornerRadius = CCGetRealFromPt(35);
+//        [_chatTextField addTarget:self action:@selector(chatTextFieldChange) forControlEvents:UIControlEventEditingChanged];
+//        _chatTextField.rightView = self.rightView;
+//    }
+//    return _chatTextField;
+//}
 
 /**
  输入内容改变
  */
--(void)chatTextFieldChange {
-    if(_chatTextField.text.length > 300) {
-        _chatTextField.text = [_chatTextField.text substringToIndex:300];
-    }
-}
-//右侧视图
--(UIButton *)rightView {
-    if(!_rightView) {
-        _rightView = [UIButton buttonWithType:UIButtonTypeCustom];
-        _rightView.frame = CGRectMake(0, 0, 40, 40);
-        _rightView.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        _rightView.backgroundColor = CCClearColor;
-        //        [_rightView setBackgroundImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
-        [_rightView setImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
-        [_rightView setImage:[UIImage imageNamed:@"face_hov"] forState:UIControlStateSelected];
-        [_rightView addTarget:self action:@selector(faceBoardClick) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _rightView;
-}
+//-(void)chatTextFieldChange {
+//    if(_chatTextField.text.length > 300) {
+//        _chatTextField.text = [_chatTextField.text substringToIndex:300];
+//    }
+//}
+////右侧视图
+//-(UIButton *)rightView {
+//    if(!_rightView) {
+//        _rightView = [UIButton buttonWithType:UIButtonTypeCustom];
+//        _rightView.frame = CGRectMake(0, 0, 40, 40);
+//        _rightView.imageView.contentMode = UIViewContentModeScaleAspectFit;
+//        _rightView.backgroundColor = CCClearColor;
+//        //        [_rightView setBackgroundImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
+//        [_rightView setImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
+//        [_rightView setImage:[UIImage imageNamed:@"face_hov"] forState:UIControlStateSelected];
+//        [_rightView addTarget:self action:@selector(faceBoardClick) forControlEvents:UIControlEventTouchUpInside];
+//    }
+//    return _rightView;
+//}
 //点击表情按钮
-- (void)faceBoardClick {
-    BOOL selected = !_rightView.selected;
-    _rightView.selected = selected;
-    
-    if(selected) {
-        [_chatTextField setInputView:self.emojiView];
-    } else {
-        [_chatTextField setInputView:nil];
-    }
-    
-    [_chatTextField becomeFirstResponder];
-    [_chatTextField reloadInputViews];
-}
-//表情视图
--(UIView *)emojiView {
-    if(!_emojiView) {
-        if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
-            _keyboardRect = CGRectMake(0, 0, SCREEN_WIDTH, 271);
-        }
-        _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
-        _emojiView.backgroundColor = CCRGBColor(242,239,237);
-        
-        CGFloat faceIconSize = CCGetRealFromPt(60);
-        CGFloat xspace = (_keyboardRect.size.width - FACE_COUNT_CLU * faceIconSize) / (FACE_COUNT_CLU + 1);
-        CGFloat yspace = (_keyboardRect.size.height - 26 - FACE_COUNT_ROW * faceIconSize) / (FACE_COUNT_ROW + 1);
-        
-        for (int i = 0; i < FACE_COUNT_ALL; i++) {
-            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            faceButton.tag = i + 1;
-            
-            [faceButton addTarget:self action:@selector(faceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            //            计算每一个表情按钮的坐标和在哪一屏
-            CGFloat x = (i % FACE_COUNT_CLU + 1) * xspace + (i % FACE_COUNT_CLU) * faceIconSize;
-            CGFloat y = (i / FACE_COUNT_CLU + 1) * yspace + (i / FACE_COUNT_CLU) * faceIconSize;
-            
-            faceButton.frame = CGRectMake(x, y, faceIconSize, faceIconSize);
-            faceButton.backgroundColor = CCClearColor;
-            [faceButton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%02d", i+1]]
-                        forState:UIControlStateNormal];
-            faceButton.contentMode = UIViewContentModeScaleAspectFit;
-            [_emojiView addSubview:faceButton];
-        }
-        //删除键
-        UIButton *button14 = (UIButton *)[_emojiView viewWithTag:14];
-        UIButton *button20 = (UIButton *)[_emojiView viewWithTag:20];
-        
-        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
-        back.contentMode = UIViewContentModeScaleAspectFit;
-        [back setImage:[UIImage imageNamed:@"chat_btn_facedel"] forState:UIControlStateNormal];
-        [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
-        [_emojiView addSubview:back];
-        
-        [back mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(button14);
-            make.centerY.mas_equalTo(button20);
-        }];
-    }
-    return _emojiView;
-}
-//点击删除键
-- (void) backFace {
-    NSString *inputString = _chatTextField.text;
-    if ( [inputString length] > 0) {
-        NSString *string = nil;
-        NSInteger stringLength = [inputString length];
-        if (stringLength >= FACE_NAME_LEN) {
-            string = [inputString substringFromIndex:stringLength - FACE_NAME_LEN];
-            NSRange range = [string rangeOfString:FACE_NAME_HEAD];
-            if ( range.location == 0 ) {
-                string = [inputString substringToIndex:[inputString rangeOfString:FACE_NAME_HEAD options:NSBackwardsSearch].location];
-            } else {
-                string = [inputString substringToIndex:stringLength - 1];
-            }
-        }
-        else {
-            string = [inputString substringToIndex:stringLength - 1];
-        }
-        _chatTextField.text = string;
-    }
-}
-//点击某个表情按钮
-- (void)faceButtonClicked:(id)sender {
-    NSInteger i = ((UIButton*)sender).tag;
-    
-    NSMutableString *faceString = [[NSMutableString alloc]initWithString:_chatTextField.text];
-    [faceString appendString:[NSString stringWithFormat:@"[em2_%02d]",(int)i]];
-    _chatTextField.text = faceString;
-}
+//- (void)faceBoardClick {
+//    BOOL selected = !_rightView.selected;
+//    _rightView.selected = selected;
+//
+//    if(selected) {
+//        [_chatTextField setInputView:self.emojiView];
+//    } else {
+//        [_chatTextField setInputView:nil];
+//    }
+//
+//    [_chatTextField becomeFirstResponder];
+//    [_chatTextField reloadInputViews];
+//}
+////表情视图
+//-(UIView *)emojiView {
+//    if(!_emojiView) {
+//        if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
+//            _keyboardRect = CGRectMake(0, 0, SCREEN_WIDTH, 271);
+//        }
+//        _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
+//        _emojiView.backgroundColor = CCRGBColor(242,239,237);
+//
+//        CGFloat faceIconSize = CCGetRealFromPt(60);
+//        CGFloat xspace = (_keyboardRect.size.width - FACE_COUNT_CLU * faceIconSize) / (FACE_COUNT_CLU + 1);
+//        CGFloat yspace = (_keyboardRect.size.height - 26 - FACE_COUNT_ROW * faceIconSize) / (FACE_COUNT_ROW + 1);
+//
+//        for (int i = 0; i < FACE_COUNT_ALL; i++) {
+//            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//            faceButton.tag = i + 1;
+//
+//            [faceButton addTarget:self action:@selector(faceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+//            //            计算每一个表情按钮的坐标和在哪一屏
+//            CGFloat x = (i % FACE_COUNT_CLU + 1) * xspace + (i % FACE_COUNT_CLU) * faceIconSize;
+//            CGFloat y = (i / FACE_COUNT_CLU + 1) * yspace + (i / FACE_COUNT_CLU) * faceIconSize;
+//
+//            faceButton.frame = CGRectMake(x, y, faceIconSize, faceIconSize);
+//            faceButton.backgroundColor = CCClearColor;
+//            [faceButton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%02d", i+1]]
+//                        forState:UIControlStateNormal];
+//            faceButton.contentMode = UIViewContentModeScaleAspectFit;
+//            [_emojiView addSubview:faceButton];
+//        }
+//        //删除键
+//        UIButton *button14 = (UIButton *)[_emojiView viewWithTag:14];
+//        UIButton *button20 = (UIButton *)[_emojiView viewWithTag:20];
+//
+//        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
+//        back.contentMode = UIViewContentModeScaleAspectFit;
+//        [back setImage:[UIImage imageNamed:@"chat_btn_facedel"] forState:UIControlStateNormal];
+//        [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
+//        [_emojiView addSubview:back];
+//
+//        [back mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.centerX.mas_equalTo(button14);
+//            make.centerY.mas_equalTo(button20);
+//        }];
+//    }
+//    return _emojiView;
+//}
+////点击删除键
+//- (void) backFace {
+//    NSString *inputString = _chatTextField.text;
+//    if ( [inputString length] > 0) {
+//        NSString *string = nil;
+//        NSInteger stringLength = [inputString length];
+//        if (stringLength >= FACE_NAME_LEN) {
+//            string = [inputString substringFromIndex:stringLength - FACE_NAME_LEN];
+//            NSRange range = [string rangeOfString:FACE_NAME_HEAD];
+//            if ( range.location == 0 ) {
+//                string = [inputString substringToIndex:[inputString rangeOfString:FACE_NAME_HEAD options:NSBackwardsSearch].location];
+//            } else {
+//                string = [inputString substringToIndex:stringLength - 1];
+//            }
+//        }
+//        else {
+//            string = [inputString substringToIndex:stringLength - 1];
+//        }
+//        _chatTextField.text = string;
+//    }
+//}
+////点击某个表情按钮
+//- (void)faceButtonClicked:(id)sender {
+//    NSInteger i = ((UIButton*)sender).tag;
+//
+//    NSMutableString *faceString = [[NSMutableString alloc]initWithString:_chatTextField.text];
+//    [faceString appendString:[NSString stringWithFormat:@"[em2_%02d]",(int)i]];
+//    _chatTextField.text = faceString;
+//}
 
 @end

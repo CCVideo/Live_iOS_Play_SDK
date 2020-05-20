@@ -240,7 +240,7 @@
     //选择答案的人数
     int result_1 = 0,result_2 = 0,result_3 = 0,result_4 = 0,result_5 = 0;
     //选择答案的百分比
-    float percent_1 = 0.0,percent_2 = 0.0,percent_3 = 0.0,percent_4 = 0.0,percent_5 = 0.0;
+    int percent_1 = 0,percent_2 = 0,percent_3 = 0,percent_4 = 0,percent_5 = 0;
     NSArray *array = self.resultDic[@"statisics"];
     //取出数组中的数据
     for(NSDictionary * dic in array) {
@@ -275,15 +275,15 @@
         }
         //设置统计柱状图和人数统计
         if(arrayCount >= 3) {
-            [self addProgressViewWithLeftStr:@"A:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_1,percent_1] index:1 percent:percent_1];
-            [self addProgressViewWithLeftStr:@"B:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_2,percent_2] index:2 percent:percent_2];
-            [self addProgressViewWithLeftStr:@"C:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_3,percent_3] index:3 percent:percent_3];
+            [self addProgressViewWithLeftStr:@"A:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_1,percent_1] index:1 percent:percent_1];
+            [self addProgressViewWithLeftStr:@"B:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_2,percent_2] index:2 percent:percent_2];
+            [self addProgressViewWithLeftStr:@"C:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_3,percent_3] index:3 percent:percent_3];
         }
         if(arrayCount >= 4) {
-            [self addProgressViewWithLeftStr:@"D:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_4,percent_4] index:4 percent:percent_4];
+            [self addProgressViewWithLeftStr:@"D:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_4,percent_4] index:4 percent:percent_4];
         }
         if(arrayCount >= 5) {
-            [self addProgressViewWithLeftStr:@"E:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_5,percent_5] index:5 percent:percent_5];
+            [self addProgressViewWithLeftStr:@"E:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_5,percent_5] index:5 percent:percent_5];
         }
     } else if(arrayCount == 2) {
         //设置自己的答案的图片
@@ -293,8 +293,8 @@
         [self setCheckingCorrectAnswerStyle];
         
         //添加统计图
-        [self addProgressViewWithLeftStr:@"√:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_1,percent_1] index:1 percent:percent_1];
-        [self addProgressViewWithLeftStr:@"X:" rightStr:[NSString stringWithFormat:@"%d人 (%0.1f%%)",result_2,percent_2] index:2 percent:percent_2];
+        [self addProgressViewWithLeftStr:@"√:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_1,percent_1] index:1 percent:percent_1];
+        [self addProgressViewWithLeftStr:@"X:" rightStr:[NSString stringWithFormat:@"%d人 (%d%%)",result_2,percent_2] index:2 percent:percent_2];
     }
 }
 #pragma mark - 设置UI布局

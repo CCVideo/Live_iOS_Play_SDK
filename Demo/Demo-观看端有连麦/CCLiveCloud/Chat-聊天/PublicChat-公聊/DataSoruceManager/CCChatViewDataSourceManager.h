@@ -27,7 +27,7 @@ typedef void(^InsertDanMuBlock)(CCPublicChatModel *model);//发送弹幕回调
 @interface CCChatViewDataSourceManager : NSObject
 
 @property (nonatomic, weak)id<CCChatViewDataSourceManagerDelegate> delegate;
-@property (nonatomic, strong) NSMutableArray * publicChatArray;//公聊数组
+@property (nonatomic, strong) NSMutableArray<CCPublicChatModel*> * publicChatArray;//公聊数组
 
 /**
  单例模式

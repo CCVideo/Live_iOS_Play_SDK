@@ -23,4 +23,5 @@
 #import "UILabel+Extension.h"
 #import "UIImage+Extension.h"
 #import "UIView+Extension.h"
+#import "ObjectExtension.h"
 #endif /* CCLiveCloud_pch */

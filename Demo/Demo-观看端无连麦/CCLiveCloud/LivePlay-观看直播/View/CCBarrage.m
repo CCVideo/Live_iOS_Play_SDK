@@ -21,11 +21,14 @@
 @property (nonatomic, assign) int times;
 @property (nonatomic, assign) int stopY;
 @property (nonatomic, assign) BarrageStyle barrageStyle;
+@property(nonatomic,assign)UIView * referenceView;
+
 @end
 
 @implementation CCBarrage
 
-- (instancetype)initWithVideoView:(UIView *)videoView barrageStyle:(BarrageStyle)barrageStyle{
+-(instancetype)initWithVideoView:(UIView *)videoView barrageStyle:(BarrageStyle)barrageStyle ReferenceView:(UIView *)referenceView
+{
     self = [super init];
     if (self) {
         self.barrageManager = [[OCBarrageManager alloc] init];
@@ -42,6 +45,12 @@
 -(void)insertBarrageMessage:(CCPublicChatModel *)model{
     
     UIView *superView = [self.barrageManager.renderView superview];
+    if (self.referenceView) {
+        [superView insertSubview:self.barrageManager.renderView belowSubview:self.referenceView];
+    }else{
+        [superView bringSubviewToFront:self.barrageManager.renderView];
+    }
+
     [superView bringSubviewToFront:self.barrageManager.renderView];
     
     /*  这里是有两个模版，模版一样式为:1.其他学生发送没有背景.

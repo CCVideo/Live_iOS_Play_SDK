@@ -81,13 +81,39 @@ typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
 
 /**
  *    @brief  历史聊天数据
+ *    @param  chatLogArr [{ chatId         //聊天ID
+                           content         //聊天内容
+                           groupId         //聊天组ID
+                           time            //时间
+                           userAvatar      //用户头像
+                           userId          //用户ID
+                           userName        //用户名称
+                           userRole        //用户角色}]
  */
 - (void)onChatLog:(NSArray *)chatLogArr;
 
-/**
- *    @brief  收到公聊消息
- */
+/*
+*  @brief  收到公聊消息
+  @param  message {   groupId         //聊天组ID
+                      msg             //消息内容
+                      time            //发布时间
+                      useravatar      //用户头像
+                      userid          //用户ID
+                      username        //用户名称
+                      userrole        //用户角色}
+*/
 - (void)onPublicChatMessage:(NSDictionary *)dic;
+/*
+ *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
+   @param  message {   groupId         //聊天组ID
+                       msg             //消息内容
+                       time            //发布时间
+                       useravatar      //用户头像
+                       userid          //用户ID
+                       username        //用户名称
+                       userrole        //用户角色}
+ */
+- (void)onBanDeleteChatMessage:(NSDictionary *)dic;
 
 /**
  *  @brief  接收到发送的广播
@@ -110,17 +136,47 @@ typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
 
 /**
  *    @brief  收到提问，用户观看时和主讲的互动问答信息
+ *    @param  questionDic { groupId         //分组ID
+                            content         //问答内容
+                            userName        //问答用户名
+                            userId          //问答用户ID
+                            time            //问答时间
+                            id              //问答主键ID
+                            useravatar      //用户化身 }
  */
 - (void)onQuestionDic:(NSDictionary *)questionDic;
 
 /**
  *    @brief  收到回答
+ *    @param  answerDic {content            //回复内容
+                         userName           //用户名
+                         questionUserId     //问题用户ID
+                         time               //回复时间
+                         questionId         //问题ID
+                         isPrivate          //1 私聊回复 0 公聊回复}
  */
 - (void)onAnswerDic:(NSDictionary *)answerDic;
 
 /**
- *    @brief  收到提问&回答
- */
+*    @brief  收到历史提问&回答
+*    @param  questionArr [{content             //问答内容
+                           encryptId           //加密ID
+                           groupId             //分组ID
+                           isPublish           //1 发布的问答 0 未发布的问答
+                           questionUserId      //问答用户ID
+                           questionUserName    //问答用户名
+                           time                //问答时间
+                           triggerTime         //问答具体时间}]
+*    @param  answerArr  [{answerUserId         //回复用户ID
+                          answerUserName       //回复名
+                          answerUserRole       //回复角色（主讲、助教）
+                          content              //回复内容
+                          encryptId            //加密ID
+                          groupId              //分组ID
+                          isPrivate            //1 私聊回复 0 公共回复
+                          time = 135;          //回复时间
+                          triggerTime          //回复具体时间}]
+*/
 - (void)onQuestionArr:(NSArray *)questionArr onAnswerArr:(NSArray *)answerArr;
 
 //主动调用方法

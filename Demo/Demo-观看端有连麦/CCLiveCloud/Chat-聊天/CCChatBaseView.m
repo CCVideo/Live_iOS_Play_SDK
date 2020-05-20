@@ -123,11 +123,11 @@
             return;
         }
         [self.publicTableView reloadData];
-        [self.publicTableView.mj_header endRefreshing];
     }else{
 //        NSLog(@"没有更多数据了");
         [self.publicTableView.mj_header endRefreshing];
     }
+    [self.publicTableView.mj_header endRefreshing];
 }
 //公聊数组
 -(NSMutableArray *)publicChatArray {
@@ -370,6 +370,7 @@
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.publicTableView.mj_header beginRefreshing];
         [self.publicTableView reloadData];
         [self.publicTableView setContentOffset:CGPointMake(0, self.publicTableView.contentSize.height -self.publicTableView.bounds.size.height) animated:YES];
         //防止越界

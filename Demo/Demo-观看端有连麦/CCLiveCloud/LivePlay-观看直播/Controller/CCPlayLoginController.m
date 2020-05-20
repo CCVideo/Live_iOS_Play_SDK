@@ -8,7 +8,6 @@
 
 #import "CCPlayLoginController.h"
 #import "TextFieldUserInfo.h"
-#import "CCSDK/CCLiveUtil.h"
 #import "CCSDK/RequestData.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
@@ -31,6 +30,7 @@
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserName;//用户名
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserPassword;//密码
 @property (nonatomic, strong)InformationShowView  * informationView;//提示
+@property (nonatomic, assign)BOOL                  isShowTipView;//是否已显示输入过长提示框
 @end
 
 @implementation CCPlayLoginController
@@ -70,9 +70,8 @@
     [super viewWillDisappear:animated];
 }
 #pragma mark- 点击登录
-
 /**
- 点击登陆按钮
+ *    @brief    点击登陆按钮
  */
 -(void)loginAction {
     [self.view endEditing:YES];
@@ -88,7 +87,6 @@
         [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
         }];
-        
         [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
         return;
     }
@@ -99,7 +97,7 @@
     [self integrationSDK];
 }
 /**
- 配置SDK
+ *    @brief    配置SDK
  */
 -(void)integrationSDK{
     PlayParameter *parameter = [[PlayParameter alloc] init];
@@ -107,13 +105,26 @@
     parameter.roomId = self.textFieldRoomId.text;//roomId
     parameter.viewerName = self.textFieldUserName.text;//观看者昵称
     parameter.token = self.textFieldUserPassword.text;//登陆密码
-    parameter.security = YES;//是否使用https
+    parameter.security = YES;//是否使用https (已弃用)
     parameter.viewerCustomua = @"viewercustomua";//自定义参数
     RequestData *requestData = [[RequestData alloc] initLoginWithParameter:parameter];
     requestData.delegate = self;
 }
 /**
- 用户名过长提示
+*    @brief    显示昵称长图超出20字提示窗
+*/
+- (void)showTipView
+{
+    _isShowTipView = YES;
+    CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:USERNAME_CONFINE sureAction:@"好的" cancelAction:nil sureBlock:^{
+        _isShowTipView = NO;
+        [self.view endEditing:YES];
+    }];
+    [APPDelegate.window addSubview:alertView];
+}
+
+/**
+ *    @brief    用户名过长提示
  */
 -(void)showInformationView{
     [_informationView removeFromSuperview];
@@ -125,7 +136,7 @@
     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
 }
 /**
- 添加正在登录提示视图
+ *    @brief    添加正在登录提示视图
  */
 -(void)showLoadingView{
     _loadingView = [[LoadingView alloc] initWithLabel:LOGIN_LOADING centerY:NO];
@@ -137,7 +148,6 @@
     [_loadingView layoutIfNeeded];
 }
 #pragma mark- 必须实现的代理方法RequestDataDelegate
-
 //@optional
 /**
  *    @brief    请求成功
@@ -187,7 +197,7 @@
 }
 #pragma mark - 导航栏按钮点击事件
 /**
- 点击返回按钮
+ *    @brief    点击返回按钮
  */
 - (void)onSelectVC {
     [self.navigationController popViewControllerAnimated:NO];
@@ -246,18 +256,53 @@
 /**
  userName输入框长度改变
  */
--(void)userNameTextFieldChange {
-    if(_textFieldUserName.text.length > 20) {
-                [self.view endEditing:YES];
-        _textFieldUserName.text = [_textFieldUserName.text substringToIndex:20];
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:USERNAME_CONFINE];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-        //2秒后移除提示视图
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
+- (void)textFieldEditChanged:(UITextField *)textField
+{
+    if (textField.markedTextRange == nil)//点击完选中的字之后
+    {
+        if (textField.text.length > 20) {
+            if (_isShowTipView == NO) {
+                [self showTipView];
+            }
+        }
+    }
+    else//没有点击出现的汉字,一直在点击键盘
+    {
+        if (textField.text.length > 59) { //相当于20个字符
+        
+        }
+    }
+    NSString *lang = [textField textInputMode].primaryLanguage;
+    if ([lang isEqualToString:@"zh-Hans"]) {
+        //输入简体中文内容
+        //获取高亮部分，如拼音
+        UITextRange *selectedRange = [textField markedTextRange];
+        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
+        if (!position) {
+            [self handleTextFieldCharLength:textField];
+        }
+    }
+    else{
+        //输入简体中文以外的内容
+        [self handleTextFieldCharLength:textField];
+    }
+}
+
+- (void)handleTextFieldCharLength:(UITextField *)textField
+{
+    NSString *toBeString = textField.text;
+    if (textField.text.length > 20) {
+        //获取超过50最大字符数的多余字符range
+        NSRange rangeIndex = [toBeString rangeOfComposedCharacterSequenceAtIndex:20];
+        if (rangeIndex.length == 1){
+            //如果多余字符的length = 1，则直接截取最大字符数
+            textField.text = [toBeString substringToIndex:20];
+        }
+        else{
+            //如果多余字符的length > 1，则截取位置为（0.50），按输入内容单位截取
+            NSRange rangeRange = [toBeString rangeOfComposedCharacterSequencesForRange:NSMakeRange(0, 20)];
+            textField.text = [toBeString substringWithRange:rangeRange];
+        }
     }
 }
 
@@ -267,7 +312,7 @@
     return YES;
 }
 
-- (void) textFieldDidChange:(UITextField *) TextField {
+- (void)textFieldDidChange:(UITextField *) TextField {
     if(StrNotEmpty(_textFieldUserId.text) && StrNotEmpty(_textFieldRoomId.text) && StrNotEmpty(_textFieldUserName.text)) {
         self.loginBtn.enabled = YES;
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,1) CGColor]];
@@ -276,6 +321,7 @@
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,0.6) CGColor]];
     }
 }
+
 #pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -337,7 +383,7 @@
     [self.view addSubview:self.informationLabel];
     [self.view addSubview:self.loginBtn];
     
-    [self.textFieldUserName addTarget:self action:@selector(userNameTextFieldChange) forControlEvents:UIControlEventEditingChanged];
+    [self.textFieldUserName addTarget:self action:@selector(textFieldEditChanged:) forControlEvents:UIControlEventEditingChanged];
     //直播间信息
     [self.informationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.view).with.offset(CCGetRealFromPt(40));

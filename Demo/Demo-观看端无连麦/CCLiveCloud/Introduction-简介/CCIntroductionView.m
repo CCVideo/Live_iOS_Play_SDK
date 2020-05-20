@@ -7,7 +7,7 @@
 //
 
 #import "CCIntroductionView.h"
-
+#import <WebKit/WebKit.h>
 
 @interface CCIntroductionView ()<UIScrollViewDelegate>
 
@@ -104,10 +104,12 @@
         make.width.mas_equalTo(2);
     }];
     
-    //添加webView,加载简介
-    UIWebView * web = [[UIWebView alloc] init];
+   
+    WKWebView *web = [[WKWebView alloc] init];
     web.backgroundColor = [UIColor whiteColor];
     web.scrollView.showsHorizontalScrollIndicator = NO;
+    web.scrollView.showsVerticalScrollIndicator = NO;
+    web.scrollView.bouncesZoom = NO;
     web.opaque = NO;
     [self addSubview:web];
     [web mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -115,11 +117,11 @@
         make.top.equalTo(titleLabel.mas_bottom).offset(10);
         make.bottom.equalTo(self);
     }];
-    self.roomDesc = [NSString stringWithFormat:@"<head ><style type=\"text/css\" >img{height: auto;max-width: 100%%;max-height: 100%%;}</style></head ><body style=\"word-wrap:break-word;\"> <div style= \" width:%fpx\">%@ </div> </body>", SCREEN_WIDTH,self.roomDesc];
-    [web loadHTMLString:self.roomDesc baseURL:nil];
-
+    
+    NSString *headerString = @"<header><meta name='viewport' content='width=device-width, user-scalable=no'><style>img{max-width:100% !important; height:auto!important;}</style></header>";
+//    NSString *headerString = [NSString stringWithFormat:@"<header><meta name='viewport' content='width=%f, user-scalable=no'><style>img{max-width:100%% !important; height:auto!important;}</style></header>",SCREEN_WIDTH];
+     [web loadHTMLString:[headerString stringByAppendingString:self.roomDesc] baseURL:nil];
 }
-
 
 
 @end

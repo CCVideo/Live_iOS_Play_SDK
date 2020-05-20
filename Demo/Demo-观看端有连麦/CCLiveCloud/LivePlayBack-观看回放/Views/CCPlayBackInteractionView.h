@@ -86,6 +86,23 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark- 问答
 /**
  *    @brief  收到提问&回答
+ *    @param  questionArr [{content             //问答内容
+                            encryptId           //加密ID
+                            groupId             //分组ID
+                            isPublish           //1 发布的问答 0 未发布的问答
+                            questionUserId      //问答用户ID
+                            questionUserName    //问答用户名
+                            time                //问答时间
+                            triggerTime         //问答具体时间}]
+ *    @param  answerArr  [{answerUserId         //回复用户ID
+                           answerUserName       //回复名
+                           answerUserRole       //回复角色（主讲、助教）
+                           content              //回复内容
+                           encryptId            //加密ID
+                           groupId              //分组ID
+                           isPrivate            //1 私聊回复 0 公共回复
+                           time = 135;          //回复时间
+                           triggerTime          //回复具体时间}]
  */
 - (void)onParserQuestionArr:(NSArray *)questionArr onParserAnswerArr:(NSArray *)answerArr;
 

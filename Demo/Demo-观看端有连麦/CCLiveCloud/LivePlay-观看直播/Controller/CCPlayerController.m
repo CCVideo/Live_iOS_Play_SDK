@@ -27,6 +27,7 @@
 #import "CCClassTestView.h"//随堂测
 #import "CCCupView.h"//奖杯
 #import "CCPunchView.h"
+#import <HDMarqueeTool/HDMarqueeTool.h>
 //#ifdef LockView
 #import "CCLockView.h"//锁屏界面
 //#endif
@@ -86,7 +87,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 @property (nonatomic,assign)BOOL                     screenLandScape;//横屏
 @property (nonatomic,assign)BOOL                     isHomeIndicatorHidden;//隐藏home条
 @property (nonatomic,assign)NSInteger                firRoadNum;//房间线路
-@property (nonatomic,strong)NSMutableArray           * secRoadKeyArray;//清晰度数组
+@property (nonatomic,strong)NSMutableArray           *secRoadKeyArray;//清晰度数组
 @property (nonatomic,assign)BOOL                     firstUnStart;//第一次进入未开始直播
 @property (nonatomic,assign)BOOL                     pauseInBackGround;//后台播放是否暂停
 
@@ -94,9 +95,13 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 @property (nonatomic,assign)BOOL                     isSmallDocView;//是否是文档小窗模式
 @property (nonatomic,strong)UIView                   *onceDocView;//临时DocView(双击ppt进入横屏调用)
 @property (nonatomic,strong)UIView                   *oncePlayerView;//临时playerView(双击ppt进入横屏调用)
-@property (nonatomic,strong)UILabel                  *label;
-@property (nonatomic,strong)MPVolumeView               *volumeView;
-@property (nonatomic,assign)CGFloat    jjjj;
+//@property (nonatomic,strong)UILabel                  *label;
+@property (nonatomic, assign)BOOL                    openmarquee;//跑马灯开启
+@property (nonatomic,strong)HDMarqueeView            * marqueeView;//跑马灯
+@property (nonatomic,strong)NSDictionary             * jsonDict;//跑马灯数据
+@property (nonatomic,assign)BOOL                     isLivePlay;//直播间是否已开启
+@property (nonatomic,assign)NSInteger                documentDisplayMode; //适应文档 1 适应窗口  2适应屏幕 开启滚动
+
 @end
 @implementation CCPlayerController
 //初始化
@@ -114,9 +119,37 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
     _pauseInBackGround = NO;
+    _isLivePlay = NO;
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
+//    UIButton *btn = [[UIButton alloc] init];
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(100, 100, 100, 100);
+//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
+//    self.jjjj = 0;
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 100, 200, 100);
+//
+
+}
+- (void)broadcastLast_msg:(NSArray *)array {
+    
+}
+- (void)onLivePlayedTime:(NSDictionary *)dic {
+    NSLog(@"数据是%@",dic);
+}
+-(void)videoStateChangeWithString:(NSString *) result {
+//    NSLog(@"状态%@",result);
+}
+- (void)changedoc {
+//    [self.requestData changeDocWebColor:@"#000000"];
+    [_requestData getLivePlayedTime];
+//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
+//    [_requestData getOnlineTeachers];
+//    [self onBanDeleteChat:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -126,12 +159,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self removeObserver];//移除通知
-    
-}
-//获取视频截图
-- (void)thumbnailImageAtCurrentTime {
-   UIImage *image =  [self.requestData.ijkPlayer thumbnailImageAtCurrentTime];
-    NSLog(@"获取视频截图%@",image);
 }
 /**
  创建UI
@@ -173,9 +200,10 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     parameter.scalingMode = 1;//屏幕适配方式
     parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
     parameter.viewerCustomua = @"viewercustomua";//自定义参数,没有的话这么写就可以
-    parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+//    parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+    parameter.pptInteractionEnabled = YES;
     parameter.DocModeType = 0;//设置当前的文档模式
-//    parameter.DocShowType = 1; 
+//    parameter.DocShowType = 1;
 //    parameter.groupid = _contentView.groupId;//用户的groupId
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;
@@ -188,6 +216,23 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)sendChatMessageWithStr:(NSString *)str {
     [_requestData chatMessage:str];
+//    [_requestData sendChatMessage:str completion:^(BOOL success) {
+//        NSString * str;
+//        if (success == YES) {
+////            NSLog(@"发送成功");
+//            str =@"发送成功";
+//        } else {
+////            NSLog(@"发送失败");
+//             str =@"发送失败";
+//        }
+//        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
+//
+//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//
+//        }];
+//        [alertController addAction:okAction];
+//        [self presentViewController:alertController animated:YES completion:nil];
+//    }];
 }
 /**
  切换线路
@@ -258,12 +303,24 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [_requestData changePlayerParent:self.playerView.smallVideoView];
         [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestData changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        //切换大窗文档时候 文档能拖动
+        UIView *view = [self.playerView.subviews lastObject];
+        if (_documentDisplayMode == 2) {
+            view.userInteractionEnabled = YES;
+        }else {
+            view.userInteractionEnabled = NO;
+        }
+        
     }else{
         [_requestData changeDocParent:self.playerView.smallVideoView];
         [_requestData changePlayerParent:self.playerView];
         [_requestData changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestData changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        //切换小窗文档时候 文档不能拖动
+        UIView *view = [self.playerView.smallVideoView.subviews lastObject];
+        view.userInteractionEnabled = NO;
     }
+    [self.playerView bringSubviewToFront:self.marqueeView];
 }
 /**
  点击全屏按钮代理
@@ -280,12 +337,15 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     } else {
         [_requestData changeDocFrame:self.view.frame];
     }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.marqueeView startMarquee];
+    });
 }
+
 /**
- 点击退出按钮(返回竖屏或者结束直播)
- 
- @param sender backBtn
- @param tag changeBtn的标记，1为视频为主，2为文档为主
+ *    @brief    点击退出按钮(返回竖屏或者结束直播)
+ *    @param    sender backBtn
+ *    @param tag changeBtn的标记，1为视频为主，2为文档为主
  */
 - (void)backButtonClick:(UIButton *)sender changeBtnTag:(NSInteger)tag{
     if (sender.tag == 2) {//横屏返回竖屏
@@ -295,10 +355,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         } else {
             [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
         }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.marqueeView startMarquee];
+        });
     }else if( sender.tag == 1){//结束直播
         [self creatAlertController_alert];
 //        [self dismissViewControllerAnimated:YES completion:nil];
-
     }
 }
 //隐藏其他视图,当点击全屏和退出全屏时调用此方法
@@ -380,26 +442,33 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark- 功能代理方法 用哪个实现哪个-----
 
 /**
- 双击ppt
+ *    @brief    双击PPT
  */
 -(void)doubleCllickPPTView{
     if (_screenLandScape) {//如果是横屏状态下
         _screenLandScape = NO;
         _isScreenLandScape = YES;
-        [self interfaceOrientation:UIInterfaceOrientationPortrait];
-        [UIApplication sharedApplication].statusBarHidden = NO;
-        _isScreenLandScape = NO;
+        
+        // 新增方法 --> 处理全屏双击PPT退出全屏操作，统一由PlayView管理
+        // 注：该方法不影响连麦操作
+        [_playerView backBtnClickWithTag:2];
+        
+//        [self interfaceOrientation:UIInterfaceOrientationPortrait];
+//        [UIApplication sharedApplication].statusBarHidden = NO;
+//        _isScreenLandScape = NO;
         
         /**    移除临时的_onceDocView和_oncePlayerView，并且显示互动视图和视频视图  */
-        _contentView.hidden = NO;
-        [_onceDocView removeFromSuperview];
-        _playerView.hidden = NO;
-        [_oncePlayerView removeFromSuperview];
+//        _contentView.hidden = NO;
+//        [_onceDocView removeFromSuperview];
+//        _playerView.hidden = NO;
+//        [_oncePlayerView removeFromSuperview];
+//
+//        [_requestData changePlayerParent:_playerView];
+//        [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+//
+//        [_requestData changeDocParent:_contentView.docView];
+//        [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
         
-        [_requestData changePlayerParent:_playerView];
-        [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
-        [_requestData changeDocParent:_contentView.docView];
-        [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
         //#ifdef LIANMAI_WEBRTC
         if([_playerView exsitRmoteView]) {
             [_playerView removeRmoteView];
@@ -416,22 +485,34 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [UIApplication sharedApplication].statusBarHidden = YES;
         _isScreenLandScape = NO;
         
+        // 新增方法 --> 处理双击PPT进入全屏操作，统一由PlayView管理
+        // 注：该方法不影响连麦操作
+        [_playerView quanpingBtnClick];
+        
+        
         /**    创建临时的_onceDocView和_oncePlayerView，并且隐藏互动视图和视频视图  */
-        _contentView.hidden = YES;
-        _playerView.hidden = YES;
+//        _contentView.hidden = YES;
+//        _playerView.hidden = YES;
+//
+//        // 临时文档View
+//        _onceDocView = [[UIView alloc] init];
+//        _onceDocView.frame = [UIScreen mainScreen].bounds;
+//        [self.view addSubview:_onceDocView];
+//
+//        // 临时视频
+//        _oncePlayerView = [[UIView alloc] init];
+////        _oncePlayerView.frame = CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152));
+//        // 新增修改
+//        _oncePlayerView.frame = CGRectMake(self.view.frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150));
+//
+//        [self.view addSubview:_oncePlayerView];
+//
+//        [_requestData changeDocParent:_onceDocView];
+//        [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
+//        [_requestData changePlayerParent:_oncePlayerView];
+//        [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
         
-        _onceDocView = [[UIView alloc] init];
-        _onceDocView.frame = [UIScreen mainScreen].bounds;
-        [self.view addSubview:_onceDocView];
         
-        _oncePlayerView = [[UIView alloc] init];
-        _oncePlayerView.frame = CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152));
-        [self.view addSubview:_oncePlayerView];
-        
-        [_requestData changeDocParent:_onceDocView];
-        [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
-        [_requestData changePlayerParent:_oncePlayerView];
-        [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
         //#ifdef LIANMAI_WEBRTC
         if([_playerView exsitRmoteView]) {
             [_playerView removeRmoteView];
@@ -443,6 +524,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         //#endif
     }
 }
+
 #pragma mark- 房间信息
 /**
  *    @brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
@@ -458,14 +540,16 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 -(void)roomInfo:(NSDictionary *)dic {
     _roomName = dic[@"name"];
-    
+    self.openmarquee = [dic[@"openMarquee"] boolValue];
     //添加更多菜单
     [APPDelegate.window addSubview:self.menuView];
-    self.playerView.titleLabel.text = _roomName;
+    [self.playerView roominfo:dic];
     NSInteger type = [dic[@"templateType"] integerValue];
     if (type == 4 || type == 5) {
         [self.playerView addSmallView];
     }
+    //适应文档 1 适应窗口  2适应屏幕 开启滚动
+    _documentDisplayMode = [dic[@"documentDisplayMode"] integerValue];
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
     _playerView.templateType = type;
@@ -599,6 +683,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)onPublicChatMessage:(NSDictionary *)dic {
     [_contentView onPublicChatMessage:dic];
+    NSLog(@"收到公聊%@",dic);
 }
 /**
  *  @brief  接收到发送的广播
@@ -686,6 +771,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)getPlayStatue:(NSInteger)status {
     [_playerView getPlayStatue:status];
+    //直播状态
+    _isLivePlay = status == 0 ? YES : NO;
     if (status == 0 && self.firstUnStart) {
         NSDate *date = [NSDate date];// 获得时间对象
         NSDateFormatter *forMatter = [[NSDateFormatter alloc] init];
@@ -721,6 +808,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  *    @brief  停止直播，endNormal表示是否停止推流
  */
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal {
+    _isLivePlay = NO; //直播停止
     if (self.punchView) {
         [self removePunchView];
     }
@@ -743,6 +831,14 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     NSString *str = ALERT_BANCHAT(mode == 1);
     //添加禁言弹窗
     [self addBanAlertView:str];
+}
+-(void)onBanDeleteChat:(NSDictionary *)viewerDic {
+//    NSDictionary * dict = [[NSDictionary alloc]initWithObjectsAndKeys:
+//                                @"30b7184b53194374bb9c8f69d3851323",@"viewerId",
+//                                nil];
+    [_contentView onBanDeleteChatMessage:viewerDic];
+
+//    NSLog(@"结果是%@",dict);
 }
 /**
  *    @brief    收到解除禁言事件(The new method)
@@ -824,6 +920,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 /**
  *  @brief  获取问卷详细内容
+ *  @param  detailDic {
+            forcibly               //1就是强制答卷，0为非强制答卷
+            id                     //问卷主键ID
+            subjects               //包含的项目
+            submitedAction         //1提交后查看答案，0为提交后不查看答案
+            title                  //标题 }
  */
 - (void)questionnaireDetailInformation:(NSDictionary *)detailDic {
     [self.view endEditing:YES];
@@ -858,6 +960,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 /**
  *  @brief  获取问卷统计
+ *  @param  staticsDic {
+            forcibly               //1就是强制答卷，0为非强制答卷
+            id                     //问卷主键ID
+            subjects               //包含的项目
+            submitedAction         //1提交后查看答案，0为提交后不查看答案
+            title                  //标题 }
  */
 - (void)questionnaireStaticsInformation:(NSDictionary *)staticsDic {
     [self.view endEditing:YES];
@@ -920,6 +1028,16 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 /**
   *  @brief  答题结果
+  *  @param  resultDic {answerCount         //参与回答人数
+                        correctOption       //正确答案 (单选字符串，多选字符串数组)
+                        statisics[{         //统计数组
+                                    count   //选择当前选项人数
+                                    option  //选项序号
+                                    percent //正确率
+                                    }]
+                        voteCount           //题目数量
+                        voteId              //题目ID
+                        voteType            //题目类型}
   */
 - (void)vote_result:(NSDictionary *)resultDic{
     [self removeVoteView];
@@ -927,6 +1045,100 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     _voteViewResult = voteViewResult;
     //添加答题结果
     [self addAlerView:self.voteViewResult];
+}
+#pragma mark - 跑马灯
+/**
+ *    @brief    跑马灯
+ *    @param    dic action  [{                      //事件
+                                duration            //执行时间
+                                end {               //结束位置
+                                        alpha       //透明度
+                                        xpos        //x坐标
+                                        ypos        //y坐标 },
+                                start {             //开始位置
+                                        alpha       //透明度
+                                        xpos        //x坐标
+                                        ypos        //y坐标}]
+                    image {                         //包含图片
+                                height              //图片高度
+                                image_url           //地址
+                                width               //图片宽度}
+                    loop                            //循环次数 -1 无限循环
+                    text   {                        //文字信息
+                                 color              //文字颜色
+                                 content            //文字内容
+                                 font_size          //字体大小}
+                    type                            //当前类型 text 文本 image 图片
+ */
+- (void)receivedMarqueeInfo:(NSDictionary *)dic {
+    if (dic == nil || self.openmarquee == NO) {
+        return;
+    }
+    self.jsonDict = dic;
+    {
+
+        CGFloat width = 0.0;
+        CGFloat height = 0.0;
+        self.marqueeView = [[HDMarqueeView alloc]init];
+        HDMarqueeViewStyle style = [[self.jsonDict objectForKey:@"type"] isEqualToString:@"text"] ? HDMarqueeViewStyleTitle : HDMarqueeViewStyleImage;
+        self.marqueeView.style = style;
+        self.marqueeView.repeatCount = [[self.jsonDict objectForKey:@"loop"] integerValue];
+        if (style == HDMarqueeViewStyleTitle) {
+            NSDictionary * textDict = [self.jsonDict objectForKey:@"text"];
+            NSString * text = [textDict objectForKey:@"content"];
+            UIColor * textColor = [UIColor colorWithHexString:[textDict objectForKey:@"color"] alpha:1.0f];
+            UIFont * textFont = [UIFont systemFontOfSize:[[textDict objectForKey:@"font_size"] floatValue]];
+            
+            self.marqueeView.text = text;
+            self.marqueeView.textAttributed = @{NSFontAttributeName:textFont,NSForegroundColorAttributeName:textColor};
+            CGSize textSize = [self.marqueeView.text calculateRectWithSize:CGSizeMake(SCREEN_WIDTH, SCREENH_HEIGHT) Font:textFont WithLineSpace:0];
+            width = textSize.width;
+            height = textSize.height;
+            
+        }else{
+            NSDictionary * imageDict = [self.jsonDict objectForKey:@"image"];
+            NSURL * imageURL = [NSURL URLWithString:[imageDict objectForKey:@"image_url"]];
+            self.marqueeView.imageURL = imageURL;
+            width = [[imageDict objectForKey:@"width"] floatValue];
+            height = [[imageDict objectForKey:@"height"] floatValue];
+
+        }
+        self.marqueeView.frame = CGRectMake(0, 0, width, height);
+        //处理action
+        NSArray * setActionsArray = [self.jsonDict objectForKey:@"action"];
+        
+        NSMutableArray <HDMarqueeAction *> * actions = [NSMutableArray array];
+        for (int i = 0; i < setActionsArray.count; i++) {
+            NSDictionary * actionDict = [setActionsArray objectAtIndex:i];
+            CGFloat duration = [[actionDict objectForKey:@"duration"] floatValue];
+            NSDictionary * startDict = [actionDict objectForKey:@"start"];
+            NSDictionary * endDict = [actionDict objectForKey:@"end"];
+
+            HDMarqueeAction * marqueeAction = [[HDMarqueeAction alloc]init];
+            marqueeAction.duration = duration;
+            marqueeAction.startPostion.alpha = [[startDict objectForKey:@"alpha"] floatValue];
+            marqueeAction.startPostion.pos = CGPointMake([[startDict objectForKey:@"xpos"] floatValue], [[startDict objectForKey:@"ypos"] floatValue]);
+            marqueeAction.endPostion.alpha = [[endDict objectForKey:@"alpha"] floatValue];
+            marqueeAction.endPostion.pos = CGPointMake([[endDict objectForKey:@"xpos"] floatValue], [[endDict objectForKey:@"ypos"] floatValue]);
+            
+            [actions addObject:marqueeAction];
+        }
+        
+        self.marqueeView.actions = actions;
+        self.marqueeView.fatherView = self.playerView;
+        self.playerView.layer.masksToBounds = YES;
+
+        }
+    
+}
+#pragma  mark - 文档加载状态
+-(void)docLoadCompleteWithIndex:(NSInteger)index {
+     if (index == 0) {
+             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                 [self.playerView addSubview:self.marqueeView];
+                 [self.marqueeView startMarquee];
+             });
+        }
 }
 #pragma mark - 公告
 /**
@@ -938,6 +1150,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 /**
  *  @brief  监听到有公告消息
+ *  @dict   {action         //action 返回release 取出公告内容，action 返回remove 删除公告
+             announcement   //公告内容}
  */
 - (void)on_announcement:(NSDictionary *)dict{
     //如果当前不在公告页面,提示有新公告
@@ -955,8 +1169,18 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 #pragma mark - 随堂测
 /**
- *    @brief    接收到随堂测(The new method)
+ *    @brief       接收到随堂测(The new method)
  *    rseultDic    随堂测内容
+      resultDic    {isExist                         //1 随堂考存在 0随堂考不存在
+                    practice {id                    //随堂考主键ID
+                              isAnswered            //false 未回答过 true 回答过
+                              options = ({ id       //选项主键ID
+                                           index    //选项序号})
+                              publishTime           //发布时间
+                              status                //发布状态 1开启 0关闭
+                              type                  //题目类型 0判断 1单选 2多选}
+                    serverTime                      //分发时间}
+ *
  */
 -(void)receivePracticeWithDic:(NSDictionary *) resultDic{
     if ([resultDic[@"isExist"] intValue] == 0) {
@@ -983,6 +1207,19 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 /**
  *    @brief    随堂测提交结果(The new method)
  *    rseultDic    提交结果,调用commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options后执行
+ *
+      resultDic {datas {practice                                 //随堂测
+                             { answerResult                      //
+                               id                                //随堂测主键ID
+                               isRepeatAnswered                  //是否重置答案
+                               options ({  count                 //参与人数
+                                             id                  //选项主键ID
+                                             index               //选项序号
+                                             isCorrect           //是否正确
+                                             percent             //选项占比})
+                               submitRecord ({ optionId          //提交记录 提交选项ID
+                                               optionIndex       //提交选项序号})
+                               type                              //题型 0 判断 1单选 2多选}}}
  */
 -(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic{
     [_testView practiceSubmitResultsWithDic:resultDic];
@@ -991,6 +1228,19 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 /**
  *    @brief    随堂测统计结果(The new method)
  *    rseultDic    统计结果,调用getPracticeStatisWithPracticeId:(NSString *)practiceId后执行
+      resultDic  {practice {                                //随堂测
+                            answerPersonNum                 //回答人数
+                            correctPersonNum                //回答正确人数
+                            correctRate                     //正确率
+                            id                              //随堂测主键ID
+                            options ({                      //选项数组
+                                        count               //选择人数
+                                        id                  //选项ID
+                                        index               //选项序号
+                                        isCorrect           //是否正确
+                                        percent             //选项选择率})
+                            status                          //状态
+                            type                            //题型 0判断 1单选 2多选}}
  */
 -(void)practiceStatisResultsWithDic:(NSDictionary *) resultDic{
     if (_testView) {
@@ -1002,13 +1252,17 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 /**
  *    @brief    停止随堂测(The new method)
  *    rseultDic    结果
+ *    resultDic {practiceId //随堂测主键ID}
  */
 -(void)practiceStopWithDic:(NSDictionary *) resultDic{
     [_testView stopTest];
+    [self.requestData getPracticeRankWithPracticeId:resultDic[@"practiceId"]];
+
 }
 /**
  *    @brief    关闭随堂测(The new method)
  *    rseultDic    结果
+ *    resultDic {practiceId //随堂测主键ID}
  */
 -(void)practiceCloseWithDic:(NSDictionary *) resultDic{
     //移除随堂测视图
@@ -1019,6 +1273,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  *    @brief    收到奖杯(The new method)
  *    dic       结果
  *    "type":  1 奖杯 2 其他
+ *    "viewerName": 获奖用户名
+ *    "viewerId": 获奖用户ID
  */
 -(void)prize_sendWithDict:(NSDictionary *)dic{
     NSString *name = @"";
@@ -1057,6 +1313,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  *  @brief 主播端接受连麦请求，在此代理方法中，要调用DequestData对象的
  *  - (void)saveUserInfo:(NSDictionary *)dict remoteView:(UIView *)remoteView;方法
  *  把收到的字典参数和远程连麦页面的view传进来，这个view需要自己设置并发给SDK，SDK将要在这个view上进行渲染
+ *
+     publisherId = "";
+     type = audiovideo;
+     videosize = 320x240;
+     viewerId = 188bc6e67041459e807b5ad1ddbe0d9c;
+     viewerName = A;
  */
 - (void)acceptSpeak:(NSDictionary *)dict {
     [self.playerView acceptSpeak:dict];
@@ -1156,6 +1418,11 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification
 {
+//    NSLog(@"播放时间1aaa%lld,%lld",_requestData.ijkPlayer.videoCachedBytes,_requestData.ijkPlayer.videoCachedDuration);
+    if (_requestData.ijkPlayer.videoCachedBytes == 0 && _requestData.ijkPlayer.videoCachedDuration == 0) {
+//        NSLog(@"主播端异常退出");
+    }
+
     //    IJKMPMoviePlaybackStateStopped,
     //    IJKMPMoviePlaybackStatePlaying,
     //    IJKMPMoviePlaybackStatePaused,
@@ -1170,6 +1437,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             break;
         }
         case IJKMPMoviePlaybackStatePlaying:{
+
             [_playerView.loadingView removeFromSuperview];
             [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
 //#ifdef LockView
@@ -1287,9 +1555,30 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [ws hiddenMenuView];
         } chatBlock:^(NSString * _Nonnull msg) {
             [ws.requestData chatMessage:msg];
+//            [ws.requestData sendChatMessage:msg completion:^(BOOL success) {
+//                        NSString * str;
+//                        if (success == YES) {
+//                //            NSLog(@"发送成功");
+//                            str =@"发送成功";
+//                        } else {
+//                //            NSLog(@"发送失败");
+//                             str =@"发送失败";
+//                        }
+//                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
+//
+//                        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//
+//                        }];
+//                        [alertController addAction:okAction];
+//                        [self presentViewController:alertController animated:YES completion:nil];
+//            }];
         } privateChatBlock:^(NSString * _Nonnull anteid, NSString * _Nonnull msg) {
             [ws.requestData privateChatWithTouserid:anteid msg:msg];
         } questionBlock:^(NSString * _Nonnull message) {
+            if (_isLivePlay == NO) {
+                [self addBanAlertView:@"直播未开始，无法提问"];
+                return;
+            }
             [ws.requestData question:message];
         } docViewType:_isSmallDocView];
         _contentView.playerView = self.playerView;
@@ -1302,6 +1591,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [self.view endEditing:YES];
     }
 }
+
 //隐藏home条
 - (BOOL)prefersHomeIndicatorAutoHidden {
     return  YES;

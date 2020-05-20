@@ -23,6 +23,11 @@
     if (self) {
         [self setBackgroundColor:[UIColor whiteColor]];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
+        ///格栅处理
+        self.layer.shouldRasterize = YES;
+        self.layer.rasterizationScale = [UIScreen mainScreen].scale;
+        ///异步绘制
+        self.layer.drawsAsynchronously = YES;
         [self setUI];//设置UI布局
     }
     return self;

@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.7.1"
+#define SDKVersion @"3.8.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -298,6 +298,10 @@
  *      0 文档组件初始化完成
  *      1 动画文档加载完成
  *      2 非动画文档加载完成
+ *      3文档组件加载失败
+ *      4文档图片加载失败
+ *      5文档动画加载失败
+ *      6画板加载失败
  */
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
 
@@ -400,6 +404,12 @@
  *    @brief    跑马灯信息,需要开启跑马灯功能且iOS 9.0以上
 */
 -(void)receivedMarqueeInfo:(NSDictionary *)dic;
+/**
+ *    @brief    回调已播放时长, 如果未开始，则time为-1
+ *              触发此方法需要调用getLivePlayedTime
+*/
+- (void)onLivePlayedTime:(NSDictionary *)dic;
+
 
 
 @end
@@ -407,37 +417,42 @@
 @interface RequestData : NSObject
 
 @property (weak,nonatomic) id<RequestDataDelegate>      delegate;
-@property (retain,    atomic) IJKFFMoviePlayerController      *ijkPlayer;
+@property (retain,atomic) IJKFFMoviePlayerController      *ijkPlayer;
 
 /**
  *	@brief	登录房间
- *	@param 	parameter   配置参数信息
- *  必填参数 userId;
- *  必填参数 roomId;
- *  必填参数 viewerName;
- *  必填参数 token;
- *  必填参数 security;
- *  （选填参数） viewercustomua;
+ *	@param 	parameter              配置参数信息
+ *  必填参数 userId;                //用户ID
+ *  必填参数 roomId;                //房间ID
+ *  必填参数 viewerName;            //用户名称
+ *  必填参数 token;                 //房间密码
+ *  (已弃用!) security              //是否使用https
+ * （选填参数）viewercustomua;       //用户自定义参数，需和后台协商，没有定制传@""
  */
 - (id)initLoginWithParameter:(PlayParameter *)parameter;
 /**
  *	@brief	进入房间，并请求画图聊天数据并播放视频（可以不登陆，直接从此接口进入直播间）
- *	@param 	parameter   配置参数信息
- *  必填参数 userId;
- *  必填参数 roomId;
- *  必填参数 viewerName;
- *  必填参数 token;
- *  必填参数 docParent;
- *  必填参数 docFrame;
- *  必填参数 playerParent;
- *  必填参数 playerFrame;
- *  必填参数 scalingMode;
- *  必填参数 security;
- *  必填参数 defaultColor;
- *  必填参数 scalingMode;
- *  必填参数 PPTScalingMode;
- *  必填参数 pauseInBackGround;
- *  （选填参数） viewercustomua;
+ *	@param 	parameter               配置参数信息
+ *  必填参数 userId;                 //用户ID
+ *  必填参数 roomId;                 //房间ID
+ *  必填参数 viewerName;             //用户名称
+ *  必填参数 token;                  //房间密码
+ *  必填参数 docParent;              //文档父类窗口
+ *  必填参数 docFrame;               //文档区域
+ *  必填参数 playerParent;           //视频父类窗口
+ *  必填参数 playerFrame;            //视频区域
+ *  必填参数 scalingMode;            //屏幕适配方式
+ *  (已弃用!) security               //是否使用https
+ *  必填参数 defaultColor;           //ppt默认底色，不写默认为白色
+ *  必填参数 PPTScalingMode;        //PPT适配方式
+ *                                  PPT适配模式分为四种，
+ *                                  1.一种是全部填充屏幕，可拉伸变形，
+ *                                  2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
+ *                                  3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
+ *                                  4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *  必填参数 pauseInBackGround;      //后台是否继续播放，
+ *                                  注意：如果开启后台播放需要打开 xcode->Capabilities->Background Modes->on->Audio,AirPlay,and Picture in Picture
+ * （选填参数）viewercustomua;        //用户自定义参数，需和后台协商，没有定制传@""
  */
 - (id)initWithParameter:(PlayParameter *)parameter;
 /**
@@ -609,5 +624,13 @@
 获取老师列表
 */
 - (void)getOnlineTeachers;
+/**
+ 获取已播放时长,调用后会响应onLivePlayedTime方法,调用间隔三秒
+ */
+- (void)getLivePlayedTime;
+/**
+重新加载文档
+*/
+- (void)docReload;
 
 @end

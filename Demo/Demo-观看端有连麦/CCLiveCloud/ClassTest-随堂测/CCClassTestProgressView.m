@@ -29,7 +29,8 @@
     int i = 0;
     float originY = self.isScreen?27:34;
     for (NSDictionary *dic in _resultDic[@"practice"][@"options"]) {
-        NSString *text = [NSString stringWithFormat:@"%@:", [NSString stringWithFilterStr:dic[@"index"]]];
+        NSInteger type = [_resultDic[@"practice"][@"type"] integerValue];
+        NSString *text = [NSString stringWithFormat:@"%@:", [NSString stringWithFilterStr:dic[@"index"] withType:type ]];
         //处理text
         UILabel *label = [UILabel labelWithText:text fontSize:[UIFont systemFontOfSize:12] textColor:CCRGBColor(51, 51, 51) textAlignment:NSTextAlignmentCenter];
         label.frame = CGRectMake(16, i * originY, 22, 12);

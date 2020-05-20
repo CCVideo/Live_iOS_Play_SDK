@@ -43,6 +43,4 @@ typedef void(^IsNotResponseBlock)();//不回复回调
  */
 -(void)updateDataArray:(NSMutableArray *)dataArray;
 
-@property(nonatomic,strong)CustomTextField          *chatTextField;//聊天输入框
-
 @end

@@ -11,6 +11,7 @@
 #import "CCSDK/RequestDataPlayBack.h"//sdk
 #import "CCSDK/SaveLogUtil.h"//日志
 #import "CCPlayBackInteractionView.h"//回放互动视图
+#import <HDMarqueeTool/HDMarqueeTool.h>
 //#ifdef LockView
 #import "CCLockView.h"//锁屏
 //#endif
@@ -43,7 +44,10 @@
 @property (nonatomic,strong)UIView                      * oncePlayerView;//临时playerView(双击ppt进入横屏调用)
 @property (nonatomic,strong)UILabel                     *label;
 @property (nonatomic,assign)CGFloat                        playTime;
-
+@property (nonatomic,strong)HDMarqueeView               * marqueeView;//跑马灯
+@property (nonatomic,strong)NSDictionary                * jsonDict;//跑马灯数据
+@property (nonatomic,assign)NSInteger                   documentDisplayMode; //适应文档 1 适应窗口  2适应屏幕 开启滚动
+   
 
 @end
 
@@ -54,16 +58,115 @@
     self.view.backgroundColor = [UIColor whiteColor];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
-    _pauseInBackGround = YES;
+    _pauseInBackGround = NO;
     _isSmallDocView = YES;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
+
+//    UILabel * label = [[UILabel alloc] init];
+//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
+//    label.textColor = [UIColor redColor];
+//    label.frame = CGRectMake(100, 240, 200, 100);
+//    [self.view addSubview:label];
+    
+//    UIButton *btn = [[UIButton alloc] init];
+//    btn.tag = 1;
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(100, 300, 100, 40);
+//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
+//    [btn setTitle:@"线路0" forState:UIControlStateNormal];
+//    UIButton *btn1 = [[UIButton alloc] init];
+//    [btn1 setBackgroundColor:[UIColor greenColor]];
+//    [self.view addSubview:btn1];
+//    btn1.frame = CGRectMake(200, 300, 100, 40);
+//    [btn1 setTitle:@"线路1" forState:UIControlStateNormal];
+//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn2 = [[UIButton alloc] init];
+//    [btn2 setBackgroundColor:[UIColor grayColor]];
+//    [self.view addSubview:btn2];
+//    btn2.frame = CGRectMake(300, 200, 100, 40);
+//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
+//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
+
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 340, 200, 100);
+//    self.label.numberOfLines = 0;
+//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
+
 }
-//获取视频截图
-- (void)thumbnailImageAtCurrentTime {
-    UIImage *image =  [self.requestDataPlayBack.ijkPlayer thumbnailImageAtCurrentTime];
-    NSLog(@"获取视频截图%@",image);
+/**
+ *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1
+ */
+-(void)numberOfReceivedLines:(NSInteger)linesCount {
+    NSLog(@"有%zd条线路",linesCount);
+}
+/*
+    docName         //文档名
+    pageTitle       //页标题
+    time            //时间
+    url             //地址
+ */
+/**
+ *    @brief   回放翻页数据列表
+ *    @param   array [{  docName         //文档名
+                        pageTitle       //页标题
+                        time            //时间
+                        url             //地址 }]
+ */
+- (void)pageChangeList:(NSMutableArray *)array {
+    
+}
+- (void)publish_stream {
+//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
+}
+- (void)onPageChange:(NSDictionary *)dictionary {
+    
+}
+- (void)videoStateChangeWithString:(NSString *)result {
+//    NSLog(@"---状态是%@",result);
+}
+- (void)changedoc2 {
+//    [self changedoc1];
+//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+//    if (ratio!=0 && self.playerView.height!=0) {
+//        CGAffineTransform  tran = CGAffineTransformIdentity;
+//        if (ratio>self.playerView.width/self.playerView.height) {
+//            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
+//        }else{
+//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
+//        }
+//        self.playerView.transform = tran;
+//    }
+
+}
+- (void)changedoc1 {
+//    self.playerView.transform = CGAffineTransformIdentity;
+//    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
+    [_requestDataPlayBack changeLineWithNum:1 completion:^(NSDictionary *results) {
+        self.label.text = [NSString stringWithFormat:@"%@",results];
+    }];
+
+}
+- (void)changedoc:(UIButton *)sender {
+    [_requestDataPlayBack changeLineWithNum:0 completion:^(NSDictionary *results) {
+        self.label.text = [NSString stringWithFormat:@"%@",results];
+    }];
+//    [self changedoc1];
+//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+//    if (ratio!=0 && self.playerView.height!=0) {
+//        CGAffineTransform  tran = CGAffineTransformIdentity;
+//        if (ratio>self.playerView.width/self.playerView.height) {
+//            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
+//        }else{
+//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
+//        }
+//        self.playerView.transform = tran;
+//    }
 }
 /**
  切换回放,需要重新配置参数
@@ -92,7 +195,8 @@
         parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
         parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
         parameter.scalingMode = 1;//屏幕适配方式
-        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+//        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+        parameter.pptInteractionEnabled = YES;
     //        parameter.groupid = self.groupId;//用户的groupId
         _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
         _requestDataPlayBack.delegate = self;
@@ -131,7 +235,8 @@
     parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
     parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
     parameter.scalingMode = 1;//屏幕适配方式
-    parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+//    parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+    parameter.pptInteractionEnabled = YES;
 //        parameter.groupid = self.groupId;//用户的groupId
     _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
     _requestDataPlayBack.delegate = self;
@@ -248,16 +353,100 @@
  *    模版类型为6: 聊天互动： 无 直播文档： 无 直播问答： 有
  */
 -(void)roomInfo:(NSDictionary *)dic {
+    _roomName = dic[@"baseRecordInfo"][@"title"];
+    
+//    [self.playerView addSmallView];
+    NSInteger type = [dic[@"templateType"] integerValue];
+    
+    //适应文档 1 适应窗口  2适应屏幕 开启滚动
+    _documentDisplayMode = [dic[@"documentDisplayMode"] integerValue];
+
+    if (type == 4 || type == 5) {
+        [self.playerView addSmallView];
+    }
     _roomName = dic[@"name"];
     [self.playerView addSmallView];
     //设置房间标题
-    self.playerView.titleLabel.text = dic[@"name"];
+    self.playerView.titleLabel.text = _roomName;
     //配置互动视图的信息
     [self.interactionView roomInfo:dic playerView:self.playerView];
+}
+#pragma mark - 跑马灯
+- (void)receivedMarqueeInfo:(NSDictionary *)dic {
+    if (dic == nil) {
+        return;
+    }
+    self.jsonDict = dic;
+    {
+
+        CGFloat width = 0.0;
+        CGFloat height = 0.0;
+        self.marqueeView = [[HDMarqueeView alloc]init];
+        HDMarqueeViewStyle style = [[self.jsonDict objectForKey:@"type"] isEqualToString:@"text"] ? HDMarqueeViewStyleTitle : HDMarqueeViewStyleImage;
+        self.marqueeView.style = style;
+        self.marqueeView.repeatCount = [[self.jsonDict objectForKey:@"loop"] integerValue];
+        if (style == HDMarqueeViewStyleTitle) {
+            NSDictionary * textDict = [self.jsonDict objectForKey:@"text"];
+            NSString * text = [textDict objectForKey:@"content"];
+            UIColor * textColor = [UIColor colorWithHexString:[textDict objectForKey:@"color"] alpha:1.0f];
+            UIFont * textFont = [UIFont systemFontOfSize:[[textDict objectForKey:@"font_size"] floatValue]];
+            
+            self.marqueeView.text = text;
+            self.marqueeView.textAttributed = @{NSFontAttributeName:textFont,NSForegroundColorAttributeName:textColor};
+            CGSize textSize = [self.marqueeView.text calculateRectWithSize:CGSizeMake(SCREEN_WIDTH, SCREENH_HEIGHT) Font:textFont WithLineSpace:0];
+            width = textSize.width;
+            height = textSize.height;
+            
+        }else{
+            NSDictionary * imageDict = [self.jsonDict objectForKey:@"image"];
+            NSURL * imageURL = [NSURL URLWithString:[imageDict objectForKey:@"image_url"]];
+            self.marqueeView.imageURL = imageURL;
+            width = [[imageDict objectForKey:@"width"] floatValue];
+            height = [[imageDict objectForKey:@"height"] floatValue];
+
+        }
+        self.marqueeView.frame = CGRectMake(0, 0, width, height);
+        //处理action
+        NSArray * setActionsArray = [self.jsonDict objectForKey:@"action"];
+        
+        NSMutableArray <HDMarqueeAction *> * actions = [NSMutableArray array];
+        for (int i = 0; i < setActionsArray.count; i++) {
+            NSDictionary * actionDict = [setActionsArray objectAtIndex:i];
+            CGFloat duration = [[actionDict objectForKey:@"duration"] floatValue];
+            NSDictionary * startDict = [actionDict objectForKey:@"start"];
+            NSDictionary * endDict = [actionDict objectForKey:@"end"];
+
+            HDMarqueeAction * marqueeAction = [[HDMarqueeAction alloc]init];
+            marqueeAction.duration = duration;
+            marqueeAction.startPostion.alpha = [[startDict objectForKey:@"alpha"] floatValue];
+            marqueeAction.startPostion.pos = CGPointMake([[startDict objectForKey:@"xpos"] floatValue], [[startDict objectForKey:@"ypos"] floatValue]);
+            marqueeAction.endPostion.alpha = [[endDict objectForKey:@"alpha"] floatValue];
+            marqueeAction.endPostion.pos = CGPointMake([[endDict objectForKey:@"xpos"] floatValue], [[endDict objectForKey:@"ypos"] floatValue]);
+            
+            [actions addObject:marqueeAction];
+        }
+        
+        self.marqueeView.actions = actions;
+        self.marqueeView.fatherView = self.playerView;
+        self.playerView.layer.masksToBounds = YES;
+
+        }
+    
+}
+#pragma  mark - 文档加载状态
+-(void)docLoadCompleteWithIndex:(NSInteger)index {
+     if (index == 0) {
+             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                 [self.playerView addSubview:self.marqueeView];
+                 [self.marqueeView startMarquee];
+             });
+        }
 }
 #pragma mark- 回放的开始时间和结束时间
 /**
  *  @brief 回放的开始时间和结束时间
+ *  @param dic {endTime     //结束时间
+                startTime   //开始时间 }
  */
 -(void)liveInfo:(NSDictionary *)dic {
 //    NSLog(@"%@",dic);
@@ -430,6 +619,7 @@
     //滑块滑动完成回调
     _playerView.sliderCallBack = ^(int duration) {
         weakSelf.requestDataPlayBack.currentPlaybackTime = duration;
+//        NSLog(@"播放时间拖动%d",duration);
 //#ifdef LockView
         /*  校对锁屏播放器进度 */
         [weakSelf.lockView updateCurrentDurtion:weakSelf.requestDataPlayBack.currentPlaybackTime];
@@ -522,7 +712,7 @@
         if(duration - position == 1 && (self.playerView.sliderValue == position || self.playerView.sliderValue == duration)) {
             position = duration;
         }
-//                            NSLog(@"__test --%f",_requestDataPlayBack.currentPlaybackTime);
+//                            NSLog(@"播放时间 --%f",_requestDataPlayBack.currentPlaybackTime);
         
         //设置plaerView的滑块和右侧时间Label
         self.playerView.slider.maximumValue = (int)duration;
@@ -586,6 +776,9 @@
     }
     //隐藏互动视图
     [self hiddenInteractionView:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.marqueeView startMarquee];
+    });
 }
 /**
  返回按钮点击代理
@@ -600,6 +793,9 @@
     }
     //显示互动视图
     [self hiddenInteractionView:NO];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.marqueeView startMarquee];
+    });
 }
 /**
  切换视频/文档按钮点击回调
@@ -612,12 +808,23 @@
         [_requestDataPlayBack changePlayerParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        //切换大窗文档时候 文档能拖动
+        UIView *view = [self.playerView.subviews lastObject];
+        if (_documentDisplayMode == 2) {
+            view.userInteractionEnabled = YES;
+        }else {
+            view.userInteractionEnabled = NO;
+        }
     }else{
         [_requestDataPlayBack changeDocParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changePlayerParent:self.playerView];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        //切换小窗文档时候 文档不能拖动
+        UIView *view = [self.playerView.smallVideoView.subviews lastObject];
+        view.userInteractionEnabled = NO;
     }
+    [self.playerView bringSubviewToFront:self.marqueeView];
 }
 /**
  隐藏互动视图

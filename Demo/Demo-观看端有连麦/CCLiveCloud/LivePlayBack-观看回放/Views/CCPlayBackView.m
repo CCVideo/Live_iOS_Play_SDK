@@ -20,6 +20,10 @@
 
 @property (nonatomic, strong)UILabel                    * unStart;//重新播放
 
+@property (nonatomic, assign)NSInteger                  showShadowCountFlag;
+// 新增控制阴影View
+@property (nonatomic, assign)BOOL                       isShowShadowView;
+
 @end
 
 @implementation CCPlayBackView
@@ -79,10 +83,11 @@
  隐藏导航
  */
 - (void)LatencyHiding {
-    if (self.bottomShadowView.hidden == NO) {
-        self.bottomShadowView.hidden = YES;
-        self.topShadowView.hidden = YES;
-    }
+//    if (self.bottomShadowView.hidden == NO) {
+//        self.bottomShadowView.hidden = YES;
+//        self.topShadowView.hidden = YES;
+//    }
+    [self showOrHiddenShadowView];
 }
 
 /**
@@ -92,25 +97,49 @@
  */
 - (void)doTapChange:(UITapGestureRecognizer*) recognizer {
     
-    if (self.bottomShadowView.hidden == YES) {
+//    if (self.bottomShadowView.hidden == YES) {
+//        self.bottomShadowView.hidden = NO;
+//        self.topShadowView.hidden = NO;
+//        [self.topShadowView becomeFirstResponder];
+//        [self bringSubviewToFront:self.topShadowView];
+//        [self bringSubviewToFront:self.bottomShadowView];
+//    } else {
+//        self.bottomShadowView.hidden = YES;
+//        self.topShadowView.hidden = YES;
+//        [self.topShadowView resignFirstResponder];
+//    }
+//    [self endEditing:NO];
+    [self showOrHiddenShadowView];
+    
+}
+
+/**
+*  @brief  隐藏导航
+*/
+- (void)showOrHiddenShadowView
+{
+    if (_isShowShadowView == NO) {
+
         self.bottomShadowView.hidden = NO;
         self.topShadowView.hidden = NO;
         [self.topShadowView becomeFirstResponder];
         [self bringSubviewToFront:self.topShadowView];
         [self bringSubviewToFront:self.bottomShadowView];
+        
     } else {
+        
         self.bottomShadowView.hidden = YES;
         self.topShadowView.hidden = YES;
         [self.topShadowView resignFirstResponder];
     }
-    [self endEditing:NO];
-    
 }
 
 /**
  创建UI
  */
 - (void)setupUI {
+    
+    _isShowShadowView = YES;
     //上面阴影
     self.topShadowView =[[UIView alloc] init];
     UIImageView *topShadow = [[UIImageView alloc] init];
@@ -151,7 +180,7 @@
     self.changeButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_30];
     self.changeButton.tag = 1;
     [self.changeButton setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
-    [self.topShadowView addSubview:_changeButton];
+    [self.topShadowView addSubview:self.changeButton];
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.topShadowView).offset(CCGetRealFromPt(-20));
         make.centerY.equalTo(self.backButton);
@@ -159,6 +188,7 @@
         make.width.mas_equalTo(CCGetRealFromPt(180));
     }];
     [self.changeButton layoutIfNeeded];
+    
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.backButton);
         make.left.equalTo(self.backButton.mas_right);
@@ -301,6 +331,8 @@
     
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
     self.playerTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:weakObject selector:@selector(LatencyHiding) userInfo:nil repeats:YES];
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    [runLoop addTimer:_playerTimer forMode:NSRunLoopCommonModes];
     
     //新加属性
     [self.backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -373,6 +405,8 @@
     [self stopTimer];
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
     _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    [runLoop addTimer:_timer forMode:NSRunLoopCommonModes];
 }
 
 /**
@@ -482,6 +516,32 @@
         [self creatAlertController_alert];
     }
 }
+
+/**
+ *    @brief    playerView 触摸事件 （直播文档模式，文档手势冲突）
+ *    @param    point   触碰当前区域的点
+ */
+- (nullable UIView *)hitTest:(CGPoint)point withEvent:(nullable UIEvent *)event
+{
+    // 每次触摸事件 此方法会进行两次回调，_showShadowCountFlag 标记第二次回调处理事件
+    _showShadowCountFlag++;
+    CGFloat selfH = self.frame.size.height;
+    if (point.y > 0 && point.y <= CCGetRealFromPt(88)) { //过滤掉顶部shadowView
+        _showShadowCountFlag = 0;
+        return [super hitTest:point withEvent:event];
+    }else if (point.y >= selfH - CCGetRealFromPt(60) && point.y <= selfH) { ////过滤掉底部shadowView
+        _showShadowCountFlag = 0;
+        return [super  hitTest:point withEvent:event];
+    }else {
+        if (_showShadowCountFlag == 2) {
+            _isShowShadowView = _isShowShadowView == YES ? NO : YES;
+            [self showOrHiddenShadowView];
+            _showShadowCountFlag = 0;
+        }
+        return [super hitTest:point withEvent:event];
+    }
+}
+
 //创建提示窗
 -(void)creatAlertController_alert {
     //设置提示弹窗
@@ -516,6 +576,8 @@
     [self stopTimer];
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
     _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    [runLoop addTimer:_timer forMode:NSRunLoopCommonModes];
 }
 //停止播放
 -(void) stopTimer {

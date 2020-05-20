@@ -15,6 +15,10 @@
 #import "CCPlayerController.h"
 #import "CCPlayBackController.h"
 #import "CCcommonDefine.h"
+#import "CCDownloadViewController.h"
+
+#define loginBtnImageName @"default_btn"
+
 @interface CCEntranceViewController ()
 
 
@@ -62,17 +66,18 @@
     [self.view addSubview:bgView];
 //观看直播
     UIButton *palyButton = [[UIButton alloc] init];
-    [palyButton setBackgroundImage: [UIImage imageNamed:@"default_btn"] forState:UIControlStateNormal];
-    [palyButton setBackgroundImage: [UIImage imageNamed:@"default_btn"] forState:UIControlStateHighlighted];
+    [palyButton setBackgroundImage: [UIImage imageNamed:loginBtnImageName] forState:UIControlStateNormal];
+    [palyButton setBackgroundImage: [UIImage imageNamed:loginBtnImageName] forState:UIControlStateHighlighted];
 
     [palyButton setTitle:@"观看直播" forState:UIControlStateNormal];
     [palyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     palyButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_36];
     palyButton.layer.cornerRadius = 25;
     [self.view addSubview:palyButton];
+    CGFloat deviceOffset = iPhone5_5s_5c_5SE ? 30 : 50;
     [palyButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.view);
-        make.top.equalTo(self.view).offset(SCREENH_HEIGHT/2+50);
+        make.top.equalTo(self.view).offset(SCREENH_HEIGHT/2+deviceOffset);
         make.width.mas_equalTo(300);
         make.height.mas_equalTo(50);
     }];
@@ -81,8 +86,8 @@
     
 //观看回放
     UIButton *palyBackButton = [[UIButton alloc] init];
-    [palyBackButton setBackgroundImage: [UIImage imageNamed:@"default_btn"] forState:UIControlStateNormal];
-    [palyBackButton setBackgroundImage: [UIImage imageNamed:@"default_btn"] forState:UIControlStateHighlighted];
+    [palyBackButton setBackgroundImage: [UIImage imageNamed:loginBtnImageName] forState:UIControlStateNormal];
+    [palyBackButton setBackgroundImage: [UIImage imageNamed:loginBtnImageName] forState:UIControlStateHighlighted];
     [palyBackButton setTitle:@"观看回放" forState:UIControlStateNormal];
     [palyBackButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     palyBackButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_36];
@@ -95,8 +100,26 @@
     [palyBackButton addTarget:self action:@selector(palyBackButtonClick) forControlEvents:UIControlEventTouchUpInside];
     palyBackButton.layer.cornerRadius = 25;
     
+    
+//离线回放
+    UIButton *localPlayButton = [[UIButton alloc]init];
+    [localPlayButton setBackgroundImage:[UIImage imageNamed:loginBtnImageName] forState:UIControlStateNormal];
+    [localPlayButton setBackgroundImage:[UIImage imageNamed:loginBtnImageName] forState:UIControlStateHighlighted];
+    [localPlayButton setTitle:@"离线回放" forState:UIControlStateNormal];
+    [localPlayButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    localPlayButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_36];
+    [self.view addSubview:localPlayButton];
+    [localPlayButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.height.equalTo(palyBackButton);
+        make.top.equalTo(palyBackButton.mas_bottom).offset(20);
+    }];
+    [localPlayButton addTarget:self action:@selector(localPlayButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    localPlayButton.layer.cornerRadius = 25;
+    
+    
+    
     UILabel *label = [[UILabel alloc] init];
-    label.text = @"版本: hd_sdk_v3.7.1";
+    label.text = @"版本: hd_sdk_v3.8.0";
     label.textColor = [UIColor lightGrayColor];
     [self.view addSubview:label];
     [label mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -123,6 +146,17 @@
 //        [self presentViewController:vc animated:YES completion:nil];
     [self.navigationController pushViewController:vc animated:NO];
 }
+/**
+ *  @brief  点击观看离线回放
+ */
+- (void)localPlayButtonClick {
+    CCDownloadViewController *vc = [[CCDownloadViewController alloc] init];
+//两种跳转方式
+//        [self presentViewController:vc animated:YES completion:nil];
+    [self.navigationController pushViewController:vc animated:NO];
+}
+
+
 /**
  *  @brief  旋转屏设置
  */

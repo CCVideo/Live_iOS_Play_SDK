@@ -24,7 +24,6 @@ typedef void(^AnnouncementBlock)(void);
 @property (nonatomic, strong) UIButton         *menuBtn;//菜单按钮
 @property (nonatomic, strong) UIButton         *privateChatBtn;//私聊按钮
 @property (nonatomic, strong) UIButton         *lianmaiBtn;//连麦按钮
-
 @property (nonatomic, strong) UIButton         *announcementBtn;//公告按钮
 //私聊点击回调
 @property (nonatomic, copy) PrivateBlock             privateBlock;

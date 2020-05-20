@@ -11,6 +11,9 @@
 #import "PPUtil.h"
 #import "PPStickerKeyboard.h"
 #import "PPStickerDataManager.h"
+
+#define maxInputLength 300
+
 @interface CCChatContentView ()<UITextFieldDelegate,PPStickerKeyboardDelegate,UITextViewDelegate>
 @property(nonatomic,strong)UIButton                     *rightView;//右侧按钮
 @property(nonatomic,strong)InformationShowView          *informationView;//提示视图
@@ -25,14 +28,6 @@
 -(instancetype)init{
     self = [super init];
     if (self) {
-        UIView * line = [[UIView alloc] init];
-        line.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
-        [self addSubview:line];
-        [line mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.top.right.equalTo(self);
-            make.height.mas_equalTo(1);
-        }];
-        
         [self addSubview:self.textView];
 //        self.chatTextField.backgroundColor = [UIColor blueColor];
         [_textView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -40,7 +35,6 @@
             make.left.mas_equalTo(self).offset(CCGetRealFromPt(24));
             make.right.mas_equalTo(self).offset(-CCGetRealFromPt(84));
             make.height.mas_equalTo(CCGetRealFromPt(70));
-            
         }];
         [self addSubview:self.rightView];
         [_rightView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -48,19 +42,41 @@
             make.left.equalTo(self.textView.mas_right);
             make.right.mas_equalTo(self).offset(-CCGetRealFromPt(10));
             make.height.mas_equalTo(CCGetRealFromPt(70));
-            
         }];
-        UIView * line1 = [[UIView alloc] init];
-        line1.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
-        [self addSubview:line1];
-        [line1 mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.bottom.right.equalTo(self);
-            make.height.mas_equalTo(2);
-        }];
+       
         //添加通知
         [self addObserver];
     }
     return self;
+}
+
+- (void)setIsFullScroll:(BOOL)isFullScroll
+{
+    _isFullScroll = isFullScroll;
+    
+    if (_isFullScroll != YES) {
+        
+        UIView * line = [[UIView alloc] init];
+        [self addSubview:line];
+        line.hidden = YES;
+        line.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
+        [line mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.top.right.equalTo(self);
+            make.height.mas_equalTo(1);
+        }];
+        
+        
+        UIView * line1 = [[UIView alloc] init];
+        line1.backgroundColor = [UIColor colorWithHexString:@"#e8e8e8" alpha:1.0f];
+        [self addSubview:line1];
+        line1.hidden = YES;
+        [line1 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.bottom.right.equalTo(self);
+            make.height.mas_equalTo(2);
+        }];
+    }else {
+        self.textView.placeholderColor = [UIColor whiteColor];
+    }
 }
 
 //右侧表情键盘按钮
@@ -81,17 +97,18 @@
     BOOL selected = !_rightView.selected;
     _rightView.selected = selected;
     
-    [self. textView becomeFirstResponder];
+    [self.textView resignFirstResponder];
     if(selected) {
 //        [_chatTextField setInputView:self.emojiView];
         self.textView.inputView = self.stickerKeyboard;         // 切换到自定义的表情键盘
-              [self.textView reloadInputViews];
+        [self.textView reloadInputViews];
     } else {
 //        [_chatTextField setInputView:nil];
         //收表情键盘
-              self.textView.inputView = nil;                          // 切换到系统键盘
-              [self.textView reloadInputViews];
+          self.textView.inputView = nil;                          // 切换到系统键盘
+          [self.textView reloadInputViews];
     }
+    [self.textView becomeFirstResponder];
 }
 
 #pragma mark - 移除提示视图
@@ -157,28 +174,33 @@
 }
 
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
-    if (self.plainText.length>300) {
+    if (self.plainText.length > maxInputLength) {
         [_informationView removeFromSuperview];
-           _informationView = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
-           [APPDelegate.window addSubview:_informationView];
-           [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-               make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-           }];
-
-           [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
-        return NO;
+       _informationView = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
+       [APPDelegate.window addSubview:_informationView];
+       [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+       }];
+        
+       [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(informationViewRemove) userInfo:nil repeats:NO];
     }
     return YES;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-
+    
     if ([@"\n" isEqualToString:text]) {
         [self sendAction];
         _textView.text = nil;
         [_textView resignFirstResponder];
         
         return NO;
+    }
+    //超过300文字
+    if (range.length == 0) {
+        if(textView.text.length > maxInputLength) {
+            return NO;
+        }
     }
 
     return YES;
@@ -188,6 +210,7 @@
 {
     return [self.textView.attributedText pp_plainTextForRange:NSMakeRange(0, self.textView.attributedText.length)];
 }
+
 - (void)refreshTextUI
 {
     if (!self.textView.text.length) {
@@ -217,8 +240,9 @@
 }
 - (void)textViewDidChange:(UITextView *)textView
 {
-    [self refreshTextUI];
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self refreshTextUI];
+    });
 }
 
 

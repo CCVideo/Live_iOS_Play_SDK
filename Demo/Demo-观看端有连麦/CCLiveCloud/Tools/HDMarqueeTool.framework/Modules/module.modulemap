@@ -1,0 +1,6 @@
+framework module HDMarqueeTool {
+  umbrella header "HDMarqueeTool.h"
+
+  export *
+  module * { export * }
+}

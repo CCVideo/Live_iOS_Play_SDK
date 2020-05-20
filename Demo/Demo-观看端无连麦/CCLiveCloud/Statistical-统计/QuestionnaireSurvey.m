@@ -1059,9 +1059,9 @@
     dic[@"subjectsAnswer"] = array;
     if(self.commitblock) {
         self.commitblock(dic);
+        [_submitBtn setTitle:STATISTICAL_COMMIT_SUCCESS forState:UIControlStateNormal];
+        _submitBtn.userInteractionEnabled = NO;
         if (self.submitedAction == 1) {
-            [_submitBtn setTitle:STATISTICAL_COMMIT_SUCCESS forState:UIControlStateNormal];
-            _submitBtn.userInteractionEnabled = NO;
             for(UILabel *correctLabel in self.correctLabelArray) {
                 correctLabel.hidden = NO;
             }

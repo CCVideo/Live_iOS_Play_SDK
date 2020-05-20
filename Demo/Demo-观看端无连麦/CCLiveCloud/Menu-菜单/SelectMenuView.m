@@ -60,7 +60,7 @@
     [_announcementBtn addTarget:self action:@selector(announcementBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     _announcementLabel = [self labelWithTitle:@"公告" andBtn:self.announcementBtn];
     
-   
+
     
     BOOL haveLianmai = [self existLianmai];
     CGFloat bottom = haveLianmai?327:227;
@@ -111,7 +111,6 @@
         _privateBlock();
     }
 }
-
 
 /**
  点击公告按钮
@@ -169,7 +168,7 @@
     _privateLabel.hidden = hidden;
     _announcementBtn.hidden = hidden;
     _announcementLabel.hidden = hidden;
-    
+
 }
 -(void)hiddenPrivateBtn{
     [_privateChatBtn removeFromSuperview];

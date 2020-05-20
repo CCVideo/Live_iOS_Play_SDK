@@ -25,7 +25,8 @@ typedef NS_ENUM(NSUInteger, RenderViewStyle){//弹幕视图显示位置
 
  @param videoView 视频视图
  */
--(instancetype)initWithVideoView:(UIView *)videoView barrageStyle:(BarrageStyle)barrageStyle;
+//-(instancetype)initWithVideoView:(UIView *)videoView barrageStyle:(BarrageStyle)barrageStyle;
+-(instancetype)initWithVideoView:(UIView *)videoView barrageStyle:(BarrageStyle)barrageStyle ReferenceView:(UIView *)referenceView;
 
 
 /**

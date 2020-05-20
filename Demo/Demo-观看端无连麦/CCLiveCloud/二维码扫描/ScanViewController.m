@@ -331,27 +331,38 @@
     NSRange rangeUserId = [result rangeOfString:@"userid="];
     NSRange rangeLiveId = [result rangeOfString:@"liveid="];
 //    NSRange rangeRecordId = [result rangeOfString:@"recordid="];
-    WS(ws)
-    if (!StrNotEmpty(result) || rangeRoomId.location == NSNotFound || rangeUserId.location == NSNotFound || (self.index == 3 && rangeLiveId.location == NSNotFound)) {
-        //扫描失败
-        [self scanFailed];
-    } else {
-        NSString *roomId = [result substringWithRange:NSMakeRange(rangeRoomId.location + rangeRoomId.length, rangeUserId.location - 1 - (rangeRoomId.location + rangeRoomId.length))];
-        if(self.index == 1) {//我要直播
-            NSString *userId = [result substringFromIndex:rangeUserId.location + rangeUserId.length];
-//            NSLog(@"roomId = %@,userId = %@",roomId,userId);
-            SaveToUserDefaults(LIVE_USERID,userId);
-            SaveToUserDefaults(LIVE_ROOMID,roomId);
-        } else if(self.index == 2) {//观看直播
-            NSString *userId = [result substringFromIndex:rangeUserId.location + rangeUserId.length];
-//            NSLog(@"roomId = %@,userId = %@",roomId,userId);
-            SaveToUserDefaults(WATCH_USERID,userId);
-            SaveToUserDefaults(WATCH_ROOMID,roomId);
-        } else if(self.index == 3) {//观看回放
-            [self parseCodeWithPlayBackStr:result roomId:roomId];
+    WS(ws);
+    if (self.index == 4) { //离线回放
+        SaveToUserDefaults(@"SCAN_RESULT",result);
+    }else {
+        if (!StrNotEmpty(result) || rangeRoomId.location == NSNotFound || rangeUserId.location == NSNotFound || (self.index == 3 && rangeLiveId.location == NSNotFound)) {
+            //扫描失败
+            [self scanFailed];
+        } else {
+            NSString *roomId = [result substringWithRange:NSMakeRange(rangeRoomId.location + rangeRoomId.length, rangeUserId.location - 1 - (rangeRoomId.location + rangeRoomId.length))];
+            if(self.index == 1) {//我要直播
+                NSString *userId = [result substringFromIndex:rangeUserId.location + rangeUserId.length];
+        //            NSLog(@"roomId = %@,userId = %@",roomId,userId);
+                SaveToUserDefaults(LIVE_USERID,userId);
+                SaveToUserDefaults(LIVE_ROOMID,roomId);
+            } else if(self.index == 2) {//观看直播
+                NSString *userId = [result substringFromIndex:rangeUserId.location + rangeUserId.length];
+        //            NSLog(@"roomId = %@,userId = %@",roomId,userId);
+                SaveToUserDefaults(WATCH_USERID,userId);
+                SaveToUserDefaults(WATCH_ROOMID,roomId);
+            } else if(self.index == 3) {//观看回放
+                [self parseCodeWithPlayBackStr:result roomId:roomId];
+            } else if(self.index == 4) { //观看离线回放
+        //            NSString *userId = [result substringWithRange:NSMakeRange(rangeUserId.location + rangeUserId.length, rangeLiveId.location - 1 - (rangeUserId.location + rangeUserId.length))];
+        //            NSString *liveId = [result substringFromIndex:rangeLiveId.location + rangeLiveId.length];
+        //            SaveToUserDefaults(PLAYBACK_USERID,userId);
+        //            SaveToUserDefaults(PLAYBACK_ROOMID,roomId);
+        //            SaveToUserDefaults(PLAYBACK_LIVEID,liveId);
+                SaveToUserDefaults(@"SCAN_RESULT",result);
+            }
         }
-        [ws.navigationController popViewControllerAnimated:NO];
     }
+    [ws.navigationController popViewControllerAnimated:NO];
 }
 //扫描失败
 -(void)scanFailed{

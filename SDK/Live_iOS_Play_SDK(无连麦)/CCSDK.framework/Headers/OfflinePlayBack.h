@@ -20,6 +20,7 @@
 - (void)offline_getDocAspectRatioOfWidth:(CGFloat)width height:(CGFloat)height;
 /**
  *	@brief	收到本房间的历史提问&回答
+ *  @param  questionArr [{}]
  */
 - (void)offline_onParserQuestionArr:(NSArray *)questionArr onParserAnswerArr:(NSArray *)answerArr;
 /**
@@ -29,10 +30,14 @@
 /**
  *  @brief  获取ppt当前页数和总页数(The new method)
  *
- *  回调当前翻页的页数信息 <br/>
- *  白板docTotalPage一直为0, pageNum从1开始<br/>
- *  其他文档docTotalPage为正常页数,pageNum从0开始<br/>
+ *  回调当前翻页的页数信息
+ *  白板docTotalPage一直为0, pageNum从1开始
+ *  其他文档docTotalPage为正常页数,pageNum从0开始
  *  @param dictionary 翻页信息
+ *  dictionary :{docId 文档ID
+ *               docName 文档名
+ *               docTotalPage 文档总页数
+ *               pageNum 文档页码}
  */
 - (void)onPageChange:(NSDictionary *) dictionary;
 /**

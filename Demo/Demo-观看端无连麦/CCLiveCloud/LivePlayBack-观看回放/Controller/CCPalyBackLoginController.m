@@ -10,7 +10,6 @@
 #import "TextFieldUserInfo.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
-#import "CCSDK/CCLiveUtil.h"
 #import "CCSDK/RequestDataPlayBack.h"
 #import "InformationShowView.h"
 #import "LoadingView.h"
@@ -30,6 +29,7 @@
 @property(nonatomic,strong)TextFieldUserInfo            * textFieldUserName;//用户名
 @property(nonatomic,strong)TextFieldUserInfo            * textFieldUserPassword;//密码
 @property(nonatomic,strong)InformationShowView          * informationView;//提示窗
+@property(nonatomic,assign)BOOL                         isShowTipView;//是否已显示输入过长提示框
 
 @end
 
@@ -160,6 +160,17 @@
     [_loadingView layoutIfNeeded];
 }
 /**
+ *    @brief    显示昵称长图超出20字提示窗
+ */
+- (void)showTipView
+{
+    _isShowTipView = YES;
+    CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:USERNAME_CONFINE sureAction:@"好的" cancelAction:nil sureBlock:^{
+        _isShowTipView = NO;
+    }];
+    [APPDelegate.window addSubview:alertView];
+}
+/**
  显示输入限制提示视图
  */
 -(void)showInformationView{
@@ -201,11 +212,65 @@
     [self.view endEditing:YES];
     [self keyboardHide];
 }
--(void)userNameTextFieldChange {
-    if(_textFieldUserName.text.length > 20) {
-        _textFieldUserName.text = [_textFieldUserName.text substringToIndex:20];
+//-(void)userNameTextFieldChange {
+//    if(_textFieldUserName.text.length > 20) {
+//        _textFieldUserName.text = [_textFieldUserName.text substringToIndex:20];
+//    }
+//}
+/**
+ userName输入框长度改变
+ */
+- (void)textFieldEditChanged:(UITextField *)textField
+{
+    if (textField.markedTextRange == nil)//点击完选中的字之后
+    {
+        if (textField.text.length > 20) {
+            if (_isShowTipView == NO) {
+                [self showTipView];
+            }
+        }
+    }
+    else//没有点击出现的汉字,一直在点击键盘
+    {
+        if (textField.text.length > 59) { //等同于20个文字
+
+        }
+    }
+    
+    NSString *lang = [textField textInputMode].primaryLanguage;
+    if ([lang isEqualToString:@"zh-Hans"]) {
+        //输入简体中文内容
+        //获取高亮部分，如拼音
+        UITextRange *selectedRange = [textField markedTextRange];
+        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
+        if (!position) {
+            [self handleTextFieldCharLength:textField];
+        }
+    }
+    else{
+        //输入简体中文以外的内容
+        [self handleTextFieldCharLength:textField];
     }
 }
+
+- (void)handleTextFieldCharLength:(UITextField *)textField
+{
+    NSString *toBeString = textField.text;
+    if (textField.text.length > 20) {
+        //获取超过50最大字符数的多余字符range
+        NSRange rangeIndex = [toBeString rangeOfComposedCharacterSequenceAtIndex:20];
+        if (rangeIndex.length == 1){
+            //如果多余字符的length = 1，则直接截取最大字符数
+            textField.text = [toBeString substringToIndex:20];
+        }
+        else{
+            //如果多余字符的length > 1，则截取位置为（0.50），按输入内容单位截取
+            NSRange rangeRange = [toBeString rangeOfComposedCharacterSequencesForRange:NSMakeRange(0, 20)];
+            textField.text = [toBeString substringWithRange:rangeRange];
+        }
+    }
+}
+
 #pragma mark - 懒加载
 //直播间信息
 -(UILabel *)informationLabel {
@@ -301,7 +366,7 @@
     //test   groupId
     //    [self.view addSubview:self.groupId];
     
-    [self.textFieldUserName addTarget:self action:@selector(userNameTextFieldChange) forControlEvents:UIControlEventEditingChanged];
+    [self.textFieldUserName addTarget:self action:@selector(textFieldEditChanged:) forControlEvents:UIControlEventEditingChanged];
     //userId输入框
     [self.textFieldUserId mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self.view);

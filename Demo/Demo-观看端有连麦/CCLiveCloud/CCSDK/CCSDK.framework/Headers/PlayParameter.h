@@ -69,7 +69,7 @@
  */
 @property(nonatomic,assign)BOOL                         security;//是否使用https(已弃用!)
 /**
- *  @brief
+ *  @brief 屏幕适配方式
  * 0:IJKMPMovieScalingModeNone
  * 1:IJKMPMovieScalingModeAspectFit
  * 2:IJKMPMovieScalingModeAspectFill

@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSString    *URL;//链接
 @property (nonatomic, strong) NSArray     *urlArr;//链接数组
 @property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSString    *userRole;//用户身份
 
 @end
 
@@ -198,6 +199,9 @@
 #pragma mark - 点击头像回调
 -(void)headBtnClicked:(UIButton *)btn
 {
+    if ([self.userRole isEqualToString:@"student"]) {
+        return;
+    }
     if (_headBtnClick) {
         _headBtnClick(btn);
     }
@@ -288,6 +292,7 @@
 -(void)dealHeadBtnWithModel:(CCPublicChatModel *)model
            isInput:(BOOL)input
          indexPath:(NSIndexPath *)indexPath{
+    self.userRole = model.userrole;
     //设置头像
     BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];//判断是否是自己发的
     _headBtn.tag = indexPath.row;
@@ -347,7 +352,9 @@
 //    NSLog(@"是哪里昵称长度%@",NSStringFromRange(redRange));
     //修改特定字符的颜色
     //userName时特定表情时会崩溃  redRange会显示不确定的大小
-    [textAttri addAttribute:NSForegroundColorAttributeName value:textColor range:redRange];
+    if (redRange.location + redRange.length < textAttri.length) {//判断取值范围是否超出长度
+        [textAttri addAttribute:NSForegroundColorAttributeName value:textColor range:redRange];
+    }
     //url增加颜色
     if (model.typeState != 2) {//如果是图片的话,过滤掉消息
         

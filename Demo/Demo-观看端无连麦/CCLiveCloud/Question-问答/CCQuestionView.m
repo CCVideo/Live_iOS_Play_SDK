@@ -13,6 +13,10 @@
 #import "InformationShowView.h"//提示视图
 #import "UIImageView+WebCache.h"
 #import "CCQuestionViewCell.h"//cell
+#import <MJRefresh/MJRefresh.h>
+#import "CCProxy.h"
+
+#define lowVersionDeviceLoadDataCount 20 // 低版本设备加载数据条数
 
 @interface CCQuestionView()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
@@ -35,20 +39,26 @@
 @property(nonatomic,copy)  QuestionBlock                block;//问答回调
 @property(nonatomic,assign)BOOL                         input;//是否有输入框
 @property(nonatomic,strong)InformationShowView          *informationView;//提示信息
-@property(nonatomic,strong)UIView *imageView;//
-//
+@property(nonatomic,strong)UIView                       *imageView;//
+
+@property(nonatomic,assign)int                          liveCurrentPage;// 直播当前问答分页
+@property(nonatomic,assign)int                          replayCurrentPage;// 回放当前问答分页
+@property(nonatomic,strong)NSMutableArray               *tempQuestionArray;// 问答临时数组
+@property(nonatomic,assign)BOOL                         isDoneAllData; //是否加载完所有数据
+@property(nonatomic,assign)BOOL                         isMyQuestion; //是否查看我的提问
+
 @end
 
+
 @implementation CCQuestionView
-
-
-
 
 -(instancetype)initWithQuestionBlock:(QuestionBlock)questionBlock input:(BOOL)input{
     self = [super init];
     if(self) {
         self.block      = questionBlock;
         self.input      = input;
+        [self.newQADic removeAllObjects];
+        [self.newKeysArr removeAllObjects];
         [self initUI];
         if(self.input) {
             [self addObserver];
@@ -57,7 +67,7 @@
     return self;
 }
 
--(NSMutableArray *)newKeysArr {
+-(NSMutableArray *)newKeysArr{
     if(!_newKeysArr) {
         _newKeysArr = [[NSMutableArray alloc] init];
     }
@@ -71,63 +81,201 @@
     return _newQADic;
 }
 
--(void)reloadQADic:(NSMutableDictionary *)QADic keysArrAll:(NSMutableArray *)keysArrAll {
+- (NSMutableArray *)tempQuestionArray
+{
+    if (!_tempQuestionArray) {
+        _tempQuestionArray = [NSMutableArray array];
+    }
+    return _tempQuestionArray;
+}
+
+/**
+*    @brief    重载问答数据
+*    @param QADic 问答字典
+*    @param keysArrAll 回答Key数组
+*    @param questionSourceType 问答数据来源
+*    @param currentPage 当前分页 （查看历史问答时传当前分页，否则传0）
+                        查看历史问答：QuestionSourceTypeFromLiveHistory 和 QuestionSourceTypeFromReplay
+*    @param isDoneAllData 是否加载完所有数据 （查看历史问答时标记是否已加载全部问答，否则传YES）
+*/
+-(void)reloadQADic:(NSMutableDictionary *)QADic keysArrAll:(NSMutableArray *)keysArrAll questionSourceType:(QuestionSourceType)questionSourceType currentPage:(int)currentPage isDoneAllData:(BOOL)isDoneAllData {
+    
     self.QADic = [QADic mutableCopy];
     self.keysArrAll = [keysArrAll mutableCopy];
-    [self.newKeysArr removeAllObjects];
     [self.newQADic removeAllObjects];
-
     int keysArrCount = (int)[self.keysArrAll count];
-    for(int i = 0;i <keysArrCount ;i++) {
-        NSString *encryptId = [self.keysArrAll objectAtIndex:i];
-        NSMutableArray *arr = [self.QADic objectForKey:encryptId];
-        NSMutableArray *newArr = [[NSMutableArray alloc] init];
-        for(int j = 0;j < [arr count];j++) {
-            Dialogue *dialogue = [arr objectAtIndex:j];
-            if(j == 0 && ![newArr containsObject:dialogue]) {
-                if(dialogue.dataType == NS_CONTENT_TYPE_QA_QUESTION &&
-                   ![self.newKeysArr containsObject:encryptId] &&
-                   ([dialogue.fromuserid isEqualToString:dialogue.myViwerId] ||
-                    dialogue.isPublish == YES)) {
-                       if(self.leftView.selected) {
-                           if([dialogue.fromuserid isEqualToString:dialogue.myViwerId]) {
-                               [self.newKeysArr addObject:encryptId];
-                               [newArr addObject:dialogue];
-                               [self.newQADic setObject:newArr forKey:encryptId];
-                           }
-                       } else {
-                           [self.newKeysArr addObject:encryptId];
-                           [newArr addObject:dialogue];
-                           [self.newQADic setObject:newArr forKey:encryptId];
-                       }
-                   }
-            } else if(![newArr containsObject:dialogue] && [newArr count] > 0) {
-                Dialogue *firstDialogue = [arr objectAtIndex:0];
-                if((dialogue.isPrivate == 0 || (dialogue.isPrivate == 1 && [firstDialogue.fromuserid isEqualToString:dialogue.myViwerId])) && dialogue.dataType == NS_CONTENT_TYPE_QA_ANSWER) {
-                    NSMutableArray *newArr = [self.newQADic objectForKey:encryptId];
-                    if (newArr != nil) {
-                        [newArr addObject:dialogue];
+    // 直播模式
+    if (questionSourceType == QuestionSourceTypeFromLive) {
+        _liveCurrentPage = currentPage;
+        [self.newKeysArr removeAllObjects];
+        [self questionDataWithKeysArrCount:keysArrCount keysArr:self.keysArrAll questionSourceType:questionSourceType];
+    }else if (questionSourceType == QuestionSourceTypeFromReplay) {
+        _replayCurrentPage = currentPage;
+        _isDoneAllData = isDoneAllData;
+        [self.newKeysArr removeAllObjects];
+        [self questionDataWithKeysArrCount:keysArrCount keysArr:self.keysArrAll questionSourceType:questionSourceType];
+    }else {
+        _liveCurrentPage = currentPage;
+        _isDoneAllData = isDoneAllData;
+        [self questionDataWithKeysArrCount:keysArrCount keysArr:self.keysArrAll questionSourceType:questionSourceType];
+    }
+}
+
+/**
+ *    @brief    初始化下拉刷新（直播查看历史问答）
+ */
+- (void)setupHeaderRefresh
+{
+    self.questionTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction: @selector(loadMoreHistoryData)];
+    self.questionTableView.mj_header.hidden = YES;
+}
+/**
+ *    @brief    下拉查看历史数据回调
+ */
+- (void)loadMoreHistoryData
+{
+    _liveCurrentPage++;
+    if ([self.delegate respondsToSelector:@selector(livePlayLoadHistoryDataWithPage:)]) {
+        [self.delegate livePlayLoadHistoryDataWithPage:_liveCurrentPage];
+    }
+}
+
+/**
+ *    @brief     初始化上拉加载更多（回放查看历史问答）
+ */
+- (void)setupFooterRefresh
+{
+    self.questionTableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+    self.questionTableView.mj_footer.hidden = YES;
+}
+
+/**
+ *    @brief    上拉查看历史数据回调
+ */
+- (void)loadMoreData
+{
+    _replayCurrentPage++;
+    if ([self.delegate respondsToSelector:@selector(replayLoadMoreDataWithPage:)]) {
+        [self.delegate replayLoadMoreDataWithPage:_replayCurrentPage];
+    }
+}
+
+/**
+ *    @brief    解析问答数据
+ *    @param keysArrCount 秘钥条数
+ *    @param keysArr 问答秘钥数组
+ *    @param questionSouceType 问答来源类型
+ */
+- (void)questionDataWithKeysArrCount:(int)keysArrCount keysArr:(NSMutableArray *)keysArr questionSourceType:(QuestionSourceType)questionSouceType
+{
+    dispatch_queue_t queue = dispatch_queue_create("Question", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queue, ^{
+        [self.tempQuestionArray removeAllObjects];
+        for(int i = 0;i <keysArrCount ;i++) {
+            // 取出秘钥
+            NSString *encryptId = [keysArr objectAtIndex:i];
+            // 取出对应的问答数组
+            NSMutableArray *arr = [self.QADic objectForKey:encryptId];
+            NSMutableArray *newArr = [[NSMutableArray alloc] init];
+            for(int j = 0;j < [arr count];j++) {
+                // 对应的数据模型
+                Dialogue *dialogue = [arr objectAtIndex:j];
+                if(j == 0 && ![newArr containsObject:dialogue]) {
+                    if(dialogue.dataType == NS_CONTENT_TYPE_QA_QUESTION &&
+                       ![self.tempQuestionArray containsObject:encryptId] &&
+                       ([dialogue.fromuserid isEqualToString:dialogue.myViwerId] ||
+                        dialogue.isPublish == YES)) {
+                        dialogue.cellHeight = [self heightForCellOfQuestion:arr];
+                        // 查看我的问答
+                        if(_isMyQuestion == YES) {
+                            if([dialogue.fromuserid isEqualToString:dialogue.myViwerId]) {
+                                [self.tempQuestionArray addObject:encryptId];
+                                [newArr addObject:dialogue];
+                                [self.newQADic setObject:newArr forKey:encryptId];
+                            }
+                        } else { // 其他问答
+                            [self.tempQuestionArray addObject:encryptId];
+                            [newArr addObject:dialogue];
+                            [self.newQADic setObject:newArr forKey:encryptId];
+                        }
+                    }
+                } else if(![newArr containsObject:dialogue] && [newArr count] > 0) {
+                    Dialogue *firstDialogue = [arr objectAtIndex:0];
+                    if((dialogue.isPrivate == 0 || (dialogue.isPrivate == 1 && [firstDialogue.fromuserid isEqualToString:dialogue.myViwerId])) && dialogue.dataType == NS_CONTENT_TYPE_QA_ANSWER) {
+                        NSMutableArray *newArr = [self.newQADic objectForKey:encryptId];
+                        if (newArr != nil) {
+                            [newArr addObject:dialogue];
+                        }
                     }
                 }
             }
+            if (i == keysArrCount-1) {
+                if (questionSouceType == QuestionSourceTypeFromLiveHistory) { //查看直播历史问答
+                    [self.newKeysArr removeAllObjects];
+                    [self.newKeysArr addObjectsFromArray:self.tempQuestionArray];
+                }else {
+                    [self.newKeysArr addObjectsFromArray:self.tempQuestionArray];
+                }
+            }
         }
-    }
-
+    });
+        
+    dispatch_barrier_sync(queue, ^{
+        // 等数据处理完 再刷新
+    });
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.questionTableView reloadData];
-        if (self.newKeysArr != nil && [self.newKeysArr count] != 0 ) {
-            NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.newKeysArr.count-1) inSection:0];
-            [self.questionTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        if (questionSouceType == QuestionSourceTypeFromLive) {
+            
+            [self.questionTableView.mj_header endRefreshing];
+            if (self.newKeysArr != nil && [self.newKeysArr count] != 0 ) {
+                NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.newKeysArr.count-1) inSection:0];
+                [self.questionTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            } 
+        }else if(questionSouceType == QuestionSourceTypeFromLiveHistory) {
+            
+            // 包含历史数据显示下拉加载更多
+            if (self.questionTableView.mj_header.hidden == YES) {
+                self.questionTableView.mj_header.hidden = NO;
+            }
+            
+            [self.questionTableView.mj_header endRefreshing];
+            // 下拉无缝加载
+            NSInteger row = _newKeysArr.count - _liveCurrentPage * lowVersionDeviceLoadDataCount;
+            if (row > 0 && _liveCurrentPage != 0) {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+                [self.questionTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            }
+            // 加载完所有数据
+            if (_isDoneAllData == YES) {
+                self.questionTableView.mj_header.hidden = YES;
+            }
+        }else {
+            self.questionTableView.mj_footer.hidden = self.newKeysArr.count > 0 ? NO : YES;
+            [self.questionTableView.mj_footer endRefreshing];
+            if (_isDoneAllData == YES) {
+                [self.questionTableView.mj_footer endRefreshingWithNoMoreData];
+            }else if (self.newKeysArr.count > 0 && self.newKeysArr.count < lowVersionDeviceLoadDataCount) {
+                [self.questionTableView.mj_footer endRefreshingWithNoMoreData];
+            }
         }
     });
 }
 
+
 -(void)dealloc {
     [self removeObserver];
 }
-//初始化视图
+/**
+ *    @brief    初始化视图
+ */
 -(void)initUI {
     self.backgroundColor = [UIColor whiteColor];
+    _liveCurrentPage = 0;   // 直播默认起始页码
+    _replayCurrentPage = 0; // 回放默认起始页码
+    _isDoneAllData = NO;    // 初始化加载更多 无数据显示
+    _isMyQuestion = NO;     // 查看我的问答
     if(self.input) {
         //添加输入视图
         [self addSubview:self.contentView];
@@ -158,34 +306,19 @@
             make.right.equalTo(self.contentView).offset(-CCGetRealFromPt(24));
             make.height.mas_equalTo(CCGetRealFromPt(84));
         }];
-
+        [self setupHeaderRefresh];
     } else {//没有输入时
         //添加问答视图
         [self addSubview:self.questionTableView];
         [_questionTableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(self);
         }];
+        [self setupFooterRefresh];
     }
-}
-//键盘将要退出时
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if(!StrNotEmpty([_questionTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
-        [_informationView removeFromSuperview];
-        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
-        [APPDelegate.window addSubview:_informationView];
-        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-        
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
-        return YES;
-    }
-    [self chatSendMessage];
-    return YES;
 }
 
 /**
- 发送问答消息
+ *    @brief    发送问答消息
  */
 -(void)chatSendMessage {
     NSString *str = _questionTextField.text;
@@ -201,6 +334,9 @@
     [_questionTextField resignFirstResponder];
 }
 #pragma mark - 添加通知
+/**
+*    @brief    添加通知
+*/
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -212,7 +348,9 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
 }
-//移除通知
+/**
+ *    @brief    移除通知
+ */
 -(void)removeObserver {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 
@@ -220,7 +358,9 @@
 }
 
 #pragma mark keyboard notification
-//键盘将要出现
+/**
+ *    @brief    键盘将要出现
+ */
 - (void)keyboardWillShow:(NSNotification *)notif {
  
     if(![self.questionTextField isFirstResponder]) {
@@ -254,14 +394,37 @@
                 [self.questionTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
         }];
-
     }
 }
-//键盘将要隐藏
+
+/**
+ *    @brief    键盘将要退出时
+ */
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if(!StrNotEmpty([_questionTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
+        [_informationView removeFromSuperview];
+        _informationView = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
+        [APPDelegate.window addSubview:_informationView];
+        [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+        }];
+        
+        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
+        return YES;
+    }
+    [self chatSendMessage];
+    return YES;
+}
+
+/**
+ *    @brief    键盘将要隐藏
+ */
 - (void)keyboardWillHide:(NSNotification *)notif {
     [self hideKeyboard];
 }
-//隐藏键盘
+/**
+ *    @brief    隐藏键盘
+ */
 - (void)hideKeyboard {
     NSInteger tabheight = IS_IPHONE_X?178:110;
     [_contentView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -280,7 +443,9 @@
 
     }];
 }
-//输入视图
+/**
+ *    @brief    输入视图
+ */
 -(UIView *)contentView {
     if(!_contentView) {
         _contentView = [[UIView alloc] init];
@@ -289,7 +454,9 @@
     }
     return _contentView;
 }
-//问答输入框
+/**
+ *    @brief    问答输入框
+ */
 -(QuestionTextField *)questionTextField {
     if(!_questionTextField) {
         _questionTextField = [[QuestionTextField alloc] init];
@@ -300,7 +467,9 @@
     }
     return _questionTextField;
 }
-//输入框内容改变
+/**
+ *    @brief    输入框内容改变
+ */
 -(void)questionTextFieldChange {
     if(_questionTextField.text.length > 300) {
         //        [self endEditing:YES];
@@ -315,12 +484,16 @@
         [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
     }
 }
-//移除提示信息
+/**
+ *    @brief    移除提示信息
+ */
 -(void)removeInformationView {
     [_informationView removeFromSuperview];
     _informationView = nil;
 }
-//左侧按钮
+/**
+ *    @brief    左侧按钮（点击查看我的/全部问答）
+ */
 -(UIButton *)leftView {
     if(!_leftView) {
         _leftView = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -334,14 +507,19 @@
     return _leftView;
 }
 
-//点击左侧按钮
+
+/**
+ *    @brief    查看我的问答按钮点击事件
+ */
 -(void)leftButtonClicked {
     BOOL selected = !_leftView.selected;
     _leftView.selected = selected;
+    // 是否查看我的问答
+    _isMyQuestion = selected;
     _leftView.userInteractionEnabled = NO;
 
     [self bringSubviewToFront:self.contentView];
-//添加提示背景
+    //添加提示背景
      self.imageView = [[UIView alloc] init];
     self.imageView.backgroundColor = [UIColor colorWithHexString:@"#1e1f21" alpha:0.6f];
     [self.contentView addSubview:self.imageView];
@@ -352,7 +530,7 @@
     }];
     [self.imageView layoutIfNeeded];
     self.imageView.layer.cornerRadius = CCGetRealFromPt(30);
-//添加提示label
+    //添加提示label
     UILabel *label = [[UILabel alloc] init];
     label.text = ALERT_CHECKQUESTION(selected);
     label.backgroundColor = CCClearColor;
@@ -364,9 +542,9 @@
     [label mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.centerY.equalTo(self.imageView);
     }];
-//重载我的问答和所有问答
-    [self reloadQADic:self.QADic keysArrAll:self.keysArrAll];
-//加载动画
+    //重载我的问答和所有问答
+    [self reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:QuestionSourceTypeFromLive currentPage:0 isDoneAllData:YES];
+    //加载动画
     [UIView animateWithDuration:1.0 delay:1.0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.imageView.alpha = 0;
     } completion:^(BOOL finished) {
@@ -374,7 +552,9 @@
         self.leftView.userInteractionEnabled = YES;
     }];
 }
-//问答tableView
+/**
+ *    @brief    问答tableView
+ */
 -(UITableView *)questionTableView {
     if(!_questionTableView) {
         _questionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -412,7 +592,9 @@
     NSString *encryptId = [self.newKeysArr objectAtIndex:indexPath.row];
     NSMutableArray *arr = [self.newQADic objectForKey:encryptId];
     //计算高度
-    CGFloat height = [self heightForCellOfQuestion:arr] + 2;
+//    CGFloat height = [self heightForCellOfQuestion:arr] + 2;
+    Dialogue *dia = [arr firstObject];
+    CGFloat height = dia.cellHeight;
     if(indexPath.row == 0) {
         height += 2;
     }
@@ -424,7 +606,7 @@
     //注册cell
     CCQuestionViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[CCQuestionViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
+        cell = [[CCQuestionViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     //解析数据
     NSString *encryptId = [self.newKeysArr objectAtIndex:indexPath.row];
@@ -437,14 +619,14 @@
 }
 
 /**
- 计算cell的高度
-
- @param array 问答数据数组
- @return 高度
- */
+*    @brief    计算cell的高度
+*    @param    array 问答数据数组
+*    @return   高度
+*/
 -(CGFloat)heightForCellOfQuestion:(NSMutableArray *)array {
+    
     CGFloat height;
-//计算高度
+    //计算高度
     Dialogue *dialogue = [array objectAtIndex:0];
     float textMaxWidth = CCGetRealFromPt(590);
     NSMutableAttributedString *textAttri = [[NSMutableAttributedString alloc] initWithString:dialogue.msg];
@@ -509,6 +691,8 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [_questionTextField resignFirstResponder];
 }
+
+
 
 
 @end

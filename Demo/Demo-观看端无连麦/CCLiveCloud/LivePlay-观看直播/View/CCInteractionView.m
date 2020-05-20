@@ -11,7 +11,12 @@
 #import "CCQuestionView.h"//问答
 #import "Dialogue.h"//模型
 #import "CCChatViewDataSourceManager.h"//数据处理
-@interface CCInteractionView ()<UIScrollViewDelegate, CCChatViewDataSourceManagerDelegate>
+#import "CCProxy.h"
+#define livePlayQuestionDataCount 20 //默认单次处理20条
+
+static int flagCount = 0; //计数器
+
+@interface CCInteractionView ()<UIScrollViewDelegate, CCChatViewDataSourceManagerDelegate,CCQuestionViewDelegate>
 
 @property (nonatomic, strong)CCChatViewDataSourceManager *manager;//聊天数据源
 @property (nonatomic,strong)CCIntroductionView       * introductionView;//简介视图
@@ -36,13 +41,32 @@
 @property (nonatomic,copy) PrivateChatBlock          privateChatBlock;//私聊回调
 @property (nonatomic,copy) QuestionBlock             questionBlock;//问答回调
 
+
+/** 历史问答数组, 用于下滑查看历史数据用 */
+@property (nonatomic,strong) NSMutableArray          *historyQuestionArray;
+/** 历史答案数组, 用于下滑查看历史数据用 */
+@property (nonatomic,strong) NSMutableArray          *historyAnswerArray;
+/** 直播问答当前页面 */
+@property (nonatomic,assign) int                     livePlayQuestionCurrentPage;
+/** 首次进入直播间 */
+@property (nonatomic,assign) BOOL                    isFirstJoinLiveRoom;
+/** 是否有历史数据 */
+@property (nonatomic,assign) BOOL                    isDoneAllData;
+/** 计时器 记录问答数据 */
+@property (nonatomic,strong) NSTimer                 *timer;
+/** 查看历史问答翻页标记已添加回复 */
+@property (nonatomic,strong)NSMutableDictionary      *QADicFlag;
+
 @end
 #define IMGURL @"[img_"
 @implementation CCInteractionView
 - (void)dealloc
 {
     [_updateTimer invalidate];
+    // 注销定时器
+    [self stopTimer];
 }
+
 -(instancetype)initWithFrame:(CGRect)frame
               hiddenMenuView:(nonnull HiddenMenuViewBlock)block
                    chatBlock:(nonnull ChatMessageBlock)chatBlock
@@ -58,6 +82,8 @@
         _questionBlock = questionBlock;
         _isSmallDocView = isSmallDocView;
         [self setUpUI];
+        // 开启定时器
+        [self startTimer];
         NSDate *currentDate = [NSDate date];
         NSDateFormatter *dataFormatter = [[NSDateFormatter alloc]init];
         [dataFormatter setDateFormat:@"HH:mm:ss"];
@@ -66,10 +92,45 @@
     }
     return self;
 }
+
+/**
+ *    @brief    开启Timer
+ */
+- (void)startTimer
+{
+    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
+}
+/**
+ *    @brief    关闭Timer
+ */
+-(void)stopTimer {
+    if([_timer isValid]) {
+        [_timer invalidate];
+    }
+    _timer = nil;
+}
+
+/**
+ *    @brief    timer 回调
+ */
+- (void)timerfunc
+{
+    if (flagCount > 10) { // 同一时段返回多条问答 按每秒刷新
+        [self updata]; // 刷新
+        flagCount = 0;
+    }else {
+        return;
+    }
+}
+
 //初始化布局
 -(void)setUpUI{
     //设置功能切换
     //UISegmentedControl,功能控制,聊天文档等
+    self.livePlayQuestionCurrentPage = 0; // 历史数据页码
+    self.isFirstJoinLiveRoom = YES; // 首次进入直播间标记
+    
     [self addSubview:self.segment];
     self.segment.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(82));
     
@@ -225,7 +286,9 @@
     if (_templateType == 1) {
         //聊天互动： 无 直播文档： 无 直播问答： 无
         [_segment setWidth:0.0f forSegmentAtIndex:0];
+        [_segment setTitle:@"" forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
+        [_segment setTitle:@"" forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width forSegmentAtIndex:2];
 //        [_segment setWidth:0.0f forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 2;
@@ -255,6 +318,7 @@
         //聊天互动： 有 直播文档： 无 直播问答： 无
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
+        [_segment setTitle:@"" forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:2];
 //        [_segment setWidth:0.0f forSegmentAtIndex:3];
         _segment.selectedSegmentIndex = 0;
@@ -272,6 +336,7 @@
 //        CGFloat docWidth = _isSmallDocView ? 0 : self.segment.frame.size.width / count;
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:0];
         [_segment setWidth:0.0f forSegmentAtIndex:1];
+        [_segment setTitle:@"" forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/count forSegmentAtIndex:2];
 //        [_segment setWidth:docWidth forSegmentAtIndex:3];
         _shadowView.frame = CGRectMake([self.segment widthForSegmentAtIndex:0]/4, shadowViewY, [self.segment widthForSegmentAtIndex:0]/2, 2);
@@ -301,6 +366,7 @@
         //聊天互动： 无 直播文档： 无 直播问答： 有
         _segment.selectedSegmentIndex = 1;
         [_segment setWidth:0.0f forSegmentAtIndex:0];
+        [_segment setTitle:@"" forSegmentAtIndex:0];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:1];
         [_segment setWidth:self.segment.frame.size.width/2 forSegmentAtIndex:2];
 //        [_segment setWidth:0.0f forSegmentAtIndex:3];
@@ -372,6 +438,13 @@
 #pragma mark- 聊天
 /**
  *    @brief    收到私聊信息
+ *    @param    dic {fromuserid         //发送者用户ID
+ *                   fromusername       //发送者用户名
+ *                   fromuserrole       //发送者角色
+ *                   msg                //消息内容
+ *                   time               //发送时间
+ *                   touserid           //接受者用户ID
+ *                   tousername         //接受者用户名}
  */
 - (void)OnPrivateChat:(NSDictionary *)dic withMsgBlock:(NewMessageBlock)block {
     //判断消息方是否是自己
@@ -425,6 +498,14 @@
 }
 /**
  *    @brief  历史聊天数据
+ *    @param  chatLogArr [{ chatId          //聊天ID
+                            content         //聊天内容
+                            groupId         //聊天组ID
+                            time            //时间
+                            userAvatar      //用户头像
+                            userId          //用户ID
+                            userName        //用户名称
+                            userRole        //用户角色}]
  */
 - (void)onChatLog:(NSArray *)chatLogArr {
     /*  防止网络不好或者断开连麦时重新刷新此接口，导致重复显示历史聊天数据 */
@@ -436,7 +517,36 @@
     [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
 }
 /**
- *    @brief  收到公聊消息
+ *    @brief  禁言删除聊天记录
+ */
+- (void)onBanDeleteChatMessage:(NSDictionary *)dic {
+    NSString * viewerId = dic[@"viewerId"];
+    BOOL fromSelf = [viewerId isEqualToString:_viewerId];//判断是否是自己发的
+    if (fromSelf) {
+        return;
+    } else {
+        for (NSInteger i = 0; i <self.manager.publicChatArray.count;i++ ) {
+            if ([self.manager.publicChatArray[i].fromuserid isEqualToString:viewerId]) {
+                [self.manager.publicChatArray removeObjectAtIndex:i];
+                i--;
+            }
+        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
+        });
+
+    }
+
+}
+/*
+ *  @brief  收到公聊消息
+   @param  message {   groupId         //聊天组ID
+                       msg             //消息内容
+                       time            //发布时间
+                       useravatar      //用户头像
+                       userid          //用户ID
+                       username        //用户名称
+                       userrole        //用户角色}
  */
 - (void)onPublicChatMessage:(NSDictionary *)dic{
     //解析公聊消息
@@ -486,6 +596,11 @@
 }
 /**
  *  @brief  接收到发送的广播
+ *  @param  dic {
+                content     //广播内容
+                userid      //发布者ID
+                username    //发布者名字
+                userrole    //发布者角色 }
  */
 - (void)broadcast_msg:(NSDictionary *)dic {
     //解析广播消息
@@ -494,6 +609,13 @@
 }
 /*
  *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
+    @param  message {   groupId         //聊天组ID
+                        msg             //消息内容
+                        time            //发布时间
+                        useravatar      //用户头像
+                        userid          //用户ID
+                        username        //用户名称
+                        userrole        //用户角色}
  */
 - (void)onSilenceUserChatMessage:(NSDictionary *)message {
     
@@ -506,7 +628,16 @@
     
 }
 #pragma mark- 问答
-//发布问题的id
+/**
+ *  @brief  统一更新数据 （短时间 数据量大 按秒刷新，数据量少 按条刷新）
+ */
+- (void)updata
+{
+    [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:QuestionSourceTypeFromLive currentPage:0 isDoneAllData:YES];
+}
+/**
+ *  @brief  发布问题的id
+ */
 -(void)publish_question:(NSString *)publishId {
     for(NSString *encryptId in self.keysArrAll) {
         NSMutableArray *arr = [self.QADic objectForKey:encryptId];
@@ -515,7 +646,11 @@
             dialogue.isPublish = YES;
         }
     }
-    [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll];
+//    [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:QuestionSourceTypeFromLive currentPage:0 isDoneAllData:YES];
+    flagCount++; // 计数器 小于10条按条刷新
+    if (flagCount < 10) {
+        [self updata];
+    }
 }
 /**
  *    @brief  收到提问，用户观看时和主讲的互动问答信息
@@ -559,7 +694,11 @@
                 [self.keysArrAll addObject:dialog.encryptId];
             }
             [arr addObject:dialog];
-            [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll];
+//            [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:QuestionSourceTypeFromLive currentPage:0 isDoneAllData:YES];
+            flagCount++; // 计数器 小于10条按条刷新
+            if (flagCount < 10) {
+               [self updata];
+            }
         }
     }
 }
@@ -594,71 +733,165 @@
             }
         }
         [arr addObject:dialog];
-        [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll];
+//        [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:QuestionSourceTypeFromLive currentPage:0 isDoneAllData:YES];
+        flagCount++; // 计数器 小于10条按条刷新
+        if (flagCount < 10) {
+           [self updata];
+        }
     }
 }
+
 /**
- *    @brief  收到提问&回答
+ *    @brief  收到提问&回答(历史)
  */
 - (void)onQuestionArr:(NSArray *)questionArr onAnswerArr:(NSArray *)answerArr
 {
-    
     if ([questionArr count] == 0 && [answerArr count] == 0) {
         return;
     }
-    
     [self.QADic removeAllObjects];
-    
-    for (NSDictionary *dic in questionArr) {
-        Dialogue *dialog = [[Dialogue alloc] init];
-        //通过groupId过滤数据------start
-        NSString *msgGroupId = dic[@"groupId"];
-        //判断是否自己or消息的groupId为空or是否是本组聊天信息
-        if ([_groupId isEqualToString:@""] || [msgGroupId isEqualToString:@""] || [self.groupId isEqualToString:msgGroupId] || !msgGroupId) {
-            
+    // 第一次进入直播间 包含有历史问答 记录
+    if (self.isFirstJoinLiveRoom == YES && questionArr.count > 0) {
+        [self.historyAnswerArray removeAllObjects];
+        [self.historyQuestionArray removeAllObjects];
+        // 首次进入直播间加载历史数据
+        [self.historyQuestionArray addObjectsFromArray:questionArr];
+        [self.historyAnswerArray addObjectsFromArray:answerArr];
+        
+        [self.QADicFlag removeAllObjects];
+        for (int i = 0; i < answerArr.count; i++) {
+            NSString *flagKey = [NSString stringWithFormat:@"%@%d",@"answer",i];
+            [self.QADicFlag setObject:@(0) forKey:flagKey];
+        }
+        
+    }
+    // 问答总条数
+    int questionArrCount = (int)[questionArr count];
+    NSArray *tempArr = [NSArray array];
+    if (questionArrCount > livePlayQuestionDataCount) { // 历史问答数 > 20 条，先加载最后20条 开启分页
+        NSRange range = NSMakeRange(questionArrCount - livePlayQuestionDataCount, livePlayQuestionDataCount);
+        tempArr = [questionArr subarrayWithRange:range];
+        [self livePlayWithQuestionArr:tempArr answerArr:answerArr qustionSouceType:QuestionSourceTypeFromLive];
+    }else {
+        [self livePlayWithQuestionArr:questionArr answerArr:answerArr qustionSouceType:QuestionSourceTypeFromLive];
+    }
+    self.isFirstJoinLiveRoom = NO; //非首次进入直播间
+}
+
+/**
+ *    @brief  直播查看历史数据 （QuestionView 代理方法）
+ */
+- (void)livePlayLoadHistoryDataWithPage:(int)currentPage
+{
+    // 是否包含历史数据
+    if (self.historyQuestionArray.count == 0) return;
+    // 剩余数据count
+    int resuideKeysCount = (int)_historyQuestionArray.count - currentPage *livePlayQuestionDataCount;
+    // 最后一页数据 不够一整页数据时 计算剩余数据count
+    if (resuideKeysCount < livePlayQuestionDataCount) {
+       // 无更多数据
+       _isDoneAllData = YES;
+    }
+    if (resuideKeysCount <= 0) { // 剩余条数不足
+        NSMutableArray *tempQuestionArr = [NSMutableArray array];
+        NSMutableArray *tempAnswerArr = [NSMutableArray array];
+        [self livePlayWithQuestionArr:tempQuestionArr answerArr:tempAnswerArr qustionSouceType:QuestionSourceTypeFromLiveHistory];
+    }else {
+        // 当前分页范围
+        int location = resuideKeysCount < livePlayQuestionDataCount ? 0 : resuideKeysCount - livePlayQuestionDataCount;
+        NSRange range = NSMakeRange(location, livePlayQuestionDataCount < resuideKeysCount ? livePlayQuestionDataCount : resuideKeysCount);
+        NSMutableArray *tempQuestionArr = [NSMutableArray array];
+        // 取出分页范围的数据
+        [tempQuestionArr addObjectsFromArray:[_historyQuestionArray subarrayWithRange:range]];
+        // 记录当前分页
+        _livePlayQuestionCurrentPage = currentPage;
+        
+        [self livePlayWithQuestionArr:tempQuestionArr answerArr:self.historyAnswerArray qustionSouceType:QuestionSourceTypeFromLiveHistory];
+    }
+}
+
+/**
+ * @brief 历史问答 数据统一处理
+ *
+ * @param questionArr 提问数组
+ * @param answerArr 回复数组
+ * @param questionSourceType 问答来源类型
+*/
+- (void)livePlayWithQuestionArr:(NSArray *)questionArr answerArr:(NSArray *)answerArr qustionSouceType:(QuestionSourceType)questionSourceType
+{
+    dispatch_queue_t queue = dispatch_queue_create("LiveQuestion", DISPATCH_QUEUE_SERIAL);
+    dispatch_async(queue, ^{
+        // 临时数组用于存储历史数据按顺序展示
+        NSMutableArray *temp = [NSMutableArray array];
+        for (NSDictionary *dic in questionArr) {
+            Dialogue *dialog = [[Dialogue alloc] init];
+            //通过groupId过滤数据------start
+            NSString *msgGroupId = dic[@"groupId"];
+            //判断是否自己 or消息的groupId为空 or是否是本组聊天信息
+            if ([_groupId isEqualToString:@""] ||
+                [msgGroupId isEqualToString:@""] ||
+                [self.groupId isEqualToString:msgGroupId] ||
+                !msgGroupId) {
+                
+                dialog.msg = dic[@"content"];
+                dialog.username = dic[@"questionUserName"];
+                dialog.fromuserid = dic[@"questionUserId"];
+                dialog.myViwerId = _viewerId;
+                dialog.time = dic[@"time"];
+                dialog.encryptId = dic[@"encryptId"];
+                dialog.useravatar = dic[@"useravatar"];
+                dialog.dataType = NS_CONTENT_TYPE_QA_QUESTION;
+                dialog.isPublish = [dic[@"isPublish"] boolValue];
+                
+                //将过滤过的数据添加至问答字典
+                NSMutableArray *arr = [self.QADic objectForKey:dialog.encryptId];
+                if (arr == nil) {
+                    arr = [[NSMutableArray alloc] init];
+                    [self.QADic setObject:arr forKey:dialog.encryptId];
+                }
+                if(![self.keysArrAll containsObject:dialog.encryptId]) {
+                    if (questionSourceType == QuestionSourceTypeFromLiveHistory) {
+                        [temp addObject:dialog.encryptId];
+                    }else {
+                        [self.keysArrAll addObject:dialog.encryptId];
+                    }
+                }
+
+                [arr addObject:dialog];
+            }
+        }
+        if (questionSourceType == QuestionSourceTypeFromLiveHistory) { // 直播查看历史问答
+            // 将新数据插入到 keysArrAll 数组最前面
+            NSMutableIndexSet  *indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, temp.count)];
+            [self.keysArrAll insertObjects:temp atIndexes:indexes];
+        }
+        
+        for (int i = 0; i < answerArr.count; i++) {
+            NSDictionary *dic = answerArr[i];
+            Dialogue *dialog = [[Dialogue alloc] init];
             dialog.msg = dic[@"content"];
-            dialog.username = dic[@"questionUserName"];
-            dialog.fromuserid = dic[@"questionUserId"];
-            dialog.myViwerId = _viewerId;
-            dialog.time = dic[@"time"];
+            dialog.username = dic[@"answerUserName"];
+            dialog.fromuserid = dic[@"answerUserId"];
             dialog.encryptId = dic[@"encryptId"];
             dialog.useravatar = dic[@"useravatar"];
-            dialog.dataType = NS_CONTENT_TYPE_QA_QUESTION;
-            dialog.isPublish = [dic[@"isPublish"] boolValue];
-            
-            //将过滤过的数据添加至问答字典
+            dialog.dataType = NS_CONTENT_TYPE_QA_ANSWER;
+            dialog.isPrivate = [dic[@"isPrivate"] boolValue];
+            dialog.time = dic[@"time"];
             NSMutableArray *arr = [self.QADic objectForKey:dialog.encryptId];
-            if (arr == nil) {
-                arr = [[NSMutableArray alloc] init];
-                [self.QADic setObject:arr forKey:dialog.encryptId];
+            NSString *flagKey = [NSString stringWithFormat:@"%@%d",@"answer",i];
+            NSInteger answerFlag = [[self.QADicFlag objectForKey:flagKey] integerValue];
+            if (arr != nil) {
+                if (answerFlag == 0) {
+                    [arr addObject:dialog];
+                    [self.QADicFlag setObject:@(1) forKey:flagKey];
+                }
             }
-            if(![self.keysArrAll containsObject:dialog.encryptId]) {
-                [self.keysArrAll addObject:dialog.encryptId];
-            }
-            
-            [arr addObject:dialog];
         }
-    }
-    
-    for (NSDictionary *dic in answerArr) {
-        Dialogue *dialog = [[Dialogue alloc] init];
-        dialog.msg = dic[@"content"];
-        dialog.username = dic[@"answerUserName"];
-        dialog.fromuserid = dic[@"answerUserId"];
-        dialog.myViwerId = _viewerId;
-        dialog.encryptId = dic[@"encryptId"];
-        dialog.useravatar = dic[@"useravatar"];
-        dialog.dataType = NS_CONTENT_TYPE_QA_ANSWER;
-        dialog.isPrivate = [dic[@"isPrivate"] boolValue];
-        NSMutableArray *arr = [self.QADic objectForKey:dialog.encryptId];
-        if (arr != nil) {
-            [arr addObject:dialog];
-        }
-    }
-    
-    [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll];
+        
+        [self.questionChatView reloadQADic:self.QADic keysArrAll:self.keysArrAll questionSourceType:questionSourceType currentPage:_livePlayQuestionCurrentPage isDoneAllData:_isDoneAllData];
+    });
 }
-//主动调用方法
+
 /**
  *    @brief    提问
  *    @param     message 提问内容
@@ -730,6 +963,7 @@
         _questionChatView = [[CCQuestionView alloc] initWithQuestionBlock:^(NSString *message) {
             [weakSelf question:message];
         } input:YES];
+        _questionChatView.delegate = self;
         _questionChatView.backgroundColor = [UIColor grayColor];
     }
     return _questionChatView;
@@ -741,12 +975,22 @@
     }
     return _keysArrAll;
 }
+//存储已发布的 问答 和 回复
 -(NSMutableDictionary *)QADic {
     if(!_QADic) {
         _QADic = [[NSMutableDictionary alloc] init];
     }
     return _QADic;
 }
+//存储已发布问答的回复关联标记
+-(NSMutableDictionary *)QADicFlag {
+
+    if(!_QADicFlag) {
+        _QADicFlag = [[NSMutableDictionary alloc] init];
+    }
+    return _QADicFlag;
+}
+
 //创建聊天视图
 -(CCChatBaseView *)chatView {
     if(!_chatView) {
@@ -806,6 +1050,23 @@
     }
     return _chatArr;
 }
+//历史问答数据
+- (NSMutableArray *)historyQuestionArray
+{
+    if (!_historyQuestionArray) {
+        _historyQuestionArray = [NSMutableArray array];
+    }
+    return _historyQuestionArray;
+}
+//历史回复数据
+- (NSMutableArray *)historyAnswerArray
+{
+    if (!_historyAnswerArray) {
+        _historyAnswerArray = [NSMutableArray array];
+    }
+    return _historyAnswerArray;
+}
+
 #pragma mark - CCChatViewDataSourceDelegate
 - (void)updateIndexPath:(nonnull NSIndexPath *)indexPath chatArr:(nonnull NSMutableArray *)chatArr {
     id object = [chatArr objectAtIndex:indexPath.row];
@@ -818,4 +1079,7 @@
     [self.chatView.ccPrivateChatView removeFromSuperview];
     [[CCChatViewDataSourceManager sharedManager] removeData];
 }
+
+
+
 @end

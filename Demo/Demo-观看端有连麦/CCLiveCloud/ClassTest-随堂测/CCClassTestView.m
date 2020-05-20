@@ -18,6 +18,7 @@
 @property (nonatomic, assign) BOOL                        isScreenLandScape;//是否是全屏
 @property (nonatomic, copy) NSString                  * practiceId;//随堂测id
 @property (nonatomic, assign) BOOL                      isSingle;//是否是单选
+@property (nonatomic, assign) BOOL                      isJudge;//是否是判断
 @property (nonatomic, assign) NSInteger                count;//选项总数
 @property (nonatomic, strong) UIButton                * closeBtn;//关闭按钮
 
@@ -47,6 +48,7 @@
 @property(nonatomic,strong)UILabel                  *clockLabel;//时间label
 @property(nonatomic,strong)NSTimer                  *requestTimer;//请求结果timer
 @property(nonatomic,assign)NSInteger                durtion;//答题时间
+@property(nonatomic,assign)NSInteger                mistiming;//时间差
 #pragma mark - 答题失败
 @property(nonatomic,strong)UILabel                  *commitFailedLabel;//提交失败提示
 @property(nonatomic,strong)InformationShowView      *informationView;//提示视图
@@ -75,6 +77,12 @@
 #define COMMITFAILED @"网络异常，请重试"
 @implementation CCClassTestView
 
+/**
+ *    @brief    初始化方法
+ *    @param testDic 随堂测答题选项字典 testDic[@"practice"][@"Type"] :0 判断，1 单选，2 多选
+ *    @param isScreenLandScape 是否是全屏
+ *    @return self;
+ */
 -(instancetype)initWithTestDic:(NSDictionary *)testDic isScreenLandScape:(BOOL)isScreenLandScape{
     self = [super init];
     if (self) {
@@ -84,6 +92,9 @@
         self.practiceId = testDic[@"practice"][@"id"];//随堂测id
         self.optinsArr = testDic[@"practice"][@"options"];
         self.isSingle = [testDic[@"practice"][@"type"]intValue] == 1? YES:NO;
+        // 新增判断题处理
+        self.isJudge = [testDic[@"practice"][@"type"]intValue] == 0? YES:NO;
+        
         self.count = self.optinsArr.count;
         self.finish = NO;
 //        NSLog(@"%ld个选项", self.count);
@@ -98,15 +109,26 @@
 //    NSLog(@"移除随堂测视图");
 }
 #pragma mark - 设置UI
+/**
+ *    @brief    设置UI
+ */
 -(void)setUpUI{
     self.buttonOffset = _isScreenLandScape?9.f:4.f;
     _view = [[UIView alloc]init];
     _view.backgroundColor = [UIColor whiteColor];
     _view.layer.cornerRadius = CCGetRealFromPt(10);
     [self addSubview:_view];
-    NSInteger type = [self.testDic[@"practice"][@"type"] integerValue];
-    NSString *text = type == 1?@"单选题":@"多选题";
     
+    // NSString *text = type == 1?@"单选题":@"多选题";
+    // 随堂测类型 0 判断 1 单选 2 多选
+    // 新增判断题处理
+    NSInteger type = [self.testDic[@"practice"][@"type"] integerValue];
+    NSString *text = @"单选题";
+    if (type == 0) {
+        text = @"判断题";
+    }else if (type == 2) {
+        text = @"多选题";
+    }
     
     if (!_isScreenLandScape) {//竖屏
         [_view mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -244,9 +266,8 @@
 //竖屏约束
 //横屏约束
 #pragma mark - 设置答题选项
-
 /**
- 设置答案视图
+ *    @brief    设置答案视图
  */
 -(void)setAnswerUI{
     [self initWithABtnAndBtn];
@@ -265,7 +286,7 @@
 }
 
 /**
- 设置A选项和B选项
+ *    @brief    设置A选项和B选项
  */
 -(void)initWithABtnAndBtn{
     CGFloat leftOffset = (VIEW_WIDTH - self.count * BUTTON_WIDTH(_isScreenLandScape) - (self.buttonOffset * (self.count - 1)))/2;
@@ -274,7 +295,11 @@
         leftOffset = 153;
     }
     //设置rightButton的样式和约束
-    _aButton = [UIButton buttonWithImageName:BUTTON_IMGNAME(_isScreenLandScape, @"A") selectedImageName:BUTTON_SELIMGNAME(_isScreenLandScape, @"A") tag:0 target:self sel:@selector(optionsBtnClicked:)];
+    
+    // 新增判断题处理
+    NSString *optionATitle = _isJudge == YES ? @"judge_right" : @"A";
+    
+    _aButton = [UIButton buttonWithImageName:BUTTON_IMGNAME(_isScreenLandScape, optionATitle) selectedImageName:BUTTON_SELIMGNAME(_isScreenLandScape, optionATitle) tag:0 target:self sel:@selector(optionsBtnClicked:)];
     [_aButton addTarget:self action:@selector(optionsBtnTouched) forControlEvents:UIControlEventTouchDown];
     [_aButton addTarget:self action:@selector(optionsBtnCanceled) forControlEvents:UIControlEventTouchCancel];
     [self.view addSubview:_aButton];
@@ -285,7 +310,10 @@
     }];
     
     //设置wrongButton的样式和约束
-    _bButton = [UIButton buttonWithImageName:BUTTON_IMGNAME(_isScreenLandScape, @"B") selectedImageName:BUTTON_SELIMGNAME(_isScreenLandScape, @"B") tag:1 target:self sel:@selector(optionsBtnClicked:)];
+    // 新增判断题处理
+    NSString *optionBTitle = _isJudge == YES ? @"judge_wrong" : @"B";
+    
+    _bButton = [UIButton buttonWithImageName:BUTTON_IMGNAME(_isScreenLandScape, optionBTitle) selectedImageName:BUTTON_SELIMGNAME(_isScreenLandScape, optionBTitle) tag:1 target:self sel:@selector(optionsBtnClicked:)];
     [_bButton addTarget:self action:@selector(optionsBtnTouched) forControlEvents:UIControlEventTouchDown];
     [_bButton addTarget:self action:@selector(optionsBtnCanceled) forControlEvents:UIControlEventTouchCancel];
     [self.view addSubview:_bButton];
@@ -297,7 +325,7 @@
 }
 
 /**
- 设置C选项
+ *    @brief    设置C选项
  */
 -(void)initWithCButton{
     //设置cButton的样式和约束
@@ -314,7 +342,7 @@
 }
 
 /**
- 设置D选项
+ *    @brief    设置D选项
  */
 -(void)initWithDButton{
     //设置dButton的样式和约束
@@ -330,7 +358,7 @@
 }
 
 /**
- 设置E选项
+ *    @brief    设置E选项
  */
 -(void)initWithEButton{
     //设置eButton的样式和约束
@@ -347,7 +375,7 @@
 }
 
 /**
- 设置F选项
+ *    @brief    设置F选项
  */
 -(void)initWithFButton{
     //设置eButton的样式和约束
@@ -363,26 +391,27 @@
     }];
 }
 #pragma mark - btn点击事件
-//避免选择答案的时候点击提交按钮，误触
+/**
+ *    @brief    避免选择答案的时候点击提交按钮，误触
+ */
 -(void)optionsBtnTouched{
 //    NSLog(@"点击了a按钮");
     _submitBtn.userInteractionEnabled = NO;
 }
 
 /**
- 点击选项后调用
+ *    @brief    点击选项后调用
  */
 -(void)optionsBtnCanceled{
 //    NSLog(@"可以点击发布按钮");
     _submitBtn.userInteractionEnabled = YES;
 }
 /**
- 点击选项按钮
-
- @param button 选项按钮
+ *    @brief    点击选项按钮
+ *    @param    button 选项按钮
  */
 -(void)optionsBtnClicked:(UIButton *)button{
-    if (_isSingle) {
+    if (_isSingle || _isJudge) {
         [self.selectedArr removeAllObjects];
         //取消所有btn的选择
         [self cancelAllBtnsSelected];
@@ -406,7 +435,7 @@
 }
 
 /**
- 取消所有btn的selected属性
+ *    @brief    取消所有btn的selected属性
  */
 -(void)cancelAllBtnsSelected{
     _aButton.selected = NO;
@@ -425,7 +454,7 @@
     }
 }
 /**
- 点击发布按钮
+ *    @brief    点击发布按钮
  */
 -(void)submitBtnClicked{
     if (self.result == YES) {
@@ -444,9 +473,8 @@
 }
 
 /**
- 是否提交成功
-
- @param success 是否提交成功
+ *    @brief    是否提交成功
+ *    @param    success 是否提交成功
  */
 -(void)commitResult:(BOOL)success{
     if (success == NO) {
@@ -489,7 +517,7 @@
 }
 
 /**
- 移除提示视图
+ *    @brief    移除提示视图
  */
 -(void)removeInformationView{
     if (_informationView) {
@@ -499,7 +527,7 @@
 #pragma mark - 开启计时器
 
 /**
- 开启定时器
+ *    @brief    开启定时器
  */
 -(void)startTimer{
     [self getCurrentDurtion];
@@ -511,29 +539,39 @@
 }
 
 /**
- 得到当前秒数
+*    @brief    获取答题时间
+*    @return   秒数
+*/
+//- (NSInteger)getExamDurtion
+//{
+//    NSString *publistTime = _testDic[@"practice"][@"publishTime"];
+//    NSInteger publish = [NSString timeSwitchTimestamp:publistTime andFormatter:@"yyyy-MM-dd HH:mm:ss"];
+//    NSInteger now = [NSString timeSwitchTimestamp:self.submitAnswerTime andFormatter:@"yyyy-MM-dd HH:mm:ss"];
+//    NSInteger durtion = now - publish - 1;
+//    return durtion;
+//}
 
- @return 秒数
+/**
+ *    @brief    获取开始发布随堂考的时间差
+ *    @return   秒数
  */
 -(NSInteger)getCurrentDurtion{
-    NSString *publistTime = _testDic[@"practice"][@"publishTime"];
-    NSInteger publish = [NSString timeSwitchTimestamp:publistTime andFormatter:@"yyyy-MM-dd HH:mm:ss"];
-//    NSLog(@"%@", publistTime);
-    NSDate *currentDate = [NSDate date];
-    NSDateFormatter *dataFormatter = [[NSDateFormatter alloc]init];
-    [dataFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *dateString = [dataFormatter stringFromDate:currentDate];
-//    NSLog(@"%@", dateString);
-    NSInteger now = [NSString timeSwitchTimestamp:dateString andFormatter:@"yyyy-MM-dd HH:mm:ss"];
-    _durtion = now - publish - 1;
-//    NSLog(@"now:%ld", now);
-//    NSLog(@"publish:%ld", publish);
+
+    NSInteger nowTime = [[NSString getNowTimeTimestamp] integerValue];
+    NSInteger serverTime = [NSString timeSwitchTimestamp:_testDic[@"serverTime"] andFormatter:@"yyyy-MM-dd HH:mm:ss"];
+    _durtion = nowTime - serverTime;
+    //时间差
+    _mistiming = nowTime - serverTime;
+    
     return _durtion;
 }
+
+
+
 #pragma mark - 更新时间
 
 /**
- 更新时间
+ *    @brief    更新时间
  */
 -(void)updateTime{
     //获取初始化秒数
@@ -543,7 +581,7 @@
 #pragma mark - 停止计时器
 
 /**
- 停止计时器
+ *    @brief    停止计时器
  */
 -(void)stopTimer{
     [_timer invalidate];
@@ -551,9 +589,8 @@
 }
 
 /**
- 是否隐藏（当视图隐藏的时候关闭timer)
-
- @param hidden hidden
+ *    @brief    是否隐藏（当视图隐藏的时候关闭timer)
+ *    @param hidden hidden
  */
 -(void)setHidden:(BOOL)hidden{
     [super setHidden:hidden];
@@ -576,7 +613,7 @@
 #pragma mark - 结束答题结果显示
 
 /**
- 移除提交结果
+ *    @brief    移除提交结果
  */
 -(void)stopResultView{
     [self requestStatis];
@@ -588,7 +625,7 @@
 }
 
 /**
- 移除结果提示视图
+ *    @brief    移除结果提示视图
  */
 -(void)removeResultView{
     if (_resultImageView) {
@@ -599,7 +636,7 @@
     }
 }
 /**
- 显示提交结果样式
+ *    @brief    显示提交结果样式
  */
 -(void)showResultView{
     [self removeResultView];
@@ -643,9 +680,8 @@
 }
 
 /**
- 隐藏其他视图
-
- @param hidden 是否隐藏
+ *    @brief    隐藏其他视图
+ *    @param    hidden 是否隐藏
  */
 -(void)otherViewsHidden:(BOOL)hidden{
     _clockImageView.hidden = hidden;
@@ -671,7 +707,7 @@
 }
 
 /**
- 开启动画
+ *    @brief    开启动画
  */
 -(void)showAnimation{
     self.view.alpha = 0.1f;
@@ -683,9 +719,8 @@
 #pragma mark - 我的答案和正确答案
 
 /**
- 更新我的答案字典
-
- @param arr 需要被更新的数组
+ *    @brief    更新我的答案字典
+ *    @param    arr 需要被更新的数组
  */
 -(void)updateSelectArr:(NSArray *)arr{
     [_selectedArr removeAllObjects];
@@ -693,19 +728,20 @@
 }
 
 /**
- 显示答案视图
+ *    @brief    显示答案视图
  */
 -(void)showAnswerView{
     NSString *myAnswerText = @"您的答案：";
     NSString *correctAnswerText = @"正确答案：";
     for (NSDictionary *dic in _resultDic[@"practice"][@"options"]) {
+        NSInteger type = [_resultDic[@"practice"][@"type"] integerValue];
         if([_selectedArr containsObject:dic[@"id"]]){
 //            NSLog(@"我选择的答案：%d", [dic[@"index"] intValue]);
-            myAnswerText = [myAnswerText stringByAppendingString:[NSString stringWithFilterStr:dic[@"index"]]];
+            myAnswerText = [myAnswerText stringByAppendingString:[NSString stringWithFilterStr:dic[@"index"] withType:type]];
         }
         if ([dic[@"isCorrect"] intValue] == 1 ) {
 //            NSLog(@"正确答案：%d", [dic[@"index"] intValue]);
-            correctAnswerText = [correctAnswerText stringByAppendingString:[NSString stringWithFilterStr:dic[@"index"]]];
+            correctAnswerText = [correctAnswerText stringByAppendingString:[NSString stringWithFilterStr:dic[@"index"] withType:type]];
         }
     }
     if (self.result == NO) {//如果选择了答案没有提交。。。todo
@@ -738,12 +774,17 @@
 #pragma mark - 统计结果
 
 /**
- 请求统计回调
+ *    @brief    请求统计回调
  */
 -(void)requestStatis{
     self.StaticBlock(_practiceId);
 }
 
+/**
+ *    @brief    得到答题统计
+ *    @param    resultDic 统计结果字典
+ *    @param    isScreen  是否全屏
+ */
 -(void)getPracticeStatisWithResultDic:(NSDictionary *)resultDic isScreen:(BOOL)isScreen{
     self.isScreenLandScape = isScreen;
     [self otherViewsHidden:YES];
@@ -773,7 +814,7 @@
 
 
 /**
- 显示统计结果视图
+ *    @brief    显示统计结果视图
  */
 -(void)showPracticeStatisView{
     self.frame = [UIScreen mainScreen].bounds;
@@ -889,7 +930,7 @@
         
     }
     [self.view layoutIfNeeded];
-    _centerLabel.text = [NSString stringWithFormat:@"共%ld人回答，正确率%@", _answerPersonNum, _correctRate];
+    _centerLabel.text = [NSString stringWithFormat:@"共%zd人回答，正确率%@", _answerPersonNum, _correctRate];
     
     //设置统计结果
     if (!_progressView) {
@@ -913,6 +954,9 @@
     _correctAnswerLabel.hidden = NO;
 }
 #pragma mark - 停止答题
+/**
+ *    @brief    停止答题
+ */
 -(void)stopTest{
     //关闭定时器
     [self stopTimer];
@@ -925,13 +969,24 @@
     //设置闹钟的图片和样式
     _clockImageView.image = [UIImage imageNamed:@"icon-time-gray"];
     _clockLabel.textColor = CCRGBColor(102, 102, 102);
-    [self getCurrentDurtion];
-    _clockLabel.text = [NSString stringWithFormat:@"%@", [NSString timeFormat:_durtion]];
+    
+//    [self getCurrentDurtion];
+    NSInteger currentTime = [[NSString getNowTimeTimestamp] integerValue];
+    
+    NSString *publistTime = _testDic[@"practice"][@"publishTime"];
+    NSInteger publish = [NSString timeSwitchTimestamp:publistTime andFormatter:@"yyyy-MM-dd HH:mm:ss"];
+    // 获取当前结束 - 时间差 (发布随堂测的系统时间 - 发布时间) - 发布时间
+    NSInteger durtion = currentTime - _mistiming - publish;
+    
+    _clockLabel.text = [NSString stringWithFormat:@"%@", [NSString timeFormat:durtion]];
     
     //再次调用答题结果，判断当前是否停止答题
     self.StaticBlock(self.practiceId);
 }
 #pragma mark - 点击关闭按钮
+/**
+ *    @brief    点击关闭按钮
+ */
 -(void)closeBtnClicked {
     if (self.shouldRmove) {
         [self removeFromSuperview];
@@ -943,8 +998,9 @@
     }
 }
 #pragma mark - 懒加载
-//关闭按钮点击回调
-//label背景视图
+/**
+ *    @brief    label背景视图
+ */
 -(UIView *)labelBgView {
     if(!_labelBgView) {
         _labelBgView = [[UIView alloc] init];
@@ -956,7 +1012,9 @@
     }
     return _labelBgView;
 }
-//发布按钮
+/**
+ *    @brief    发布按钮
+ */
 -(UIButton *)submitBtn {
     if(!_submitBtn) {
         _submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -973,6 +1031,9 @@
     }
     return _submitBtn;
 }
+/**
+ *    @brief    选择后的数组
+ */
 -(NSMutableArray *)selectedArr{
     if (!_selectedArr) {
         _selectedArr = [NSMutableArray array];
@@ -981,10 +1042,9 @@
 }
 
 /**
- 修改特定字符颜色
-
- @param str str
- @return 处理过的字符串
+ *    @brief    修改特定字符颜色
+ *    @param    str   字符串
+ *    @return   处理过的字符串
  */
 -(NSMutableAttributedString *)getAttributedStrWithStr:(NSString *)str{
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:str];
@@ -992,7 +1052,9 @@
     [string addAttribute:NSForegroundColorAttributeName value:CCRGBColor(121, 128, 139) range:NSMakeRange(0, 5)];
     return string;
 }
-//拖拽小屏
+/**
+ *    @brief    拖拽小屏
+ */
 - (void) handlePan:(UIPanGestureRecognizer*) recognizer
 {
     if (_resultDic) {
@@ -1038,9 +1100,8 @@
 #pragma mark - 判断是否有网络
 
 /**
- 判断当前是否有网络
-
- @return 是否有网
+ *    @brief    判断当前是否有网络
+ *    @return   是否有网
  */
 -(BOOL)isExistenceNetwork{
     BOOL isExistenceNetwork = YES;

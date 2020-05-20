@@ -332,7 +332,7 @@
     style.alignment = NSTextAlignmentLeft;
     style.minimumLineHeight = CCGetRealFromPt(34);
     style.maximumLineHeight = CCGetRealFromPt(34);
-    style.lineBreakMode = NSLineBreakByCharWrapping;
+    style.lineBreakMode = UILineBreakModeWordWrap;
     NSDictionary *dict = @{NSFontAttributeName:[UIFont systemFontOfSize:FontSize_24],NSParagraphStyleAttributeName:style};
     [textAttri addAttributes:dict range:NSMakeRange(0, textAttri.length)];
     
@@ -464,6 +464,9 @@
 }
 #pragma mark - 更新对应indexPath的行高
 -(void)updateCellHeightWithIndexPath:(NSIndexPath *)indexPath imageSize:(CGSize)imageSize{
+    if (self.publicChatArray.count == 0) {
+        return;
+    }
     CCPublicChatModel *model = [self.publicChatArray objectAtIndex: indexPath.row];
     model.imageSize = [self getCGSizeWithImageSize:imageSize];
     CGFloat cellHeight;

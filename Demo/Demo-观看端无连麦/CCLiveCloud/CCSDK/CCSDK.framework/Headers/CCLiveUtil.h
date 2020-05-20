@@ -23,6 +23,7 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     ERROR_SOCKET = 1017,//@"socket加载失败"
     ERROR_PUNCH = 1018,//@"获取打卡信息失败"
     ERROR_PUNCHCOMMIT = 1019,//@"获取打卡提交结果失败"
+    ERROR_DRMURL = 1020,//@"获取加密地址失败"
 };
 
 

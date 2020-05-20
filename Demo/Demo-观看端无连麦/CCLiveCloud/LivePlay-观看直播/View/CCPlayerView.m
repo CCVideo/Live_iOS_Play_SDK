@@ -11,8 +11,9 @@
 #import "InformationShowView.h"
 #import "CCProxy.h"
 #import "CCBarrage.h"
-@interface CCPlayerView ()<UITextFieldDelegate
+#import "CCChatContentView.h"
 
+@interface CCPlayerView ()<UITextFieldDelegate
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -38,6 +39,19 @@
 @property (nonatomic, assign)BOOL                       isMain;//是否视频为主
 @property (nonatomic, assign)BOOL                       isSmallDocView;//是否是文档小窗模式
 @property (nonatomic, strong)CCBarrage                  *barrageView;//弹幕
+@property (nonatomic, assign)BOOL                    showusercount;//显示在线人数
+@property (nonatomic, assign)BOOL                    openlivecountdown;//倒计时
+@property (nonatomic, assign)BOOL                    barrage;//弹幕
+@property (nonatomic, assign)BOOL                    openmarquee;//跑马灯
+@property (nonatomic, strong)UILabel                    * unStart1;//直播倒计时
+@property (nonatomic, strong)CCChatContentView          *inputView;
+
+// 新增控制阴影View
+@property (nonatomic, assign)BOOL                       isShowShadowView;
+// 文档手势冲突 获取屏幕点击回调 计数Flag
+@property (nonatomic, assign)NSInteger                  showShadowCountFlag;
+@property (nonatomic, assign)BOOL                       keyboardShow;
+
 @end
 
 @implementation CCPlayerView
@@ -51,26 +65,118 @@
         self.backgroundColor = [UIColor blackColor];
         _isSmallDocView = isSmallDocView;
         [self setupUI];
-        [self addObserver];
     }
     return self;
 }
+/**
+ *  @dict    房间信息用来处理弹幕开关,是否显示在线人数,直播倒计时等
+ */
+- (void)roominfo:(NSDictionary *)dict {
+    self.titleLabel.text = dict[@"name"];;
+    /*
+     showusercount 显示在线人数
+     openlivecountdown 倒计时
+     barrage 弹幕
+     openmarquee 跑马灯
+     */
+    self.showusercount = [dict[@"showUserCount"] boolValue];
+    self.openlivecountdown = [dict[@"openLiveCountdown"] boolValue];
+    self.barrage = [dict[@"barrage"] boolValue];
+    self.openmarquee = [dict[@"openMarquee"] boolValue];
+    if (self.barrage == YES) {
+        [self hideDanMuBtnClicked];
+    }
+    if (self.showusercount == NO) {
+        self.userCountLogo.hidden = YES;
+        self.userCountLabel.hidden = YES;
+    }
+    if (self.openlivecountdown == YES) {
+        [self timeoutWithStr:dict[@"liveStartTime"]];
+    }
+}
+
+-(void)timeoutWithStr:(NSString *)str{
+    NSString * strings = [str substringToIndex:19];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    //24小时制：yyyy-MM-dd HH:mm:ss  12小时制：yyyy-MM-dd hh:mm:ss
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    NSDate *date = [dateFormatter dateFromString:strings];
+    NSTimeInterval interval = [date timeIntervalSince1970];
+    NSTimeInterval interval1 = [[NSDate date] timeIntervalSince1970];
+    __block int timeout = (int)interval - (int)interval1; //倒计时时
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);
+    dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行
+    dispatch_source_set_event_handler(_timer, ^{
+
+        if(timeout==0){ //倒计时结束，关闭
+            dispatch_source_cancel(_timer);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //设置界面的按钮显示 根据自己需求设置（倒计时结束后调用）
+                //self.ShouMIdate.text =@"0天0时0分0秒";
+                self.unStart1.text = @"即将开始";
+            });
+        }else if(timeout > 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //设置界面的按钮显示 根据自己需求设置
+                //                NSLog(@"____%@",strTime);
+                int second =timeout%60;//秒
+                int minutes = timeout/60%60;//分钟的。
+                int hour = timeout/60/60%24;//小时
+                int day = timeout/60/60/24;//天
+                NSString *strTime = [NSString stringWithFormat:@"%d天%d小时%d分钟%d秒",day,hour,minutes,second ];
+                //_ShouMIdate.text =strTime;
+//                NSLog(@"倒计时%@",strTime);
+                self.unStart1.text = strTime;
+            });
+            timeout--;
+        }
+
+});
+
+dispatch_resume(_timer);
+
+}
+
 /**
  *  @brief  隐藏导航,用定时器控制,键盘弹出和隐藏的时候修改self.shouldHidden的值来控制是否隐藏
  */
 - (void)LatencyHiding {
 
-    if (self.bottomShadowView.hidden == NO && self.shouldHidden == NO) {
-            self.bottomShadowView.hidden = YES;
-            self.topShadowView.hidden = YES;
-        }
+    // 新增控制方法
+    [self showOrHiddenShadowView];
+    [self stopPlayerTimer];
+//    if (self.bottomShadowView.hidden == NO && self.shouldHidden == NO) {
+//            self.bottomShadowView.hidden = YES;
+//            self.topShadowView.hidden = YES;
+//        }
 }
 /**
  *  @brief  隐藏导航,点击手势
  */
 - (void)doTapChange:(UITapGestureRecognizer*) recognizer {
 
-    if (self.bottomShadowView.hidden == YES) {
+    [self showOrHiddenShadowView];
+//    if (self.bottomShadowView.hidden == YES) {
+//        self.bottomShadowView.hidden = NO;
+//        self.topShadowView.hidden = NO;
+//        [self.topShadowView becomeFirstResponder];
+//        [self bringSubviewToFront:self.topShadowView];
+//        [self bringSubviewToFront:self.bottomShadowView];
+//    } else {
+//        self.bottomShadowView.hidden = YES;
+//        self.topShadowView.hidden = YES;
+//        [self.topShadowView resignFirstResponder];
+//        [self.chatTextField resignFirstResponder];
+//    }
+}
+
+/**
+*  @brief  隐藏导航
+*/
+- (void)showOrHiddenShadowView
+{
+    if (_isShowShadowView == NO) {
         self.bottomShadowView.hidden = NO;
         self.topShadowView.hidden = NO;
         [self.topShadowView becomeFirstResponder];
@@ -80,7 +186,6 @@
         self.bottomShadowView.hidden = YES;
         self.topShadowView.hidden = YES;
         [self.topShadowView resignFirstResponder];
-        [self.chatTextField resignFirstResponder];
     }
 }
 
@@ -93,11 +198,16 @@
     [self endEditing:NO];
 }
 
+
+
 /**
  *  @brief  创建UI
  */
 - (void)setupUI {
     _endNormal = YES;
+    // 新增显示阴影View 默认显示
+    _isShowShadowView = YES;
+    _showShadowCountFlag = 0;
     //上面阴影
     self.topShadowView =[[UIView alloc] init];
     UIImageView *topShadow = [[UIImageView alloc] init];
@@ -260,16 +370,18 @@
 
     //横屏聊天
     _contentView = [[UIView alloc] init];
-    _contentView.backgroundColor = CCRGBAColor(171,179,189,0.30);
+    _contentView.userInteractionEnabled = YES;
+    _contentView.backgroundColor = CCRGBAColor(171,179,189,1);
     [self.bottomShadowView addSubview:_contentView];
+    CGFloat offset = IS_IPHONE_X ? 10 : 0;
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.bottomShadowView);
-        make.height.mas_equalTo(CCGetRealFromPt(100));
+        make.bottom.equalTo(self.bottomShadowView).offset(-offset);
+        make.height.mas_equalTo(CCGetRealFromPt(110));
         make.left.equalTo(self.bottomShadowView);
         make.right.equalTo(self.bottomShadowView);
     }];
     _contentView.hidden = YES;
-    _contentView.alpha = 0.5;
+    _contentView.alpha = 1;
 
     //弹幕按钮
     _danMuButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -286,27 +398,43 @@
     }];
 
     //表情按钮
-    _rightView = [UIButton buttonWithType:UIButtonTypeCustom];
-    _rightView.frame = CGRectMake(0, 0, CCGetRealFromPt(48), CCGetRealFromPt(48));
-    _rightView.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    _rightView.backgroundColor = CCClearColor;
-    [_rightView setImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
-    [_rightView setImage:[UIImage imageNamed:@"face_hov"] forState:UIControlStateSelected];
-    [_rightView addTarget:self action:@selector(faceBoardClick) forControlEvents:UIControlEventTouchUpInside];
+//    _rightView = [UIButton buttonWithType:UIButtonTypeCustom];
+//    _rightView.frame = CGRectMake(0, 0, CCGetRealFromPt(48), CCGetRealFromPt(48));
+//    _rightView.imageView.contentMode = UIViewContentModeScaleAspectFit;
+//    _rightView.backgroundColor = CCClearColor;
+//    [_rightView setImage:[UIImage imageNamed:@"face_nov"] forState:UIControlStateNormal];
+//    [_rightView setImage:[UIImage imageNamed:@"face_hov"] forState:UIControlStateSelected];
+//    [_rightView addTarget:self action:@selector(faceBoardClick) forControlEvents:UIControlEventTouchUpInside];
 
     //输入框
-    _chatTextField = [[CustomTextField alloc] init];
-    _chatTextField.delegate = self;
-    _chatTextField.layer.cornerRadius = CCGetRealFromPt(45);
-    [_chatTextField addTarget:self action:@selector(chatTextFieldChange) forControlEvents:UIControlEventEditingChanged];
-    _chatTextField.rightView = self.rightView;
-    [self.contentView addSubview:_chatTextField];
-    [self.chatTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.contentView);
+//    _chatTextField = [[CustomTextField alloc] init];
+//    _chatTextField.delegate = self;
+//    _chatTextField.layer.cornerRadius = CCGetRealFromPt(45);
+//    [_chatTextField addTarget:self action:@selector(chatTextFieldChange) forControlEvents:UIControlEventEditingChanged];
+//    _chatTextField.rightView = self.rightView;
+//    [self.contentView addSubview:_chatTextField];
+//    [self.chatTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.centerY.mas_equalTo(self.contentView);
+//        make.left.mas_equalTo(self.danMuButton.mas_right).offset(CCGetRealFromPt(22));
+//        make.right.equalTo(self.contentView).offset(-CCGetRealFromPt(22));
+//        make.height.mas_equalTo(CCGetRealFromPt(90));
+//    }];
+    
+    self.inputView = [[CCChatContentView alloc]init];
+    self.inputView.isFullScroll = YES;
+    [self.contentView addSubview:self.inputView];
+    self.inputView.delegate = self;
+    [_inputView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.contentView).offset(-CCGetRealFromPt(10));
         make.left.mas_equalTo(self.danMuButton.mas_right).offset(CCGetRealFromPt(22));
         make.right.equalTo(self.contentView).offset(-CCGetRealFromPt(22));
         make.height.mas_equalTo(CCGetRealFromPt(90));
     }];
+    WS(weakSelf)
+    //聊天回调
+    self.inputView.sendMessageBlock = ^{
+        [weakSelf chatSendMessage];
+    };
 
     //直播未开始
     self.liveUnStart = [[UIImageView alloc] init];
@@ -332,6 +460,13 @@
     self.unStart.text = PLAY_UNSTART;
     [self.liveUnStart addSubview:self.unStart];
     self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(271), 100, 30);
+    self.unStart1 = [[UILabel alloc] init];
+    self.unStart1.textColor = [UIColor whiteColor];
+    self.unStart1.alpha = 0.6f;
+    self.unStart1.textAlignment = NSTextAlignmentCenter;
+    self.unStart1.font = [UIFont systemFontOfSize:FontSize_30];
+    [self.liveUnStart addSubview:self.unStart1];
+    self.unStart1.frame = CGRectMake(SCREEN_WIDTH/2-100, CCGetRealFromPt(320), 200, 30);
 //单击手势
     _TapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange:)];
     _TapGesture.numberOfTapsRequired = 1;
@@ -350,14 +485,14 @@
     }];
 
     //初始化弹幕
-    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle];
+//    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle];
+    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle ReferenceView:self.bottomShadowView];
+
 }
 
-
 /**
- 横竖屏切换
-
- @param screenLandScape 横竖屏
+ *    @brief    横竖屏切换
+ *    @param    screenLandScape 横竖屏
  */
 - (void)layouUI:(BOOL)screenLandScape {
     _screenLandScape = screenLandScape;
@@ -396,7 +531,7 @@
         [self.titleLabel layoutIfNeeded];
         self.liveUnStart.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
         self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(380), 100, 30);
-
+        self.unStart1.frame = CGRectMake(SCREEN_WIDTH/2-100, CCGetRealFromPt(420), 200, 30);
     } else {
         self.qingXiButton.hidden = YES;
         self.quanpingButton.hidden = NO;
@@ -427,6 +562,7 @@
         [self.titleLabel layoutIfNeeded];
         self.liveUnStart.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462));
         self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(271), 100, 30);
+        self.unStart1.frame = CGRectMake(SCREEN_WIDTH/2-100, CCGetRealFromPt(320), 200, 30);
     }
     
 }
@@ -435,7 +571,7 @@
  线路选择视图
 
  @param firRoadNum 线路
- @param secRoadKeyArray 清晰度
+ @param secRoadKeyArray 清晰度  [@"标清",@"高清"]
  */
 - (void)SelectLinesWithFirRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray {
 //
@@ -544,7 +680,7 @@
 }
 #pragma mark - 切换线路相关
 /**
- 点击清晰度
+ *    @brief    点击清晰度
  */
 - (void)qingXiButtonClick {
     [self bringSubviewToFront:self.selectedIndexView];
@@ -555,9 +691,8 @@
 }
 
 /**
- 线路选择
-
- @param sender 点击的按钮
+ *    @brief    线路选择
+ *    @param    sender 点击的按钮
  */
 - (void)firRoadBtnClick:(UIButton *)sender {
     self.selectedIndexView.hidden = YES;
@@ -588,9 +723,8 @@
 }
 
 /**
- 选择的清晰度
-
- @param sender 点击的按钮
+ *    @brief    选择的清晰度
+ *    @param    sender 点击的按钮
  */
 - (void)secRoadBtnClick:(UIButton *)sender {
     self.selectedIndexView.hidden = YES;
@@ -607,26 +741,100 @@
     _secRoadButton = sender;
     self.selectedIndex(_btn.tag,sender.tag-1);
 }
+
+#pragma mark - 私有方法
+//发送公聊信息
+-(void)chatSendMessage{
+    NSString *str = _inputView.plainText;
+    if(str == nil || str.length == 0) {
+        return;
+    }
+    // 发送公聊信息
+    self.sendChatMessage(str);
+    _inputView.textView.text = nil;
+    [_inputView.textView resignFirstResponder];
+}
+
+#pragma mark - inputView deleaget输入键盘的代理
+//键盘将要出现
+-(void)keyBoardWillShow:(CGFloat)height endEditIng:(BOOL)endEditIng{
+    
+    //键盘弹出 隐藏shadowView
+    [self showOrHiddenShadowView];
+    self.keyboardShow = YES;
+    //防止图片和键盘弹起冲突
+    if (endEditIng == YES) {
+        [self endEditing:YES];
+        return;
+    }
+    
+    if (_screenLandScape == YES) {
+        NSInteger selfHeight = self.frame.size.height - height;
+        NSInteger contentHeight = selfHeight>CCGetRealFromPt(110)?(-height):(CCGetRealFromPt(110)-self.frame.size.height);
+        _contentView.tag = 100;
+        [[UIApplication sharedApplication].keyWindow addSubview:_contentView];
+        [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self).offset(IS_IPHONE_X ? 44:0);
+            make.height.mas_equalTo(CCGetRealFromPt(110));
+            make.right.equalTo(self).offset(IS_IPHONE_X? (-44):0);
+            make.bottom.equalTo(self.mas_bottom).offset(contentHeight);
+        }];
+        
+        [_inputView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.contentView).offset(-CCGetRealFromPt(10));
+            make.left.mas_equalTo(self.danMuButton.mas_right).offset(CCGetRealFromPt(22));
+            make.right.equalTo(self.contentView).offset(-CCGetRealFromPt(22));
+            make.height.mas_equalTo(CCGetRealFromPt(90));
+        }];
+    }
+}
+//隐藏键盘
+-(void)hiddenKeyBoard{
+
+    if (_screenLandScape == YES) {
+        [self endEditing:YES];
+        self.keyboardShow = NO;
+        [[[UIApplication sharedApplication].keyWindow viewWithTag:100] removeFromSuperview];
+        [self.bottomShadowView addSubview:self.contentView];
+        CGFloat offset = IS_IPHONE_X ? 10 : 0;
+        [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.bottomShadowView);
+            make.height.mas_equalTo(CCGetRealFromPt(110));
+            make.right.equalTo(self.bottomShadowView);
+            make.bottom.equalTo(self.bottomShadowView).offset(-offset);
+        }];
+        
+        [_inputView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.contentView).offset(-CCGetRealFromPt(10));
+            make.left.mas_equalTo(self.danMuButton.mas_right).offset(CCGetRealFromPt(22));
+            make.right.equalTo(self.contentView).offset(-CCGetRealFromPt(22));
+            make.height.mas_equalTo(CCGetRealFromPt(90));
+        }];
+    }
+}
+
 #pragma mark - 点击表情按钮
 /**
  表情按钮点击事件
  */
-- (void)faceBoardClick {
-    BOOL selected = !_rightView.selected;
-    _rightView.selected = selected;
-    
-    if(selected) {
-        [_chatTextField setInputView:self.emojiView];
-    } else {
-        [_chatTextField setInputView:nil];
-    }
-    
-    [_chatTextField becomeFirstResponder];
-    [_chatTextField reloadInputViews];
-}
+//- (void)faceBoardClick {
+//    BOOL selected = !_rightView.selected;
+//    _rightView.selected = selected;
+//
+//    if(selected) {
+//        [_chatTextField setInputView:self.emojiView];
+//    } else {
+//        [_chatTextField setInputView:nil];
+//    }
+//
+//    [_chatTextField becomeFirstResponder];
+//    [_chatTextField reloadInputViews];
+//}
 
 #pragma mark - 新增的共有点击事件方法
-//点击全屏按钮
+/**
+ *    @brief    点击全屏按钮
+ */
 -(void)quanpingBtnClick{
     //全屏按钮代理
     [self.delegate quanpingButtonClick:_changeButton.tag];
@@ -640,7 +848,7 @@
         make.height.mas_equalTo(SCREENH_HEIGHT);
     }];
     [self layoutIfNeeded];//
-
+   
     
     //隐藏其他视图
     [self layouUI:YES];
@@ -648,38 +856,95 @@
     if (_isSmallDocView) {
         [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
+    
 }
-/**
-//结束直播和退出全屏
 
-@param sender 点击按钮
-*/
+/**
+ *    @brief    结束直播和退出全屏
+ *    @param    sender 点击按钮
+ */
 -(void)backBtnClick:(UIButton *)sender{
     [self endEditing:YES];
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
+        // 返回按钮在进入全屏的情况下 tag 被设置为 2
         sender.tag = 1;
-        [UIApplication sharedApplication].statusBarHidden = NO;
-        self.selectedIndexView.hidden = YES;
-//        [self endEditing:NO];
-        self.contentView.hidden = YES;
-        UIView *view = [self superview];
-        [self mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(view);
-            make.height.mas_equalTo(CCGetRealFromPt(462));
-            make.top.equalTo(view).offset(SCREEN_STATUS);
-        }];
-        [self layoutIfNeeded];
-
-        CGRect rect = [UIScreen mainScreen].bounds;
-        if (_isSmallDocView) {
-            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
-        }
-        [self layouUI:NO];
-
+        [self backBtnClickWithTag:_changeButton.tag];
+//        [UIApplication sharedApplication].statusBarHidden = NO;
+//        self.selectedIndexView.hidden = YES;
+////        [self endEditing:NO];
+//        self.contentView.hidden = YES;
+//        UIView *view = [self superview];
+//        [self mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(view);
+//            make.height.mas_equalTo(CCGetRealFromPt(462));
+//            make.top.equalTo(view).offset(SCREEN_STATUS);
+//        }];
+//        [self layoutIfNeeded];
+//        //#ifdef LIANMAI_WEBRTC
+//            if(_remoteView) {//设置竖屏状态下连麦窗口
+//                [_remoteView removeFromSuperview];
+//                if (_changeButton.tag == 2) {//如果是视频小窗
+//                    [self.smallVideoView addSubview:self.remoteView];
+//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
+//                }else{
+//                    [self addSubview:self.remoteView];
+//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+//                }
+//                [self bringSubviewToFront:self.topShadowView];
+//                [self bringSubviewToFront:self.bottomShadowView];
+//                // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
+//                self.setRemoteView(self.remoteView.frame);
+//            }
+//        //#endif
+//        CGRect rect = [UIScreen mainScreen].bounds;
+//        if (_isSmallDocView) {
+//            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+//        }
+//        [self layouUI:NO];
+//        //#ifdef LIANMAI_WEBRTC
+//        //连麦视图显示
+//        if (_lianMaiView) {
+//            _lianMaiView.hidden = NO;
+//        }
+        //#endif
     }
 }
+
+/**
+ *    @brief    返回按钮事件处理
+ *    @param    tag 按钮的tag
+ */
+- (void)backBtnClickWithTag:(NSInteger)tag
+{
+    // 全屏返回时调用
+    if (tag == 2) {
+        UIButton *button = [[UIButton alloc]init];
+        button.tag = 2;
+        [self.delegate backButtonClick:button changeBtnTag:_changeButton.tag];
+    }
+    
+    [UIApplication sharedApplication].statusBarHidden = NO;
+    self.selectedIndexView.hidden = YES;
+//        [self endEditing:NO];
+    self.contentView.hidden = YES;
+    UIView *view = [self superview];
+    [self mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(view);
+        make.height.mas_equalTo(CCGetRealFromPt(462));
+        make.top.equalTo(view).offset(SCREEN_STATUS);
+    }];
+    [self layoutIfNeeded];
+
+    CGRect rect = [UIScreen mainScreen].bounds;
+    if (_isSmallDocView) {
+        [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+    }
+    [self layouUI:NO];
+
+}
+
 /**
  切换视频和文档
  
@@ -697,10 +962,11 @@
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
-       
+    
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
+    
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -715,108 +981,108 @@
 
  @return 懒加载表情视图
  */
--(UIView *)emojiView {
-    if(!_emojiView) {
-        if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
-            _keyboardRect = CGRectMake(0, 0, 736, 194);
-        }
-        
-        _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
-        _emojiView.backgroundColor = CCRGBColor(242,239,237);
-        
-        CGFloat faceIconSize = CCGetRealFromPt(60);
-        CGFloat xspace = (_keyboardRect.size.width - FACE_COUNT_CLU * faceIconSize) / (FACE_COUNT_CLU + 1);
-        CGFloat yspace = (_keyboardRect.size.height - 26 - FACE_COUNT_ROW * faceIconSize) / (FACE_COUNT_ROW + 1);
-        
-        for (int i = 0; i < FACE_COUNT_ALL; i++) {
-            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            faceButton.tag = i + 1;
-            
-            [faceButton addTarget:self action:@selector(faceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            //            计算每一个表情按钮的坐标和在哪一屏
-            CGFloat x = (i % FACE_COUNT_CLU + 1) * xspace + (i % FACE_COUNT_CLU) * faceIconSize;
-            CGFloat y = (i / FACE_COUNT_CLU + 1) * yspace + (i / FACE_COUNT_CLU) * faceIconSize;
-            
-            faceButton.frame = CGRectMake(x, y, faceIconSize, faceIconSize);
-            faceButton.backgroundColor = CCClearColor;
-            [faceButton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%02d", i+1]]
-                        forState:UIControlStateNormal];
-            faceButton.contentMode = UIViewContentModeScaleAspectFit;
-            [_emojiView addSubview:faceButton];
-        }
-        //删除键
-        UIButton *button14 = (UIButton *)[_emojiView viewWithTag:14];
-        UIButton *button20 = (UIButton *)[_emojiView viewWithTag:20];
-        
-        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
-        back.contentMode = UIViewContentModeScaleAspectFit;
-        [back setImage:[UIImage imageNamed:@"chat_btn_facedel"] forState:UIControlStateNormal];
-        [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
-        [_emojiView addSubview:back];
-        
-        [back mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(button14);
-            make.centerY.mas_equalTo(button20);
-        }];
-    }
-    return _emojiView;
-}
+//-(UIView *)emojiView {
+//    if(!_emojiView) {
+//        if(_keyboardRect.size.width == 0 || _keyboardRect.size.height ==0) {
+//            _keyboardRect = CGRectMake(0, 0, 736, 194);
+//        }
+//
+//        _emojiView = [[UIView alloc] initWithFrame:_keyboardRect];
+//        _emojiView.backgroundColor = CCRGBColor(242,239,237);
+//
+//        CGFloat faceIconSize = CCGetRealFromPt(60);
+//        CGFloat xspace = (_keyboardRect.size.width - FACE_COUNT_CLU * faceIconSize) / (FACE_COUNT_CLU + 1);
+//        CGFloat yspace = (_keyboardRect.size.height - 26 - FACE_COUNT_ROW * faceIconSize) / (FACE_COUNT_ROW + 1);
+//
+//        for (int i = 0; i < FACE_COUNT_ALL; i++) {
+//            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//            faceButton.tag = i + 1;
+//
+//            [faceButton addTarget:self action:@selector(faceButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+//            //            计算每一个表情按钮的坐标和在哪一屏
+//            CGFloat x = (i % FACE_COUNT_CLU + 1) * xspace + (i % FACE_COUNT_CLU) * faceIconSize;
+//            CGFloat y = (i / FACE_COUNT_CLU + 1) * yspace + (i / FACE_COUNT_CLU) * faceIconSize;
+//
+//            faceButton.frame = CGRectMake(x, y, faceIconSize, faceIconSize);
+//            faceButton.backgroundColor = CCClearColor;
+//            [faceButton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%02d", i+1]]
+//                        forState:UIControlStateNormal];
+//            faceButton.contentMode = UIViewContentModeScaleAspectFit;
+//            [_emojiView addSubview:faceButton];
+//        }
+//        //删除键
+//        UIButton *button14 = (UIButton *)[_emojiView viewWithTag:14];
+//        UIButton *button20 = (UIButton *)[_emojiView viewWithTag:20];
+//
+//        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
+//        back.contentMode = UIViewContentModeScaleAspectFit;
+//        [back setImage:[UIImage imageNamed:@"chat_btn_facedel"] forState:UIControlStateNormal];
+//        [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
+//        [_emojiView addSubview:back];
+//
+//        [back mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.centerX.mas_equalTo(button14);
+//            make.centerY.mas_equalTo(button20);
+//        }];
+//    }
+//    return _emojiView;
+//}
 
 /**
  选择表情
 
  @param sender 点解表情
  */
-- (void)faceButtonClicked:(id)sender {
-    [self.chatTextField becomeFirstResponder];
-    NSInteger i = ((UIButton*)sender).tag;
-    NSMutableString *faceString = [[NSMutableString alloc]initWithString:_chatTextField.text];
-    [faceString appendString:[NSString stringWithFormat:@"[em2_%02d]",(int)i]];
-    _chatTextField.text = faceString;
-    [self chatTextFieldChange];
-}
+//- (void)faceButtonClicked:(id)sender {
+//    [self.chatTextField becomeFirstResponder];
+//    NSInteger i = ((UIButton*)sender).tag;
+//    NSMutableString *faceString = [[NSMutableString alloc]initWithString:_chatTextField.text];
+//    [faceString appendString:[NSString stringWithFormat:@"[em2_%02d]",(int)i]];
+//    _chatTextField.text = faceString;
+//    [self chatTextFieldChange];
+//}
 
 /**
  删除表情
  */
-- (void)backFace {
-    NSString *inputString = _chatTextField.text;
-    if ( [inputString length] > 0) {
-        NSString *string = nil;
-        NSInteger stringLength = [inputString length];
-        if (stringLength >= FACE_NAME_LEN) {
-            string = [inputString substringFromIndex:stringLength - FACE_NAME_LEN];
-            NSRange range = [string rangeOfString:FACE_NAME_HEAD];
-            if ( range.location == 0 ) {
-                string = [inputString substringToIndex:[inputString rangeOfString:FACE_NAME_HEAD options:NSBackwardsSearch].location];
-            } else {
-                string = [inputString substringToIndex:stringLength - 1];
-            }
-        }
-        else {
-            string = [inputString substringToIndex:stringLength - 1];
-        }
-        _chatTextField.text = string;
-    }
-}
+//- (void)backFace {
+//    NSString *inputString = _chatTextField.text;
+//    if ( [inputString length] > 0) {
+//        NSString *string = nil;
+//        NSInteger stringLength = [inputString length];
+//        if (stringLength >= FACE_NAME_LEN) {
+//            string = [inputString substringFromIndex:stringLength - FACE_NAME_LEN];
+//            NSRange range = [string rangeOfString:FACE_NAME_HEAD];
+//            if ( range.location == 0 ) {
+//                string = [inputString substringToIndex:[inputString rangeOfString:FACE_NAME_HEAD options:NSBackwardsSearch].location];
+//            } else {
+//                string = [inputString substringToIndex:stringLength - 1];
+//            }
+//        }
+//        else {
+//            string = [inputString substringToIndex:stringLength - 1];
+//        }
+//        _chatTextField.text = string;
+//    }
+//}
 
 /**
  输入文字
  */
--(void)chatTextFieldChange {
-    if(_chatTextField.text.length > 300) {
-        //        [self.view endEditing:YES];
-        _chatTextField.text = [_chatTextField.text substringToIndex:300];
-        [_informationViewPop removeFromSuperview];
-        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
-        [APPDelegate.window addSubview:_informationViewPop];
-        [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
-        }];
-
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationViewPop) userInfo:nil repeats:NO];
-    }
-}
+//-(void)chatTextFieldChange {
+//    if(_chatTextField.text.length > 300) {
+//        //        [self.view endEditing:YES];
+//        _chatTextField.text = [_chatTextField.text substringToIndex:300];
+//        [_informationViewPop removeFromSuperview];
+//        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_INPUTLIMITATION];
+//        [APPDelegate.window addSubview:_informationViewPop];
+//        [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 200, 0));
+//        }];
+//
+//        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationViewPop) userInfo:nil repeats:NO];
+//    }
+//}
 
 /**
  移除加载
@@ -849,118 +1115,127 @@
 /**
  发送聊天
  */
--(void)sendBtnClicked {
-    if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
-        [_informationViewPop removeFromSuperview];
-        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
-        [APPDelegate.window addSubview:_informationViewPop];
-        [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.centerY.equalTo(APPDelegate.window);
-            make.width.mas_equalTo(200);
-            make.height.mas_equalTo(50);
-        }];
-
-        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationViewPop) userInfo:nil repeats:NO];
-        return;
-    }
-    [self chatSendMessage];
-}
+//-(void)sendBtnClicked {
+//    if(!StrNotEmpty([_chatTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])) {
+//        [_informationViewPop removeFromSuperview];
+//        _informationViewPop = [[InformationShowView alloc] initWithLabel:ALERT_EMPTYMESSAGE];
+//        [APPDelegate.window addSubview:_informationViewPop];
+//        [_informationViewPop mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.centerX.centerY.equalTo(APPDelegate.window);
+//            make.width.mas_equalTo(200);
+//            make.height.mas_equalTo(50);
+//        }];
+//
+//        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationViewPop) userInfo:nil repeats:NO];
+//        return;
+//    }
+//    [self chatSendMessage];
+//}
 
 /**
  横屏发送聊天
  */
--(void)chatSendMessage {
-    NSString *str = _chatTextField.text;
-    if(str == nil || str.length == 0) {
-        return;
+//-(void)chatSendMessage {
+//    NSString *str = _chatTextField.text;
+//    if(str == nil || str.length == 0) {
+//        return;
+//    }
+//    // 发送公聊信息
+//    self.sendChatMessage(str);
+//    _chatTextField.text = nil;
+//    [_chatTextField resignFirstResponder];
+//}
+
+/**
+ *    @brief    playerView 触摸事件 （直播文档模式，文档手势冲突）
+ *    @param    point   触碰当前区域的点
+ */
+- (nullable UIView *)hitTest:(CGPoint)point withEvent:(nullable UIEvent *)event
+{
+    // 每次触摸事件 此方法会进行两次回调，_showShadowCountFlag 标记第二次回调处理事件
+    _showShadowCountFlag++;
+    CGFloat selfH = self.frame.size.height;
+    if (point.y > 0 && point.y <= CCGetRealFromPt(88)) { //过滤掉顶部shadowView
+        _showShadowCountFlag = 0;
+        return [super hitTest:point withEvent:event];
+    }else if (point.y >= selfH - CCGetRealFromPt(60) && point.y <= selfH) { ////过滤掉底部shadowView
+        _showShadowCountFlag = 0;
+        return [super  hitTest:point withEvent:event];
+    }else {
+        if (_showShadowCountFlag == 2) {
+            _isShowShadowView = _isShowShadowView == YES ? NO : YES;
+            if (self.keyboardShow == YES && _screenLandScape == YES) {
+                self.keyboardShow = NO;
+                [self endEditing:YES];
+                [self hiddenKeyBoard];
+            }
+            [self showOrHiddenShadowView];
+            _showShadowCountFlag = 0;
+        }
+        return [super hitTest:point withEvent:event];
     }
-    // 发送公聊信息
-    self.sendChatMessage(str);
-    _chatTextField.text = nil;
-    [_chatTextField resignFirstResponder];
 }
 
 /**
- 弹幕
-
- @param model 弹幕数据模型
+ *    @brief    弹幕
+ *    @param    model 弹幕数据模型
  */
 - (void)insertDanmuModel:(CCPublicChatModel *)model {
     [self.barrageView insertBarrageMessage:model];
 }
 
 #pragma mark keyboard notification
-- (void)keyboardWillShow:(NSNotification *)notif {
-    if(![self.chatTextField isFirstResponder]) {
-        return;
-    }
-    self.shouldHidden = YES;
-    [self.chatTextField becomeFirstResponder];
-    NSDictionary *userInfo = [notif userInfo];
-    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    _keyboardRect = [aValue CGRectValue];
-    CGFloat y = _keyboardRect.size.height;
-    if ([self.chatTextField isFirstResponder]) {
-        [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(CCGetRealFromPt(128));
-            make.left.equalTo(self.bottomShadowView).offset(IS_IPHONE_X?40:0);
-            make.right.equalTo(self.bottomShadowView);
-            make.bottom.mas_equalTo(self).offset(-y);
-        }];
-        
-        [UIView animateWithDuration:0.25f animations:^{
-            [self layoutIfNeeded];
-        } completion:^(BOOL finished) {
-            
-        }];
-    }
-}
-
-- (void)keyboardWillHide:(NSNotification *)notif {
-    self.shouldHidden = NO;
-    [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self);
-        make.height.mas_equalTo(self.screenLandScape?CCGetRealFromPt(128):CCGetRealFromPt(60));
-        make.left.equalTo(self.bottomShadowView).offset(IS_IPHONE_X?40:0);
-        make.right.equalTo(self.bottomShadowView);
-    }];
-    
-    [UIView animateWithDuration:0.25f animations:^{
-        [self layoutIfNeeded];
-    } completion:^(BOOL finished) {
-        
-    }];
-}
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [self sendBtnClicked];
-    _chatTextField.text = nil;
-    [_chatTextField resignFirstResponder];
-    return YES;
-}
+//- (void)keyboardWillShow:(NSNotification *)notif {
+//    if(![self.chatTextField isFirstResponder]) {
+//        return;
+//    }
+//    self.shouldHidden = YES;
+//    [self.chatTextField becomeFirstResponder];
+//    NSDictionary *userInfo = [notif userInfo];
+//    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+//    _keyboardRect = [aValue CGRectValue];
+//    CGFloat y = _keyboardRect.size.height;
+//    if ([self.chatTextField isFirstResponder]) {
+//        [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.height.mas_equalTo(CCGetRealFromPt(128));
+//            make.left.equalTo(self.bottomShadowView).offset(IS_IPHONE_X?40:0);
+//            make.right.equalTo(self.bottomShadowView);
+//            make.bottom.mas_equalTo(self).offset(-y);
+//        }];
+//
+//        [UIView animateWithDuration:0.25f animations:^{
+//            [self layoutIfNeeded];
+//        } completion:^(BOOL finished) {
+//
+//        }];
+//    }
+//}
+//
+//- (void)keyboardWillHide:(NSNotification *)notif {
+//    self.shouldHidden = NO;
+//    [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.mas_equalTo(self);
+//        make.height.mas_equalTo(self.screenLandScape?CCGetRealFromPt(128):CCGetRealFromPt(60));
+//        make.left.equalTo(self.bottomShadowView).offset(IS_IPHONE_X?40:0);
+//        make.right.equalTo(self.bottomShadowView);
+//    }];
+//
+//    [UIView animateWithDuration:0.25f animations:^{
+//        [self layoutIfNeeded];
+//    } completion:^(BOOL finished) {
+//
+//    }];
+//}
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+//    [self sendBtnClicked];
+//    _chatTextField.text = nil;
+//    [_chatTextField resignFirstResponder];
+//    return YES;
+//}
 
 -(void)dealloc {
-  
-    [self removeObserver];
-    [self stopPlayerTimer];
+     [self stopPlayerTimer];
 }
--(void)addObserver {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-}
--(void)removeObserver {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-}
-
-
 /**
  关闭播放计时器
  */
@@ -987,13 +1262,15 @@
     }
 }
 /**
- 小窗添加
+ *    @brief    小窗添加
  */
 - (void)addSmallView{
     [APPDelegate.window addSubview:_smallVideoView];
 //    [[UIApplication sharedApplication].keyWindow addSubview: _smallVideoView];
-
 }
+/**
+ *    @brief    小窗隐藏
+ */
 -(void)hiddenSmallVideoview{
     self.smallVideoView.hidden = YES;
     NSString *title = _changeButton.tag == 1 ? PLAY_SHOWDOC : PLAY_SHOWVIDEO;
@@ -1057,6 +1334,7 @@
 //    });
     self.changeButton.hidden = YES;
     self.unStart.text = PLAY_OVER;
+    self.unStart1.hidden = YES;
     self.quanpingButton.hidden = YES;
     [self bringSubviewToFront:_liveUnStart];
     [_loadingView removeFromSuperview];

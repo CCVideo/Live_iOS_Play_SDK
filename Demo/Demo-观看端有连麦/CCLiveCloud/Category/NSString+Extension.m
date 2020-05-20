@@ -9,25 +9,35 @@
 #import "NSString+Extension.h"
 
 @implementation NSString (Extension)
-+(NSString *)stringWithFilterStr:(NSString *)fliterStr{
++(NSString *)stringWithFilterStr:(NSString *)fliterStr withType:(NSInteger)type{
     NSString *str = [NSString stringWithFormat:@"%@", fliterStr];
-    if ([str isEqualToString:@"0"]) {
-        return @"A";
-    }
-    if ([str isEqualToString:@"1"]) {
-        return @"B";
-    }
-    if ([str isEqualToString:@"2"]) {
-        return @"C";
-    }
-    if ([str isEqualToString:@"3"]) {
-        return @"D";
-    }
-    if ([str isEqualToString:@"4"]) {
-        return @"E";
-    }
-    if ([str isEqualToString:@"5"]) {
-        return @"F";
+    if (type == 0) {
+        if ([str isEqualToString:@"0"]) {
+            return @"√";
+        }
+        if ([str isEqualToString:@"1"]) {
+            return @"X";
+        }
+    }else {
+        
+        if ([str isEqualToString:@"0"]) {
+            return @"A";
+        }
+        if ([str isEqualToString:@"1"]) {
+            return @"B";
+        }
+        if ([str isEqualToString:@"2"]) {
+            return @"C";
+        }
+        if ([str isEqualToString:@"3"]) {
+            return @"D";
+        }
+        if ([str isEqualToString:@"4"]) {
+            return @"E";
+        }
+        if ([str isEqualToString:@"5"]) {
+            return @"F";
+        }
     }
     return @"";
 }

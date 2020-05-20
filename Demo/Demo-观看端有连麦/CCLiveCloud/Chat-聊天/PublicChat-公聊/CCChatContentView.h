@@ -30,11 +30,13 @@ typedef void(^CCSendMessageBlock)(void);//发送消息回调
 @end
 @interface CCChatContentView : UIView
 
-@property (nonatomic, strong)PPStickerTextView       *textView;//聊天文本框
-@property (nonatomic, strong, readonly) NSString *plainText;
-@property (nonatomic, copy) CCSendMessageBlock     sendMessageBlock;//发送信息回调
+@property (nonatomic, strong)PPStickerTextView          *textView;//聊天文本框
+@property (nonatomic, strong, readonly) NSString        *plainText;
+@property (nonatomic, copy)CCSendMessageBlock           sendMessageBlock;//发送信息回调
+@property (nonatomic, assign)BOOL                       isFullScroll;//是否全屏
 
 @property (nonatomic, weak)id<CCChatContentViewDelegate> delegate;//代理
+
 @end
 
 NS_ASSUME_NONNULL_END

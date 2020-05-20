@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @return 过滤后的字符串
  */
-+(NSString *)stringWithFilterStr:(NSString *)fliterStr;
++(NSString *)stringWithFilterStr:(NSString *)fliterStr withType:(NSInteger)type;
 /**
  秒数转固定格式的时间字符串
  

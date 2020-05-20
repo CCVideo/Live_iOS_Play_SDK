@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong)UIButton                   * changeButton;//切换视频文档按钮
 @property (nonatomic, strong)UIButton                   * quanpingButton;//全屏按钮
 @property (nonatomic, strong)UIImageView                * liveUnStart;//直播未开始视图
-@property (nonatomic, strong)CustomTextField            * chatTextField;//横屏聊天
+//@property (nonatomic, strong)CustomTextField            * chatTextField;//横屏聊天
 
 @property (nonatomic,copy) void(^selectedRod)(NSInteger);//切换线路
 @property (nonatomic,copy) void(^sendChatMessage)(NSString *);//发送聊天
@@ -163,7 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  @brief  切换线路
  *  @param  firRoadNum 线路
- *  @param  secRoadKeyArray 清晰度
+ *  @param  secRoadKeyArray 清晰度[@"标清",@"高清"]
  */
 - (void)SelectLinesWithFirRoad:(NSInteger)firRoadNum secRoadKeyArray:(NSArray *)secRoadKeyArray;
 
@@ -178,6 +178,20 @@ NS_ASSUME_NONNULL_BEGIN
  
  */
 - (void)addSmallView;
+/**
+ *  @dict    房间信息用来处理弹幕开关,是否显示在线人数,直播倒计时等
+*/
+- (void)roominfo:(NSDictionary *)dict;
+
+/**
+ *  双击PPT时进入全屏，playView 统一的全屏方法
+*/
+- (void)quanpingBtnClick;
+
+/**
+ *  @tag 双击PPT退出全屏，默认tag值传2 playView 统一处理退出全屏
+*/
+- (void)backBtnClickWithTag:(NSInteger)tag;
 
 @end
 

@@ -13,20 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CCClassTestProgressView : UIView
 
 /**
- 初始化方法
-
- @param frame frame
- @param dic 统计字典
- @param isScreen 是否是全屏
- @return self
+ *    @brief    初始化方法
+ *    @param    frame frame
+ *    @param    dic 统计字典
+ *    @param    isScreen 是否是全屏
+ *    @return   self
  */
 -(instancetype)initWithFrame:(CGRect)frame ResultDic:(NSDictionary *)dic isScreen:(BOOL)isScreen;
 
 /**
- 更新方法
-
- @param dic 随堂测统计字典
- @param isScreen 是否是全屏
+ *    @brief    更新方法
+ *    @param    dic 随堂测统计字典
+ *    @param    isScreen 是否是全屏
  */
 -(void)updateWithResultDic:(NSDictionary *)dic isScreen:(BOOL)isScreen;
 

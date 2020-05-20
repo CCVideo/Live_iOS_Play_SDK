@@ -44,5 +44,8 @@
 
 @property(nonatomic, copy) NSString                    *chatId;
 @property(nonatomic, copy) NSString                    *status;
+
+@property(nonatomic, assign)CGFloat                     cellHeight;
+
 @end
 
