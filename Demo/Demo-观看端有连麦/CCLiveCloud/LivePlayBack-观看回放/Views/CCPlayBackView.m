@@ -156,14 +156,14 @@
     }];
     //返回按钮
     self.backButton = [[UIButton alloc] init];
-    [self.backButton setBackgroundImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
+    [self.backButton setImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
     self.backButton.tag = 1;
 
     [self.topShadowView addSubview:_backButton];
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.topShadowView).offset(CCGetRealFromPt(10));
-        make.top.equalTo(self.topShadowView).offset(CCGetRealFromPt(26));
-        make.width.height.mas_equalTo(30);
+        make.left.equalTo(self.topShadowView);
+        make.centerY.equalTo(self.topShadowView);
+        make.width.height.mas_equalTo(CCGetRealFromPt(88));
     }];
     [self.backButton layoutIfNeeded];
 
@@ -184,7 +184,7 @@
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.topShadowView).offset(CCGetRealFromPt(-20));
         make.centerY.equalTo(self.backButton);
-        make.height.mas_equalTo(CCGetRealFromPt(50));
+        make.height.mas_equalTo(CCGetRealFromPt(60));
         make.width.mas_equalTo(CCGetRealFromPt(180));
     }];
     [self.changeButton layoutIfNeeded];
@@ -203,7 +203,7 @@
     [self addSubview:self.bottomShadowView];
     [self.bottomShadowView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self);
-        make.height.mas_equalTo(CCGetRealFromPt(60));
+        make.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     [self.bottomShadowView layoutIfNeeded];
     [self.bottomShadowView addSubview:bottomShadow];
@@ -220,8 +220,8 @@
     [self.bottomShadowView addSubview:_pauseButton];
     [self.pauseButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.bottomShadowView);
-        make.left.equalTo(self.bottomShadowView).offset(CCGetRealFromPt(20));
-        make.width.height.mas_equalTo(CCGetRealFromPt(60));
+        make.left.equalTo(self.bottomShadowView).offset(CCGetRealFromPt(10));
+        make.width.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     [self.pauseButton layoutIfNeeded];
 
@@ -263,7 +263,6 @@
         make.left.equalTo(self.leftTimeLabel.mas_right).offset(CCGetRealFromPt(10));
         make.centerY.equalTo(self.leftTimeLabel);
         make.width.mas_equalTo(CCGetRealFromPt(90));
-
     }];
     [self.rightTimeLabel layoutIfNeeded];
 
@@ -296,7 +295,7 @@
     [self.quanpingButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.bottomShadowView);
         make.right.equalTo(self.bottomShadowView).offset(CCGetRealFromPt(-20));
-        make.width.height.mas_equalTo(CCGetRealFromPt(60));
+        make.width.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     [self.quanpingButton layoutIfNeeded];
 
@@ -308,8 +307,8 @@
     [self.speedButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.bottomShadowView);
         make.right.equalTo(self.quanpingButton.mas_left).offset(CCGetRealFromPt(-10));
-        make.width.mas_equalTo(CCGetRealFromPt(70));
-        make.height.mas_equalTo(CCGetRealFromPt(56));
+        make.width.mas_equalTo(CCGetRealFromPt(80));
+        make.height.mas_equalTo(CCGetRealFromPt(60));
     }];
     [self.speedButton layoutIfNeeded];
 
@@ -317,7 +316,7 @@
         make.left.equalTo(self.rightTimeLabel.mas_right).offset(CCGetRealFromPt(10));
         make.top.mas_equalTo(self.rightTimeLabel.mas_centerY).offset(-2);
         make.height.mas_equalTo(CCGetRealFromPt(34));
-        make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(460));
+        make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(500));
     }];
     [self.slider layoutIfNeeded];
     
@@ -441,33 +440,72 @@
  @param sender sender
  */
 - (void)quanpingButtonClick:(UIButton *)sender {
-    UIView *view = [self superview];
+//    UIView *view = [self superview];
     if (!sender.selected) {
         sender.selected = YES;
         sender.tag = 2;
-        self.backButton.tag = 2;
-//        self.isScreenLandScape = YES;
-//        [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
-//        self.isScreenLandScape = NO;
-//        [UIApplication sharedApplication].statusBarHidden = YES;
+        self.isScreenLandScape = YES;
+        [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
+        self.isScreenLandScape = NO;
+        [UIApplication sharedApplication].statusBarHidden = YES;
         [self turnRight];
-        if (self.delegate) {
-            [self.delegate quanpingBtnClicked:_changeButton.tag];
-        }
-        [self mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.top.right.equalTo(view);
-            make.height.mas_equalTo(SCREENH_HEIGHT);
-        }];
-        [self layoutIfNeeded];//
-        [self layouUI:YES];
-        CGRect rect = view.frame;
-        [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+        [self quanpingBtnClick];
+//        if (self.delegate) {
+//            [self.delegate quanpingBtnClicked:_changeButton.tag];
+//        }
+//        [self mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.top.right.equalTo(view);
+//            make.height.mas_equalTo(SCREENH_HEIGHT);
+//        }];
+//        [self layoutIfNeeded];//
+//        [self layouUI:YES];
+//        CGRect rect = view.frame;
+//        [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     } else {
         sender.selected = NO;
         [self backButtonClick:sender];
         sender.tag = 1;
     }
 }
+
+/**
+ *    @brief    双击文档模拟点击返回按钮
+ *    @param    tag   按钮的标签==2 是退出全屏操作
+ */
+- (void)backBtnClickWithTag:(NSInteger)tag
+{
+    UIButton *sender = [UIButton buttonWithType:UIButtonTypeCustom];
+    sender.tag = tag;
+    [self backButtonClick:sender];
+}
+
+/**
+ *    @brief    双击文档模拟点击全屏按钮
+ */
+- (void)quanpingBtnClick
+{
+    self.backButton.tag = 2;
+    //全屏按钮代理
+    if (self.delegate) {
+        [self.delegate quanpingBtnClicked:_changeButton.tag];
+    }
+    CGRect frame = [UIScreen mainScreen].bounds;
+    self.backButton.tag = 2;
+    [UIApplication sharedApplication].statusBarHidden = YES;
+    UIView *view = [self superview];
+    [self mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(view);
+        make.height.mas_equalTo(SCREENH_HEIGHT);
+    }];
+    [self layoutIfNeeded];
+    //隐藏其他视图
+    [self layouUI:YES];
+    //smallVideoView
+    if (_isSmallDocView) {
+        [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+    }
+}
+
 //切换视频和文档
 - (void)changeButtonClick:(UIButton *)sender {
     if (_smallVideoView.hidden) {
@@ -529,7 +567,7 @@
     if (point.y > 0 && point.y <= CCGetRealFromPt(88)) { //过滤掉顶部shadowView
         _showShadowCountFlag = 0;
         return [super hitTest:point withEvent:event];
-    }else if (point.y >= selfH - CCGetRealFromPt(60) && point.y <= selfH) { ////过滤掉底部shadowView
+    }else if (point.y >= selfH - CCGetRealFromPt(80) && point.y <= selfH) { ////过滤掉底部shadowView
         _showShadowCountFlag = 0;
         return [super  hitTest:point withEvent:event];
     }else {
@@ -555,7 +593,9 @@
 }
 //退出直播回放
 -(void)exitPlayBack{
-    [self.smallVideoView removeFromSuperview];
+    if (self.smallVideoView) {
+        [self.smallVideoView removeFromSuperview];
+    }
     [self stopTimer];
     [self stopPlayerTimer];
 //    NSLog(@"退出直播回放");
@@ -630,15 +670,15 @@
             make.left.equalTo(self).offset(IS_IPHONE_X ? 44:0);
             make.right.equalTo(self).offset(IS_IPHONE_X? (-44):0);
         }];
-//        [self.backButton layoutIfNeeded];
+        [self.backButton layoutIfNeeded];
         [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.backButton);
             make.left.equalTo(self.backButton.mas_right);
             make.right.equalTo(self.changeButton.mas_left).offset(-60);
         }];
-//        [self.titleLabel layoutIfNeeded];
+        [self.titleLabel layoutIfNeeded];
         [self.slider mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(460)-(IS_IPHONE_X?88:0));
+            make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(500)-(IS_IPHONE_X?88:0));
         }];
         [self.slider layoutIfNeeded];
         self.liveEnd.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
@@ -646,7 +686,7 @@
     } else {//竖屏
         self.quanpingButton.selected = NO;
         [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(CCGetRealFromPt(60));
+            make.height.mas_equalTo(CCGetRealFromPt(80));
             make.left.equalTo(self);
             make.right.equalTo(self);
         }];
@@ -654,15 +694,15 @@
             make.left.equalTo(self);
             make.right.equalTo(self);
         }];
-//        [self.backButton layoutIfNeeded];
+        [self.backButton layoutIfNeeded];
         [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.backButton);
             make.left.equalTo(self.backButton.mas_right);
             make.right.equalTo(self.changeButton.mas_left).offset(-5);
         }];
-//        [self.titleLabel layoutIfNeeded];
+        [self.titleLabel layoutIfNeeded];
         [self.slider mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(460));
+            make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(500));
         }];
         [self.slider layoutIfNeeded];
         self.liveEnd.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462));

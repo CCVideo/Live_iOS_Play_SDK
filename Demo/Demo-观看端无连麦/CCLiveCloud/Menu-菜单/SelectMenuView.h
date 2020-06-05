@@ -15,7 +15,6 @@ typedef enum : NSUInteger {
 } NewMessageState;
 //私聊回调
 typedef void(^PrivateBlock)(void);
-
 //公告回调
 typedef void(^AnnouncementBlock)(void);
 

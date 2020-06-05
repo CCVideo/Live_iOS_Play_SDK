@@ -163,17 +163,17 @@
     
     WS(weakSelf)
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        NSInteger type = [dic[@"templateType"] integerValue];
-        if (type == 4 || type == 5) { ///离线回放添加小窗
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.playerView addSmallView];
-            });
-        }
         //设置房间标题
         weakSelf.playerView.titleLabel.text = dic[@"name"];
         //配置互动视图的信息
         [weakSelf.interactionView roomInfo:dic playerView:self.playerView];
+        NSInteger type = [dic[@"templateType"] integerValue];
+        if (type == 4 || type == 5) { ///离线回放添加小窗
+            //读取本地数据 无网络延时 会被先添加到控制器 被遮盖
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.playerView addSmallView];
+            });
+        }
     });
 }
 #pragma mark- 回放的开始时间和结束时间

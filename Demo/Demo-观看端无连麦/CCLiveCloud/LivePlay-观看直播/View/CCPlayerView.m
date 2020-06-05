@@ -45,12 +45,10 @@
 @property (nonatomic, assign)BOOL                    openmarquee;//跑马灯
 @property (nonatomic, strong)UILabel                    * unStart1;//直播倒计时
 @property (nonatomic, strong)CCChatContentView          *inputView;
-
-// 新增控制阴影View
-@property (nonatomic, assign)BOOL                       isShowShadowView;
-// 文档手势冲突 获取屏幕点击回调 计数Flag
-@property (nonatomic, assign)NSInteger                  showShadowCountFlag;
-@property (nonatomic, assign)BOOL                       keyboardShow;
+@property (nonatomic, assign)BOOL                       isShowShadowView;// 新增控制阴影View
+@property (nonatomic, assign)NSInteger                  showShadowCountFlag;// 文档手势冲突 获取屏幕点击回调 计数Flag
+@property (nonatomic, assign)BOOL                       keyboardShow;// 键盘显示判断
+@property (nonatomic, assign)NSInteger                  barrageStatus;// 弹幕显示状态 2全屏 1关闭 0半屏
 
 @end
 
@@ -84,8 +82,13 @@
     self.barrage = [dict[@"barrage"] boolValue];
     self.openmarquee = [dict[@"openMarquee"] boolValue];
     if (self.barrage == YES) {
-        [self hideDanMuBtnClicked];
+        self.barrageStatus = 2;
+        [self updataBarrageStatus];
+    }else {
+        self.barrageStatus = 1;
+        [self updataBarrageStatus];
     }
+    
     if (self.showusercount == NO) {
         self.userCountLogo.hidden = YES;
         self.userCountLabel.hidden = YES;
@@ -154,9 +157,9 @@ dispatch_resume(_timer);
 /**
  *  @brief  隐藏导航,点击手势
  */
-- (void)doTapChange:(UITapGestureRecognizer*) recognizer {
+//- (void)doTapChange:(UITapGestureRecognizer*) recognizer {
 
-    [self showOrHiddenShadowView];
+//    [self showOrHiddenShadowView];
 //    if (self.bottomShadowView.hidden == YES) {
 //        self.bottomShadowView.hidden = NO;
 //        self.topShadowView.hidden = NO;
@@ -169,23 +172,28 @@ dispatch_resume(_timer);
 //        [self.topShadowView resignFirstResponder];
 //        [self.chatTextField resignFirstResponder];
 //    }
-}
+//}
 
 /**
-*  @brief  隐藏导航
-*/
+ *  @brief  隐藏导航
+ */
 - (void)showOrHiddenShadowView
 {
-    if (_isShowShadowView == NO) {
-        self.bottomShadowView.hidden = NO;
-        self.topShadowView.hidden = NO;
-        [self.topShadowView becomeFirstResponder];
-        [self bringSubviewToFront:self.topShadowView];
-        [self bringSubviewToFront:self.bottomShadowView];
-    } else {
-        self.bottomShadowView.hidden = YES;
-        self.topShadowView.hidden = YES;
-        [self.topShadowView resignFirstResponder];
+    ///编辑状态时,先退出编辑状态
+    if (_keyboardShow == YES) {
+        [self endEditing:YES];
+    }else {
+        if (_isShowShadowView == NO) {
+            self.bottomShadowView.hidden = NO;
+            self.topShadowView.hidden = NO;
+            [self.topShadowView becomeFirstResponder];
+            [self bringSubviewToFront:self.topShadowView];
+            [self bringSubviewToFront:self.bottomShadowView];
+        } else {
+            self.bottomShadowView.hidden = YES;
+            self.topShadowView.hidden = YES;
+            [self.topShadowView resignFirstResponder];
+        }
     }
 }
 
@@ -223,14 +231,13 @@ dispatch_resume(_timer);
     }];
     //返回按钮
     self.backButton = [[UIButton alloc] init];
-    [self.backButton setBackgroundImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
+    [self.backButton setImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
     self.backButton.tag = 1;
-
     [self.topShadowView addSubview:_backButton];
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.topShadowView).offset(CCGetRealFromPt(10));
-        make.top.equalTo(self.topShadowView).offset(CCGetRealFromPt(26));
-        make.width.height.mas_equalTo(30);
+        make.left.equalTo(self.topShadowView);
+        make.centerY.equalTo(self.topShadowView);
+        make.width.height.mas_equalTo(CCGetRealFromPt(88));
     }];
     //点击事件
     [self.backButton addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -252,7 +259,7 @@ dispatch_resume(_timer);
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.topShadowView).offset(CCGetRealFromPt(-20));
         make.centerY.equalTo(self.backButton);
-        make.height.mas_equalTo(CCGetRealFromPt(50));
+        make.height.mas_equalTo(CCGetRealFromPt(60));
         make.width.mas_equalTo(CCGetRealFromPt(180));
     }];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -288,7 +295,7 @@ dispatch_resume(_timer);
     [self addSubview:self.bottomShadowView];
     [self.bottomShadowView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self);
-        make.height.mas_equalTo(CCGetRealFromPt(60));
+        make.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     [self.bottomShadowView addSubview:bottomShadow];
     [bottomShadow mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -300,7 +307,7 @@ dispatch_resume(_timer);
     userCountLogo.contentMode = UIViewContentModeScaleAspectFit;
     [self.bottomShadowView addSubview:userCountLogo];
     [userCountLogo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.backButton);
+        make.left.equalTo(self.backButton).offset(10);
         make.centerY.equalTo(self.bottomShadowView);
         make.width.height.mas_equalTo(CCGetRealFromPt(24));
     }];
@@ -317,12 +324,12 @@ dispatch_resume(_timer);
 
     //全屏按钮
     self.quanpingButton = [[UIButton alloc] init];
-    [self.quanpingButton setBackgroundImage:[UIImage imageNamed:@"quanping"] forState:UIControlStateNormal];
+    [self.quanpingButton setImage:[UIImage imageNamed:@"quanping"] forState:UIControlStateNormal];
     [self.bottomShadowView addSubview:_quanpingButton];
     [self.quanpingButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.bottomShadowView);
         make.right.equalTo(self.bottomShadowView).offset(CCGetRealFromPt(-20));
-        make.width.height.mas_equalTo(CCGetRealFromPt(60));
+        make.width.height.mas_equalTo(CCGetRealFromPt(80));
     }];
     //  btn点击事件
     [self.quanpingButton addTarget:self action:@selector(quanpingBtnClick) forControlEvents:UIControlEventTouchUpInside];
@@ -385,16 +392,16 @@ dispatch_resume(_timer);
 
     //弹幕按钮
     _danMuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_danMuButton setBackgroundImage:[UIImage imageNamed:@"barrage_fullscreen"] forState:UIControlStateNormal];
+    [_danMuButton setImage:[UIImage imageNamed:@"barrage_close"] forState:UIControlStateNormal];
 //    [_danMuButton setBackgroundImage:[UIImage imageNamed:@"video_btn_word_on"] forState:UIControlStateSelected];
     [_danMuButton addTarget:self action:@selector(hideDanMuBtnClicked) forControlEvents:UIControlEventTouchUpInside];
 //    [_danMuButton setSelected:YES];
-    _danMuButton.tag = 0;
+    _danMuButton.tag = 2;
     [self.contentView addSubview:_danMuButton];
     [_danMuButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.contentView);
         make.left.equalTo(self.contentView).offset(CCGetRealFromPt(20));
-        make.width.mas_equalTo(CCGetRealFromPt(60));
+        make.width.mas_equalTo(CCGetRealFromPt(80));
     }];
 
     //表情按钮
@@ -468,9 +475,11 @@ dispatch_resume(_timer);
     [self.liveUnStart addSubview:self.unStart1];
     self.unStart1.frame = CGRectMake(SCREEN_WIDTH/2-100, CCGetRealFromPt(320), 200, 30);
 //单击手势
-    _TapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange:)];
-    _TapGesture.numberOfTapsRequired = 1;
-    [self addGestureRecognizer:_TapGesture];
+    /**
+     _TapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange:)];
+     _TapGesture.numberOfTapsRequired = 1;
+     [self addGestureRecognizer:_TapGesture];
+     */
 //隐藏导航
     [self stopPlayerTimer];
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
@@ -486,10 +495,10 @@ dispatch_resume(_timer);
 
     //初始化弹幕
 //    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle];
-    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle ReferenceView:self.bottomShadowView];
+    self.barrageView = [[CCBarrage alloc] initWithVideoView:self barrageStyle:NomalBarrageStyle ReferenceView:self];
 
 }
-
+#pragma mark - 横竖屏切换
 /**
  *    @brief    横竖屏切换
  *    @param    screenLandScape 横竖屏
@@ -516,7 +525,8 @@ dispatch_resume(_timer);
             make.right.equalTo(self.userCountLabel.mas_left).offset(-5);
         }];
         [self.userCountLogo layoutIfNeeded];
-        [self.barrageView barrageOpen];
+        //更新弹幕状态
+        [self updataBarrageStatus];
         [self.topShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(CCGetRealFromPt(128));
             make.left.equalTo(self).offset(IS_IPHONE_X ? 44:0);
@@ -536,7 +546,7 @@ dispatch_resume(_timer);
         self.qingXiButton.hidden = YES;
         self.quanpingButton.hidden = NO;
         [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(CCGetRealFromPt(60));
+            make.height.mas_equalTo(CCGetRealFromPt(80));
             make.left.right.equalTo(self);
         }];
         [self.userCountLogo mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -756,19 +766,25 @@ dispatch_resume(_timer);
 }
 
 #pragma mark - inputView deleaget输入键盘的代理
+
+- (void)setIsQuestionnaireSurveyKeyBoardAction:(BOOL)isQuestionnaireSurveyKeyBoardAction
+{
+    _isQuestionnaireSurveyKeyBoardAction = isQuestionnaireSurveyKeyBoardAction;
+}
+
 //键盘将要出现
 -(void)keyBoardWillShow:(CGFloat)height endEditIng:(BOOL)endEditIng{
-    
+
     //键盘弹出 隐藏shadowView
-    [self showOrHiddenShadowView];
+//    [self showOrHiddenShadowView];
     self.keyboardShow = YES;
     //防止图片和键盘弹起冲突
     if (endEditIng == YES) {
         [self endEditing:YES];
         return;
     }
-    
-    if (_screenLandScape == YES) {
+    //判断横屏 并且不是问卷调查键盘事件
+    if (_screenLandScape == YES && _isQuestionnaireSurveyKeyBoardAction != YES) {
         NSInteger selfHeight = self.frame.size.height - height;
         NSInteger contentHeight = selfHeight>CCGetRealFromPt(110)?(-height):(CCGetRealFromPt(110)-self.frame.size.height);
         _contentView.tag = 100;
@@ -791,9 +807,10 @@ dispatch_resume(_timer);
 //隐藏键盘
 -(void)hiddenKeyBoard{
 
-    if (_screenLandScape == YES) {
+    self.keyboardShow = NO;
+    //判断横屏 并且不是问卷调查键盘事件
+    if (_screenLandScape == YES && _isQuestionnaireSurveyKeyBoardAction != YES) {
         [self endEditing:YES];
-        self.keyboardShow = NO;
         [[[UIApplication sharedApplication].keyWindow viewWithTag:100] removeFromSuperview];
         [self.bottomShadowView addSubview:self.contentView];
         CGFloat offset = IS_IPHONE_X ? 10 : 0;
@@ -871,44 +888,7 @@ dispatch_resume(_timer);
         // 返回按钮在进入全屏的情况下 tag 被设置为 2
         sender.tag = 1;
         [self backBtnClickWithTag:_changeButton.tag];
-//        [UIApplication sharedApplication].statusBarHidden = NO;
-//        self.selectedIndexView.hidden = YES;
-////        [self endEditing:NO];
-//        self.contentView.hidden = YES;
-//        UIView *view = [self superview];
-//        [self mas_updateConstraints:^(MASConstraintMaker *make) {
-//            make.left.right.equalTo(view);
-//            make.height.mas_equalTo(CCGetRealFromPt(462));
-//            make.top.equalTo(view).offset(SCREEN_STATUS);
-//        }];
-//        [self layoutIfNeeded];
-//        //#ifdef LIANMAI_WEBRTC
-//            if(_remoteView) {//设置竖屏状态下连麦窗口
-//                [_remoteView removeFromSuperview];
-//                if (_changeButton.tag == 2) {//如果是视频小窗
-//                    [self.smallVideoView addSubview:self.remoteView];
-//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
-//                }else{
-//                    [self addSubview:self.remoteView];
-//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-//                }
-//                [self bringSubviewToFront:self.topShadowView];
-//                [self bringSubviewToFront:self.bottomShadowView];
-//                // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-//                self.setRemoteView(self.remoteView.frame);
-//            }
-//        //#endif
-//        CGRect rect = [UIScreen mainScreen].bounds;
-//        if (_isSmallDocView) {
-//            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
-//        }
-//        [self layouUI:NO];
-//        //#ifdef LIANMAI_WEBRTC
-//        //连麦视图显示
-//        if (_lianMaiView) {
-//            _lianMaiView.hidden = NO;
-//        }
-        //#endif
+
     }
 }
 
@@ -936,13 +916,11 @@ dispatch_resume(_timer);
         make.top.equalTo(view).offset(SCREEN_STATUS);
     }];
     [self layoutIfNeeded];
-
     CGRect rect = [UIScreen mainScreen].bounds;
     if (_isSmallDocView) {
         [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
     [self layouUI:NO];
-
 }
 
 /**
@@ -962,11 +940,9 @@ dispatch_resume(_timer);
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
-    
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
-    
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -1093,18 +1069,46 @@ dispatch_resume(_timer);
 }
 
 /**
+ *    @brief    更新弹幕状态
+ */
+- (void)updataBarrageStatus
+{
+    [self.barrageView barrageClose];
+    NSString *barrageImageName = @"barrage_close";
+    if (_barrageStatus == 0) { //半屏
+        _danMuButton.tag = 1;
+        barrageImageName = @"barrage_top";
+        if (_screenLandScape) {
+            [self.barrageView barrageOpen];
+            [self.barrageView changeRenderViewStyle:RenderViewTop];
+        }
+    }else if (_barrageStatus == 2) { //全屏
+        _danMuButton.tag = 0;
+        barrageImageName = @"barrage_fullscreen";
+        if (_screenLandScape) {
+            [self.barrageView barrageOpen];
+            [self.barrageView changeRenderViewStyle:RenderViewFullScreen];
+        }
+    }
+    [_danMuButton setImage:[UIImage imageNamed:barrageImageName] forState:UIControlStateNormal];
+}
+
+/**
  弹幕开关
  */
 -(void)hideDanMuBtnClicked {
     if (_danMuButton.tag == 0) {//开启半屏模式
+        _barrageStatus = 0;
         [_danMuButton setImage:[UIImage imageNamed:@"barrage_top"] forState:UIControlStateNormal];
         _danMuButton.tag = 1;
-        [_barrageView changeRenderViewStyle:RenderViewTop];
+        [self.barrageView changeRenderViewStyle:RenderViewTop];
     }else if (_danMuButton.tag == 1){//关闭弹幕
+        _barrageStatus = 1;
         [_danMuButton setImage:[UIImage imageNamed:@"barrage_close"] forState:UIControlStateNormal];
         _danMuButton.tag = 2;
         [self.barrageView barrageClose];
     }else if (_danMuButton.tag == 2){//开启全屏弹幕
+        _barrageStatus = 2;
         [_danMuButton setImage:[UIImage imageNamed:@"barrage_fullscreen"] forState:UIControlStateNormal];
         _danMuButton.tag = 0;
         [self.barrageView barrageOpen];
@@ -1158,8 +1162,9 @@ dispatch_resume(_timer);
     if (point.y > 0 && point.y <= CCGetRealFromPt(88)) { //过滤掉顶部shadowView
         _showShadowCountFlag = 0;
         return [super hitTest:point withEvent:event];
-    }else if (point.y >= selfH - CCGetRealFromPt(60) && point.y <= selfH) { ////过滤掉底部shadowView
+    }else if (point.y >= selfH - CCGetRealFromPt(80) && point.y <= selfH) { ////过滤掉底部shadowView
         _showShadowCountFlag = 0;
+        _isQuestionnaireSurveyKeyBoardAction = NO;
         return [super  hitTest:point withEvent:event];
     }else {
         if (_showShadowCountFlag == 2) {
@@ -1168,11 +1173,13 @@ dispatch_resume(_timer);
                 self.keyboardShow = NO;
                 [self endEditing:YES];
                 [self hiddenKeyBoard];
+            }else {
+                [self showOrHiddenShadowView];
             }
-            [self showOrHiddenShadowView];
             _showShadowCountFlag = 0;
+            return [super hitTest:point withEvent:event];
         }
-        return [super hitTest:point withEvent:event];
+        return nil;
     }
 }
 
@@ -1181,7 +1188,9 @@ dispatch_resume(_timer);
  *    @param    model 弹幕数据模型
  */
 - (void)insertDanmuModel:(CCPublicChatModel *)model {
-    [self.barrageView insertBarrageMessage:model];
+    if (_screenLandScape) {
+        [self.barrageView insertBarrageMessage:model];
+    }
 }
 
 #pragma mark keyboard notification
@@ -1234,8 +1243,11 @@ dispatch_resume(_timer);
 //}
 
 -(void)dealloc {
-     [self stopPlayerTimer];
+    [self stopPlayerTimer];
 }
+
+//#endif
+
 /**
  关闭播放计时器
  */
@@ -1328,7 +1340,9 @@ dispatch_resume(_timer);
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal{
     _endNormal = endNormal;
     self.liveUnStart.hidden = NO;
-    [self.smallVideoView removeFromSuperview];
+    if (self.smallVideoView) {
+        [self.smallVideoView removeFromSuperview];
+    }
 //    dispatch_async(dispatch_get_main_queue(), ^{
 //        self.smallVideoView.hidden = YES;
 //    });

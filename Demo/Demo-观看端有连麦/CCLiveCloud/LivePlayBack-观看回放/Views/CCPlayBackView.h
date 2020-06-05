@@ -109,6 +109,17 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)turnPortrait;
 //添加小窗
 - (void)addSmallView;
+
+/**
+ *  双击PPT时进入全屏，playView 统一的全屏方法
+*/
+- (void)quanpingBtnClick;
+
+/**
+ *  @tag 双击PPT退出全屏，默认tag值传2 playView 统一处理退出全屏
+*/
+- (void)backBtnClickWithTag:(NSInteger)tag;
+
 @end
 
 NS_ASSUME_NONNULL_END

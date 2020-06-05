@@ -53,6 +53,14 @@
         [self createImageWithColor:CCRGBColor(255,255,255)] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
        [self.navigationController.navigationBar setShadowImage:[UIImage new]];
        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    ///开启网络状态监听定时器
+    [self startTimer];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self stopTimer];
 }
 
 -(void)addUrlClicked {
@@ -399,8 +407,6 @@
     [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.top.mas_equalTo(self.view);
     }];
-    ///开启网络状态监听定时器
-    [self startTimer];
 }
 
 //开始播放

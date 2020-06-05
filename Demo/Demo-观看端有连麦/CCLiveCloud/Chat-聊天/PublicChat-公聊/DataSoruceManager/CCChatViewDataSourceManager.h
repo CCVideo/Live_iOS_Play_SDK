@@ -28,6 +28,7 @@ typedef void(^InsertDanMuBlock)(CCPublicChatModel *model);//发送弹幕回调
 
 @property (nonatomic, weak)id<CCChatViewDataSourceManagerDelegate> delegate;
 @property (nonatomic, strong) NSMutableArray<CCPublicChatModel*> * publicChatArray;//公聊数组
+@property (nonatomic, strong) NSMutableArray<CCPublicChatModel*> * historyRadioArray;//历史广播数组
 
 /**
  单例模式
@@ -81,6 +82,12 @@ typedef void(^InsertDanMuBlock)(CCPublicChatModel *model);//发送弹幕回调
  */
 -(void)addRadioMessage:(NSDictionary *)dic;
 
+
+/**
+ *    @brief    接受历史广播消息
+ *    @param    dic   广播字典
+ */
+-(void)receiveRadioHistoryMessage:(NSDictionary *)dic;
 
 /**
 更新imageCell的行高

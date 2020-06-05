@@ -116,9 +116,37 @@ typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
 - (void)onBanDeleteChatMessage:(NSDictionary *)dic;
 
 /**
- *  @brief  接收到发送的广播
- */
+*  @brief  接收到发送的广播
+*  @param  dic {
+               content         //广播内容
+               userid          //发布者ID
+               username        //发布者名字
+               userrole        //发布者角色
+               createTime      //绝对时间
+               time            //相对时间(相对直播)
+               id              //广播ID }
+*/
 - (void)broadcast_msg:(NSDictionary *)dic;
+/**
+ *    @brief    删除广播
+ *    @param    dic   广播信息
+ *              dic {action             //操作 1.删除
+                     id                 //广播ID }
+ */
+- (void)broadcast_delete:(NSDictionary *)dic;
+/**
+ *    @brief    历史广播数组
+ *    @param    array   历史广播数组
+ *              array [{
+                            content         //广播内容
+                            userid          //发布者ID
+                            username        //发布者名字
+                            userrole        //发布者角色
+                            createTime      //绝对时间
+                            time            //相对时间(相对直播)
+                            id              //广播ID }]
+ */
+- (void)broadcastLast_msg:(NSArray *)array;
 
 /*
  *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到

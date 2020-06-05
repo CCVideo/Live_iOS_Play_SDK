@@ -14,6 +14,7 @@
     self = [super init];
     if (self) {
         _trackIndex = -1;
+        self.userInteractionEnabled = NO;
     }
     
     return self;

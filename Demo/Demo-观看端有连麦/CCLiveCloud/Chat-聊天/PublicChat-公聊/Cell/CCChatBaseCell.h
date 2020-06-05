@@ -18,14 +18,14 @@ typedef void(^HeadBtnClickBlock)(UIButton *btn);//头像点击回调
 
 @property (nonatomic, copy) HeadBtnClickBlock headBtnClick;
 #pragma mark - 图片消息
-@property (nonatomic, strong) CCImageView *smallImageView;//图片视图
+//@property (nonatomic, strong) CCImageView *smallImageView;//图片视图
 
 /**
  加载广播cell
 
  @param model 公聊数据模型
  */
--(void)setRadioModel:(CCPublicChatModel *)model;
+//-(void)setRadioModel:(CCPublicChatModel *)model;
 
 /**
  加载文本cell
@@ -45,9 +45,9 @@ typedef void(^HeadBtnClickBlock)(UIButton *btn);//头像点击回调
  @param input 是否有输入框
  @param indexPath 位置下标
  */
--(void)setImageModel:(CCPublicChatModel *)model
-             isInput:(BOOL)input
-           indexPath:(NSIndexPath *)indexPath;
+//-(void)setImageModel:(CCPublicChatModel *)model
+//             isInput:(BOOL)input
+//           indexPath:(NSIndexPath *)indexPath;
 @end
 
 NS_ASSUME_NONNULL_END

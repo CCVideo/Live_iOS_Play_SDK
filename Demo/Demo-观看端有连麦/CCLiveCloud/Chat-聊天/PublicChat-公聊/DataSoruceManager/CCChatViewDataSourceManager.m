@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NSMutableDictionary *downloadDic;
 
 @end
+
 #define IMGURL @"[img_"
 @implementation CCChatViewDataSourceManager
 
@@ -68,10 +69,12 @@
             if([userDic objectForKey:model.userid] == nil) {
                 [userDic setObject:dic[@"userName"] forKey:model.userid];
             }
-        [self dealWithModel:model];//处理model
+            [self dealWithModel:model];//处理model
             [self.publicChatArray addObject:model];
         }
     }
+    //发送通知 历史聊天数据已处理完成
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"CCChatHistoryData" object:nil];
 }
 #pragma mark - 加载直播回放历史聊天数据
 
@@ -155,7 +158,6 @@
 //        NSLog(@"count大于300,返回最新60条");
 //        return;
 //    }
-    
     NSString *msgGroupId = dic[@"groupId"];
     if ([groupId isEqualToString:@""] || [msgGroupId isEqualToString:@""] || [groupId isEqualToString:msgGroupId] || !msgGroupId) {
         CCPublicChatModel *model = [[CCPublicChatModel alloc] init];
@@ -194,11 +196,36 @@
         [self.publicChatArray addObject:model];
     }
 }
+
+/**
+ *    @brief    接受历史广播消息
+ *    @param    dic   广播字典
+ */
+-(void)receiveRadioHistoryMessage:(NSDictionary *)dic
+{
+    
+//    [self.historyRadioArray removeAllObjects];
+    CCPublicChatModel *model = [[CCPublicChatModel alloc] init];
+    model.msg = [NSString stringWithFormat:@"系统消息：%@",dic[@"content"]];
+    model.createTime = dic[@"createTime"];
+    model.boardcastId = dic[@"id"];
+    NSLog(@"接收到历史广播的ID%@",model.boardcastId);
+    model.time = dic[@"time"];
+    //设置广播消息UI布局
+    model.typeState = RadioState;
+    
+    //计算广播行高,并返回cellheight;
+    model.cellHeight = [self getRadioCellHeightWith:model];
+    [self.historyRadioArray addObject:model];
+}
+
 //添加广播消息
 -(void)addRadioMessage:(NSDictionary *)dic{
     CCPublicChatModel *model = [[CCPublicChatModel alloc] init];
     model.msg = [NSString stringWithFormat:@"系统消息：%@",dic[@"value"][@"content"]];
-    
+    model.createTime = dic[@"value"][@"createTime"];
+    model.boardcastId = dic[@"value"][@"id"];
+    NSLog(@"接收到新增广播的ID%@",model.boardcastId);
     //设置广播消息UI布局
     model.typeState = RadioState;
     
@@ -510,6 +537,9 @@
     if (self.publicChatArray != nil) {
         [self.publicChatArray removeAllObjects];
     }
+    if (self.historyRadioArray != nil) {
+        [self.historyRadioArray removeAllObjects];
+    }
 //    [self.downloadDic removeAllObjects];
 }
 #pragma mark - 懒加载
@@ -527,4 +557,15 @@
     }
     return _downloadDic;
 }
+
+//历史广播数组
+- (NSMutableArray *)historyRadioArray
+{
+    if (!_historyRadioArray) {
+        _historyRadioArray = [NSMutableArray array];
+    }
+    return _historyRadioArray;
+}
+
+
 @end

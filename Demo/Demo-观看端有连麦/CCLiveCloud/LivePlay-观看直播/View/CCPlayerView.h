@@ -72,7 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong)LoadingView              * loadingView;//加载视图
 @property (nonatomic,assign)BOOL                     endNormal;//是否直播结束
 @property (nonatomic,assign)NSInteger                  templateType;//房间类型
-@property(nonatomic,strong)InformationShowView      *informationViewPop;
+@property (nonatomic,strong)InformationShowView      *informationViewPop;
+
+@property (nonatomic,assign)BOOL                     isQuestionnaireSurveyKeyBoardAction;//是否是问卷调查键盘事件
+
 //#ifdef LIANMAI_WEBRTC
 
 @property(nonatomic,strong)LianmaiView              *lianMaiView;//连麦

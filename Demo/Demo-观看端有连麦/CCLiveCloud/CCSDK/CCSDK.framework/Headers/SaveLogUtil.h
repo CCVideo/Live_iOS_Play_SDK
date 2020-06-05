@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define SDKVersion @"3.8.0"
+#define SDKVersion @"3.8.1"
 
 @interface SaveLogUtil : NSObject
 

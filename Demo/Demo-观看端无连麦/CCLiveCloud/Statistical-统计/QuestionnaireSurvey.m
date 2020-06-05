@@ -1061,12 +1061,12 @@
         self.commitblock(dic);
         [_submitBtn setTitle:STATISTICAL_COMMIT_SUCCESS forState:UIControlStateNormal];
         _submitBtn.userInteractionEnabled = NO;
+        // submiteAction == 1 显示答案
         if (self.submitedAction == 1) {
             for(UILabel *correctLabel in self.correctLabelArray) {
                 correctLabel.hidden = NO;
             }
         }
-
     }
 }
 //选择按钮点击

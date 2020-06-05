@@ -240,6 +240,7 @@
 }
 - (void)textViewDidChange:(UITextView *)textView
 {
+    // 防止iOS13 三指触控闪退问题修复
     dispatch_async(dispatch_get_main_queue(), ^{
         [self refreshTextUI];
     });
@@ -266,6 +267,9 @@
         _textView.layer.borderWidth = 0.5;
         _textView.layer.borderColor = [UIColor colorWithRed:221/255.0 green:221/255.0 blue:221/255.0 alpha:1].CGColor;
 //        _textView.inputAccessoryView = self.rightView;
+        /**
+         iOS11以上,UITextView的NSTextAttachment 默认是可以进行拖拽交互的,但是却导致拖动光标时很容易触发这个交互.textDragInteraction设置为NO,就能禁止掉NSTextAttachment的拖拽交互
+         */
         if (@available(iOS 11.0, *)) {
             _textView.textDragInteraction.enabled = NO;
         }

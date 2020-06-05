@@ -12,7 +12,13 @@
 #import "Dialogue.h"//模型
 #import "CCChatViewDataSourceManager.h"//数据处理
 #import "CCProxy.h"
+
+//#import "YYFPSLabel.h"
+
 #define livePlayQuestionDataCount 20 //默认单次处理20条
+
+//收到历史聊天数据 广播标识
+#define CCChatLast_msg @"CCChatHistoryData"
 
 static int flagCount = 0; //计数器
 
@@ -55,7 +61,11 @@ static int flagCount = 0; //计数器
 /** 计时器 记录问答数据 */
 @property (nonatomic,strong) NSTimer                 *timer;
 /** 查看历史问答翻页标记已添加回复 */
-@property (nonatomic,strong)NSMutableDictionary      *QADicFlag;
+@property (nonatomic,strong) NSMutableDictionary      *QADicFlag;
+/** 历史聊天数据处理完成 */
+@property (nonatomic, assign) BOOL                   isDoneChatHistoryData;
+/** 历史聊天数据处理完成 */
+@property (nonatomic, assign) BOOL                   isDoneRadioHistoryData;
 
 @end
 #define IMGURL @"[img_"
@@ -65,6 +75,8 @@ static int flagCount = 0; //计数器
     [_updateTimer invalidate];
     // 注销定时器
     [self stopTimer];
+    
+    [[NSNotificationCenter defaultCenter]removeObserver:CCChatLast_msg];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame
@@ -81,6 +93,7 @@ static int flagCount = 0; //计数器
         _privateChatBlock = privateChatBlock;
         _questionBlock = questionBlock;
         _isSmallDocView = isSmallDocView;
+        [self addObserver];
         [self setUpUI];
         // 开启定时器
         [self startTimer];
@@ -91,6 +104,14 @@ static int flagCount = 0; //计数器
         _lastTime = [NSString timeSwitchTimestamp:dateString andFormatter:@"HH:mm:ss"];
     }
     return self;
+}
+
+/**
+ *    @brief    添加通知
+ */
+- (void)addObserver
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(chatLast_data) name:CCChatLast_msg object:nil];
 }
 
 /**
@@ -130,7 +151,7 @@ static int flagCount = 0; //计数器
     //UISegmentedControl,功能控制,聊天文档等
     self.livePlayQuestionCurrentPage = 0; // 历史数据页码
     self.isFirstJoinLiveRoom = YES; // 首次进入直播间标记
-    
+    self.isDoneRadioHistoryData = YES;
     [self addSubview:self.segment];
     self.segment.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(82));
     
@@ -166,7 +187,6 @@ static int flagCount = 0; //计数器
     //添加更多菜单
 //    [APPDelegate.window addSubview:self.menuView];
     
-    
     //添加聊天
     [_scrollView addSubview:self.chatView];
     self.chatView.frame = CGRectMake(0, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
@@ -184,6 +204,11 @@ static int flagCount = 0; //计数器
         [_scrollView addSubview:self.docView];
         self.docView.frame = CGRectMake(_scrollView.frame.size.width * 3, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
     }
+//    #if defined (DEBUG)||defined(_DEBUG)
+//    YYFPSLabel *fpsLabel = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 0, 60, 20)];
+//    [_scrollView addSubview:fpsLabel];
+//    [_scrollView bringSubviewToFront:fpsLabel];
+//    #endif
 }
 
 #pragma mark - 响应事件
@@ -512,9 +537,14 @@ static int flagCount = 0; //计数器
     if (self.manager.publicChatArray.count > 0) {
         return;
     }
+    /* 没有历史聊天不需要进行数据处理 */
+    if (chatLogArr.count == 0) {
+        //发送通知 历史聊天数据已处理完成
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"CCChatHistoryData" object:nil];
+        return;
+    }
     //解析历史聊天数据
     [self.manager initWithPublicArray:chatLogArr userDic:self.userDic viewerId:self.viewerId groupId:self.groupId];
-    [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
 }
 /**
  *    @brief  禁言删除聊天记录
@@ -534,13 +564,11 @@ static int flagCount = 0; //计数器
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
         });
-
     }
-
 }
-/*
+/**
  *  @brief  收到公聊消息
-   @param  message {   groupId         //聊天组ID
+    @param  dic {  groupId         //聊天组ID
                        msg             //消息内容
                        time            //发布时间
                        useravatar      //用户头像
@@ -563,17 +591,17 @@ static int flagCount = 0; //计数器
         [self.chatArr addObject:[self.manager.publicChatArray lastObject]];
 //        NSLog(@"同一秒，添加至数组");
         [_updateTimer invalidate];
-            if (@available(iOS 10.0, *)) {
-                _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:NO block:^(NSTimer * _Nonnull timer) {
-                    if (weakSelf.chatArr.count != 0) {
-                        [weakSelf.chatView addPublicChatArray:weakSelf.chatArr];
-                        [weakSelf.chatArr removeAllObjects];
-                        //                NSLog(@"延迟数据校对");
-                    }
-                }];
-            } else {
-             _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addPublicChatArray) userInfo:nil repeats:YES];
-            }
+        if (@available(iOS 10.0, *)) {
+            _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                if (weakSelf.chatArr.count != 0) {
+                    [weakSelf.chatView addPublicChatArray:weakSelf.chatArr];
+                    [weakSelf.chatArr removeAllObjects];
+                    //                NSLog(@"延迟数据校对");
+                }
+            }];
+        } else {
+         _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addPublicChatArray) userInfo:nil repeats:YES];
+        }
 
     }else{
         if (self.chatArr.count != 0) {
@@ -594,19 +622,7 @@ static int flagCount = 0; //计数器
         //                NSLog(@"延迟数据校对");
     }
 }
-/**
- *  @brief  接收到发送的广播
- *  @param  dic {
-                content     //广播内容
-                userid      //发布者ID
-                username    //发布者名字
-                userrole    //发布者角色 }
- */
-- (void)broadcast_msg:(NSDictionary *)dic {
-    //解析广播消息
-    [self.manager addRadioMessage:dic];
-    [self.chatView addPublicChat:[self.manager.publicChatArray lastObject]];
-}
+
 /*
  *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
     @param  message {   groupId         //聊天组ID
@@ -626,6 +642,145 @@ static int flagCount = 0; //计数器
  */
 - (void)information:(NSString *)information {
     
+}
+
+/**
+ *    @brief    历史聊天数据 广播回调
+ */
+- (void)chatLast_data
+{
+    _isDoneChatHistoryData = YES;
+    [self chatAndRadioDataSorting];
+}
+
+#pragma mark - 广播
+/**
+ *  @brief  接收到发送的广播
+ *  @param  dic {
+                content         //广播内容
+                userid          //发布者ID
+                username        //发布者名字
+                userrole        //发布者角色
+                createTime      //绝对时间
+                time            //相对时间(相对直播)
+                id              //广播ID }
+ */
+- (void)broadcast_msg:(NSDictionary *)dic {
+    //解析广播消息
+    [self.manager addRadioMessage:dic];
+    [self.chatView addPublicChat:[self.manager.publicChatArray lastObject]];
+}
+
+/**
+ *    @brief    历史广播数组
+ *    @param    array   历史广播数组
+ *              array [{
+                           content         //广播内容
+                           userid          //发布者ID
+                           username        //发布者名字
+                           userrole        //发布者角色
+                           createTime      //绝对时间
+                           time            //相对时间(相对直播)
+                           id              //广播ID }]
+ */
+- (void)broadcastLast_msg:(NSArray *)array {
+    if (array.count == 0) {
+        _isDoneRadioHistoryData = YES;
+        [self chatAndRadioDataSorting];
+        return;
+    }
+    //处理历史广播数据 返回self.manager.historyRadioArray
+    for (int i = 0; i < array.count; i++) {
+        [self.manager receiveRadioHistoryMessage:array[i]];
+    }
+    //历史广播数据处理完成
+    _isDoneRadioHistoryData = YES;
+    [self chatAndRadioDataSorting];
+}
+
+/**
+ *    @brief    删除广播
+ *    @param    dic   广播信息
+ *              dic {action             //操作 1.删除
+                     id                 //广播ID }
+ */
+- (void)broadcast_delete:(NSDictionary *)dic {
+    /**
+     1.遍历公聊数组找到对应的广播
+     2.将对应模型的action置为1 放到数组对应的位置
+     3.刷新列表
+     */
+    /// 广播ID
+    NSString *boardcastId = dic[@"id"];
+    NSLog(@"需要删除的广播ID:%@",boardcastId);
+    NSInteger action = [dic[@"action"] integerValue];
+    if (action == 0) {
+        NSLog(@"不需要删除广播");
+        return;
+    }
+    for (int i = 0; i < self.manager.publicChatArray.count; i++) {
+        CCPublicChatModel *model = self.manager.publicChatArray[i];
+        /// 找到对应的广播
+        if (model.typeState == RadioState && model.boardcastId.length > 0 && [model.boardcastId isEqualToString:boardcastId]) {
+            model.action = [dic[@"action"] integerValue];
+            model.cellHeight = 0;
+            [self.manager.publicChatArray replaceObjectAtIndex:i withObject:model];
+            NSLog(@"删除成功");
+            break;
+        }
+    }
+    [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
+}
+
+/**
+ *    @brief    历史聊天广播数据排序
+ */
+- (void)chatAndRadioDataSorting
+{
+    if (_isDoneChatHistoryData == YES && _isDoneRadioHistoryData == YES) {
+        
+        NSMutableArray *publicChatArrCopy = [NSMutableArray array];
+        [publicChatArrCopy addObjectsFromArray:self.manager.publicChatArray];
+        NSMutableArray *radioArray = [NSMutableArray array];
+        [radioArray addObjectsFromArray:self.manager.historyRadioArray];
+        
+        /**
+         * 获取历史广播接口会被重复调用
+         * 需要遍历一下当前广播是否被添加
+         */
+        ///取出最后一条历史广播数据
+        CCPublicChatModel *radioModel = [radioArray lastObject];
+        for (CCPublicChatModel *model in self.manager.publicChatArray) {
+            if ([radioModel.boardcastId isEqualToString:model.boardcastId]) {
+                [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
+                return;
+            }
+        }
+        
+        NSMutableArray *res = [NSMutableArray arrayWithCapacity:[publicChatArrCopy count] + [radioArray count]];
+        int i = 0, j = 0; //i 表示历史聊天数据的下标  j表示历史广播数据的下标
+        while (i < [publicChatArrCopy count]  &&  j < [radioArray count]) {
+            CCPublicChatModel *chatModel = publicChatArrCopy[i];
+            CCPublicChatModel *radioModel = radioArray[j];
+            if ([chatModel.time integerValue] <= [radioModel.time integerValue]) {
+                [res addObject:publicChatArrCopy[i++]];
+            }else {
+                [res addObject:radioArray[j++]];
+            }
+        }
+        
+        while (i < [publicChatArrCopy count]) {
+            [res addObject:publicChatArrCopy[i++]];
+        }
+        
+        while (j < [radioArray count]) {
+            [res addObject:radioArray[j++]];
+        }
+        [self.manager.publicChatArray removeAllObjects];
+        [self.manager.publicChatArray addObjectsFromArray:res];
+        //数据组合完成刷新
+        [self.chatView reloadPublicChatArray:self.manager.publicChatArray];
+    }
 }
 #pragma mark- 问答
 /**

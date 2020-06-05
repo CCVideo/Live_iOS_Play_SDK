@@ -11,6 +11,9 @@
 #import "UIImage+animatedGIF.h"
 
 #import "CCChatViewDataSourceManager.h"
+
+#define BGColor [UIColor colorWithHexString:@"#f5f5f5" alpha:1.0f]
+
 @interface CCChatBaseCell ()
 #pragma mark - 广播
 @property (nonatomic, strong) UIButton    *radioBgButton;//广播背景视图
@@ -34,8 +37,12 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.backgroundColor = CCClearColor;
+//        self.backgroundColor = CCClearColor;
+        self.backgroundColor = BGColor;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
+        for (id subView in self.contentView.subviews) {
+            [subView removeFromSuperview];
+        }
         [self setUpUI];
     }
     return self;
@@ -46,26 +53,11 @@
 }
 #pragma mark - 设置UI布局
 -(void)setUpUI{
-    //设置广播消息
-    _radioBgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _radioBgButton.enabled = NO;
-    _radioBgButton.layer.cornerRadius = CCGetRealFromPt(4);
-    _radioBgButton.layer.masksToBounds = YES;
-    [_radioBgButton setBackgroundColor:CCRGBColor(237,237,237)];
-    [self addSubview:_radioBgButton];
-    //设置广播文本
-    _radioLabel = [[UILabel alloc] init];
-    _radioLabel.numberOfLines = 0;
-    _radioLabel.backgroundColor = CCClearColor;
-    _radioLabel.textColor = CCRGBColor(248,129,25);
-    _radioLabel.textAlignment = NSTextAlignmentLeft;
-    _radioLabel.userInteractionEnabled = NO;
-    [_radioBgButton addSubview:_radioLabel];
-    _radioLabel.font = [UIFont systemFontOfSize:FontSize_24];
-    
+
     //添加头像
     _headBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    _headBtn.backgroundColor = CCClearColor;
+//    _headBtn.backgroundColor = CCClearColor;
+    _headBtn.backgroundColor = BGColor;
     _headBtn.layer.cornerRadius = CCGetRealFromPt(40);
     _headBtn.layer.masksToBounds = YES;
     [self addSubview:_headBtn];
@@ -80,38 +72,17 @@
     
     _contentLabel = [[UILabel alloc] init];
     _contentLabel.numberOfLines = 0;
-    _contentLabel.backgroundColor = CCClearColor;
+//    _contentLabel.backgroundColor = CCClearColor;
+    _headBtn.backgroundColor = BGColor;
     _contentLabel.textColor = CCRGBColor(51,51,51);
     _contentLabel.textAlignment = NSTextAlignmentLeft;
     _contentLabel.userInteractionEnabled = NO;
     [_bgBtn addSubview:_contentLabel];
     
-    _smallImageView = [[CCImageView alloc] init];
-    [_bgBtn addSubview:_smallImageView];
+//    _smallImageView = [[CCImageView alloc] init];
+//    [_bgBtn addSubview:_smallImageView];
 }
-#pragma mark - 加载广播消息
 
-/**
- 加载广播消息
-
- @param model 公聊数据模型
- */
--(void)setRadioModel:(CCPublicChatModel *)model{
-    //设置广播消息的背景btn
-    [_radioBgButton mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(self);
-        make.width.mas_equalTo(CCGetRealFromPt(25) * 2 + model.textSize.width);
-        make.top.mas_equalTo(self).offset(CCGetRealFromPt(15));
-        make.bottom.mas_equalTo(self).offset(CCGetRealFromPt(-15));
-    }];
-    //设置广播的消息内容
-    _radioLabel.text = model.msg;
-    [_radioLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(_radioBgButton.mas_centerX);
-        make.centerY.mas_equalTo(_radioBgButton.mas_centerY).offset(-1);
-        make.size.mas_equalTo(CGSizeMake(model.textSize.width + 1, model.textSize.height + 1));
-    }];
-}
 #pragma mark - 加载纯文本消息
 -(void)setTextModel:(CCPublicChatModel *)model
             isInput:(BOOL)input
@@ -140,7 +111,7 @@
             make.size.mas_equalTo(CGSizeMake(width, height));
         }];
     };
-    [self.bgBtn layoutIfNeeded];
+    
     //设置Label的约束
     [_contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.bgBtn).offset(CCGetRealFromPt(25));
@@ -164,6 +135,7 @@
         UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
         [_contentLabel addGestureRecognizer:labelTapGestureRecognizer];
     }
+    [self.bgBtn layoutIfNeeded];[self.bgBtn layoutIfNeeded];
     [self dealWithBtn:self.bgBtn];
 }
 -(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
@@ -206,60 +178,7 @@
         _headBtnClick(btn);
     }
 }
-#pragma mark - 加载图片cell
--(void)setImageModel:(CCPublicChatModel *)model
-             isInput:(BOOL)input
-           indexPath:(nonnull NSIndexPath *)indexPath{
-    CGFloat height = 0;//计算气泡的高度
-    CGFloat width = 0;//计算气泡的宽度
-    //设置头像
-    [self dealHeadBtnWithModel:model isInput:input indexPath:indexPath];
-    
-    //添加消息内容
-    _contentLabel.attributedText = [self getTextAttri:model];
-    
-    height = model.textSize.height + CCGetRealFromPt(18) * 2;
-    //判断本地是否有这张图片
-    [self downloadImage:model.msg index:indexPath];
-    height += model.imageSize.height;
-    //----------------------------------------------------
-    //计算气泡的宽度和高度
-    width = model.textSize.width + CCGetRealFromPt(30) + CCGetRealFromPt(20);
-    if (model.imageSize.width > width) {//计算宽度
-        width = model.imageSize.width + CCGetRealFromPt(30) + CCGetRealFromPt(20);
-    }
-    if (width < CCGetRealFromPt(200)) {
-        width = CCGetRealFromPt(200);
-    }
-    if(height < CCGetRealFromPt(80)) {//计算高度
-        [_bgBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(self.headBtn.mas_right).offset(CCGetRealFromPt(22));
-            make.top.mas_equalTo(self.headBtn);
-            make.size.mas_equalTo(CGSizeMake(width, CCGetRealFromPt(80)));
-        }];
-    } else {
-        height = model.textSize.height + CCGetRealFromPt(18) * 2 + model.imageSize.height;
-        [_bgBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(self.headBtn.mas_right).offset(CCGetRealFromPt(22));
-            make.top.mas_equalTo(self.headBtn);
-            make.size.mas_equalTo(CGSizeMake(width, height));
-        }];
-    };
-    [self.bgBtn layoutIfNeeded];
-    //重置文字内容的约束
-    [_contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.bgBtn).offset(CCGetRealFromPt(25));
-        make.top.mas_equalTo(self.bgBtn).offset(5);
-        make.size.mas_equalTo(CGSizeMake(model.textSize.width + 1, model.textSize.height + 1));
-    }];
-    //设置smallChatImage的约束
-    [_smallImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.bgBtn).offset(CCGetRealFromPt(25));
-        make.top.mas_equalTo(self.contentLabel.mas_bottom).offset(5);
-        make.size.mas_equalTo(model.imageSize);
-    }];
-    [self dealWithBtn:self.bgBtn];
-}
+
 - (BOOL)isURL:(NSString *)url {
     if(url.length < 1) return NO;
     if (url.length>4 && [[url substringToIndex:4] isEqualToString:@"www."]) {
@@ -321,7 +240,9 @@
         make.top.mas_equalTo(self).offset(CCGetRealFromPt(30));
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(80),CCGetRealFromPt(80)));
     }];
-    [_headBtn layoutIfNeeded];
+    if (_headBtn) {
+        [_headBtn layoutIfNeeded];
+    }
     //根据身份为头像设置身份标示
     _imageid.image = [UIImage imageNamed:model.headTag];
     [_imageid mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -413,46 +334,5 @@
         
     }
     return [NSValue valueWithRange:range];
-}
-#pragma mark - 设置图片相关设置
-//返回一个处理过的图片大小
--(CGSize)getCGSizeWithImage:(UIImage *)image{
-    CGSize imageSize = image.size;
-    //先判断图片的宽度和高度哪一个大
-    if (image.size.width > image.size.height) {
-        //以宽度为准，设置最大宽度
-        if (imageSize.width > CCGetRealFromPt(438)) {
-            imageSize.height = CCGetRealFromPt(438) / imageSize.width * imageSize.height;
-            imageSize.width = CCGetRealFromPt(438);
-        }
-    }else{
-        //以高度为准，设置最大高度
-        if (imageSize.height >= CCGetRealFromPt(438)) {
-            imageSize.width = CCGetRealFromPt(438) / imageSize.height * imageSize.width;
-            imageSize.height = CCGetRealFromPt(438);
-        }
-    }
-    return imageSize;
-}
-#pragma mark - 缓存图片
-- (void)downloadImage:(NSString *)URL index:(NSIndexPath *)indexPath{
-    WS(ws)
-    [_smallImageView sd_setImageWithURL:[NSURL URLWithString:URL] placeholderImage:[UIImage imageNamed:@"picture_loading"] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        //判断是否已下载，if down return
-        BOOL exist = [[CCChatViewDataSourceManager sharedManager] existImageWithUrl:URL];
-        if (exist) {
-            return;
-        }
-        if (error) {
-            //加载失败,显示图片加载失败
-            UIImage *errorImage = [UIImage imageNamed:@"picture_load_fail"];
-            ws.smallImageView.image = errorImage;
-            //缓存图片信息
-            [[CCChatViewDataSourceManager sharedManager] updateCellHeightWithIndexPath:indexPath imageSize:errorImage.size];
-        }else{
-            //缓存图片信息
-            [[CCChatViewDataSourceManager sharedManager] updateCellHeightWithIndexPath:indexPath imageSize:image.size];
-        }
-    }];
 }
 @end

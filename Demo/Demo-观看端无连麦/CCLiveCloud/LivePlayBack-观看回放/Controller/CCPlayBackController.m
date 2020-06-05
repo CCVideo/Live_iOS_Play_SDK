@@ -46,7 +46,6 @@
 @property (nonatomic,assign)CGFloat                        playTime;
 @property (nonatomic,strong)HDMarqueeView               * marqueeView;//跑马灯
 @property (nonatomic,strong)NSDictionary                * jsonDict;//跑马灯数据
-@property (nonatomic,assign)NSInteger                   documentDisplayMode; //适应文档 1 适应窗口  2适应屏幕 开启滚动
    
 
 @end
@@ -64,109 +63,44 @@
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
 
-//    UILabel * label = [[UILabel alloc] init];
-//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
-//    label.textColor = [UIColor redColor];
-//    label.frame = CGRectMake(100, 240, 200, 100);
-//    [self.view addSubview:label];
-    
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 300, 100, 40);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setTitle:@"线路0" forState:UIControlStateNormal];
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(200, 300, 100, 40);
-//    [btn1 setTitle:@"线路1" forState:UIControlStateNormal];
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-//    UIButton *btn2 = [[UIButton alloc] init];
-//    [btn2 setBackgroundColor:[UIColor grayColor]];
-//    [self.view addSubview:btn2];
-//    btn2.frame = CGRectMake(300, 200, 100, 40);
-//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
-//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
-
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 340, 200, 100);
-//    self.label.numberOfLines = 0;
-//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
 
 }
-/**
- *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1
- */
--(void)numberOfReceivedLines:(NSInteger)linesCount {
-    NSLog(@"有%zd条线路",linesCount);
-}
-/*
-    docName         //文档名
-    pageTitle       //页标题
-    time            //时间
-    url             //地址
- */
-/**
- *    @brief   回放翻页数据列表
- *    @param   array [{  docName         //文档名
-                        pageTitle       //页标题
-                        time            //时间
-                        url             //地址 }]
- */
-- (void)pageChangeList:(NSMutableArray *)array {
-    
-}
-- (void)publish_stream {
-//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
-}
-- (void)onPageChange:(NSDictionary *)dictionary {
-    
-}
-- (void)videoStateChangeWithString:(NSString *)result {
-//    NSLog(@"---状态是%@",result);
-}
+//文档全屏
 - (void)changedoc2 {
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
-//        }
-//        self.playerView.transform = tran;
-//    }
+    [self changedoc1];
+    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+    if (ratio!=0 && self.playerView.height!=0) {
+        CGAffineTransform  tran = CGAffineTransformIdentity;
+        if (ratio>self.playerView.width/self.playerView.height) {
+            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
+        }else{
+            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
+        }
+        self.playerView.transform = tran;
+    }
 
 }
+//文档复原
 - (void)changedoc1 {
-//    self.playerView.transform = CGAffineTransformIdentity;
-//    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
-    [_requestDataPlayBack changeLineWithNum:1 completion:^(NSDictionary *results) {
-        self.label.text = [NSString stringWithFormat:@"%@",results];
-    }];
+    self.playerView.transform = CGAffineTransformIdentity;
+    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
 
 }
+//文档拉伸
 - (void)changedoc:(UIButton *)sender {
-    [_requestDataPlayBack changeLineWithNum:0 completion:^(NSDictionary *results) {
-        self.label.text = [NSString stringWithFormat:@"%@",results];
-    }];
-//    [self changedoc1];
-//    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-//    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-//    if (ratio!=0 && self.playerView.height!=0) {
-//        CGAffineTransform  tran = CGAffineTransformIdentity;
-//        if (ratio>self.playerView.width/self.playerView.height) {
-//            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
-//        }else{
-//            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
-//        }
-//        self.playerView.transform = tran;
-//    }
+    [self changedoc1];
+    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
+    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
+    if (ratio!=0 && self.playerView.height!=0) {
+        CGAffineTransform  tran = CGAffineTransformIdentity;
+        if (ratio>self.playerView.width/self.playerView.height) {
+            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
+        }else{
+            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
+        }
+        self.playerView.transform = tran;
+    }
 }
 /**
  切换回放,需要重新配置参数
@@ -301,42 +235,17 @@
  */
 - (void)doubleCllickPPTView{
     if (_playerView.quanpingButton.selected) {//如果是横屏状态下
-        
         /* 横屏转竖屏 */
         _playerView.quanpingButton.selected = NO;
         [_playerView turnPortrait];
-        
-        /**    移除临时的_onceDocView和_oncePlayerView，并且显示互动视图和视频视图  */
         _interactionView.hidden = NO;
-        [_onceDocView removeFromSuperview];
-        _playerView.hidden = NO;
-        [_oncePlayerView removeFromSuperview];
-
-        [_requestDataPlayBack changePlayerParent:_playerView];
-        [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
-        [_requestDataPlayBack changeDocParent:_interactionView.docView];
-        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, _interactionView.docView.frame.size.width, _interactionView.docView.frame.size.height)];
+        [_playerView backBtnClickWithTag:2];
     }else{
+        _interactionView.hidden = YES;
         /* 竖屏转横屏 */
         _playerView.quanpingButton.selected = YES;
         [_playerView turnRight];
-        
-        /**    创建临时的_onceDocView和_oncePlayerView，并且隐藏互动视图和视频视图  */
-        _interactionView.hidden = YES;
-        _playerView.hidden = YES;
-
-        _onceDocView = [[UIView alloc] init];
-        _onceDocView.frame = [UIScreen mainScreen].bounds;
-        [self.view addSubview:_onceDocView];
-
-        _oncePlayerView = [[UIView alloc] init];
-        _oncePlayerView.frame = CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152));
-        [self.view addSubview:_oncePlayerView];
-
-        [_requestDataPlayBack changeDocParent:_onceDocView];
-        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
-        [_requestDataPlayBack changePlayerParent:_oncePlayerView];
-        [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
+        [_playerView quanpingBtnClick];
     }
 }
 #pragma mark- 房间信息
@@ -357,15 +266,10 @@
     
 //    [self.playerView addSmallView];
     NSInteger type = [dic[@"templateType"] integerValue];
-    
-    //适应文档 1 适应窗口  2适应屏幕 开启滚动
-    _documentDisplayMode = [dic[@"documentDisplayMode"] integerValue];
-
     if (type == 4 || type == 5) {
         [self.playerView addSmallView];
     }
     _roomName = dic[@"name"];
-    [self.playerView addSmallView];
     //设置房间标题
     self.playerView.titleLabel.text = _roomName;
     //配置互动视图的信息
@@ -436,10 +340,18 @@
 #pragma  mark - 文档加载状态
 -(void)docLoadCompleteWithIndex:(NSInteger)index {
      if (index == 0) {
-             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                 [self.playerView addSubview:self.marqueeView];
-                 [self.marqueeView startMarquee];
-             });
+         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+             ///文档小窗默认禁止滚动
+             for (UIView *view in self.playerView.smallVideoView.subviews) {
+                 if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+                     view.userInteractionEnabled = NO;
+                 }
+             }
+         });
+         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+             [self.playerView addSubview:self.marqueeView];
+             [self.marqueeView startMarquee];
+         });
         }
 }
 #pragma mark- 回放的开始时间和结束时间
@@ -804,25 +716,28 @@
  */
 -(void)changeBtnClicked:(NSInteger)tag{
     if (tag == 2) {
+        
+        for (UIView *view in self.playerView.smallVideoView.subviews) {
+            if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+                view.userInteractionEnabled = YES;
+            }
+        }
+        
         [_requestDataPlayBack changeDocParent:self.playerView];
         [_requestDataPlayBack changePlayerParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
-        //切换大窗文档时候 文档能拖动
-        UIView *view = [self.playerView.subviews lastObject];
-        if (_documentDisplayMode == 2) {
-            view.userInteractionEnabled = YES;
-        }else {
-            view.userInteractionEnabled = NO;
-        }
     }else{
         [_requestDataPlayBack changeDocParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changePlayerParent:self.playerView];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
         //切换小窗文档时候 文档不能拖动
-        UIView *view = [self.playerView.smallVideoView.subviews lastObject];
-        view.userInteractionEnabled = NO;
+        for (UIView *view in self.playerView.smallVideoView.subviews) {
+            if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+                view.userInteractionEnabled = NO;
+            }
+        }
     }
     [self.playerView bringSubviewToFront:self.marqueeView];
 }

@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.8.0"
+#define SDKVersion @"3.8.1"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -409,6 +409,7 @@
  *              触发此方法需要调用getLivePlayedTime
 */
 - (void)onLivePlayedTime:(NSDictionary *)dic;
+
 
 //#ifdef LIANMAI_WEBRTC
 /**

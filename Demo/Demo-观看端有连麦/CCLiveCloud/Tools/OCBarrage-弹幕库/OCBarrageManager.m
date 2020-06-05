@@ -53,6 +53,9 @@
     if (!barrageCell) {
         return;
     }
+    if (barrageCell.userInteractionEnabled == YES) {
+        barrageCell.userInteractionEnabled = NO;
+    }
     barrageCell.barrageDescriptor = barrageDescriptor;
     [self.renderView fireBarrageCell:barrageCell];
 }

@@ -23,7 +23,10 @@ typedef NS_ENUM(NSUInteger, CCPublicMsgState) {
 @property (copy, nonatomic) NSString                        * fromuserrole;//消息方用户角色
 @property (copy, nonatomic) NSString                        * msg;//具体消息
 @property (copy, nonatomic) NSString                        * useravatar;//用户头像
-@property (copy, nonatomic) NSString                        * time;//时间
+@property (copy, nonatomic) NSString                        * time;//相对时间(相对直播)
+@property (copy, nonatomic) NSString                        * boardcastId;//广播ID
+@property (copy, nonatomic) NSString                        * createTime; //绝对时间
+@property (assign, nonatomic) NSInteger                       action;     //广播操作 1 删除
 @property (copy, nonatomic) NSString                        * myViwerId;//自己的id
 @property (copy, nonatomic) NSString                        * chatId;//聊天id
 @property (copy, nonatomic) NSString                        * status;//聊天状态

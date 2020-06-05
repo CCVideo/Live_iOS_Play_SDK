@@ -12,6 +12,10 @@
 #import "CCChatBaseCell.h"//公聊cell
 #import "CCChatViewDataSourceManager.h"//聊天
 #import "MJRefresh.h"//下拉刷新
+#import "CCProxy.h"
+#import "CCChatBaseImageCell.h"
+#import "CCChatBaseRadioCell.h"
+
 @interface CCChatBaseView ()<CCChatContentViewDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, assign) BOOL                input;//是否有输入文本框
 @property (nonatomic, strong) UITableView         * publicTableView;//公聊tableView
@@ -30,6 +34,7 @@
     if (self) {
         self.publicChatBlock = block;
         self.input = input;
+        self.userInteractionEnabled = YES;
         [self initUI];
         if(self.input) {
             [self addObserver];
@@ -87,6 +92,10 @@
         _publicTableView.estimatedRowHeight = 0;
         _publicTableView.estimatedSectionHeaderHeight = 0;
         _publicTableView.estimatedSectionFooterHeight = 0;
+        _publicTableView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *TapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doTapChange:)];
+        TapGesture.numberOfTapsRequired = 1;
+        [_publicTableView addGestureRecognizer:TapGesture];
 //        [_publicTableView registerClass:[ChatViewCell class] forCellReuseIdentifier:@"CellChatView"];
         if (@available(iOS 11.0, *)) {
             _publicTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -105,9 +114,6 @@
         [self.publicTableView.mj_header endRefreshing];
         return;
     }
-    
-    
-    
     if ([CCChatViewDataSourceManager sharedManager].publicChatArray.count > self.publicChatArray.count) {
         NSMutableArray *arr = [CCChatViewDataSourceManager sharedManager].publicChatArray;
         NSInteger selfCount = self.publicChatArray.count;
@@ -260,46 +266,68 @@
 }
 #pragma mark - TableView Delegate And TableViewDataSource
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSString *CellId = [NSString stringWithFormat:@"cellID%ld",(long)indexPath.row];
+//        NSString *CellId = [NSString stringWithFormat:@"cellID%ld",(long)indexPath.row];
+    static NSString *CellId = @"cellID";
+    static NSString *ImageCellId = @"imageCellID";
+    static NSString *RadioCellId = @"radioCellID";
     //TODO return;
     if ([self.publicChatArray count] - 1 < (long)indexPath.row || !self.publicChatArray.count) {
         return [[UITableViewCell alloc] init];//防止数组越界
     }
     CCPublicChatModel *model = [self.publicChatArray objectAtIndex:indexPath.row];
-    CCChatBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:CellId];
-    if (cell == nil) {
-        cell = [[CCChatBaseCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellId];
-    }
-    //判断消息方是否是自己
-    BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
-    //聊天审核-------------如果消息状态码为1,不显示此消息,状态栏可能没有
-    if (model.status && [model.status isEqualToString:@"1"] && !fromSelf){
-        cell.hidden = YES;
+    if (model.typeState == ImageState) {
+        
+        CCChatBaseImageCell *cell = [tableView dequeueReusableCellWithIdentifier:ImageCellId];
+        if (cell == nil) {
+           cell = [[CCChatBaseImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ImageCellId];
+        }
+        //判断消息方是否是自己
+        BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
+        //聊天审核-------------如果消息状态码为1,不显示此消息,状态栏可能没有
+        WS(ws)
+        if (model.status && [model.status isEqualToString:@"1"] && !fromSelf){
+           cell.hidden = YES;
+           return cell;
+        }
+        [cell setImageModel:model isInput:self.input indexPath:indexPath];
+        cell.headBtnClick = ^(UIButton * _Nonnull btn) {
+           [ws headBtnClicked:btn];
+        };
+        return cell;
+        
+    }else if (model.typeState == RadioState) {
+     
+        CCChatBaseRadioCell *cell = [tableView dequeueReusableCellWithIdentifier:RadioCellId];
+        if (cell == nil) {
+           cell = [[CCChatBaseRadioCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:RadioCellId];
+        }
+        [cell setRadioModel:model];
+        return cell;
+        
+    }else {
+        
+        CCChatBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:CellId];
+        if (cell == nil) {
+            cell = [[CCChatBaseCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellId];
+        }
+        //判断消息方是否是自己
+        BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
+        //聊天审核-------------如果消息状态码为1,不显示此消息,状态栏可能没有
+        if (model.status && [model.status isEqualToString:@"1"] && !fromSelf){
+            cell.hidden = YES;
+            return cell;
+        }
+        //加载cell
+        WS(ws)
+        if (model.typeState == TextState){//纯文本消息
+            //加载纯文本cell
+            [cell setTextModel:model isInput:self.input indexPath:indexPath];
+        }
+        cell.headBtnClick = ^(UIButton * _Nonnull btn) {
+            [ws headBtnClicked:btn];
+        };
         return cell;
     }
-    
-    //加载cell
-    WS(ws)
-    if (model.typeState == RadioState) {//广播消息
-        //加载广播消息
-        [cell setRadioModel:model];
-    }else if (model.typeState == TextState){//纯文本消息
-        cell.smallImageView.image = nil;
-        //加载纯文本cell
-        [cell setTextModel:model isInput:self.input indexPath:indexPath];
-//        NSLog(@"数据是%@",model.msg);
-    }else if(model.typeState == ImageState){//图片cell
-//        cell.smallImageView.hidden = NO;
-
-        //加载图片cell
-        [cell setImageModel:model isInput:self.input indexPath:indexPath];
-//        NSLog(@"数据是%@",model.msg);
-
-    }
-    cell.headBtnClick = ^(UIButton * _Nonnull btn) {
-        [ws headBtnClicked:btn];
-    };
-    return cell;
 }
 //cell行高
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -309,20 +337,29 @@
     CCPublicChatModel *model = [self.publicChatArray objectAtIndex:indexPath.row];
     if (model.typeState == RadioState) {//广播消息
         return model.cellHeight;
+    }else if (model.typeState == ImageState) {
+        return model.cellHeight;
+    }else {
+        //判断消息方是否是自己
+        BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
+        //聊天审核 如果消息状态码为1,不显示此消息,状态可能没有
+        if (model.status && [model.status isEqualToString:@"1"] && !fromSelf) {
+            return 0;
+        }
+        return model.cellHeight;
     }
-    //判断消息方是否是自己
-    BOOL fromSelf = [model.fromuserid isEqualToString:model.myViwerId];
-    //聊天审核 如果消息状态码为1,不显示此消息,状态可能没有
-    if (model.status && [model.status isEqualToString:@"1"] && !fromSelf) {
-        return 0;
-    }
-    return model.cellHeight;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 //    NSLog(@"聊天数%zd",self.publicChatArray.count);
     return [self.publicChatArray count];
 }
+
+//单击手势退出键盘
+- (void)doTapChange:(UITapGestureRecognizer*) recognizer {
+    [self endEditing:NO];
+}
+
 #pragma mark - 公有调用方法
 //reload
 -(void)reloadPublicChatArray:(NSMutableArray *)array{
@@ -334,7 +371,6 @@
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.publicTableView reloadData];
-        
         if (self.publicChatArray != nil && [self.publicChatArray count] != 0 ) {
             NSIndexPath *indexPathLast = [NSIndexPath indexPathForItem:(self.publicChatArray.count - 1) inSection:0];
             [self.publicTableView scrollToRowAtIndexPath:indexPathLast atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -370,20 +406,17 @@
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.publicTableView.mj_header beginRefreshing];
+//        [self.publicTableView.mj_header beginRefreshing];
+        //回放聊天刷新问题
         [self.publicTableView reloadData];
-        [self.publicTableView setContentOffset:CGPointMake(0, self.publicTableView.contentSize.height -self.publicTableView.bounds.size.height) animated:YES];
         //防止越界
-//        NSIndexPath *lastIndexPath = [indexPaths lastObject];
-//        if ((long)lastIndexPath.row > self.publicChatArray.count) {
-//            return;
-//        }
-////        [self.publicTableView beginUpdates];
-////        [self.publicTableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-////        [self.publicTableView endUpdates];
-//        if (indexPaths != nil && [indexPaths count] != 0 ) {
-//            [self.publicTableView scrollToRowAtIndexPath:[indexPaths lastObject] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-//        }
+        NSIndexPath *lastIndexPath = [indexPaths lastObject];
+        if ((long)lastIndexPath.row > self.publicChatArray.count) {
+            return;
+        }
+        if (indexPaths != nil && [indexPaths count] != 0 ) {
+            [self.publicTableView scrollToRowAtIndexPath:[indexPaths lastObject] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     });
 }
 
@@ -502,4 +535,5 @@
     [self removeObserver];
 //    NSLog(@"%s", __func__);
 }
+
 @end

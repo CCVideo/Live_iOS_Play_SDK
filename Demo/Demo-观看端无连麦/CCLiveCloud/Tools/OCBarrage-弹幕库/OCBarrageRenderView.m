@@ -20,6 +20,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.userInteractionEnabled = NO;
         _animatingCellsLock = dispatch_semaphore_create(1);
         _idleCellsLock = dispatch_semaphore_create(1);
         _trackInfoLock = dispatch_semaphore_create(1);
@@ -40,11 +41,15 @@
 
 - (nullable OCBarrageCell *)dequeueReusableCellWithClass:(Class)barrageCellClass {
     OCBarrageCell *barrageCell = nil;
+    if (self.userInteractionEnabled == YES) {
+        self.userInteractionEnabled = NO;
+    }
     
     dispatch_semaphore_wait(_idleCellsLock, DISPATCH_TIME_FOREVER);
     for (OCBarrageCell *cell in self.idleCells) {
         if ([NSStringFromClass([cell class]) isEqualToString:NSStringFromClass(barrageCellClass)]) {
             barrageCell = cell;
+            barrageCell.userInteractionEnabled = NO;
             break;
         }
     }
@@ -189,6 +194,12 @@
 }
 
 - (void)fireBarrageCell:(OCBarrageCell *)barrageCell {
+    
+    if (self.userInteractionEnabled == YES) {
+        self.userInteractionEnabled = NO;
+        NSLog(@"---重置view的用户点击事件");
+    }
+    
     switch (self.renderStatus) {
         case OCBarrageRenderStarted: {
             
