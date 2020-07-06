@@ -88,20 +88,20 @@ typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
                            userAvatar      //用户头像
                            userId          //用户ID
                            userName        //用户名称
-                           userRole        //用户角色}]
+                           userRole        //用户角色 (publisher:主讲,student:学生或观众,host:主持人,unknow:其他没有角色,teacher:助教)]
  */
 - (void)onChatLog:(NSArray *)chatLogArr;
 
 /*
-*  @brief  收到公聊消息
+ *  @brief  收到公聊消息
   @param  message {   groupId         //聊天组ID
                       msg             //消息内容
                       time            //发布时间
                       useravatar      //用户头像
                       userid          //用户ID
                       username        //用户名称
-                      userrole        //用户角色}
-*/
+                      userrole        //用户角色  (publisher:主讲,student:学生或观众,host:主持人,unknow:其他没有角色,teacher:助教) }
+ */
 - (void)onPublicChatMessage:(NSDictionary *)dic;
 /*
  *  @brief  收到自己的禁言消息，如果你被禁言了，你发出的消息只有你自己能看到，其他人看不到
@@ -111,7 +111,7 @@ typedef void(^PrivateChatMessageBlock)(NSString *anteid, NSString *msg);
                        useravatar      //用户头像
                        userid          //用户ID
                        username        //用户名称
-                       userrole        //用户角色}
+                       userrole        //用户角色 (publisher:主讲,student:学生或观众,host:主持人,unknow:其他没有角色,teacher:助教)}
  */
 - (void)onBanDeleteChatMessage:(NSDictionary *)dic;
 

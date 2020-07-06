@@ -10,6 +10,7 @@
 #import "TextFieldUserInfo.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
+#import "CCSDK/CCLiveUtil.h"
 #import "CCSDK/RequestDataPlayBack.h"
 #import "InformationShowView.h"
 #import "LoadingView.h"
@@ -136,6 +137,7 @@
  配置SDK
  */
 -(void)integrationSDK{
+    
     PlayParameter *parameter = [[PlayParameter alloc] init];
     parameter.userId = self.textFieldUserId.text;//userId
     parameter.roomId = self.textFieldRoomId.text;//直播间Id

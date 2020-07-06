@@ -10,6 +10,7 @@
 #import "MySlider.h"
 #import "LoadingView.h"//加载
 #import "CCDocView.h"//文档视图
+#import "CCButton.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol CCPlayBackViewDelegate <NSObject>
@@ -49,22 +50,24 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong)CCDocView                   * smallVideoView;//文档或者小图
 @property (nonatomic, strong)UIButton                   * smallCloseBtn;//小窗关闭按钮
 @property (nonatomic,strong)LoadingView                 * loadingView;//加载视图
-@property (nonatomic, weak)id<CCPlayBackViewDelegate>   delegate;//代理
+@property (nonatomic, weak)id<CCPlayBackViewDelegate>     delegate;//代理
 
 @property (nonatomic, strong)UILabel                    * titleLabel;//房间标题
 @property (nonatomic, strong)UILabel                    * leftTimeLabel;//当前播放时长
 @property (nonatomic, strong)UILabel                    * rightTimeLabel;//总时长
 @property (nonatomic, strong)MySlider                   * slider;//滑动条
-@property (nonatomic, strong)UIButton                   * backButton;//返回按钮
-@property (nonatomic, strong)UIButton                   * changeButton;//切换视频文档按钮
-@property (nonatomic, strong)UIButton                   * quanpingButton;//全屏按钮
-@property (nonatomic, strong)UIButton                   * pauseButton;//暂停按钮
-@property (nonatomic, strong)UIButton                   * speedButton;//倍速按钮
-@property (nonatomic, assign)NSInteger                  sliderValue;//滑动值
+@property (nonatomic, strong)CCButton                   * backButton;//返回按钮
+@property (nonatomic, strong)CCButton                   * changeButton;//切换视频文档按钮
+@property (nonatomic, strong)CCButton                   * quanpingButton;//全屏按钮
+@property (nonatomic, strong)CCButton                   * pauseButton;//暂停按钮
+@property (nonatomic, strong)CCButton                   * speedButton;//倍速按钮
+@property (nonatomic, assign)NSInteger                    sliderValue;//滑动值
 @property (nonatomic, strong)UIView                     * topShadowView;//上面的阴影
 @property (nonatomic, strong)UIView                     * bottomShadowView;//下面的阴影
 
 @property (nonatomic, strong)UIImageView                * liveEnd;//播放结束视图
+
+@property (nonatomic, assign)BOOL                         playDone;//播放完成
 
 @property (nonatomic,copy) void(^exitCallBack)(void);//退出直播间回调
 @property (nonatomic,copy) void(^sliderCallBack)(int);//滑块回调

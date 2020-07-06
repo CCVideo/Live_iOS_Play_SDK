@@ -14,6 +14,7 @@
 #import "CCChatContentView.h"
 
 @interface CCPlayerView ()<UITextFieldDelegate
+
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -307,7 +308,7 @@ dispatch_resume(_timer);
     userCountLogo.contentMode = UIViewContentModeScaleAspectFit;
     [self.bottomShadowView addSubview:userCountLogo];
     [userCountLogo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.backButton).offset(10);
+        make.left.equalTo(self).offset(10);
         make.centerY.equalTo(self.bottomShadowView);
         make.width.height.mas_equalTo(CCGetRealFromPt(24));
     }];
@@ -866,7 +867,6 @@ dispatch_resume(_timer);
     }];
     [self layoutIfNeeded];//
    
-    
     //隐藏其他视图
     [self layouUI:YES];
     //smallVideoView
@@ -882,13 +882,51 @@ dispatch_resume(_timer);
  */
 -(void)backBtnClick:(UIButton *)sender{
     [self endEditing:YES];
+
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
         // 返回按钮在进入全屏的情况下 tag 被设置为 2
         sender.tag = 1;
         [self backBtnClickWithTag:_changeButton.tag];
-
+//        [UIApplication sharedApplication].statusBarHidden = NO;
+//        self.selectedIndexView.hidden = YES;
+////        [self endEditing:NO];
+//        self.contentView.hidden = YES;
+//        UIView *view = [self superview];
+//        [self mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(view);
+//            make.height.mas_equalTo(CCGetRealFromPt(462));
+//            make.top.equalTo(view).offset(SCREEN_STATUS);
+//        }];
+//        [self layoutIfNeeded];
+//        //#ifdef LIANMAI_WEBRTC
+//            if(_remoteView) {//设置竖屏状态下连麦窗口
+//                [_remoteView removeFromSuperview];
+//                if (_changeButton.tag == 2) {//如果是视频小窗
+//                    [self.smallVideoView addSubview:self.remoteView];
+//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
+//                }else{
+//                    [self addSubview:self.remoteView];
+//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+//                }
+//                [self bringSubviewToFront:self.topShadowView];
+//                [self bringSubviewToFront:self.bottomShadowView];
+//                // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
+//                self.setRemoteView(self.remoteView.frame);
+//            }
+//        //#endif
+//        CGRect rect = [UIScreen mainScreen].bounds;
+//        if (_isSmallDocView) {
+//            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+//        }
+//        [self layouUI:NO];
+//        //#ifdef LIANMAI_WEBRTC
+//        //连麦视图显示
+//        if (_lianMaiView) {
+//            _lianMaiView.hidden = NO;
+//        }
+//        //#endif
     }
 }
 
@@ -921,6 +959,7 @@ dispatch_resume(_timer);
         [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
     [self layouUI:NO];
+
 }
 
 /**
@@ -1159,10 +1198,10 @@ dispatch_resume(_timer);
     // 每次触摸事件 此方法会进行两次回调，_showShadowCountFlag 标记第二次回调处理事件
     _showShadowCountFlag++;
     CGFloat selfH = self.frame.size.height;
-    if (point.y > 0 && point.y <= CCGetRealFromPt(88)) { //过滤掉顶部shadowView
+    if (point.y > 0 && point.y <= self.topShadowView.size.height) { //过滤掉顶部shadowView
         _showShadowCountFlag = 0;
         return [super hitTest:point withEvent:event];
-    }else if (point.y >= selfH - CCGetRealFromPt(80) && point.y <= selfH) { ////过滤掉底部shadowView
+    }else if (point.y >= selfH - self.bottomShadowView.size.height && point.y <= selfH) { ////过滤掉底部shadowView
         _showShadowCountFlag = 0;
         _isQuestionnaireSurveyKeyBoardAction = NO;
         return [super  hitTest:point withEvent:event];

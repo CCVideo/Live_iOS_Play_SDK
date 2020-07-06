@@ -413,7 +413,7 @@
 -(void)startTimer {
     [self stopTimer];
     CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:2.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];//打卡倒计时
+    _timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];//打卡倒计时
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
     [runLoop addTimer:_timer forMode:NSRunLoopCommonModes];
 }
@@ -431,9 +431,9 @@
     BOOL isNetwork = [self isExistenceNetwork];
     _isNetwork = isNetwork;
     if (isNetwork == NO) { //无网络暂停定时器并提示网络已断开
-        NSLog(@"网络已断开");
+        //NSLog(@"网络已断开");
     }else {
-        NSLog(@"网络正常");
+        //NSLog(@"网络正常");
     }
     [self.tableView reloadData];
 }

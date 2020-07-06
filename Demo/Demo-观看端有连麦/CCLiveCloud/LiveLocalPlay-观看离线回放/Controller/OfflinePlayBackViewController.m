@@ -42,7 +42,12 @@
 @property (nonatomic,assign)BOOL                        isSmallDocView;//是否是文档小屏
 @property (nonatomic,strong)UIView                      * onceDocView;//临时DocView(双击ppt进入横屏调用)
 @property (nonatomic,strong)UIView                      * oncePlayerView;//临时playerView(双击ppt进入横屏调用)
-@property (nonatomic,strong)UILabel                  *label;
+@property (nonatomic,strong)UILabel                     * label;
+
+/** 记录切换ppt缩放模式 */
+@property (nonatomic, assign)NSInteger                    pptScaleMode;
+/** 主屏是否是文档 */
+@property (nonatomic, assign)BOOL                         mainViewIsDoc;
 
 @end
 
@@ -63,27 +68,77 @@
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
     _pauseInBackGround = NO;
     _isSmallDocView = YES;
+    _mainViewIsDoc = NO;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-    self.label = [[UILabel alloc] init];
-    [self.view addSubview:self.label];
-    self.label.frame = CGRectMake(100, 100, 200, 100);
+    
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 100, 200, 100);
+//
+//    UIButton *btn = [[UIButton alloc] init];
+//    btn.tag = 1;
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(0, 53, 100, 40);
+//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
+//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
+//    UIButton *btn1 = [[UIButton alloc] init];
+//    [btn1 setBackgroundColor:[UIColor greenColor]];
+//    [self.view addSubview:btn1];
+//    btn1.frame = CGRectMake(100, 53, 100, 40);
+//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
+//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn3 = [[UIButton alloc] init];
+//    btn3.tag = 1;
+//    [btn3 setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn3];
+//    btn3.frame = CGRectMake(200, 53, 100, 40);
+//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
+//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
+    
 //        UIButton *btn = [[UIButton alloc] init];
 //        [btn setBackgroundColor:[UIColor redColor]];
 //        [self.view addSubview:btn];
 //        btn.frame = CGRectMake(100, 100, 100, 100);
 //        [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
 }
-- (void)changedoc {
-    [self.offlinePlayBack requestCancel];
-    self.offlinePlayBack = nil;
-    _pauseInBackGround = NO;
-    _isSmallDocView = YES;
-     [self integrationSDK];//集成SDK
-    [_offlinePlayBack continueFromTheTime:0];
-    _offlinePlayBack.currentPlaybackTime = 0;
-}
+
+//- (void)changedoc:(UIButton *)sender {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 1;
+//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
+//
+//- (void)changedoc1 {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 2;
+//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//
+//}
+//- (void)changedoc3 {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 3;
+//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
+//
+//- (void)changedoc {
+//    [self.offlinePlayBack requestCancel];
+//    self.offlinePlayBack = nil;
+//    _pauseInBackGround = NO;
+//    _isSmallDocView = YES;
+//     [self integrationSDK];//集成SDK
+//    [_offlinePlayBack continueFromTheTime:0];
+//    _offlinePlayBack.currentPlaybackTime = 0;
+//}
+
 //集成SDK
 - (void)integrationSDK {
     UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
@@ -98,7 +153,7 @@
     parameter.playerParent = self.playerView;//视频视图
     parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
     parameter.security = NO;//是否开启https,建议开启
-    parameter.PPTScalingMode = 2;//ppt展示模式,建议值为4
+    parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
     parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
     parameter.defaultColor = [UIColor blackColor];//ppt默认底色，不写默认为白色
     parameter.scalingMode = 1;//屏幕适配方式
@@ -106,6 +161,7 @@
     parameter.pptInteractionEnabled = YES;
     parameter.destination = self.destination;
     
+    _pptScaleMode = parameter.PPTScalingMode;
     
     _offlinePlayBack = [[OfflinePlayBack alloc] initWithParameter:parameter];
     _offlinePlayBack.delegate = self;
@@ -174,6 +230,17 @@
                 [weakSelf.playerView addSmallView];
             });
         }
+        for (UIView *view in self.playerView.subviews) {
+            if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+                _mainViewIsDoc = YES;
+            }
+        }
+        //#ifdef LockView
+        //_roomName有值得时候才初始化锁屏view
+        if (_pauseInBackGround == NO && _roomName) {//后台支持播放
+           [self setLockView];//设置锁屏界面
+        }
+        //#endif
     });
 }
 #pragma mark- 回放的开始时间和结束时间
@@ -210,8 +277,13 @@
 - (void)pageChangeList:(NSMutableArray *)array {
     //    NSLog(@"%@",array);
 }
+
 -(void)onPageChange:(NSDictionary *)dictionary {
     //    NSLog(@"翻页数据是%@",dictionary);
+//    if (_mainViewIsDoc == NO) return;
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//    });
 }
 
 -(void)broadcastHistory_msg:(NSArray *)array {
@@ -231,6 +303,10 @@
 {
     switch (_offlinePlayBack.ijkPlayer.loadState)
     {
+        case IJKMPMoviePlaybackStateStopped: {
+            self.playerView.playDone = YES;
+            break;
+        }
         case IJKMPMovieLoadStateStalled:
             break;
         case IJKMPMovieLoadStatePlayable:
@@ -247,6 +323,7 @@
     switch (_offlinePlayBack.ijkPlayer.playbackState)
     {
         case IJKMPMoviePlaybackStateStopped: {
+            self.playerView.playDone = YES;
             break;
         }
         case IJKMPMoviePlaybackStatePlaying:
@@ -257,7 +334,7 @@
             if(self.playerView.loadingView && ![self.playerView.timer isValid]) {
                 //                NSLog(@"__test 重新开始播放视频, slider.value = %f", _playerView.slider.value);
                 //#ifdef LockView
-                if (_pauseInBackGround == NO) {//后台支持播放
+                if (_pauseInBackGround == NO && _roomName) {//后台支持播放
                     [self setLockView];//设置锁屏界面
                 }
                 //#endif
@@ -278,7 +355,6 @@
                 /*   从0秒开始加载文档  */
                 [_offlinePlayBack continueFromTheTime:0];
                 /*   Ps:从100秒开始加载视频  */
-                //                [_requestDataPlayBack continueFromTheTime:100];
                 //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
                 [self.playerView startTimer];
             }
@@ -326,6 +402,7 @@
     };
     //滑块滑动完成回调
     _playerView.sliderCallBack = ^(int duration) {
+
         weakSelf.offlinePlayBack.currentPlaybackTime = duration;
         //#ifdef LockView
         /*  校对锁屏播放器进度 */
@@ -400,6 +477,17 @@
         weakSelf.playerView.sliderValue = weakSelf.playerView.slider.value;
     };
 }
+/**
+ *    @brief    秒转分秒字符串
+ *    @param    totalSeconds   秒数
+ */
+- (NSString *)timeFormatted:(int)totalSeconds
+{
+    int seconds = totalSeconds % 60;
+    int minutes = totalSeconds / 60;
+    return [NSString stringWithFormat:@"%02d:%02d", minutes, seconds];
+}
+
 //#endif
 #pragma mark - playViewDelegate
 /**
@@ -417,7 +505,6 @@
         if(duration - position == 1 && (self.playerView.sliderValue == position || self.playerView.sliderValue == duration)) {
             position = duration;
         }
-        //                            NSLog(@"__test --%f",_requestDataPlayBack.currentPlaybackTime);
         
         //设置plaerView的滑块和右侧时间Label
         self.playerView.slider.maximumValue = (int)duration;
@@ -468,6 +555,7 @@
         [_offlinePlayBack changePlayerFrame:self.view.frame];
     } else {
         [_offlinePlayBack changeDocFrame:self.view.frame];
+        [_offlinePlayBack changeDocFrame:self.view.frame withPPTScalingMode:_pptScaleMode];
     }
     //隐藏互动视图
     [self hiddenInteractionView:YES];
@@ -482,6 +570,7 @@
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
     } else {
         [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462)) withPPTScalingMode:_pptScaleMode];
     }
     //显示互动视图
     [self hiddenInteractionView:NO];
@@ -493,15 +582,25 @@
  */
 -(void)changeBtnClicked:(NSInteger)tag{
     if (tag == 2) {
+        
+        _mainViewIsDoc = YES;
         [_offlinePlayBack changeDocParent:self.playerView];
         [_offlinePlayBack changePlayerParent:self.playerView.smallVideoView];
-        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        
+        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
+        
+        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+        
     }else{
+        
+        _mainViewIsDoc = NO;
         [_offlinePlayBack changeDocParent:self.playerView.smallVideoView];
         [_offlinePlayBack changePlayerParent:self.playerView];
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
+        
         [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height) withPPTScalingMode:_pptScaleMode];
     }
 }
 /**
@@ -534,6 +633,10 @@
                                                  name:IJKMPMoviePlayerLoadStateDidChangeNotification
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(moviePlayerPlaybackDidFinish:)
+                                                 name:IJKMPMoviePlayerPlaybackDidFinishNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActiveNotification)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
@@ -550,10 +653,19 @@
     [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerPlaybackStateDidChangeNotification object:nil];
     
     [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerLoadStateDidChangeNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerPlaybackDidFinishNotification object:nil];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
 }
+
+- (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification
+{
+    
+}
+
 /**
  APP将要进入前台
  */
@@ -620,7 +732,11 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
+//    return UIInterfaceOrientationMaskAllButUpsideDown;
+    if (self.playerView.isScreenLandScape == YES) {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+    }
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 - (BOOL)prefersHomeIndicatorAutoHidden {

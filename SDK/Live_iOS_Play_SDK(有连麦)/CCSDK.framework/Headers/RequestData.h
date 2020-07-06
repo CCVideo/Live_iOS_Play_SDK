@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.8.1"
+#define SDKVersion @"3.9.0"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -51,7 +51,14 @@
  */
 - (void)onLiveStatusChangeEnd:(BOOL)endNormal;
 /**
- *	@brief  收到公聊消息
+ *  @brief  收到公聊消息
+ *  @param  message {groupId         //聊天组ID
+                     msg             //消息内容
+                     time            //发布时间
+                     useravatar      //用户头像
+                     userid          //用户ID
+                     username        //用户名称
+                     userrole        //用户角色  (publisher:主讲,student:学生或观众,host:主持人,unknow:其他没有角色,teacher:助教) }
  */
 - (void)onPublicChatMessage:(NSDictionary *)message;
 /**
@@ -87,8 +94,12 @@
 - (void)onKickOut:(NSDictionary *)dictionary;
 /**
  *	@brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
- *	房间简介：dic[@"desc"];
- *	房间名称：dic[@"name"];
+ *  显示在线人数   dic[@"showusercount"];
+ *  倒计时              dic[@"openlivecountdown"];
+ *  弹幕                  dic[@"barrage"];
+ *  跑马灯              dic[@"openmarquee"];
+ *	房间简介：       dic[@"desc"];
+ *	房间名称：       dic[@"name"];
  *	房间模版类型：[dic[@"templateType"] integerValue];
  *	模版类型为1: 聊天互动： 无 直播文档： 无 直播问答： 无
  *	模版类型为2: 聊天互动： 有 直播文档： 无 直播问答： 有
@@ -409,7 +420,13 @@
  *              触发此方法需要调用getLivePlayedTime
 */
 - (void)onLivePlayedTime:(NSDictionary *)dic;
-
+/**
+ *    @brief    删除广播
+ *    @param    dic   删除数据
+ *              dic {action         //操作 1.删除
+                     id             //广播id }
+ */
+- (void)broadcast_delete:(NSDictionary *)dic;
 
 //#ifdef LIANMAI_WEBRTC
 /**
@@ -505,7 +522,8 @@
  */
 - (void)requestCancel;
 /**
- *	@brief  获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，几秒钟发一次就可以，然后在代理回调函数中，处理返回的数据
+ *	(已废弃) SDK会主动调用 - (void)onUserCount:(NSString *)count;
+ *  @brief  获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，几秒钟发一次就可以，然后在代理回调函数中，处理返回的数据
  */
 - (void)roomUserCount;
 /**
@@ -657,6 +675,21 @@
 重新加载文档
 */
 - (void)docReload;
+
+/**
+ *    @brief    主动调用方法      用于调整PPT缩放模式
+ *    @param    docFrame        文档的frame
+ *    @param    PPTScalingMode  PPT缩放模式
+ *                               1.一种是全部填充屏幕，可拉伸变形，
+ *                               2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
+ *                               3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
+ *                               4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *                               
+ *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
+ */
+- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
+
+
 //#ifdef LIANMAI_WEBRTC
 /**
  *  @brief 当收到- (void)acceptSpeak:(NSDictionary *)dict;回调方法后，调用此方法

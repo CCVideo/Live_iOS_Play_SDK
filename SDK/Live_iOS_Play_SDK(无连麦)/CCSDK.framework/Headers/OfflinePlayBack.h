@@ -190,5 +190,17 @@
  -6 -dst存在但并不是加密文件格式;
  */
 - (int)DecompressZipWithDec:(NSString *)dst dir:(NSString *)dir;
+/**
+ *    @brief    主动调用方法      用于调整PPT缩放模式
+ *    @param    docFrame        文档的frame
+ *    @param    PPTScalingMode  PPT缩放模式
+ *                               1.一种是全部填充屏幕，可拉伸变形，
+ *                               2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
+ *                               3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
+ *                               4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *
+ *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
+ */
+- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
 
 @end

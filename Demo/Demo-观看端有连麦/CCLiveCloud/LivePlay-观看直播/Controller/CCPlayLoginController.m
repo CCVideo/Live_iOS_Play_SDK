@@ -8,6 +8,7 @@
 
 #import "CCPlayLoginController.h"
 #import "TextFieldUserInfo.h"
+#import "CCSDK/CCLiveUtil.h"
 #import "CCSDK/RequestData.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
@@ -58,6 +59,7 @@
     self.textFieldRoomId.text = GetFromUserDefaults(WATCH_ROOMID);//roomId
     self.textFieldUserName.text = GetFromUserDefaults(WATCH_USERNAME);//userName
     self.textFieldUserPassword.text = GetFromUserDefaults(WATCH_PASSWORD);//password
+//    self.textFieldUserPassword.text = @"d27e105a-fe34-4b8c-93ce-c3d571733247";
     if(StrNotEmpty(_textFieldUserId.text) && StrNotEmpty(_textFieldRoomId.text) && StrNotEmpty(_textFieldUserName.text)) {
         self.loginBtn.enabled = YES;
         [_loginBtn.layer setBorderColor:[CCRGBAColor(255,71,0,1) CGColor]];

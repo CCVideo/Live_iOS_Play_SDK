@@ -13,7 +13,6 @@
 @property (nonatomic, strong) UILabel          *announcementLabel;//公告
 @property (nonatomic, strong) UILabel          *privateLabel;//私聊
 
-
 @property (nonatomic, strong) UIImageView      *lineView;//分割线
 
 @property (nonatomic, strong) UIButton         *privateBgBtn;//新私聊背景
@@ -59,7 +58,7 @@
     }];
     [_announcementBtn addTarget:self action:@selector(announcementBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     _announcementLabel = [self labelWithTitle:@"公告" andBtn:self.announcementBtn];
-    
+
     
     BOOL haveLianmai = [self existLianmai];
     CGFloat bottom = haveLianmai?327:227;

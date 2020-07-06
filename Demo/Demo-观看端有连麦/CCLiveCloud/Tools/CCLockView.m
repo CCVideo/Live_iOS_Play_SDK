@@ -25,7 +25,7 @@
 -(instancetype)initWithRoomName:(NSString *)roomName duration:(int)duration{
     self = [super initWithFrame:CGRectZero];
     if (self) {
-        _roomName = roomName;
+        _roomName = roomName.length == 0 ? @" " :roomName;
         _duration = duration;
         _currentTime = 0;
         _change = NO;

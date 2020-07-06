@@ -74,7 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign)BOOL                     isQuestionnaireSurveyKeyBoardAction;//是否是问卷调查键盘事件
 
 
-
 /**
  初始化方法
 
@@ -85,7 +84,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame docViewType:(BOOL)isSmallDocView;
 //meauView点击方法
 -(void)menuViewSelected:(BOOL)selected;
-
 
 #pragma mark - 直播状态相关代理
 /**

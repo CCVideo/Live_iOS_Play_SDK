@@ -13,8 +13,6 @@
 #import "CCChatViewDataSourceManager.h"//数据处理
 #import "CCProxy.h"
 
-//#import "YYFPSLabel.h"
-
 #define livePlayQuestionDataCount 20 //默认单次处理20条
 
 //收到历史聊天数据 广播标识
@@ -151,7 +149,7 @@ static int flagCount = 0; //计数器
     //UISegmentedControl,功能控制,聊天文档等
     self.livePlayQuestionCurrentPage = 0; // 历史数据页码
     self.isFirstJoinLiveRoom = YES; // 首次进入直播间标记
-    self.isDoneRadioHistoryData = YES;
+    
     [self addSubview:self.segment];
     self.segment.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(82));
     
@@ -204,11 +202,6 @@ static int flagCount = 0; //计数器
         [_scrollView addSubview:self.docView];
         self.docView.frame = CGRectMake(_scrollView.frame.size.width * 3, 0, _scrollView.frame.size.width, _scrollView.frame.size.height);
     }
-//    #if defined (DEBUG)||defined(_DEBUG)
-//    YYFPSLabel *fpsLabel = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 0, 60, 20)];
-//    [_scrollView addSubview:fpsLabel];
-//    [_scrollView bringSubviewToFront:fpsLabel];
-//    #endif
 }
 
 #pragma mark - 响应事件
@@ -452,7 +445,7 @@ static int flagCount = 0; //计数器
         }
     }
     if (!reloadArr.count) {
-        NSLog(@"找不到聊天审核的信息");
+        //NSLog(@"找不到聊天审核的信息");
         return;
     }
     //调用chatView的方法,更新聊天状态,并且刷新某一行
@@ -712,10 +705,10 @@ static int flagCount = 0; //计数器
      */
     /// 广播ID
     NSString *boardcastId = dic[@"id"];
-    NSLog(@"需要删除的广播ID:%@",boardcastId);
+    //NSLog(@"需要删除的广播ID:%@",boardcastId);
     NSInteger action = [dic[@"action"] integerValue];
     if (action == 0) {
-        NSLog(@"不需要删除广播");
+        //NSLog(@"不需要删除广播");
         return;
     }
     for (int i = 0; i < self.manager.publicChatArray.count; i++) {
@@ -725,7 +718,7 @@ static int flagCount = 0; //计数器
             model.action = [dic[@"action"] integerValue];
             model.cellHeight = 0;
             [self.manager.publicChatArray replaceObjectAtIndex:i withObject:model];
-            NSLog(@"删除成功");
+            //NSLog(@"删除成功");
             break;
         }
     }

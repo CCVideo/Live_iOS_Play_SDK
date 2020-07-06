@@ -791,21 +791,21 @@ didFinishDownloadingToURL:(NSURL *)location
 - (void)moveFileAtURL:(NSURL *)srcURL toPath:(NSString *)dstPath
 {
     if (!dstPath) {
-        NSLog(@"error filePath is nil!");
+        //NSLog(@"error filePath is nil!");
         return;
     }
     NSError *error = nil;
     if ([self.fileManager fileExistsAtPath:dstPath] ) {
         [self.fileManager removeItemAtPath:dstPath error:&error];
         if (error) {
-            NSLog(@"removeItem error %@",error);
+            //NSLog(@"removeItem error %@",error);
         }
     }
     
     NSURL *dstURL = [NSURL fileURLWithPath:dstPath];
     [self.fileManager moveItemAtURL:srcURL toURL:dstURL error:&error];
     if (error){
-        NSLog(@"moveItem error:%@",error);
+        //NSLog(@"moveItem error:%@",error);
     }
 }
 

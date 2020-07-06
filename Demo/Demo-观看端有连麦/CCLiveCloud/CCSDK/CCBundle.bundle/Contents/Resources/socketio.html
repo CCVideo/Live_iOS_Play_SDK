@@ -6507,6 +6507,10 @@
             socket.on('broadcast_action', function(data){
                     socket_message('broadcast_action', data);
             });
+            //54  推流主持人切换主讲
+            socket.on('switch_stream', function(data){
+                    socket_message('switch_stream', data);
+            });
      
         }
         function socket_message(type,data){

@@ -13,7 +13,7 @@
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
-#define SDKVersion @"3.8.1"
+#define SDKVersion @"3.9.0"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -117,9 +117,14 @@
 */
 -(void)receivedMarqueeInfo:(NSDictionary *)dic;
 /**
- *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1
+ *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1 (已废弃)
  */
 -(void)numberOfReceivedLines:(NSInteger)linesCount;
+
+/**
+ *接收到播放线路   例:videoArray元素个数 2 代表2条线路 changeLineWithPlayParameter传0或1
+ */
+-(void)numberOfReceivedLinesWithVideo:(NSArray *)videoArray audio:(NSArray *)audioArray;
 
 @end
 
@@ -244,12 +249,35 @@
  */
 -(void)getPracticeInformation;
 /**
- *  @brief 切换线路
+ *  @brief 切换线路 (已废弃)
  * index 传入numberOfReceivedLines的返回值 如:返回2 则传0或1
  * results:
-    success 0 切换成功 -1切换品失败 -2 切换频繁
+    success 0 切换成功 -1切换失败 -2 切换频繁
     currentIndex 当前播放线路
  */
 - (void)changeLineWithNum:(NSInteger)index completion:(void (^)(NSDictionary * results))completion;
+
+/**
+ *  @brief 切换线路
+ * param
+ *       disableVideo  视频传no,音频传yes(账号开启音频模式下才可以传yes)
+ *       lineNum 线路 例:-(void)numberOfReceivedLinesWithVideo:(NSArray *)videoArray audio:(NSArray *)audioArray;中videoArray元素个数为2 则传0或1
+ * results:
+    success 0 切换成功 -1切换失败 -2 切换频繁
+    currentIndex 当前播放线路
+ */
+- (void)changeLineWithPlayParameter:(PlayParameter *)param completion:(void (^)(NSDictionary * results))completion;
+/**
+ *    @brief    主动调用方法      用于调整PPT缩放模式
+ *    @param    docFrame        文档的frame
+ *    @param    PPTScalingMode  PPT缩放模式
+ *                               1.一种是全部填充屏幕，可拉伸变形，
+ *                               2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
+ *                               3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
+ *                               4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *
+ *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
+ */
+- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
 
 @end

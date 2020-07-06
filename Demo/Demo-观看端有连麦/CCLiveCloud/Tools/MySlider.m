@@ -71,5 +71,13 @@
 //    return result;
 //}
 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (CGRectContainsPoint(CGRectInset(self.bounds, -20, -20), point)) {
+        return YES;
+    }
+    return NO;
+}
+
 @end
 

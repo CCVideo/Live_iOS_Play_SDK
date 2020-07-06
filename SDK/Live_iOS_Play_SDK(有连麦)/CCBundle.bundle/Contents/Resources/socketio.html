@@ -6244,6 +6244,7 @@
         }
         function socketIOEmitWithOutBuffer(emitAction, emitValue) {
             socket.emitWithoutBuffer(emitAction, emitValue);
+             console.log('参1数'+emitAction+'代1理'+emitValue)
         }
         function socketIOConnect(uri, spareUri, sessionId, platform, terminal) {
             socket = io.connect(uri, {
@@ -6501,6 +6502,14 @@
             //52  聊天禁言删除历史记录ban_delete_chat
             socket.on('ban_delete_chat', function(data){
                     socket_message('ban_delete_chat', data);
+            });
+            //53  删除广播 broadcast_action
+            socket.on('broadcast_action', function(data){
+                    socket_message('broadcast_action', data);
+            });
+            //54  推流主持人切换主讲
+            socket.on('switch_stream', function(data){
+                    socket_message('switch_stream', data);
             });
      
         }

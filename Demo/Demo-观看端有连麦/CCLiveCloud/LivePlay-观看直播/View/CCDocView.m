@@ -23,6 +23,8 @@
     if (self) {
         _isSmallVideo = smallVideo;
         self.userInteractionEnabled = YES;
+        //剪掉超出的部分
+        self.clipsToBounds = YES;
         [self setUpUI];
     }
     return self;

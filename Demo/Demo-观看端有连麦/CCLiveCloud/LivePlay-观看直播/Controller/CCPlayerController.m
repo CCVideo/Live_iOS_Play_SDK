@@ -100,6 +100,10 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 @property (nonatomic,strong)HDMarqueeView            * marqueeView;//跑马灯
 @property (nonatomic,strong)NSDictionary             * jsonDict;//跑马灯数据
 @property (nonatomic,assign)BOOL                     isLivePlay;//直播间是否已开启
+/** 记录切换ppt缩放模式 */
+@property (nonatomic, assign)NSInteger                    pptScaleMode;
+/** 主屏是否是文档 */
+@property (nonatomic, assign)BOOL                         mainViewIsDoc;
 @end
 @implementation CCPlayerController
 //初始化
@@ -118,11 +122,63 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
     _pauseInBackGround = NO;
     _isLivePlay = NO;
+    _mainViewIsDoc = NO;
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
+//    UIButton *btn = [[UIButton alloc] init];
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(100, 100, 100, 100);
+//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
+//    self.jjjj = 0;
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 100, 200, 100);
 //
 
+}
+/**
+ *    @brief    历史广播数组
+ *    @param    array   历史广播数组
+ *              array [{
+                           content         //广播内容
+                           userid          //发布者ID
+                           username        //发布者名字
+                           userrole        //发布者角色
+                           createTime      //绝对时间
+                           time            //相对时间(相对直播)
+                           id              //广播ID }]
+ */
+- (void)broadcastLast_msg:(NSArray *)array
+{
+    [_contentView broadcastLast_msg:array];
+}
+
+/**
+*    @brief    删除广播
+*    @param    dic   广播信息
+*              dic {action             //操作 1.删除
+                    id                 //广播ID }
+*/
+- (void)broadcast_delete:(NSDictionary *)dic
+{
+    [_contentView broadcast_delete:dic];
+}
+
+
+- (void)onLivePlayedTime:(NSDictionary *)dic {
+    //NSLog(@"数据是%@",dic);
+}
+-(void)videoStateChangeWithString:(NSString *) result {
+//    NSLog(@"状态%@",result);
+}
+- (void)changedoc {
+//    [self.requestData changeDocWebColor:@"#000000"];
+    [_requestData getLivePlayedTime];
+//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
+//    [_requestData getOnlineTeachers];
+//    [self onBanDeleteChat:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -150,6 +206,27 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     //添加互动视图
     [self.view addSubview:self.contentView];
     
+//    UIButton *btn = [[UIButton alloc] init];
+//    btn.tag = 1;
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(0, 53, 100, 40);
+//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
+//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
+//    UIButton *btn1 = [[UIButton alloc] init];
+//    [btn1 setBackgroundColor:[UIColor greenColor]];
+//    [self.view addSubview:btn1];
+//    btn1.frame = CGRectMake(100, 53, 100, 40);
+//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
+//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn3 = [[UIButton alloc] init];
+//    btn3.tag = 1;
+//    [btn3 setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn3];
+//    btn3.frame = CGRectMake(200, 53, 100, 40);
+//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
+//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
+    
     //设置视频视图和互动视图的相关属性
     _playerView.menuView = _menuView;
 }
@@ -168,7 +245,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     parameter.docParent = docView;//文档小窗
     parameter.docFrame = CGRectMake(0,0,docView.frame.size.width, docView.frame.size.height);//文档位置,ps:起始位置为文档视图坐标
     parameter.security = YES;//是否开启https,建议开启
-    parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+    parameter.PPTScalingMode = 4 ;//ppt展示模式,建议值为4
     parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
     parameter.scalingMode = 1;//屏幕适配方式
     parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
@@ -177,10 +254,40 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     parameter.pptInteractionEnabled = YES;
     parameter.DocModeType = 0;//设置当前的文档模式
 //    parameter.DocShowType = 1;
-//    parameter.groupid = _contentView.groupId;//用户的groupId
+    parameter.groupid = _contentView.groupId;//用户的groupId
+    
+    _pptScaleMode = parameter.PPTScalingMode;
+    
     _requestData = [[RequestData alloc] initWithParameter:parameter];
     _requestData.delegate = self;
+
 }
+
+//- (void)changedoc:(UIButton *)sender {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 1;
+//    [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
+
+//- (void)changedoc1 {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 2;
+//    [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//
+//}
+//- (void)changedoc3 {
+//    
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 3;
+//    [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
+
+
 #pragma mark - 私有方法
 /**
  发送聊天
@@ -244,7 +351,11 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
+//    return UIInterfaceOrientationMaskAllButUpsideDown;
+    if (self.isScreenLandScape == YES) {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+    }
+    return UIInterfaceOrientationMaskPortrait;
 }
 /**
  强制转屏
@@ -277,17 +388,23 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
                 view.userInteractionEnabled = YES;
             }
         }
+        _mainViewIsDoc = YES;
         [_requestData changeDocParent:self.playerView];
         [_requestData changePlayerParent:self.playerView.smallVideoView];
-        [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestData changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
+        [_requestData changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
         
     }else{
+        _mainViewIsDoc = NO;
         [_requestData changeDocParent:self.playerView.smallVideoView];
         [_requestData changePlayerParent:self.playerView];
         [_requestData changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestData changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
-        //切换小窗文档时候 文档不能拖动
+        
+        [_requestData changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+        
+        //小窗文档禁止滚动
         for (UIView *view in self.playerView.smallVideoView.subviews) {
             if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
                 view.userInteractionEnabled = NO;
@@ -310,6 +427,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         [_requestData changePlayerFrame:self.view.frame];
     } else {
         [_requestData changeDocFrame:self.view.frame];
+        [_requestData changeDocFrame:self.view.frame withPPTScalingMode:_pptScaleMode];
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.marqueeView startMarquee];
@@ -328,6 +446,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [_requestData changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
         } else {
             [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+            [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462)) withPPTScalingMode:_pptScaleMode];
         }
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.marqueeView startMarquee];
@@ -384,10 +503,24 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self.menuView removeAllInformationView];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
-- (void)timerfunc {
+//- (void)timerfunc {
     // (已废弃)获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，几秒钟发一次就可以，然后在代理回调函数中，处理返回的数据
     //最新注释:该接口默认最短响应时间为15秒,获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，然后在代理回调函数中，处理返回的数据
-    [_requestData roomUserCount];
+//    [_requestData roomUserCount];
+//}
+
+/**
+ *    @brief    翻页同步之前的文档展示模式
+ */
+- (void)onPageChange:(NSDictionary *) dictionary
+{
+    if (_mainViewIsDoc == NO) return;
+    //NSLog(@"翻页信息:%@",dictionary);
+//    NSLog(@"%@",self.playerView);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        [_requestData changeDocFrame:CGRectMake(0, 0, self.playerView.size.width, self.playerView.size.height) withPPTScalingMode:_pptScaleMode];
+    });
 }
 
 #pragma mark- SDK 必须实现的代理方法
@@ -397,9 +530,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 -(void)requestSucceed {
 //        NSLog(@"请求成功！");
-    [self stopTimer];
-    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
-    _userCountTimer = [NSTimer scheduledTimerWithTimeInterval:15.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
+//    [self stopTimer];
+//    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
+//    _userCountTimer = [NSTimer scheduledTimerWithTimeInterval:15.0f target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
    
 }
 
@@ -424,7 +557,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 -(void)doubleCllickPPTView{
     if (_screenLandScape) {//如果是横屏状态下
-        NSLog(@"双击进入横屏");
         _screenLandScape = NO;
         _isScreenLandScape = YES;
         
@@ -458,7 +590,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         }
         //#endif
     }else{
-        NSLog(@"双击进入竖屏");
         _screenLandScape = YES;
         _isScreenLandScape = YES;
         [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
@@ -528,6 +659,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     if (type == 4 || type == 5) {
         [self.playerView addSmallView];
     }
+    
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
     _playerView.templateType = type;
@@ -538,6 +670,12 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     }
     if (type == 6) {//去除私聊按钮
         [_menuView hiddenPrivateBtn];
+    }
+    
+    for (UIView *view in self.playerView.subviews) {
+        if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+            _mainViewIsDoc = YES;
+        }
     }
 }
 #pragma mark- 获取直播开始时间和直播时长

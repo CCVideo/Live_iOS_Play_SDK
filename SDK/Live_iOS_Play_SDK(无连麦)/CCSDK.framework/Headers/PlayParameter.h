@@ -107,11 +107,17 @@
  *         使用聊天分组功能时传入,不使用可以不传
  */
 @property(copy, nonatomic)NSString                   *groupid;
+/**
+ *  @brief 是否禁用视频,默认为NO,禁用视频则只播放音频 (在线回放专用)
+ *         只有账号开启支持音频模式设置才生效,可以在初始化SDK的时候配置,也可以在切换线路调用(changeLineWithPlayParameter)的时候配置
+ */
+@property(assign, nonatomic)BOOL                        disableVideo;
+/**
+ *  @brief 切换线路
+ *         在切换线路调用(changeLineWithPlayParameter)的时候配置
+*/
+@property(assign, nonatomic)NSInteger                   lineNum;//线路
 
 
 @end
-
-
-
-
 

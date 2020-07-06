@@ -47,10 +47,22 @@
 @property (nonatomic,strong)HDMarqueeView               * marqueeView;//跑马灯
 @property (nonatomic,strong)NSDictionary                * jsonDict;//跑马灯数据
    
+@property (nonatomic, strong)PlayParameter              * toolParam;
+/** 记录切换ppt缩放模式 */
+@property (nonatomic, assign)NSInteger                    pptScaleMode;
+/** 主屏是否是文档 */
+@property (nonatomic, assign)BOOL                         mainViewIsDoc;
+@property (nonatomic, strong) PlayParameter             *parameter;
 
 @end
 
 @implementation CCPlayBackController
+- (PlayParameter *)toolParam {
+    if (!_toolParam) {
+        _toolParam = [[PlayParameter alloc] init];
+    }
+    return _toolParam;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     //初始化背景颜色，设置状态栏样式
@@ -59,47 +71,179 @@
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
     _pauseInBackGround = NO;
     _isSmallDocView = YES;
+    _mainViewIsDoc = NO;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-}
-//文档全屏
-- (void)changedoc2 {
-    [self changedoc1];
-    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-    if (ratio!=0 && self.playerView.height!=0) {
-        CGAffineTransform  tran = CGAffineTransformIdentity;
-        if (ratio>self.playerView.width/self.playerView.height) {
-            tran = CGAffineTransformScale(self.playerView.transform, ratio / self.playerView.width/self.playerView.height, ratio / (self.playerView.width/self.playerView.height));
-        }else{
-            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , self.playerView.width/self.playerView.height / ratio);
-        }
-        self.playerView.transform = tran;
-    }
+
+//    UILabel * label = [[UILabel alloc] init];
+//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
+//    label.textColor = [UIColor redColor];
+//    label.frame = CGRectMake(100, 240, 200, 100);
+//    [self.view addSubview:label];
+    
+//    UIButton *btn = [[UIButton alloc] init];
+//    btn.tag = 1;
+//    [btn setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn];
+//    btn.frame = CGRectMake(0, 53, 100, 40);
+//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
+
+//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
+
+//    [btn setTitle:@"视频1" forState:UIControlStateNormal];
+//
+//    UIButton *btn1 = [[UIButton alloc] init];
+//    [btn1 setBackgroundColor:[UIColor greenColor]];
+//    [self.view addSubview:btn1];
+//    btn1.frame = CGRectMake(100, 53, 100, 40);
+
+//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
+
+//    [btn1 setTitle:@"视频2" forState:UIControlStateNormal];
+//
+//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn3 = [[UIButton alloc] init];
+//    btn3.tag = 1;
+//    [btn3 setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:btn3];
+//    btn3.frame = CGRectMake(200, 53, 100, 40);
+//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
+
+//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
+
+//    [btn3 setTitle:@"音频" forState:UIControlStateNormal];
+
+    
+//     UIButton *btn4 = [[UIButton alloc] init];
+//     [btn4 setBackgroundColor:[UIColor greenColor]];
+//     [self.view addSubview:btn4];
+//     btn4.frame = CGRectMake(300, 200, 100, 40);
+//     [btn4 setTitle:@"音频1" forState:UIControlStateNormal];
+//     [btn4 addTarget:self action:@selector(changedoc4) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn2 = [[UIButton alloc] init];
+//    [btn2 setBackgroundColor:[UIColor grayColor]];
+//    [self.view addSubview:btn2];
+//    btn2.frame = CGRectMake(0, 200, 100, 40);
+//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
+//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
+
+//    self.label = [[UILabel alloc] init];
+//    [self.view addSubview:self.label];
+//    self.label.frame = CGRectMake(100, 340, 200, 100);
+//    self.label.numberOfLines = 0;
+//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
 
 }
-//文档复原
-- (void)changedoc1 {
-    self.playerView.transform = CGAffineTransformIdentity;
-    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
+/**
+ *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1
+ */
+-(void)numberOfReceivedLines:(NSInteger)linesCount {
+    //NSLog(@"有%zd条线路",linesCount);
+}
+/*
+    docName         //文档名
+    pageTitle       //页标题
+    time            //时间
+    url             //地址
+ */
+/**
+ *    @brief   回放翻页数据列表
+ *    @param   array [{  docName         //文档名
+                        pageTitle       //页标题
+                        time            //时间
+                        url             //地址 }]
+ */
+- (void)pageChangeList:(NSMutableArray *)array {
+    
+}
+- (void)publish_stream {
+//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
+}
 
+/**
+ *    @brief    翻页同步之前的文档展示模式
+ */
+- (void)onPageChange:(NSDictionary *)dictionary {
+    if (_mainViewIsDoc == NO) return;
+    //NSLog(@"翻页信息:%@",dictionary);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+    });
 }
-//文档拉伸
-- (void)changedoc:(UIButton *)sender {
-    [self changedoc1];
-    CGFloat ratio =  [_requestDataPlayBack getDocAspectRatio];//ppt 宽高比
-    ratio = !isnan(ratio) && ratio!=0?ratio:(16/9.0);
-    if (ratio!=0 && self.playerView.height!=0) {
-        CGAffineTransform  tran = CGAffineTransformIdentity;
-        if (ratio>self.playerView.width/self.playerView.height) {
-            tran = CGAffineTransformScale(self.playerView.transform, 1 , ratio / (self.playerView.width/self.playerView.height));
-        }else{
-            tran = CGAffineTransformScale(self.playerView.transform, self.playerView.width/self.playerView.height / ratio , 1);
-        }
-        self.playerView.transform = tran;
-    }
+
+- (void)videoStateChangeWithString:(NSString *)result {
+//    NSLog(@"---状态是%@",result);
 }
+
+//- (void)changedoc2 {
+//
+//}
+
+//- (void)changedoc1 {
+//    self.parameter.disableVideo = NO;
+//       self.parameter.lineNum = 1;
+//       [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
+//           self.label.text = [NSString stringWithFormat:@"%@",results];
+//       }];
+    
+    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 2;
+//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+
+//}
+
+//- (void)changedoc3 {
+//
+//    self.parameter.disableVideo = YES;
+//       self.parameter.lineNum = 0;
+//       [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
+//           self.label.text = [NSString stringWithFormat:@"%@",results];
+//       }];
+    
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 3;
+//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
+
+//- (void)changedoc4 {
+//
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 4;
+//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//
+//}
+
+- (void)playback_loadVideoFail {
+//    self.label.text = @"视频加载失败";
+}
+//- (void)changedoc4 {
+////    self.playerView.transform = CGAffineTransformIdentity;
+////    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
+////    [_requestDataPlayBack changeLineWithNum:1 completion:^(NSDictionary *results) {
+////        self.label.text = [NSString stringWithFormat:@"%@",results];
+////    }];
+//    self.toolParam.disableVideo = NO;
+//    self.toolParam.lineNum = 1;
+//    [self.requestDataPlayBack changeLineWithPlayParameter:self.toolParam completion:^(NSDictionary *results) {
+//         self.label.text = [NSString stringWithFormat:@"%@",results];
+//    }];
+//
+//}
+//- (void)changedoc:(UIButton *)sender {
+//    self.parameter.disableVideo = NO;
+//    self.parameter.lineNum = 0;
+//    [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
+//        self.label.text = [NSString stringWithFormat:@"%@",results];
+//    }];
+//    ///文档为主的时候进行切换
+//    if (_mainViewIsDoc == NO) return;
+//    _pptScaleMode = 1;
+//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+//}
 /**
  切换回放,需要重新配置参数
  ps:切换频率不能过快
@@ -132,7 +276,7 @@
     //        parameter.groupid = self.groupId;//用户的groupId
         _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
         _requestDataPlayBack.delegate = self;
-        
+        _pptScaleMode = parameter.PPTScalingMode;
         /* 设置playerView */
         [self.playerView showLoadingView];//显示视频加载中提示
 }
@@ -151,28 +295,29 @@
 //集成SDK
 - (void)integrationSDK {
     UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
-    PlayParameter *parameter = [[PlayParameter alloc] init];
-    parameter.userId = GetFromUserDefaults(PLAYBACK_USERID);//userId
-    parameter.roomId = GetFromUserDefaults(PLAYBACK_ROOMID);//roomId
-    parameter.liveId = GetFromUserDefaults(PLAYBACK_LIVEID);//liveId
-    parameter.recordId = GetFromUserDefaults(PLAYBACK_RECORDID);//回放Id
-    parameter.viewerName = GetFromUserDefaults(PLAYBACK_USERNAME);//用户名
-    parameter.token = GetFromUserDefaults(PLAYBACK_PASSWORD);//密码
-    parameter.docParent = docView;//文档小窗
-    parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
-    parameter.playerParent = self.playerView;//视频视图
-    parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
-    parameter.security = YES;//是否开启https,建议开启
-    parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
-    parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
-    parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
-    parameter.scalingMode = 1;//屏幕适配方式
+    _parameter = [[PlayParameter alloc] init];
+    _parameter.userId = GetFromUserDefaults(PLAYBACK_USERID);//userId
+    _parameter.roomId = GetFromUserDefaults(PLAYBACK_ROOMID);//roomId
+    _parameter.liveId = GetFromUserDefaults(PLAYBACK_LIVEID);//liveId
+    _parameter.recordId = GetFromUserDefaults(PLAYBACK_RECORDID);//回放Id
+    _parameter.viewerName = GetFromUserDefaults(PLAYBACK_USERNAME);//用户名
+    _parameter.token = GetFromUserDefaults(PLAYBACK_PASSWORD);//密码
+    _parameter.docParent = docView;//文档小窗
+    _parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
+    _parameter.playerParent = self.playerView;//视频视图
+    _parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
+    _parameter.security = YES;//是否开启https,建议开启
+    _parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+    _parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
+    _parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
+    _parameter.scalingMode = 1;//屏幕适配方式
 //    parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
-    parameter.pptInteractionEnabled = YES;
+    _parameter.pptInteractionEnabled = YES;
 //        parameter.groupid = self.groupId;//用户的groupId
-    _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
+    _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:_parameter];
     _requestDataPlayBack.delegate = self;
     
+    _pptScaleMode = _parameter.PPTScalingMode;
     /* 设置playerView */
     [self.playerView showLoadingView];//显示视频加载中提示
 }
@@ -231,7 +376,7 @@
 /**
  *    @brief     双击ppt
  */
-- (void)doubleCllickPPTView{
+- (void)doubleCllickPPTView {
     if (_playerView.quanpingButton.selected) {//如果是横屏状态下
         /* 横屏转竖屏 */
         _playerView.quanpingButton.selected = NO;
@@ -239,10 +384,10 @@
         _interactionView.hidden = NO;
         [_playerView backBtnClickWithTag:2];
     }else{
-        _interactionView.hidden = YES;
         /* 竖屏转横屏 */
         _playerView.quanpingButton.selected = YES;
         [_playerView turnRight];
+        _interactionView.hidden = YES;
         [_playerView quanpingBtnClick];
     }
 }
@@ -272,6 +417,12 @@
     self.playerView.titleLabel.text = _roomName;
     //配置互动视图的信息
     [self.interactionView roomInfo:dic playerView:self.playerView];
+    
+    for (UIView *view in self.playerView.subviews) {
+        if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
+            _mainViewIsDoc = YES;
+        }
+    }
 }
 #pragma mark - 跑马灯
 - (void)receivedMarqueeInfo:(NSDictionary *)dic {
@@ -337,6 +488,7 @@
 }
 #pragma  mark - 文档加载状态
 -(void)docLoadCompleteWithIndex:(NSInteger)index {
+//    NSLog(@"文档状态%ld",(long)index);
      if (index == 0) {
          dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
              ///文档小窗默认禁止滚动
@@ -351,6 +503,10 @@
              [self.marqueeView startMarquee];
          });
         }
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        self.label.text  = [NSString stringWithFormat:@"状态%zd",index];
+//    });
+  
 }
 #pragma mark- 回放的开始时间和结束时间
 /**
@@ -398,20 +554,20 @@
             
         case IJKMPMovieLoadStateStalled:
 //            NSLog(@"当前状态是a%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-//            NSLog(@"数据缓冲已经停止状态");
+//            NSLog(@"---数据缓冲已经停止状态");
             break;
         case IJKMPMovieLoadStatePlayable:
 //            NSLog(@"当前状态是b%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-//            NSLog(@"数据缓冲到足够开始播放状态");
+//            NSLog(@"---数据缓冲到足够开始播放状态");
             break;
         case IJKMPMovieLoadStatePlaythroughOK:
 //            NSLog(@"当前状态是c%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-//            NSLog(@"缓冲完成状态");
+//            NSLog(@"---缓冲完成状态");
             break;
             //IJKMPMovieLoadStateUnknown
         case IJKMPMovieLoadStateUnknown:
 //            NSLog(@"当前状态是d%lu",(unsigned long)_requestDataPlayBack.ijkPlayer.loadState);
-//            NSLog(@"数据缓冲变成了未知状态");
+//            NSLog(@"---数据缓冲变成了未知状态");
             break;
         default:
             break;
@@ -429,8 +585,8 @@
     
     
 }
-- (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification {
-//    NSLog(@"播放完成");
+- (void)moviePlayerPlaybackDidFinish:(NSNotification *)notification {
+    
 }
 //回放速率改变
 - (void)moviePlayBackStateDidChange:(NSNotification*)notification
@@ -440,6 +596,8 @@
     switch (_requestDataPlayBack.ijkPlayer.playbackState)
     {
         case IJKMPMoviePlaybackStateStopped: {
+        
+            self.playerView.playDone = YES;
             break;
         }
         case IJKMPMoviePlaybackStatePlaying:
@@ -510,7 +668,6 @@
     [self.interactionView removeData];
 }
 #pragma mark - 设置UI
-
 /**
  创建UI
  */
@@ -529,7 +686,6 @@
     //滑块滑动完成回调
     _playerView.sliderCallBack = ^(int duration) {
         weakSelf.requestDataPlayBack.currentPlaybackTime = duration;
-//        NSLog(@"播放时间拖动%d",duration);
 //#ifdef LockView
         /*  校对锁屏播放器进度 */
         [weakSelf.lockView updateCurrentDurtion:weakSelf.requestDataPlayBack.currentPlaybackTime];
@@ -606,9 +762,9 @@
 //#endif
 #pragma mark - playViewDelegate
 /**
- 开始播放时
+ *    @brief    开始播放时
  */
--(void)timerfunc{
+- (void)timerfunc {
     if([_requestDataPlayBack isPlaying]) {
         [self.playerView removeLoadingView];
     }
@@ -683,6 +839,7 @@
         [_requestDataPlayBack changePlayerFrame:self.view.frame];
     } else {
         [_requestDataPlayBack changeDocFrame:self.view.frame];
+        [_requestDataPlayBack changeDocFrame:self.view.frame withPPTScalingMode:_pptScaleMode];
     }
     //隐藏互动视图
     [self hiddenInteractionView:YES];
@@ -700,6 +857,7 @@
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
     } else {
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
+        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462)) withPPTScalingMode:_pptScaleMode];
     }
     //显示互动视图
     [self hiddenInteractionView:NO];
@@ -714,23 +872,27 @@
  */
 -(void)changeBtnClicked:(NSInteger)tag{
     if (tag == 2) {
-        
         for (UIView *view in self.playerView.smallVideoView.subviews) {
             if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
                 view.userInteractionEnabled = YES;
             }
         }
-        
+        _mainViewIsDoc = YES;
         [_requestDataPlayBack changeDocParent:self.playerView];
         [_requestDataPlayBack changePlayerParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
+        
+        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
     }else{
+        _mainViewIsDoc = NO;
         [_requestDataPlayBack changeDocParent:self.playerView.smallVideoView];
         [_requestDataPlayBack changePlayerParent:self.playerView];
         [_requestDataPlayBack changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
-        //切换小窗文档时候 文档不能拖动
+        
+        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+        //小窗文档禁止滚动
         for (UIView *view in self.playerView.smallVideoView.subviews) {
             if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
                 view.userInteractionEnabled = NO;
@@ -848,7 +1010,7 @@
 }
 #pragma mark - 横竖屏旋转设置
 //旋转方向
-- (BOOL)shouldAutorotate{
+- (BOOL)shouldAutorotate {
     if (self.playerView.isScreenLandScape == YES) {
         return YES;
     }
@@ -861,7 +1023,10 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
+    if (self.playerView.isScreenLandScape == YES) {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+    }
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 - (BOOL)prefersHomeIndicatorAutoHidden {
