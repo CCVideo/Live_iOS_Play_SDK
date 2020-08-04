@@ -36,6 +36,7 @@
 }
 - (void)dealloc
 {
+//    [self removeData];
 //    NSLog(@"%s", __func__);
 }
 

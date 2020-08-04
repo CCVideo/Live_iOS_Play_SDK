@@ -12,7 +12,7 @@
 #import "IJKMediaFramework/IJKMediaPlayback.h"
 #import "IJKMediaFramework/IJKFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.9.0"
+#define SDKVersion @"3.9.1"
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -245,7 +245,7 @@
 - (void)theRoomWasCleared;
 
 /**
- *    @brief     获取所有文档列表
+ *    @brief     获取所有文档列表 需要调用getDocsList
  */
 - (void)receivedDocsList:(NSDictionary *)listDic;
 /**
@@ -423,12 +423,11 @@
 /**
  *    @brief    删除广播
  *    @param    dic   删除数据
- *              dic {action         //操作 1.删除
+ *              dic {
+ *              action         //操作 1.删除
                      id             //广播id }
  */
 - (void)broadcast_delete:(NSDictionary *)dic;
-
-
 
 @end
 
@@ -664,7 +663,5 @@
  *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
  */
 - (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
-
-
 
 @end

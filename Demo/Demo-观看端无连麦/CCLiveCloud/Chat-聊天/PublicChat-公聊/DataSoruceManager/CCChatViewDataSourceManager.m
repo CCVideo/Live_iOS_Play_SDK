@@ -209,7 +209,6 @@
     model.msg = [NSString stringWithFormat:@"系统消息：%@",dic[@"content"]];
     model.createTime = dic[@"createTime"];
     model.boardcastId = dic[@"id"];
-    NSLog(@"接收到历史广播的ID%@",model.boardcastId);
     model.time = dic[@"time"];
     //设置广播消息UI布局
     model.typeState = RadioState;
@@ -225,7 +224,6 @@
     model.msg = [NSString stringWithFormat:@"系统消息：%@",dic[@"value"][@"content"]];
     model.createTime = dic[@"value"][@"createTime"];
     model.boardcastId = dic[@"value"][@"id"];
-    NSLog(@"接收到新增广播的ID%@",model.boardcastId);
     //设置广播消息UI布局
     model.typeState = RadioState;
     

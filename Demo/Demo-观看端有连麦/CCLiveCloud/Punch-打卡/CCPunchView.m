@@ -64,7 +64,6 @@
     }
     self.remainDuration -=1;// self.duration--;
     self.timeLabel.text = [NSString stringWithFormat:@"%zds",self.remainDuration];
-//    NSLog(@"文本是%@",self.timeLabel.text);
 }
 //关闭Timer
 -(void)stopTimer {
@@ -210,7 +209,6 @@
 //    });
 }
 - (void)punchBtnClick{
-    NSLog(@"点击签到");
     self.punchBtn.userInteractionEnabled = NO;
     if(self.punchBlock) {
         self.punchBlock(self.punchid);//打卡回调

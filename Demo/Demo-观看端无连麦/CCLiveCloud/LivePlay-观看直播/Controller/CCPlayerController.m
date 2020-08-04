@@ -128,6 +128,17 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //    [self.view addSubview:btn];
 //    btn.frame = CGRectMake(100, 100, 100, 100);
 //    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    UIButton *btn1 = [[UIButton alloc] init];
+//   [btn1 setBackgroundColor:[UIColor redColor]];
+//   [self.view addSubview:btn1];
+//   btn1.frame = CGRectMake(100, 201, 100, 100);
+//   [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
+//    UIButton *btn2 = [[UIButton alloc] init];
+//      [btn2 setBackgroundColor:[UIColor redColor]];
+//      [self.view addSubview:btn2];
+//      btn2.frame = CGRectMake(100, 302, 100, 100);
+//      [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
 //    self.jjjj = 0;
 //    self.label = [[UILabel alloc] init];
 //    [self.view addSubview:self.label];
@@ -135,49 +146,19 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //
 
 }
-/**
- *    @brief    历史广播数组
- *    @param    array   历史广播数组
- *              array [{
-                           content         //广播内容
-                           userid          //发布者ID
-                           username        //发布者名字
-                           userrole        //发布者角色
-                           createTime      //绝对时间
-                           time            //相对时间(相对直播)
-                           id              //广播ID }]
- */
-- (void)broadcastLast_msg:(NSArray *)array
-{
-    [_contentView broadcastLast_msg:array];
+//- (void)changedoc {
+//    [_requestData getDocsList];
+//    [_requestData changeDocMode:1];
+//}
+//- (void)changedoc2 {
+//    [_requestData changeDocMode:0];
+//}
+//- (void)changedoc1 {
+//    [_requestData changePageToNumWithDocId:@"CD14F3CD759C52B79C33DC5901307461" pageIndex:1];
+//}
+- (void)receivedDocsList:(NSDictionary *)listDic {
+//    NSLog(@"%@",listDic);
 }
-
-/**
-*    @brief    删除广播
-*    @param    dic   广播信息
-*              dic {action             //操作 1.删除
-                    id                 //广播ID }
-*/
-- (void)broadcast_delete:(NSDictionary *)dic
-{
-    [_contentView broadcast_delete:dic];
-}
-
-
-- (void)onLivePlayedTime:(NSDictionary *)dic {
-    //NSLog(@"数据是%@",dic);
-}
--(void)videoStateChangeWithString:(NSString *) result {
-//    NSLog(@"状态%@",result);
-}
-- (void)changedoc {
-//    [self.requestData changeDocWebColor:@"#000000"];
-    [_requestData getLivePlayedTime];
-//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
-//    [_requestData getOnlineTeachers];
-//    [self onBanDeleteChat:nil];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
@@ -224,8 +205,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
 //    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
     
-    //设置视频视图和互动视图的相关属性
-    _playerView.menuView = _menuView;
+
 }
 /**
  集成sdk
@@ -577,6 +557,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //        [_requestData changeDocParent:_contentView.docView];
 //        [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
         
+      
     }else{
         _screenLandScape = YES;
         _isScreenLandScape = YES;
@@ -611,7 +592,37 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //        [_requestData changePlayerParent:_oncePlayerView];
 //        [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
         
+        
+        
     }
+}
+
+/**
+ *    @brief    历史广播数组
+ *    @param    array   历史广播数组
+ *              array [{
+                           content         //广播内容
+                           userid          //发布者ID
+                           username        //发布者名字
+                           userrole        //发布者角色
+                           createTime      //绝对时间
+                           time            //相对时间(相对直播)
+                           id              //广播ID }]
+ */
+- (void)broadcastLast_msg:(NSArray *)array
+{
+    [_contentView broadcastLast_msg:array];
+}
+
+/**
+*    @brief    删除广播
+*    @param    dic   广播信息
+*              dic {action             //操作 1.删除
+                    id                 //广播ID }
+*/
+- (void)broadcast_delete:(NSDictionary *)dic
+{
+    [_contentView broadcast_delete:dic];
 }
 
 #pragma mark- 房间信息
@@ -641,10 +652,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
     _playerView.templateType = type;
-    if (type == 1) {//如果只有视频的版型，去除menuView;
-        [_menuView removeFromSuperview];
-        _menuView = nil;
-        return;
+    if (type != 1) {//如果只有视频的版型，去除menuView;
+        //设置视频视图和互动视图的相关属性
+        _playerView.menuView = _menuView;
     }
     if (type == 6) {//去除私聊按钮
         [_menuView hiddenPrivateBtn];
@@ -1391,6 +1401,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     CCCupView *cupView = [[CCCupView alloc] initWithWinnerName:name isScreen:self.screenLandScape];
     [APPDelegate.window addSubview:cupView];
 }
+
 #pragma mark - 添加通知
 -(void)addObserver {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -1421,6 +1432,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:IJKMPMovieNaturalSizeAvailableNotification
                                                   object:nil];
+   
 }
 /**
  APP将要进入后台
@@ -1669,6 +1681,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [ws.contentView.chatView privateChatBtnClicked];
             [APPDelegate.window bringSubviewToFront:ws.contentView.chatView.ccPrivateChatView];
         };
+    
         //公告按钮回调
         _menuView.announcementBlock = ^{
             [ws announcementBtnClicked];
@@ -1681,6 +1694,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 -(void)hiddenMenuView{
 
 }
+
 //公告
 -(AnnouncementView *)announcementView{
     if (!_announcementView) {

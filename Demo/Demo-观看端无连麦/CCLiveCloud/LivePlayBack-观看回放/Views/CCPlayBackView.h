@@ -41,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(void)timerfunc;
 
+/**
+ *    @brief    播放完成
+ */
+-(void)playDone;
+
 @end
 
 @interface CCPlayBackView : UIView

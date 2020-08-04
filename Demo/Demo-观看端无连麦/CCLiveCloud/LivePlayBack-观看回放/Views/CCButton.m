@@ -15,7 +15,6 @@
 {
     [super endTrackingWithTouch:touch withEvent:event];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //NSLog(@"结束点击");
         if (self.endTouchBlock) {
             self.endTouchBlock(@"");
         }

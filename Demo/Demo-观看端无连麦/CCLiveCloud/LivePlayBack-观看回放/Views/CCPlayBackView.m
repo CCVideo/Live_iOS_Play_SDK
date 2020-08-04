@@ -492,6 +492,10 @@
 {
     _playDone = playDone;
     if (_replayView.hidden == YES && playDone == YES) {
+        // 播放完成回调控制器 已播放完成
+        if ([self.delegate respondsToSelector:@selector(playDone)]) {
+            [self.delegate playDone];
+        }
         [_pauseButton setImage:[UIImage imageNamed:@"video_replay1"] forState:UIControlStateNormal];
         _replayView.hidden = NO;
         [self bringSubviewToFront:_replayView];

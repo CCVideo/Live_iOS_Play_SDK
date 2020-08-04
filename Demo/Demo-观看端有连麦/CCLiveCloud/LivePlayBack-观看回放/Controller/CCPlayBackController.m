@@ -53,7 +53,8 @@
 /** 主屏是否是文档 */
 @property (nonatomic, assign)BOOL                         mainViewIsDoc;
 @property (nonatomic, strong) PlayParameter             *parameter;
-
+/** 是否播放完成 */
+@property (nonatomic, assign)BOOL                         isPlayDone;
 @end
 
 @implementation CCPlayBackController
@@ -76,221 +77,8 @@
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
 
-//    UILabel * label = [[UILabel alloc] init];
-//    label.text = [[SaveLogUtil sharedInstance] getCurrentSDKVersion];
-//    label.textColor = [UIColor redColor];
-//    label.frame = CGRectMake(100, 240, 200, 100);
-//    [self.view addSubview:label];
-    
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(0, 53, 100, 40);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-
-//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
-
-//    [btn setTitle:@"视频1" forState:UIControlStateNormal];
-//
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(100, 53, 100, 40);
-
-//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
-
-//    [btn1 setTitle:@"视频2" forState:UIControlStateNormal];
-//
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-//    UIButton *btn3 = [[UIButton alloc] init];
-//    btn3.tag = 1;
-//    [btn3 setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn3];
-//    btn3.frame = CGRectMake(200, 53, 100, 40);
-//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
-
-//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
-
-//    [btn3 setTitle:@"音频" forState:UIControlStateNormal];
-
-    
-//     UIButton *btn4 = [[UIButton alloc] init];
-//     [btn4 setBackgroundColor:[UIColor greenColor]];
-//     [self.view addSubview:btn4];
-//     btn4.frame = CGRectMake(300, 200, 100, 40);
-//     [btn4 setTitle:@"音频1" forState:UIControlStateNormal];
-//     [btn4 addTarget:self action:@selector(changedoc4) forControlEvents:UIControlEventTouchUpInside];
-//    UIButton *btn2 = [[UIButton alloc] init];
-//    [btn2 setBackgroundColor:[UIColor grayColor]];
-//    [self.view addSubview:btn2];
-//    btn2.frame = CGRectMake(0, 200, 100, 40);
-//    [btn2 setTitle:@"全屏" forState:UIControlStateNormal];
-//    [btn2 addTarget:self action:@selector(changedoc2) forControlEvents:UIControlEventTouchUpInside];
-
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 340, 200, 100);
-//    self.label.numberOfLines = 0;
-//    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(publish_stream) userInfo:nil repeats:YES];
-
-}
-/**
- *接收到播放线路   例:int值 2 代表两条 changeLineWithNum传0或1
- */
--(void)numberOfReceivedLines:(NSInteger)linesCount {
-    //NSLog(@"有%zd条线路",linesCount);
-}
-/*
-    docName         //文档名
-    pageTitle       //页标题
-    time            //时间
-    url             //地址
- */
-/**
- *    @brief   回放翻页数据列表
- *    @param   array [{  docName         //文档名
-                        pageTitle       //页标题
-                        time            //时间
-                        url             //地址 }]
- */
-- (void)pageChangeList:(NSMutableArray *)array {
-    
-}
-- (void)publish_stream {
-//    NSLog(@"可播放时间%f",_requestDataPlayBack.ijkPlayer.playableDuration);
 }
 
-/**
- *    @brief    翻页同步之前的文档展示模式
- */
-- (void)onPageChange:(NSDictionary *)dictionary {
-    if (_mainViewIsDoc == NO) return;
-    //NSLog(@"翻页信息:%@",dictionary);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-    });
-}
-
-- (void)videoStateChangeWithString:(NSString *)result {
-//    NSLog(@"---状态是%@",result);
-}
-
-//- (void)changedoc2 {
-//
-//}
-
-//- (void)changedoc1 {
-//    self.parameter.disableVideo = NO;
-//       self.parameter.lineNum = 1;
-//       [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
-//           self.label.text = [NSString stringWithFormat:@"%@",results];
-//       }];
-    
-    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 2;
-//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-
-//}
-
-//- (void)changedoc3 {
-//
-//    self.parameter.disableVideo = YES;
-//       self.parameter.lineNum = 0;
-//       [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
-//           self.label.text = [NSString stringWithFormat:@"%@",results];
-//       }];
-    
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 3;
-//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//}
-
-//- (void)changedoc4 {
-//
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 4;
-//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//
-//}
-
-- (void)playback_loadVideoFail {
-//    self.label.text = @"视频加载失败";
-}
-//- (void)changedoc4 {
-////    self.playerView.transform = CGAffineTransformIdentity;
-////    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT);
-////    [_requestDataPlayBack changeLineWithNum:1 completion:^(NSDictionary *results) {
-////        self.label.text = [NSString stringWithFormat:@"%@",results];
-////    }];
-//    self.toolParam.disableVideo = NO;
-//    self.toolParam.lineNum = 1;
-//    [self.requestDataPlayBack changeLineWithPlayParameter:self.toolParam completion:^(NSDictionary *results) {
-//         self.label.text = [NSString stringWithFormat:@"%@",results];
-//    }];
-//
-//}
-//- (void)changedoc:(UIButton *)sender {
-//    self.parameter.disableVideo = NO;
-//    self.parameter.lineNum = 0;
-//    [_requestDataPlayBack changeLineWithPlayParameter:self.parameter completion:^(NSDictionary *results) {
-//        self.label.text = [NSString stringWithFormat:@"%@",results];
-//    }];
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 1;
-//    [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//}
-/**
- 切换回放,需要重新配置参数
- ps:切换频率不能过快
- */
-- (void)changeVideo {
-        [self deleteData];
-        _pauseInBackGround = YES;
-        _isSmallDocView = YES;
-        [self setupUI];//设置UI布局
-        [self addObserver];//添加通知
-        UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
-        PlayParameter *parameter = [[PlayParameter alloc] init];
-        parameter.userId = @"";//userId
-        parameter.roomId = @"";//roomId
-        parameter.liveId = @"";//liveId
-        parameter.recordId = @"";//回放Id
-        parameter.viewerName = @"";//用户名
-        parameter.token = @"";//密码
-        parameter.docParent = docView;//文档小窗
-        parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
-        parameter.playerParent = self.playerView;//视频视图
-        parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
-        parameter.security = YES;//是否开启https,建议开启
-        parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
-        parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
-        parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
-        parameter.scalingMode = 1;//屏幕适配方式
-//        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
-        parameter.pptInteractionEnabled = YES;
-    //        parameter.groupid = self.groupId;//用户的groupId
-        _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
-        _requestDataPlayBack.delegate = self;
-        _pptScaleMode = parameter.PPTScalingMode;
-        /* 设置playerView */
-        [self.playerView showLoadingView];//显示视频加载中提示
-}
-- (void)deleteData {
-    [self.playerView.smallVideoView removeFromSuperview];
-    if (_requestDataPlayBack) {
-        [_requestDataPlayBack requestCancel];
-        _requestDataPlayBack = nil;
-    }
-    [self removeObserver];
-    [self.playerView removeFromSuperview];
-    [self.interactionView removeData];
-    [self.interactionView removeFromSuperview];
-}
 
 //集成SDK
 - (void)integrationSDK {
@@ -357,6 +145,66 @@
 }
 
 #pragma mark-----------------------功能代理方法 用哪个实现哪个-------------------------------
+
+/**
+ *    @brief    翻页同步之前的文档展示模式
+ */
+- (void)onPageChange:(NSDictionary *)dictionary {
+    if (_mainViewIsDoc == NO) return;
+    //NSLog(@"翻页信息:%@",dictionary);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_requestDataPlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
+    });
+}
+
+
+/**
+ 切换回放,需要重新配置参数
+ ps:切换频率不能过快
+ */
+- (void)changeVideo {
+    [self deleteData];
+    _pauseInBackGround = YES;
+    _isSmallDocView = YES;
+    [self setupUI];//设置UI布局
+    [self addObserver];//添加通知
+    UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
+    PlayParameter *parameter = [[PlayParameter alloc] init];
+    parameter.userId = @"";//userId
+    parameter.roomId = @"";//roomId
+    parameter.liveId = @"";//liveId
+    parameter.recordId = @"";//回放Id
+    parameter.viewerName = @"";//用户名
+    parameter.token = @"";//密码
+    parameter.docParent = docView;//文档小窗
+    parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
+    parameter.playerParent = self.playerView;//视频视图
+    parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
+    parameter.security = YES;//是否开启https,建议开启
+    parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+    parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
+    parameter.defaultColor = [UIColor whiteColor];//ppt默认底色，不写默认为白色
+    parameter.scalingMode = 1;//屏幕适配方式
+    //        parameter.pptInteractionEnabled = !_isSmallDocView;//是否开启ppt滚动
+    parameter.pptInteractionEnabled = YES;
+    //        parameter.groupid = self.groupId;//用户的groupId
+    _requestDataPlayBack = [[RequestDataPlayBack alloc] initWithParameter:parameter];
+    _requestDataPlayBack.delegate = self;
+    _pptScaleMode = parameter.PPTScalingMode;
+    /* 设置playerView */
+    [self.playerView showLoadingView];//显示视频加载中提示
+}
+- (void)deleteData {
+    [self.playerView.smallVideoView removeFromSuperview];
+    if (_requestDataPlayBack) {
+        [_requestDataPlayBack requestCancel];
+        _requestDataPlayBack = nil;
+    }
+    [self removeObserver];
+    [self.playerView removeFromSuperview];
+    [self.interactionView removeData];
+    [self.interactionView removeFromSuperview];
+}
 #pragma mark - 服务端给自己设置的信息
 /**
  *    @brief    服务器端给自己设置的信息(The new method)
@@ -547,8 +395,6 @@
 //    } else if (_requestDataPlayBack.ijkPlayer.loadState == 3) {
 //        [self.playerView removeLoadingView];
 //    }
-//    NSLog(@"当前状态啊啊啊啊啊%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
-
     switch (_requestDataPlayBack.ijkPlayer.loadState)
     {
             
@@ -902,6 +748,13 @@
     [self.playerView bringSubviewToFront:self.marqueeView];
 }
 /**
+ *    @brief    播放完成
+ */
+- (void)playDone
+{
+    self.isPlayDone = YES;
+}
+/**
  隐藏互动视图
 
  @param hidden 是否隐藏
@@ -966,12 +819,12 @@
     });
 //#ifdef LockView
     /*  当视频播放被打断时，重新加载视频  */
-    if (!self.requestDataPlayBack.ijkPlayer.playbackState) {
+    if (!self.requestDataPlayBack.ijkPlayer.playbackState && self.isPlayDone != YES) {
         [self.requestDataPlayBack replayPlayer];
         [self.lockView updateLockView];
     }
 //#endif
-    if (self.playerView.pauseButton.selected == NO) {
+    if (self.playerView.pauseButton.selected == NO && self.isPlayDone != YES) {
         [self.playerView startTimer];
     }
 }

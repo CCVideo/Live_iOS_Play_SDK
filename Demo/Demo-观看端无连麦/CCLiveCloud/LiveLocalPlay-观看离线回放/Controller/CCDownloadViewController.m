@@ -187,7 +187,7 @@
         if (model.decompressionState != 2) {
             
             if (model.decompressionState == 1) {
-                NSLog(@"没有解压完成,请先解压");
+                //NSLog(@"没有解压完成,请先解压");
             }else if (model.decompressionState == 0){
                 NSString *str = [model.filePath substringToIndex:model.filePath.length - 4];
                 
@@ -196,7 +196,7 @@
                 dispatch_async(t, ^{
                     model.decompressionState = 1;
                     int zipDec = [self.offlinePlayBack DecompressZipWithDec:model.filePath dir:str];
-                    NSLog(@"解压码是%d,,,,路径是%@",zipDec,model.filePath);
+                    //NSLog(@"解压码是%d,,,,路径是%@",zipDec,model.filePath);
                     if (zipDec == 0) {
                         [[CCDownloadSessionManager manager] decompressionFinish:model];
                         dispatch_async(dispatch_get_main_queue(), ^{

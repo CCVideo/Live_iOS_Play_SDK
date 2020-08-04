@@ -48,7 +48,8 @@
 @property (nonatomic, assign)NSInteger                    pptScaleMode;
 /** 主屏是否是文档 */
 @property (nonatomic, assign)BOOL                         mainViewIsDoc;
-
+/** 是否播放完成 */
+@property (nonatomic, assign)BOOL                         isPlayDone;
 @end
 
 @implementation OfflinePlayBackViewController
@@ -175,7 +176,7 @@
  *    @brief    请求成功
  */
 -(void)requestSucceed {
-    NSLog(@"请求成功！");
+    //NSLog(@"请求成功！");
 }
 
 /**
@@ -188,7 +189,7 @@
     } else {
         message = reason;
     }
-    NSLog(@"请求失败:%@", message);
+    //NSLog(@"请求失败:%@", message);
     CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:message sureAction:@"好的" cancelAction:nil sureBlock:nil];
     [APPDelegate.window addSubview:alertView];
 }
@@ -264,7 +265,7 @@
 }
 
 - (void)offline_loadVideoFail {
-    NSLog(@"播放器异常，加载失败");
+//    NSLog(@"播放器异常，加载失败");
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"视频错误,请重新下载" preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
@@ -604,6 +605,13 @@
     }
 }
 /**
+ *    @brief    播放完成
+ */
+- (void)playDone
+{
+    self.isPlayDone = YES;
+}
+/**
  隐藏互动视图
  
  @param hidden 是否隐藏
@@ -675,12 +683,12 @@
     });
     //#ifdef LockView
     /*  当视频播放被打断时，重新加载视频  */
-    if (!self.offlinePlayBack.ijkPlayer.playbackState) {
+    if (!self.offlinePlayBack.ijkPlayer.playbackState && self.isPlayDone != YES) {
         [self.offlinePlayBack replayPlayer];
         [self.lockView updateLockView];
     }
     //#endif
-    if (self.playerView.pauseButton.selected == NO) {
+    if (self.playerView.pauseButton.selected == NO && self.isPlayDone != YES) {
         [self.playerView startTimer];
     }
 }

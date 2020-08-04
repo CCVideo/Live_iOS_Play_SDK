@@ -48,7 +48,8 @@
 @property (nonatomic, assign)NSInteger                    pptScaleMode;
 /** 主屏是否是文档 */
 @property (nonatomic, assign)BOOL                         mainViewIsDoc;
-
+/** 是否播放完成 */
+@property (nonatomic, assign)BOOL                         isPlayDone;
 @end
 
 @implementation OfflinePlayBackViewController
@@ -72,72 +73,9 @@
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-    
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(0, 53, 100, 40);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(100, 53, 100, 40);
-//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-//    UIButton *btn3 = [[UIButton alloc] init];
-//    btn3.tag = 1;
-//    [btn3 setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn3];
-//    btn3.frame = CGRectMake(200, 53, 100, 40);
-//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
-//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
-    
-//        UIButton *btn = [[UIButton alloc] init];
-//        [btn setBackgroundColor:[UIColor redColor]];
-//        [self.view addSubview:btn];
-//        btn.frame = CGRectMake(100, 100, 100, 100);
-//        [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
+
 }
 
-//- (void)changedoc:(UIButton *)sender {
-//
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 1;
-//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//}
-//
-//- (void)changedoc1 {
-//
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 2;
-//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//
-//}
-//- (void)changedoc3 {
-//
-//    ///文档为主的时候进行切换
-//    if (_mainViewIsDoc == NO) return;
-//    _pptScaleMode = 3;
-//    [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//}
-//
-//- (void)changedoc {
-//    [self.offlinePlayBack requestCancel];
-//    self.offlinePlayBack = nil;
-//    _pauseInBackGround = NO;
-//    _isSmallDocView = YES;
-//     [self integrationSDK];//集成SDK
-//    [_offlinePlayBack continueFromTheTime:0];
-//    _offlinePlayBack.currentPlaybackTime = 0;
-//}
 
 //集成SDK
 - (void)integrationSDK {
@@ -175,7 +113,7 @@
  *    @brief    请求成功
  */
 -(void)requestSucceed {
-    NSLog(@"请求成功！");
+    //NSLog(@"请求成功！");
 }
 
 /**
@@ -188,7 +126,7 @@
     } else {
         message = reason;
     }
-    NSLog(@"请求失败:%@", message);
+    //NSLog(@"请求失败:%@", message);
     CCAlertView *alertView = [[CCAlertView alloc] initWithAlertTitle:message sureAction:@"好的" cancelAction:nil sureBlock:nil];
     [APPDelegate.window addSubview:alertView];
 }
@@ -264,7 +202,7 @@
 }
 
 - (void)offline_loadVideoFail {
-    NSLog(@"播放器异常，加载失败");
+//    NSLog(@"播放器异常，加载失败");
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"视频错误,请重新下载" preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
@@ -604,6 +542,13 @@
     }
 }
 /**
+ *    @brief    播放完成
+ */
+- (void)playDone
+{
+    self.isPlayDone = YES;
+}
+/**
  隐藏互动视图
  
  @param hidden 是否隐藏
@@ -675,12 +620,12 @@
     });
     //#ifdef LockView
     /*  当视频播放被打断时，重新加载视频  */
-    if (!self.offlinePlayBack.ijkPlayer.playbackState) {
+    if (!self.offlinePlayBack.ijkPlayer.playbackState && self.isPlayDone != YES) {
         [self.offlinePlayBack replayPlayer];
         [self.lockView updateLockView];
     }
     //#endif
-    if (self.playerView.pauseButton.selected == NO) {
+    if (self.playerView.pauseButton.selected == NO && self.isPlayDone != YES) {
         [self.playerView startTimer];
     }
 }

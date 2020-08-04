@@ -126,59 +126,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [self setupUI];//创建UI
     [self integrationSDK];//集成SDK
     [self addObserver];//添加通知
-//    UIButton *btn = [[UIButton alloc] init];
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(100, 100, 100, 100);
-//    [btn addTarget:self action:@selector(changedoc) forControlEvents:UIControlEventTouchUpInside];
-//    self.jjjj = 0;
-//    self.label = [[UILabel alloc] init];
-//    [self.view addSubview:self.label];
-//    self.label.frame = CGRectMake(100, 100, 200, 100);
-//
-
-}
-/**
- *    @brief    历史广播数组
- *    @param    array   历史广播数组
- *              array [{
-                           content         //广播内容
-                           userid          //发布者ID
-                           username        //发布者名字
-                           userrole        //发布者角色
-                           createTime      //绝对时间
-                           time            //相对时间(相对直播)
-                           id              //广播ID }]
- */
-- (void)broadcastLast_msg:(NSArray *)array
-{
-    [_contentView broadcastLast_msg:array];
-}
-
-/**
-*    @brief    删除广播
-*    @param    dic   广播信息
-*              dic {action             //操作 1.删除
-                    id                 //广播ID }
-*/
-- (void)broadcast_delete:(NSDictionary *)dic
-{
-    [_contentView broadcast_delete:dic];
-}
-
-
-- (void)onLivePlayedTime:(NSDictionary *)dic {
-    //NSLog(@"数据是%@",dic);
-}
--(void)videoStateChangeWithString:(NSString *) result {
-//    NSLog(@"状态%@",result);
-}
-- (void)changedoc {
-//    [self.requestData changeDocWebColor:@"#000000"];
-    [_requestData getLivePlayedTime];
-//    [_requestData changeDocFrame:CGRectMake(0, 0, 100, 100)];
-//    [_requestData getOnlineTeachers];
-//    [self onBanDeleteChat:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -205,30 +152,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     
     //添加互动视图
     [self.view addSubview:self.contentView];
-    
-//    UIButton *btn = [[UIButton alloc] init];
-//    btn.tag = 1;
-//    [btn setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn];
-//    btn.frame = CGRectMake(0, 53, 100, 40);
-//    [btn addTarget:self action:@selector(changedoc:) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setTitle:@"拉伸" forState:UIControlStateNormal];
-//    UIButton *btn1 = [[UIButton alloc] init];
-//    [btn1 setBackgroundColor:[UIColor greenColor]];
-//    [self.view addSubview:btn1];
-//    btn1.frame = CGRectMake(100, 53, 100, 40);
-//    [btn1 setTitle:@"还原" forState:UIControlStateNormal];
-//    [btn1 addTarget:self action:@selector(changedoc1) forControlEvents:UIControlEventTouchUpInside];
-//    UIButton *btn3 = [[UIButton alloc] init];
-//    btn3.tag = 1;
-//    [btn3 setBackgroundColor:[UIColor redColor]];
-//    [self.view addSubview:btn3];
-//    btn3.frame = CGRectMake(200, 53, 100, 40);
-//    [btn3 addTarget:self action:@selector(changedoc3) forControlEvents:UIControlEventTouchUpInside];
-//    [btn3 setTitle:@"等比填充" forState:UIControlStateNormal];
-    
-    //设置视频视图和互动视图的相关属性
-    _playerView.menuView = _menuView;
+
 }
 /**
  集成sdk
@@ -636,6 +560,34 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     }
 }
 
+/**
+ *    @brief    历史广播数组
+ *    @param    array   历史广播数组
+ *              array [{
+                           content         //广播内容
+                           userid          //发布者ID
+                           username        //发布者名字
+                           userrole        //发布者角色
+                           createTime      //绝对时间
+                           time            //相对时间(相对直播)
+                           id              //广播ID }]
+ */
+- (void)broadcastLast_msg:(NSArray *)array
+{
+    [_contentView broadcastLast_msg:array];
+}
+
+/**
+*    @brief    删除广播
+*    @param    dic   广播信息
+*              dic {action             //操作 1.删除
+                    id                 //广播ID }
+*/
+- (void)broadcast_delete:(NSDictionary *)dic
+{
+    [_contentView broadcast_delete:dic];
+}
+
 #pragma mark- 房间信息
 /**
  *    @brief  获取房间信息，主要是要获取直播间模版来类型，根据直播间模版类型来确定界面布局
@@ -663,10 +615,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     //设置房间信息
     [_contentView roomInfo:dic withPlayView:self.playerView smallView:self.playerView.smallVideoView];
     _playerView.templateType = type;
-    if (type == 1) {//如果只有视频的版型，去除menuView;
-        [_menuView removeFromSuperview];
-        _menuView = nil;
-        return;
+    if (type != 1) {//如果只有视频的版型，去除menuView;
+        //设置视频视图和互动视图的相关属性
+        _playerView.menuView = _menuView;
     }
     if (type == 6) {//去除私聊按钮
         [_menuView hiddenPrivateBtn];

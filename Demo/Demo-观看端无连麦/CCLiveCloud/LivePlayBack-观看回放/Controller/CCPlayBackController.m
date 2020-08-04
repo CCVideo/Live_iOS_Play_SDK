@@ -53,7 +53,8 @@
 /** 主屏是否是文档 */
 @property (nonatomic, assign)BOOL                         mainViewIsDoc;
 @property (nonatomic, strong) PlayParameter             *parameter;
-
+/** 是否播放完成 */
+@property (nonatomic, assign)BOOL                         isPlayDone;
 @end
 
 @implementation CCPlayBackController
@@ -547,8 +548,6 @@
 //    } else if (_requestDataPlayBack.ijkPlayer.loadState == 3) {
 //        [self.playerView removeLoadingView];
 //    }
-//    NSLog(@"当前状态啊啊啊啊啊%ld",(long)_requestDataPlayBack.ijkPlayer.playbackState);
-
     switch (_requestDataPlayBack.ijkPlayer.loadState)
     {
             
@@ -902,6 +901,13 @@
     [self.playerView bringSubviewToFront:self.marqueeView];
 }
 /**
+ *    @brief    播放完成
+ */
+- (void)playDone
+{
+    self.isPlayDone = YES;
+}
+/**
  隐藏互动视图
 
  @param hidden 是否隐藏
@@ -966,12 +972,12 @@
     });
 //#ifdef LockView
     /*  当视频播放被打断时，重新加载视频  */
-    if (!self.requestDataPlayBack.ijkPlayer.playbackState) {
+    if (!self.requestDataPlayBack.ijkPlayer.playbackState && self.isPlayDone != YES) {
         [self.requestDataPlayBack replayPlayer];
         [self.lockView updateLockView];
     }
 //#endif
-    if (self.playerView.pauseButton.selected == NO) {
+    if (self.playerView.pauseButton.selected == NO && self.isPlayDone != YES) {
         [self.playerView startTimer];
     }
 }

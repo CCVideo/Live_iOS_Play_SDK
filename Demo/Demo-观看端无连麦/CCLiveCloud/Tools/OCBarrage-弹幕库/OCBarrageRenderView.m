@@ -197,7 +197,6 @@
     
     if (self.userInteractionEnabled == YES) {
         self.userInteractionEnabled = NO;
-        NSLog(@"---重置view的用户点击事件");
     }
     
     switch (self.renderStatus) {

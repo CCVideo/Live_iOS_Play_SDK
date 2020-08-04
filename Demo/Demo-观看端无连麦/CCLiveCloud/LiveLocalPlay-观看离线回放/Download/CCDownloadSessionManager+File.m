@@ -49,7 +49,7 @@
     if ([fileManager fileExistsAtPath:downloadModel.filePath]) {
         NSError * error = nil;
         if (![fileManager removeItemAtPath:downloadModel.filePath error:&error]) {
-            NSLog(@"文件删除失败 error:%@",error);
+            //NSLog(@"文件删除失败 error:%@",error);
         }
     }
     downloadModel.fileName = [downloadModel.fileName substringWithRange:NSMakeRange(0, downloadModel.fileName.length - (downloadModel.mimeType.length + 1))];

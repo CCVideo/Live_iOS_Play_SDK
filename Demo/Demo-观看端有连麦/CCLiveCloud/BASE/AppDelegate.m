@@ -68,8 +68,7 @@
 #import "CCEntranceViewController.h"
 #import "CCSDK/SaveLogUtil.h"
 #import "CCNAVController.h"
-//#import <Bugly/Bugly.h>
-//#import <WebRTC/WebRTC.h>
+
 
 
 @interface AppDelegate ()
@@ -80,6 +79,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _window.backgroundColor = [UIColor whiteColor];
     _window.frame = [UIScreen mainScreen].bounds;

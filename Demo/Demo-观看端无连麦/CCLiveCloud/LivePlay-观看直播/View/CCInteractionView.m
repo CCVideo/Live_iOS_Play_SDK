@@ -705,10 +705,8 @@ static int flagCount = 0; //计数器
      */
     /// 广播ID
     NSString *boardcastId = dic[@"id"];
-    //NSLog(@"需要删除的广播ID:%@",boardcastId);
     NSInteger action = [dic[@"action"] integerValue];
     if (action == 0) {
-        //NSLog(@"不需要删除广播");
         return;
     }
     for (int i = 0; i < self.manager.publicChatArray.count; i++) {
@@ -718,7 +716,6 @@ static int flagCount = 0; //计数器
             model.action = [dic[@"action"] integerValue];
             model.cellHeight = 0;
             [self.manager.publicChatArray replaceObjectAtIndex:i withObject:model];
-            //NSLog(@"删除成功");
             break;
         }
     }

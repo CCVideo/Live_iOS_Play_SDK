@@ -866,14 +866,13 @@ dispatch_resume(_timer);
         make.height.mas_equalTo(SCREENH_HEIGHT);
     }];
     [self layoutIfNeeded];//
-   
+    
     //隐藏其他视图
     [self layouUI:YES];
     //smallVideoView
     if (_isSmallDocView) {
         [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
-    
 }
 
 /**
@@ -882,7 +881,6 @@ dispatch_resume(_timer);
  */
 -(void)backBtnClick:(UIButton *)sender{
     [self endEditing:YES];
-
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
@@ -979,9 +977,11 @@ dispatch_resume(_timer);
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
+     
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
+    
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -1282,6 +1282,7 @@ dispatch_resume(_timer);
 //}
 
 -(void)dealloc {
+    
     [self stopPlayerTimer];
 }
 
