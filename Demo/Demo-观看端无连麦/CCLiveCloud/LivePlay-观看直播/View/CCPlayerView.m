@@ -233,7 +233,8 @@ dispatch_resume(_timer);
     //返回按钮
     self.backButton = [[UIButton alloc] init];
     [self.backButton setImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
-    self.backButton.tag = 1;
+    // 1.默认文档大窗
+    self.backButton.tag = 2;
     [self.topShadowView addSubview:_backButton];
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.topShadowView);
@@ -254,7 +255,8 @@ dispatch_resume(_timer);
     self.changeButton = [[UIButton alloc] init];
     self.changeButton.titleLabel.textColor = [UIColor whiteColor];
     self.changeButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_30];
-    self.changeButton.tag = 1;
+    // 1.默认文档大窗
+    self.changeButton.tag = 2;
     [self.changeButton setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
     [self.topShadowView addSubview:_changeButton];
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -308,8 +310,8 @@ dispatch_resume(_timer);
     userCountLogo.contentMode = UIViewContentModeScaleAspectFit;
     [self.bottomShadowView addSubview:userCountLogo];
     [userCountLogo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self).offset(10);
-        make.centerY.equalTo(self.bottomShadowView);
+        make.left.mas_equalTo(self).offset(10);
+        make.centerY.mas_equalTo(self.bottomShadowView);
         make.width.height.mas_equalTo(CCGetRealFromPt(24));
     }];
     //在线人数
@@ -488,7 +490,11 @@ dispatch_resume(_timer);
     
     //   视频小窗
     [self setSmallVideoView];
-    _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
+    NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+    if (self.bufferSpeed.length == 0) {
+        loadingStr = PLAY_LOADING;
+    }
+    _loadingView = [[LoadingView alloc] initWithLabel:loadingStr centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
@@ -548,11 +554,11 @@ dispatch_resume(_timer);
         self.quanpingButton.hidden = NO;
         [self.bottomShadowView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(CCGetRealFromPt(80));
-            make.left.right.equalTo(self);
+            make.left.right.mas_equalTo(self);
         }];
         [self.userCountLogo mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.backButton);
-            make.centerY.equalTo(self.bottomShadowView);
+            make.left.mas_equalTo(self).offset(10);
+            make.centerY.mas_equalTo(self.bottomShadowView);
             make.width.height.mas_equalTo(CCGetRealFromPt(24));
         }];
         [self.userCountLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -577,6 +583,18 @@ dispatch_resume(_timer);
     }
     
 }
+
+/**
+ *    @brief    仅有视频模式
+ *    @param    isOnlyVideoMode   YES 仅有视频 NO 视频和文档
+ */
+- (void)setIsOnlyVideoMode:(BOOL)isOnlyVideoMode
+{
+    _isOnlyVideoMode = isOnlyVideoMode;
+    self.backButton.tag = _isOnlyVideoMode == YES ? 1 : 2;
+    self.changeButton.tag = _isOnlyVideoMode == YES ? 1 : 2;
+}
+
 
 /**
  线路选择视图
@@ -857,7 +875,7 @@ dispatch_resume(_timer);
     //全屏按钮代理
     [self.delegate quanpingButtonClick:_changeButton.tag];
     
-    CGRect frame = [UIScreen mainScreen].bounds;
+//    CGRect frame = [UIScreen mainScreen].bounds;
     self.backButton.tag = 2;
     [UIApplication sharedApplication].statusBarHidden = YES;
     UIView *view = [self superview];
@@ -867,12 +885,17 @@ dispatch_resume(_timer);
     }];
     [self layoutIfNeeded];//
     
+    
     //隐藏其他视图
     [self layouUI:YES];
     //smallVideoView
     if (_isSmallDocView) {
-        [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+        // 1.更换小窗横屏位置
+        CGFloat y = CGRectGetMaxY(self.topShadowView.frame);
+        [self.smallVideoView setFrame:CGRectMake((IS_IPHONE_X ? 44:0), y, CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
+    
+    
 }
 
 /**
@@ -881,50 +904,14 @@ dispatch_resume(_timer);
  */
 -(void)backBtnClick:(UIButton *)sender{
     [self endEditing:YES];
+    
+    
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
         // 返回按钮在进入全屏的情况下 tag 被设置为 2
         sender.tag = 1;
         [self backBtnClickWithTag:_changeButton.tag];
-//        [UIApplication sharedApplication].statusBarHidden = NO;
-//        self.selectedIndexView.hidden = YES;
-////        [self endEditing:NO];
-//        self.contentView.hidden = YES;
-//        UIView *view = [self superview];
-//        [self mas_updateConstraints:^(MASConstraintMaker *make) {
-//            make.left.right.equalTo(view);
-//            make.height.mas_equalTo(CCGetRealFromPt(462));
-//            make.top.equalTo(view).offset(SCREEN_STATUS);
-//        }];
-//        [self layoutIfNeeded];
-//        //#ifdef LIANMAI_WEBRTC
-//            if(_remoteView) {//设置竖屏状态下连麦窗口
-//                [_remoteView removeFromSuperview];
-//                if (_changeButton.tag == 2) {//如果是视频小窗
-//                    [self.smallVideoView addSubview:self.remoteView];
-//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.smallVideoView.frame.size.width, self.smallVideoView.frame.size.height)];
-//                }else{
-//                    [self addSubview:self.remoteView];
-//                    self.remoteView.frame = [self calculateRemoteVIdeoRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-//                }
-//                [self bringSubviewToFront:self.topShadowView];
-//                [self bringSubviewToFront:self.bottomShadowView];
-//                // 设置远程连麦窗口的大小，连麦成功后调用才生效，连麦不成功调用不生效
-//                self.setRemoteView(self.remoteView.frame);
-//            }
-//        //#endif
-//        CGRect rect = [UIScreen mainScreen].bounds;
-//        if (_isSmallDocView) {
-//            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
-//        }
-//        [self layouUI:NO];
-//        //#ifdef LIANMAI_WEBRTC
-//        //连麦视图显示
-//        if (_lianMaiView) {
-//            _lianMaiView.hidden = NO;
-//        }
-//        //#endif
     }
 }
 
@@ -952,6 +939,7 @@ dispatch_resume(_timer);
         make.top.equalTo(view).offset(SCREEN_STATUS);
     }];
     [self layoutIfNeeded];
+    
     CGRect rect = [UIScreen mainScreen].bounds;
     if (_isSmallDocView) {
         [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
@@ -977,11 +965,11 @@ dispatch_resume(_timer);
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
         //切换视频时remote的视图大小
-     
+        
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
-    
+       
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -1298,6 +1286,22 @@ dispatch_resume(_timer);
     }
 }
 
+/**
+ *    @brief    视频缓冲速度
+ *    @param    bufferSpeed 视频缓冲速度
+ */
+- (void)setBufferSpeed:(NSString *)bufferSpeed
+{
+    _bufferSpeed = bufferSpeed;
+    if (_loadingView) {    
+        NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+        if (self.bufferSpeed.length == 0) {
+            loadingStr = PLAY_LOADING;
+        }
+        _loadingView.label.text = loadingStr;
+    }
+}
+
 
 #pragma mark - 小窗视图
 
@@ -1363,7 +1367,11 @@ dispatch_resume(_timer);
         self.changeButton.hidden = NO;
     }
     if (_endNormal == NO) {
-        _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
+        NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+        if (self.bufferSpeed.length == 0) {
+            loadingStr = PLAY_LOADING;
+        }
+        _loadingView = [[LoadingView alloc] initWithLabel:loadingStr centerY:YES];
         [self addSubview:_loadingView];
         [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
@@ -1400,7 +1408,11 @@ dispatch_resume(_timer);
 - (void)play_loadVideoFail{
     [_loadingView removeFromSuperview];
 //    _loadingView = nil;
-    _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
+    NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+    if (self.bufferSpeed.length == 0) {
+        loadingStr = PLAY_LOADING;
+    }
+    _loadingView = [[LoadingView alloc] initWithLabel:loadingStr centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));

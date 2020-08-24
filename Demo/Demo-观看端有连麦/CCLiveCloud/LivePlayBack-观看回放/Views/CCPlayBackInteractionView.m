@@ -36,8 +36,7 @@
 }
 - (void)dealloc
 {
-//    [self removeData];
-//    NSLog(@"%s", __func__);
+    [self removeData];
 }
 
 #pragma mark - 设置UI布局
@@ -241,6 +240,7 @@
                             userRole        //用户角色}]
  */
 -(void)onParserChat:(NSArray *)chatArr{
+    if (self.manager == nil || chatArr.count == 0) return;
     [self.manager removeData];
     [self.manager initWithPlayBackChatArray:chatArr groupId:self.groupId];
     self.publicChatArray = self.manager.publicChatArray;
@@ -618,6 +618,8 @@
 }
 #pragma mark - 移除数据(退出回放时调用)
 -(void)removeData{
-    [_manager removeData];
+    if (_manager != nil) {
+        [_manager removeData];
+    }
 }
 @end

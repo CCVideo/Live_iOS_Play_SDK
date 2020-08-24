@@ -85,11 +85,12 @@
  */
 @property(nonatomic,assign)BOOL                         pauseInBackGround;//后台是否继续播放，注意：如果开启后台播放需要打开 xcode->Capabilities->Background Modes->on->Audio,AirPlay,and Picture in Picture
 /**
- *  @brief PPT适配模式分为四种，
- * 1.一种是全部填充屏幕，可拉伸变形，
- * 2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
- * 3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边
- * 4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *  @brief PPT适配模式分为四种
+ *    PPT适配模式分为四种，
+ *    1.拉伸填充，PPT内容全部展示在显示区域，会被拉伸或压缩，不会存在黑边
+ *    2.等比居中，PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+ *    3.等比填充，PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
+ *    4.根据直播间文档显示模式的返回值进行设置（推荐）
  */
 @property(assign, nonatomic)NSInteger                   PPTScalingMode;//PPT适配方式，含义见上面
 /**
@@ -118,6 +119,49 @@
 */
 @property(assign, nonatomic)NSInteger                   lineNum;//线路
 
+/**
+ *  视频播放状态
+ *  HDMoviePlaybackStateStopped          播放停止
+ *  HDMoviePlaybackStatePlaying          开始播放
+ *  HDMoviePlaybackStatePaused           暂停播放
+ *  HDMoviePlaybackStateInterrupted      播放间断
+ *  HDMoviePlaybackStateSeekingForward   播放快进
+ *  HDMoviePlaybackStateSeekingBackward  播放后退
+ */
+typedef NS_ENUM(NSUInteger, HDMoviePlaybackState) {
+    HDMoviePlaybackStateStopped,
+    HDMoviePlaybackStatePlaying,
+    HDMoviePlaybackStatePaused,
+    HDMoviePlaybackStateInterrupted,
+    HDMoviePlaybackStateSeekingForward,
+    HDMoviePlaybackStateSeekingBackward,
+};
+
+/**
+ *  视频加载状态
+ *  HDMovieLoadStateUnknown         未知状态
+ *  HDMovieLoadStatePlayable        视频未完成全部缓存，但已缓存的数据可以进行播放
+ *  HDMovieLoadStatePlaythroughOK   完成缓存
+ *  HDMovieLoadStateStalled         数据缓存已经停止，播放将暂停
+ */
+typedef NS_ENUM(NSUInteger, HDMovieLoadState) {
+    HDMovieLoadStateUnknown,
+    HDMovieLoadStatePlayable,
+    HDMovieLoadStatePlaythroughOK,
+    HDMovieLoadStateStalled,
+};
+
+/**
+ *  视频播放完成原因
+ *  HDMovieFinishReasonPlaybackEnded    自然播放结束
+ *  HDMovieFinishReasonUserExited       用户人为结束
+ *  HDMovieFinishReasonPlaybackError    发生错误崩溃结束
+ */
+typedef NS_ENUM(NSUInteger, HDMovieFinishReason) {
+    HDMovieFinishReasonPlaybackEnded,
+    HDMovieFinishReasonUserExited,
+    HDMovieFinishReasonPlaybackError,
+};
 
 @end
 

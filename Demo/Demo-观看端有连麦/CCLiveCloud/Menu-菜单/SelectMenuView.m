@@ -194,6 +194,9 @@
     _announcementBtn.hidden = hidden;
     _announcementLabel.hidden = hidden;
     //#ifdef LIANMAI_WEBRTC
+    if (hidden == YES) {
+        _lianmaiBtn.selected = NO;
+    }
     _lianmaiLabel.hidden = hidden;
     _lianmaiBtn.hidden = hidden;
     //#endif

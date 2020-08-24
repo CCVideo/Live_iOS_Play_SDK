@@ -19,6 +19,7 @@
 #import "NSString+CCSwitchTime.h"
 #import "CCAlertView.h"
 #import "CCPublicChatModel.h"//公聊数据模型
+#import <HDBaseUtils/HDBaseUtils.h>
 //添加全局分类
 #import "UILabel+Extension.h"
 #import "UIImage+Extension.h"

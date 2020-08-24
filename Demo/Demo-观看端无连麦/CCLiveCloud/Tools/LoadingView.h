@@ -10,6 +10,8 @@
 
 @interface LoadingView : UIView
 
+@property(nonatomic,strong)UILabel                  *label;
+
 -(instancetype)initWithLabel:(NSString *)str centerY:(BOOL)centerY ;
 
 @end

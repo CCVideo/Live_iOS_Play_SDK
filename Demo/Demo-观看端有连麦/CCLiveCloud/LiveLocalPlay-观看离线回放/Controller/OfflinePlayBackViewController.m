@@ -8,13 +8,16 @@
 
 #import "OfflinePlayBackViewController.h"
 #import "CCPlayBackView.h"//视频视图
-#import "CCSDK/SaveLogUtil.h"//日志
+#import <CCSDK/SaveLogUtil.h>//日志
 #import "CCPlayBackInteractionView.h"//回放互动视图
-#import "CCSDK/OfflinePlayBack.h"//离线下载
+#import <CCSDK/OfflinePlayBack.h>//离线下载
 //#ifdef LockView
 #import "CCLockView.h"//锁屏
 //#endif
 #import <AVFoundation/AVFoundation.h>
+
+#define kHDOfflineRecordHistory @"HDOfflinePlayBackRecordHistoryPlayTime"
+
 /*
  *******************************************************
  *      去除锁屏界面功能步骤如下：                          *
@@ -46,10 +49,16 @@
 
 /** 记录切换ppt缩放模式 */
 @property (nonatomic, assign)NSInteger                    pptScaleMode;
-/** 主屏是否是文档 */
-@property (nonatomic, assign)BOOL                         mainViewIsDoc;
 /** 是否播放完成 */
 @property (nonatomic, assign)BOOL                         isPlayDone;
+
+/** 历史播放记录 记录器(连续播放5s才进行记录) */
+@property (nonatomic, assign)int                        recordHistoryCount;
+/** 历史播放记录时间 */
+@property (nonatomic, assign)int                        recordHistoryTime;
+/** 是否显示过历史播放记录 */
+@property (nonatomic, assign)BOOL                       isShowRecordHistory;
+
 @end
 
 @implementation OfflinePlayBackViewController
@@ -69,29 +78,31 @@
     /*  设置后台是否暂停 ps:后台支持播放时将会开启锁屏播放器 */
     _pauseInBackGround = NO;
     _isSmallDocView = YES;
-    _mainViewIsDoc = NO;
     [self setupUI];//设置UI布局
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
-
+    
+    _recordHistoryTime = 0;
+    _recordHistoryCount = 0;
+    _isShowRecordHistory = NO;
+    
 }
+
 
 
 //集成SDK
 - (void)integrationSDK {
+
     UIView *docView = _isSmallDocView ? _playerView.smallVideoView : _interactionView.docView;
     PlayParameter *parameter = [[PlayParameter alloc] init];
-//    parameter.userId = GetFromUserDefaults(PLAYBACK_USERID);//userId
-//    parameter.roomId = GetFromUserDefaults(PLAYBACK_ROOMID);//roomId
-//    parameter.liveId = GetFromUserDefaults(PLAYBACK_LIVEID);//liveId
-//    parameter.viewerName = GetFromUserDefaults(PLAYBACK_USERNAME);//用户名
-//    parameter.token = GetFromUserDefaults(PLAYBACK_PASSWORD);//密码
-    parameter.docParent = docView;//文档小窗
-    parameter.docFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
-    parameter.playerParent = self.playerView;//视频视图
-    parameter.playerFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
+    parameter.playerParent = docView;//视频视图
+    // 1.默认视频小窗显示
+    parameter.playerFrame = CGRectMake(0, 0, docView.frame.size.width, docView.frame.size.height);//文档小窗大小
+    parameter.docParent = self.playerView;//文档小窗
+    // 2.默认文档大窗显示
+    parameter.docFrame = CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height);//视频位置,ps:起始位置为视频视图坐标
     parameter.security = NO;//是否开启https,建议开启
-    parameter.PPTScalingMode = 4;//ppt展示模式,建议值为4
+    parameter.PPTScalingMode = 2;//ppt展示模式,建议值为2
     parameter.pauseInBackGround = _pauseInBackGround;//后台是否暂停
     parameter.defaultColor = [UIColor blackColor];//ppt默认底色，不写默认为白色
     parameter.scalingMode = 1;//屏幕适配方式
@@ -132,6 +143,193 @@
 }
 
 #pragma mark-----------------------功能代理方法 用哪个实现哪个-------------------------------
+/**
+ *    @brief    视频状态改变
+ *    @param    state
+ *              HDMoviePlaybackStateStopped          播放停止
+ *              HDMoviePlaybackStatePlaying          开始播放
+ *              HDMoviePlaybackStatePaused           暂停播放
+ *              HDMoviePlaybackStateInterrupted      播放间断
+ *              HDMoviePlaybackStateSeekingForward   播放快进
+ *              HDMoviePlaybackStateSeekingBackward  播放后退
+ */
+- (void)HDMoviePlayBackStateDidChange:(HDMoviePlaybackState)state
+{
+    switch (state)
+    {
+        case HDMoviePlaybackStateStopped: {
+            self.playerView.playDone = YES;
+            break;
+        }
+        case HDMoviePlaybackStatePlaying:{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                if (_isShowRecordHistory == NO) {
+                    int time = [self readRecordHistoryPlayTime];
+                    if (time > 0) {
+                        [self.playerView showRecordHistoryPlayViewWithRecordHistoryTime:time];
+                        _isShowRecordHistory = YES;
+                    }
+                }
+            });
+        }
+        case HDMoviePlaybackStatePaused: {
+            if(self.playerView.pauseButton.selected == YES && [_offlinePlayBack isPlaying]) {
+                [_offlinePlayBack pausePlayer];
+            }
+            if(self.playerView.loadingView && ![self.playerView.timer isValid]) {
+                //                NSLog(@"__test 重新开始播放视频, slider.value = %f", _playerView.slider.value);
+                //#ifdef LockView
+                if (_pauseInBackGround == NO && _roomName) {//后台支持播放
+                    [self setLockView];//设置锁屏界面
+                }
+                //#endif
+                [self.playerView removeLoadingView];//移除加载视图
+                /*      保存日志     */
+                [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
+                
+                
+                /* 当视频被打断时，重新开启视频需要校对时间 */
+                if (_playerView.slider.value != 0) {
+                    _offlinePlayBack.currentPlaybackTime = _playerView.slider.value;
+                    //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
+//                    [self.playerView startTimer];
+                    return;
+                }
+                
+                
+                /*   从0秒开始加载文档  */
+//                [_offlinePlayBack continueFromTheTime:0];
+                /*   Ps:从100秒开始加载视频  */
+                //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
+//                [self.playerView startTimer];
+            }
+            break;
+        }
+        case HDMoviePlaybackStateInterrupted:
+            break;
+        case HDMoviePlaybackStateSeekingForward:
+            break;
+        case HDMoviePlaybackStateSeekingBackward:
+            break;
+        default:
+            break;
+    }
+}
+/**
+ *    @brief    视频加载状态
+ *    @param    state   播放状态
+ *              HDMovieLoadStateUnknown         未知状态
+ *              HDMovieLoadStatePlayable        视频未完成全部缓存，但已缓存的数据可以进行播放
+ *              HDMovieLoadStatePlaythroughOK   完成缓存
+ *              HDMovieLoadStateStalled         数据缓存已经停止，播放将暂停
+ */
+- (void)HDMovieLoadStateDidChange:(HDMovieLoadState)state
+{
+    switch (state)
+    {
+        case HDMovieLoadStateUnknown:
+            break;
+        case HDMovieLoadStatePlayable:
+            break;
+        case HDMovieLoadStatePlaythroughOK:
+            break;
+        case HDMovieLoadStateStalled:
+            break;
+        default:
+            break;
+    }
+}
+/**
+ *    @brief    视频播放完成原因
+ *    @param    reason  原因
+ *              HDMovieFinishReasonPlaybackEnded    自然播放结束
+ *              HDMovieFinishReasonUserExited       用户人为结束
+ *              HDMovieFinishReasonPlaybackError    发生错误崩溃结束
+ */
+- (void)HDMoviePlayerPlaybackDidFinish:(HDMovieFinishReason)reason
+{
+    switch (reason) {
+        case HDMovieFinishReasonPlaybackEnded:
+            break;
+        case HDMovieFinishReasonUserExited:
+            break;
+        case HDMovieFinishReasonPlaybackError:
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)HDPlayerCurrentTime:(NSTimeInterval)currentTime totalTime:(NSTimeInterval)totalTime
+{
+    if([_offlinePlayBack isPlaying]) {
+        [self.playerView removeLoadingView];
+    }
+    
+    if (self.recordHistoryTime < currentTime - 5 || self.recordHistoryTime - 5 > currentTime) {
+        self.recordHistoryCount = 0;
+        self.recordHistoryTime = currentTime;
+    }else {
+        if (currentTime != 0) {
+            self.recordHistoryCount++;
+        }
+    }
+    //持续播放5s进行记录并存储
+    if (self.recordHistoryCount == 5) {
+        self.recordHistoryTime = currentTime;
+        [self saveRecordHistoryPlayTime];
+        self.recordHistoryCount = 0;
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //获取当前播放时间和视频总时长
+        NSTimeInterval position = (int)round(currentTime);
+        NSTimeInterval duration = (int)round(totalTime);
+        //存在播放器最后一点不播放的情况，所以把进度条的数据对到和最后一秒想同就可以了
+        if(duration - position == 1 && (self.playerView.sliderValue == position || self.playerView.sliderValue == duration)) {
+            position = duration;
+        }
+        
+        //设置plaerView的滑块和右侧时间Label
+        self.playerView.slider.maximumValue = (int)duration;
+        self.playerView.rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
+        
+        //校对SDK当前播放时间
+        if(position == 0 && self.playerView.sliderValue != 0) {
+            self.offlinePlayBack.currentPlaybackTime = self.playerView.sliderValue;
+            self.playerView.slider.value = self.playerView.sliderValue;
+        } else {
+            self.playerView.slider.value = position;
+            self.playerView.sliderValue = self.playerView.slider.value;
+        }
+        
+        //校对本地显示速率和播放器播放速率
+        if(self.offlinePlayBack.ijkPlayer.playbackRate != self.playerView.playBackRate) {
+            self.offlinePlayBack.ijkPlayer.playbackRate = self.playerView.playBackRate;
+            //#ifdef LockView
+            //校对锁屏播放器播放速率
+            [self.lockView updatePlayBackRate:self.offlinePlayBack.ijkPlayer.playbackRate];
+            //#endif
+//            [self.playerView startTimer];
+        }
+        if(self.playerView.pauseButton.selected == NO && self.offlinePlayBack.ijkPlayer.playbackState == IJKMPMoviePlaybackStatePaused) {
+            //开启播放视频
+            [self.offlinePlayBack startPlayer];
+        }
+        /* 获取当前时间段的文档数据  time：从直播开始到现在的秒数，SDK会在画板上绘画出来相应的图形 */
+//        [self.offlinePlayBack continueFromTheTime:self.playerView.sliderValue];
+        
+        /*  加载聊天数据 */
+        [self parseChatOnTime:(int)self.playerView.sliderValue];
+        //更新左侧label
+        self.playerView.leftTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(self.playerView.sliderValue / 60), (int)(self.playerView.sliderValue) % 60];
+        //#ifdef LockView
+        /*  校对锁屏播放器进度 */
+        [self.lockView updateCurrentDurtion:_offlinePlayBack.currentPlaybackTime];
+        //#endif
+    });
+}
+
 #pragma mark - 服务端给自己设置的信息
 /**
  *    @brief    服务器端给自己设置的信息(The new method)
@@ -150,6 +348,52 @@
 }
 #pragma mark- 房间信息
 /**
+ *    @brief    读取历史播放记录
+ */
+- (int)readRecordHistoryPlayTime
+{
+    int time = 0;
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *dict = [userDefaults objectForKey:kHDOfflineRecordHistory];
+    // 1.本地有历史播放记录
+    if (![dict isKindOfClass:[NSNull class]]) {
+        // 2.是同一个回放
+        if ([_fileName isEqualToString:dict[@"recordId"]]) {
+            time = [dict[@"time"] intValue];
+        }
+    }
+    return time;
+}
+
+/**
+ *    @brief    存储历史播放记录
+ */
+- (void)saveRecordHistoryPlayTime
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *saveDict = [NSMutableDictionary dictionary];
+    NSDictionary *dict = [userDefaults objectForKey:kHDOfflineRecordHistory];
+    // 1.本地有历史播放记录
+    if (![dict isKindOfClass:[NSNull class]]) {
+        // 2.是同一个回放
+        if ([_fileName isEqualToString:dict[@"recordId"]]) {
+            saveDict[@"time"] = @(self.recordHistoryTime);
+            saveDict[@"recordId"] = dict[@"recordId"];
+        }else {
+            //2.不是同一个回放
+            saveDict[@"recordId"] = _fileName;
+            saveDict[@"time"] = @(self.recordHistoryTime);
+        }
+    }else {
+        //1.本地无历史播放记录数据
+        saveDict[@"recordId"] = _fileName;
+        saveDict[@"time"] = @(self.recordHistoryTime);
+    }
+    [userDefaults setObject:saveDict forKey:kHDOfflineRecordHistory];
+    [userDefaults synchronize];
+}
+
+/**
  *    @brief  房间信息
  */
 -(void)offline_roomInfo:(NSDictionary *)dic{
@@ -167,11 +411,10 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [weakSelf.playerView addSmallView];
             });
-        }
-        for (UIView *view in self.playerView.subviews) {
-            if ([NSStringFromClass([view class]) isEqualToString:@"DrawBitmapView"]) {
-                _mainViewIsDoc = YES;
-            }
+        }else {
+            // 1.仅有视频模式
+            [self changeBtnClicked:1];
+            self.playerView.isOnlyVideoMode = YES;
         }
         //#ifdef LockView
         //_roomName有值得时候才初始化锁屏view
@@ -218,10 +461,6 @@
 
 -(void)onPageChange:(NSDictionary *)dictionary {
     //    NSLog(@"翻页数据是%@",dictionary);
-//    if (_mainViewIsDoc == NO) return;
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-//    });
 }
 
 -(void)broadcastHistory_msg:(NSArray *)array {
@@ -236,80 +475,7 @@
     //    NSLog(@"questionArr = %@,answerArr = %@",questionArr,answerArr);
     [self.interactionView onParserQuestionArr:questionArr onParserAnswerArr:answerArr];
 }
-//监听播放状态
--(void)movieLoadStateDidChange:(NSNotification*)notification
-{
-    switch (_offlinePlayBack.ijkPlayer.loadState)
-    {
-        case IJKMPMoviePlaybackStateStopped: {
-            self.playerView.playDone = YES;
-            break;
-        }
-        case IJKMPMovieLoadStateStalled:
-            break;
-        case IJKMPMovieLoadStatePlayable:
-            break;
-        case IJKMPMovieLoadStatePlaythroughOK:
-            break;
-        default:
-            break;
-    }
-}
-//回放速率改变
-- (void)moviePlayBackStateDidChange:(NSNotification*)notification
-{
-    switch (_offlinePlayBack.ijkPlayer.playbackState)
-    {
-        case IJKMPMoviePlaybackStateStopped: {
-            self.playerView.playDone = YES;
-            break;
-        }
-        case IJKMPMoviePlaybackStatePlaying:
-        case IJKMPMoviePlaybackStatePaused: {
-            if(self.playerView.pauseButton.selected == YES && [_offlinePlayBack isPlaying]) {
-                [_offlinePlayBack pausePlayer];
-            }
-            if(self.playerView.loadingView && ![self.playerView.timer isValid]) {
-                //                NSLog(@"__test 重新开始播放视频, slider.value = %f", _playerView.slider.value);
-                //#ifdef LockView
-                if (_pauseInBackGround == NO && _roomName) {//后台支持播放
-                    [self setLockView];//设置锁屏界面
-                }
-                //#endif
-                [self.playerView removeLoadingView];//移除加载视图
-                /*      保存日志     */
-                [[SaveLogUtil sharedInstance] saveLog:@"" action:SAVELOG_ALERT];
-                
-                
-                /* 当视频被打断时，重新开启视频需要校对时间 */
-                if (_playerView.slider.value != 0) {
-                    _offlinePlayBack.currentPlaybackTime = _playerView.slider.value;
-                    //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
-                    [self.playerView startTimer];
-                    return;
-                }
-                
-                
-                /*   从0秒开始加载文档  */
-                [_offlinePlayBack continueFromTheTime:0];
-                /*   Ps:从100秒开始加载视频  */
-                //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
-                [self.playerView startTimer];
-            }
-            break;
-        }
-        case IJKMPMoviePlaybackStateInterrupted: {
-            break;
-        }
-        case IJKMPMoviePlaybackStateSeekingForward:
-        case IJKMPMoviePlaybackStateSeekingBackward: {
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-}
+
 //移除通知
 - (void)dealloc {
     //    NSLog(@"%s", __func__);
@@ -348,14 +514,16 @@
         //#endif
         if (weakSelf.offlinePlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePlaying) {
             [weakSelf.offlinePlayBack startPlayer];
-            [weakSelf.playerView startTimer];
+//            [weakSelf.playerView startTimer];
         }
+        //隐藏历史播放记录view
+        [weakSelf.playerView hiddenRecordHistoryPlayView];
     };
     //滑块移动回调
     _playerView.sliderMoving = ^{
         if (weakSelf.offlinePlayBack.ijkPlayer.playbackState != IJKMPMoviePlaybackStatePaused) {
             [weakSelf.offlinePlayBack pausePlayer];
-            [weakSelf.playerView stopTimer];
+//            [weakSelf.playerView stopTimer];
         }
     };
     //更改播放器速率回调
@@ -365,10 +533,10 @@
     //暂停/开始播放回调
     _playerView.pausePlayer = ^(BOOL pause) {
         if (pause) {
-            [weakSelf.playerView stopTimer];
+//            [weakSelf.playerView stopTimer];
             [weakSelf.offlinePlayBack pausePlayer];
         }else{
-            [weakSelf.playerView startTimer];
+//            [weakSelf.playerView startTimer];
             [weakSelf.offlinePlayBack startPlayer];
         }
     };
@@ -400,10 +568,10 @@
     _lockView.pauseCallBack = ^(BOOL pause) {
         weakSelf.playerView.pauseButton.selected = pause;
         if (pause) {
-            [weakSelf.playerView stopTimer];
+//            [weakSelf.playerView stopTimer];
             [weakSelf.offlinePlayBack.ijkPlayer pause];
         }else{
-            [weakSelf.playerView startTimer];
+//            [weakSelf.playerView startTimer];
             [weakSelf.offlinePlayBack.ijkPlayer play];
         }
     };
@@ -414,6 +582,22 @@
         weakSelf.playerView.slider.value = time;
         weakSelf.playerView.sliderValue = weakSelf.playerView.slider.value;
     };
+}
+/**
+ *    @brief    将时间字符串转成秒
+ *    @param    timeStr    时间字符串  例:@"01:00:
+ */
+- (int)secondWithTimeString:(NSString *)timeStr
+{
+    if ([timeStr rangeOfString:@":"].length == 0) {
+        return 0;
+    }
+    int second = 0;
+    NSRange range = [timeStr rangeOfString:@":"];
+    int minute = [[timeStr substringToIndex:range.location] intValue];
+    int sec = [[timeStr substringFromIndex:range.location + 1] intValue];
+    second = minute * 60 + sec;
+    return second;
 }
 /**
  *    @brief    秒转分秒字符串
@@ -429,61 +613,6 @@
 //#endif
 #pragma mark - playViewDelegate
 /**
- 开始播放时
- */
--(void)timerfunc{
-    if([_offlinePlayBack isPlaying]) {
-        [self.playerView removeLoadingView];
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //获取当前播放时间和视频总时长
-        NSTimeInterval position = (int)round(self.offlinePlayBack.currentPlaybackTime);
-        NSTimeInterval duration = (int)round(self.offlinePlayBack.playerDuration);
-        //存在播放器最后一点不播放的情况，所以把进度条的数据对到和最后一秒想同就可以了
-        if(duration - position == 1 && (self.playerView.sliderValue == position || self.playerView.sliderValue == duration)) {
-            position = duration;
-        }
-        
-        //设置plaerView的滑块和右侧时间Label
-        self.playerView.slider.maximumValue = (int)duration;
-        self.playerView.rightTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(duration / 60), (int)(duration) % 60];
-        
-        //校对SDK当前播放时间
-        if(position == 0 && self.playerView.sliderValue != 0) {
-            self.offlinePlayBack.currentPlaybackTime = self.playerView.sliderValue;
-            self.playerView.slider.value = self.playerView.sliderValue;
-        } else {
-            self.playerView.slider.value = position;
-            self.playerView.sliderValue = self.playerView.slider.value;
-        }
-        
-        //校对本地显示速率和播放器播放速率
-        if(self.offlinePlayBack.ijkPlayer.playbackRate != self.playerView.playBackRate) {
-            self.offlinePlayBack.ijkPlayer.playbackRate = self.playerView.playBackRate;
-            //#ifdef LockView
-            //校对锁屏播放器播放速率
-            [self.lockView updatePlayBackRate:self.offlinePlayBack.ijkPlayer.playbackRate];
-            //#endif
-            [self.playerView startTimer];
-        }
-        if(self.playerView.pauseButton.selected == NO && self.offlinePlayBack.ijkPlayer.playbackState == IJKMPMoviePlaybackStatePaused) {
-            //开启播放视频
-            [self.offlinePlayBack startPlayer];
-        }
-        /* 获取当前时间段的文档数据  time：从直播开始到现在的秒数，SDK会在画板上绘画出来相应的图形 */
-        [self.offlinePlayBack continueFromTheTime:self.playerView.sliderValue];
-        
-        /*  加载聊天数据 */
-        [self parseChatOnTime:(int)self.playerView.sliderValue];
-        //更新左侧label
-        self.playerView.leftTimeLabel.text = [NSString stringWithFormat:@"%02d:%02d", (int)(self.playerView.sliderValue / 60), (int)(self.playerView.sliderValue) % 60];
-        //#ifdef LockView
-        /*  校对锁屏播放器进度 */
-        [self.lockView updateCurrentDurtion:_offlinePlayBack.currentPlaybackTime];
-        //#endif
-    });
-}
-/**
  全屏按钮点击代理
  
  @param tag 1视频为主，2文档为主
@@ -493,7 +622,6 @@
         [_offlinePlayBack changePlayerFrame:self.view.frame];
     } else {
         [_offlinePlayBack changeDocFrame:self.view.frame];
-        [_offlinePlayBack changeDocFrame:self.view.frame withPPTScalingMode:_pptScaleMode];
     }
     //隐藏互动视图
     [self hiddenInteractionView:YES];
@@ -508,7 +636,6 @@
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
     } else {
         [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462))];
-        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462)) withPPTScalingMode:_pptScaleMode];
     }
     //显示互动视图
     [self hiddenInteractionView:NO];
@@ -521,24 +648,19 @@
 -(void)changeBtnClicked:(NSInteger)tag{
     if (tag == 2) {
         
-        _mainViewIsDoc = YES;
         [_offlinePlayBack changeDocParent:self.playerView];
         [_offlinePlayBack changePlayerParent:self.playerView.smallVideoView];
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
         
         [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         
-        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height) withPPTScalingMode:_pptScaleMode];
-        
     }else{
         
-        _mainViewIsDoc = NO;
         [_offlinePlayBack changeDocParent:self.playerView.smallVideoView];
         [_offlinePlayBack changePlayerParent:self.playerView];
         [_offlinePlayBack changePlayerFrame:CGRectMake(0, 0,self.playerView.frame.size.width, self.playerView.frame.size.height)];
         
         [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height)];
-        [_offlinePlayBack changeDocFrame:CGRectMake(0, 0, self.playerView.smallVideoView.frame.size.width, self.playerView.smallVideoView.frame.size.height) withPPTScalingMode:_pptScaleMode];
     }
 }
 /**
@@ -567,20 +689,12 @@
 #pragma mark - 添加通知
 //通知监听
 -(void)addObserver {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForegroundNotification) name:UIApplicationWillEnterForegroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayBackStateDidChange:)
-                                                 name:IJKMPMoviePlayerPlaybackStateDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appWillEnterBackgroundNotification) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(movieLoadStateDidChange:)
-                                                 name:IJKMPMoviePlayerLoadStateDidChangeNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                                selector:@selector(moviePlayerPlaybackDidFinish:)
-                                                 name:IJKMPMoviePlayerPlaybackDidFinishNotification
-                                               object:nil];
+                                             selector:@selector(appWillEnterForegroundNotification) name:UIApplicationWillEnterForegroundNotification object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActiveNotification)
                                                  name:UIApplicationDidBecomeActiveNotification
@@ -592,23 +706,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationDidEnterBackgroundNotification
                                                   object:nil];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerPlaybackStateDidChangeNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerLoadStateDidChangeNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerPlaybackDidFinishNotification object:nil];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
-}
-
-- (void)moviePlayerPlaybackDidFinish:(NSNotification*)notification
-{
-    
 }
 
 /**
@@ -626,7 +730,7 @@
     }
     //#endif
     if (self.playerView.pauseButton.selected == NO && self.isPlayDone != YES) {
-        [self.playerView startTimer];
+//        [self.playerView startTimer];
     }
 }
 
@@ -643,7 +747,7 @@
     if (taskID == UIBackgroundTaskInvalid) {
         return;
     }
-    [self.playerView stopTimer];
+//    [self.playerView stopTimer];
 }
 
 /**
@@ -653,7 +757,7 @@
     if (_enterBackGround == NO && ![_offlinePlayBack isPlaying]) {
         /*  如果当前视频不处于播放状态，重新进行播放,初始化播放状态 */
         [_offlinePlayBack replayPlayer];
-        [_playerView stopTimer];
+//        [_playerView stopTimer];
         [_playerView showLoadingView];
         //#ifdef LockView
         [_lockView updateLockView];

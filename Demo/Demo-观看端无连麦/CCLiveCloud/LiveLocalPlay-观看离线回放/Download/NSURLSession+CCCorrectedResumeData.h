@@ -10,6 +10,6 @@
 
 @interface NSURLSession (CCCorrectedResumeData)
 
-- (NSURLSessionDownloadTask *)downloadTaskWithCorrectResumeData:(NSData *)resumeData;
+- (NSURLSessionDownloadTask *)cc_downloadTaskWithCorrectResumeData:(NSData *)resumeData;
 
 @end

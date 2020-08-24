@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void(^CloseBlock)(void);
 @interface TopView : UIView
 
-
+@property (nonatomic, strong) UIButton *closeBtn;//关闭按钮
 /**
  顶部视图背景
 

@@ -66,9 +66,10 @@
 
 #import "AppDelegate.h"
 #import "CCEntranceViewController.h"
-#import "CCSDK/SaveLogUtil.h"
+#import <CCSDK/SaveLogUtil.h>
 #import "CCNAVController.h"
-
+#import <Bugly/Bugly.h>
+//#import <WebRTC/WebRTC.h>
 
 
 @interface AppDelegate ()
@@ -79,7 +80,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    // Override point for customization after application launch.f5758fac61
+    [Bugly startWithAppId:@"144af8c8e4"];
+
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _window.backgroundColor = [UIColor whiteColor];
     _window.frame = [UIScreen mainScreen].bounds;

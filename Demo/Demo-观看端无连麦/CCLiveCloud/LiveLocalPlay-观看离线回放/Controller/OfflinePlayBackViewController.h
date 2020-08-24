@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface OfflinePlayBackViewController : UIViewController
 
 
+/** 文件名 */
+@property (nonatomic, copy)NSString *fileName;
+
 -(instancetype)initWithDestination:(NSString *)destination;
 /*
  修改备注:1.聊天数据没有myViewerId这个字段

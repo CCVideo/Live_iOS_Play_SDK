@@ -7,6 +7,7 @@
 //
 
 #import "VoteView.h"
+#import "Reachability.h"
 
 @interface VoteView()
 
@@ -34,11 +35,13 @@
 //@property(nonatomic,strong)UIImageView              *rightLogo;
 //@property(nonatomic,strong)UIView                   *selectBorder;
 @property(nonatomic,strong)UIButton                 *submitBtn;//发布按钮
+@property(nonatomic,strong)UIButton                 *cleanBtn;//收起按钮
 @property(nonatomic,assign)NSInteger                selectIndex;//单选答案
 @property(nonatomic,strong)NSMutableArray           *selectIndexArray;//多选答案
 @property(nonatomic,strong)UIView                   *view;
 @property(nonatomic,assign)BOOL                     single;//是否是单选
 @property(nonatomic,assign)BOOL                     isScreenLandScape;//是否全屏
+@property(nonatomic,strong)UILabel                  *errorTipLabel;//错误提示
 
 @end
 
@@ -76,6 +79,14 @@
  点击发布按钮
  */
 -(void)submitBtnClicked {
+    
+    //判断是否有网络
+    if (![self isExistenceNetwork]) {
+        self.errorTipLabel.text = @"网络异常，请重试";
+        self.errorTipLabel.hidden = NO;
+        return;
+    }
+    
     if(self.single) {//单选回调
         if(self.voteSingleBlock) {
             self.voteSingleBlock(_selectIndex);
@@ -87,6 +98,37 @@
     }
     [self remove];
     _submitBtn.userInteractionEnabled = NO;//避免重复答题
+}
+
+
+- (void)cleanBtnClicked
+{
+    self.hidden = YES;
+    if (self.cleanBlock) {
+        self.cleanBlock(YES);
+    }
+}
+
+- (void)show
+{
+    self.hidden = NO;
+}
+
+- (void)updataUIWithScreenLandScape:(BOOL)isScreenLandScape
+{
+    if(!isScreenLandScape) {//竖屏模式下约束
+        [_view mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.mas_equalTo(self);
+            make.centerY.mas_equalTo(self).offset(CCGetRealFromPt(180));
+            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(710), CCGetRealFromPt(675)));
+        }];
+    } else {//横屏模式下约束
+        [_view mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.mas_equalTo(self);
+            make.centerY.mas_equalTo(self);
+            make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(710), CCGetRealFromPt(675)));
+        }];
+    }
 }
 
 /**
@@ -158,15 +200,30 @@
     [_centerLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(self.labelBgView);
     }];
-    
+
     //提交按钮
     [self.view addSubview:self.submitBtn];
     [_submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(self.view);
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(50));
+        // 50
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(130));
         make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(360), CCGetRealFromPt(90)));
     }];
     [self.submitBtn setEnabled:NO];
+    
+    [self.view addSubview:self.errorTipLabel];
+    [self.errorTipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(_submitBtn.mas_top).offset(-10);
+        make.centerX.mas_equalTo(self.view);
+    }];
+    
+    //收起按钮
+    [self.view addSubview:self.cleanBtn];
+    [_cleanBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(self.view);
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(20));
+        make.size.mas_equalTo(CGSizeMake(CCGetRealFromPt(360), CCGetRealFromPt(90)));
+    }];
     
     //设置选择btn
     [self setAnswerUI];
@@ -208,8 +265,8 @@
     [_rightButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(195));
         make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(395));
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
     
     //设置wrongButton的样式和约束
@@ -218,8 +275,8 @@
     [_wrongButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(395));
         make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(195));
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 
@@ -242,8 +299,8 @@
             make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(125));
             make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(465));
         }
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 /**
@@ -264,8 +321,8 @@
             make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(295));
             make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(295));
         }
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 /**
@@ -287,8 +344,8 @@
             make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(465));
             make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(125));
         }
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 /**
@@ -306,8 +363,10 @@
             make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(520));
             make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(70));
         }
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        // 308
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        // 248
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 
@@ -322,8 +381,8 @@
     [_eButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.view).offset(CCGetRealFromPt(575));
         make.right.mas_equalTo(self.view).offset(-CCGetRealFromPt(15));
-        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(308));
-        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(247));
+        make.top.mas_equalTo(self.view).offset(CCGetRealFromPt(248));
+        make.bottom.mas_equalTo(self.view).offset(-CCGetRealFromPt(307));
     }];
 }
 #pragma mark - 懒加载
@@ -447,6 +506,36 @@
     }
     return _submitBtn;
 }
+
+//收起按钮
+-(UIButton *)cleanBtn {
+    if(_cleanBtn == nil) {
+        _cleanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_cleanBtn setTitle:@"收起" forState:UIControlStateNormal];
+        [_cleanBtn.titleLabel setFont:[UIFont systemFontOfSize:FontSize_32]];
+        [_cleanBtn setTitleColor:CCRGBColor(255,102,61) forState:UIControlStateNormal];
+        
+        [_cleanBtn.layer setMasksToBounds:YES];
+        [_cleanBtn.layer setCornerRadius:CCGetRealFromPt(45)];
+        [_cleanBtn.layer setBorderColor:CCRGBColor(255,102,61).CGColor];
+        [_cleanBtn.layer setBorderWidth:1];
+        [_cleanBtn addTarget:self action:@selector(cleanBtnClicked) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _cleanBtn;
+}
+
+- (UILabel *)errorTipLabel
+{
+    if (!_errorTipLabel) {
+        _errorTipLabel = [[UILabel alloc]init];
+        _errorTipLabel.textColor = CCRGBAColor(243,75,95,1);
+        _errorTipLabel.font = [UIFont systemFontOfSize:15];
+        _errorTipLabel.textAlignment = NSTextAlignmentCenter;
+        _errorTipLabel.hidden = YES;
+    }
+    return _errorTipLabel;
+}
+
 #pragma mark - 按钮点击事件
 -(void)buttonClicked:(UIButton *)sender {
     [self.submitBtn setEnabled:YES];
@@ -607,4 +696,31 @@
         }];
     }
 }
+
+#pragma mark - 判断是否有网络
+/**
+ *    @brief    判断当前是否有网络
+ *    @return   是否有网
+ */
+- (BOOL)isExistenceNetwork
+{
+    BOOL isExistenceNetwork = YES;
+    Reachability *reach = [Reachability reachabilityForInternetConnection];
+    switch ([reach currentReachabilityStatus]) {
+        case NotReachable:{
+            isExistenceNetwork = NO;
+            break;
+        }
+        case ReachableViaWiFi:{
+            isExistenceNetwork = YES;
+            break;
+        }
+        case ReachableViaWWAN:{
+            isExistenceNetwork = YES;
+            break;
+        }
+    }
+    return isExistenceNetwork;
+}
+
 @end

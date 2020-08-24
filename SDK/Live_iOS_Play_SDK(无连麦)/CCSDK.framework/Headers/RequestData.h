@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "PlayParameter.h"
-#import "IJKMediaFramework/IJKMediaPlayback.h"
-#import "IJKMediaFramework/IJKFFMoviePlayerController.h"
+#import "HDMediaFramework/HDMediaPlayback.h"
+#import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.9.1"
+#define SDKVersion @"3.10.0"
+
 
 
 @protocol RequestDataDelegate <NSObject>
@@ -231,6 +232,11 @@
  *  @brief  获取直播开始时间和直播时长
  *  liveDuration 直播持续时间，单位（s），直播未开始返回-1"
  *  liveStartTime 新增开始直播时间（格式：yyyy-MM-dd HH:mm:ss），如果直播未开始，则返回空字符串
+ *
+ *  注: liveStartTime: 1.后台配置直播开始时间, liveStartTime 是后台配置的开始时间, 如果开始直播时间和配置的开始时间不一致,实际开播时间 "需要用当前时间 - liveDruation " 计算实际开始时间;
+ *                     2.后台未配置直播开始时间, liveStartTime 是实际开始直播时间;
+ *      liveDuration: 直播实际开播时长;
+ *
  */
 - (void)startTimeAndDurationLiveBroadcast:(NSDictionary *)dataDic;
 
@@ -317,18 +323,68 @@
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
 
 /**
- *    @brief    接收到随堂测
+ *    @brief       接收到随堂测
  *    rseultDic    随堂测内容
+      resultDic    {
+                   isExist                         //是否存在正在发布的随堂测 1 存在 0 不存在
+                   practice{
+                             id                    //随堂测ID
+                             isAnswered            //是否已答题 true: 已答题, false: 未答题
+                             options               //选项数组
+                             ({
+                                   id              //选项ID
+                                   index           //选项索引
+                             })
+                             publishTime           //随堂测发布时间
+                             status                //随堂测状态: 1 发布中 2 停止发布 3 已关闭
+                             type                  //随堂测类型: 0 判断 1 单选 2 多选
+                             submitRecord          //如果已答题，返回该学员答题记录，如果未答题，服务端不返回该字段
+                             ({
+                                 optionId          //选项ID
+                                 optionIndex       //选项索引
+                             })
+                           }
+                   serverTime                      //分发时间
+ 
+                  }
+ *
  */
 -(void)receivePracticeWithDic:(NSDictionary *) resultDic;
 /**
  *    @brief    随堂测提交结果
  *    rseultDic    提交结果,调用commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options后执行
+ *
+      resultDic {datas {practice                                 //随堂测
+                            { answerResult                      //回答是否正确 1 正确 0 错误
+                              id                                //随堂测ID
+                              isRepeatAnswered                  //是否重复答题 true: 重复答题, false: 第一次答题
+                              options ({  count                 //参与人数
+                                            id                  //选项主键ID
+                                            index               //选项序号
+                                            isCorrect           //是否正确
+                                            percent             //选项占比})
+                              submitRecord 如果重复答题，则返回该学员第一次提交的记录，否则，返回该学员当前提交记录
+                                           ({ optionId          //提交记录 提交选项ID
+                                              optionIndex       //提交选项序号})
+                              type                              //随堂测类型: 0 判断 1 单选 2 多选}}}
  */
 -(void)practiceSubmitResultsWithDic:(NSDictionary *) resultDic;
 /**
  *    @brief    随堂测统计结果
  *    rseultDic    统计结果,调用getPracticeStatisWithPracticeId:(NSString *)practiceId后执行
+      resultDic  {practice {                                //随堂测
+                           answerPersonNum                 //回答该随堂测的人数
+                           correctPersonNum                //回答正确的人数
+                           correctRate                     //正确率
+                           id                              //随堂测ID
+                           options ({                      //选项数组
+                                       count               //选择该选项的人数
+                                       id                  //选项ID
+                                       index               //选项序号
+                                       isCorrect           //是否为正确选项 1 正确 0 错误
+                                       percent             //选择该选项的百分比})
+                           status                          //随堂测状态  1 发布中 2 停止发布
+                           type                            //随堂测类型: 0 判断 1 单选 2 多选}}
  */
 -(void)practiceStatisResultsWithDic:(NSDictionary *) resultDic;
 /**
@@ -351,6 +407,31 @@
  *    rseult    playing/paused/loading/buffing
  */
 -(void)videoStateChangeWithString:(NSString *) result;
+/**
+ *    @brief    视频状态改变
+ *    @param    state
+ *              HDMoviePlaybackStateStopped          播放停止
+ *              HDMoviePlaybackStatePlaying          开始播放
+ *              HDMoviePlaybackStatePaused           暂停播放
+ *              HDMoviePlaybackStateInterrupted      播放间断
+ *              HDMoviePlaybackStateSeekingForward   播放快进
+ *              HDMoviePlaybackStateSeekingBackward  播放后退
+ */
+- (void)HDMoviePlayBackStateDidChange:(HDMoviePlaybackState)state;
+/**
+ *    @brief    视频加载状态
+ *    @param    state   播放状态
+ *              HDMovieLoadStateUnknown         未知状态
+ *              HDMovieLoadStatePlayable        视频未完成全部缓存，但已缓存的数据可以进行播放
+ *              HDMovieLoadStatePlaythroughOK   完成缓存
+ *              HDMovieLoadStateStalled         数据缓存已经停止，播放将暂停
+ */
+- (void)HDMovieLoadStateDidChange:(HDMovieLoadState)state;
+/**
+ *    @brief    视频加载速度
+ *    @param    speed   视频加载速度字符串
+ */
+- (void)onBufferSpeed:(NSString *)speed;
 /**
  *    @brief    收到奖杯
  *    dic       结果
@@ -429,12 +510,13 @@
  */
 - (void)broadcast_delete:(NSDictionary *)dic;
 
+
 @end
 
 @interface RequestData : NSObject
 
 @property (weak,nonatomic) id<RequestDataDelegate>      delegate;
-@property (retain,atomic) IJKFFMoviePlayerController      *ijkPlayer;
+@property (retain,atomic) HDFFMoviePlayerController      *ijkPlayer;
 
 /**
  *	@brief	登录房间
@@ -461,12 +543,12 @@
  *  必填参数 scalingMode;            //屏幕适配方式
  *  (已弃用!) security               //是否使用https
  *  必填参数 defaultColor;           //ppt默认底色，不写默认为白色
- *  必填参数 PPTScalingMode;        //PPT适配方式
- *                                  PPT适配模式分为四种，
- *                                  1.一种是全部填充屏幕，可拉伸变形，
- *                                  2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
- *                                  3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
- *                                  4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *  必填参数 PPTScalingMode;         //PPT适配方式
+                                     PPT适配模式分为四种，
+                                     1.拉伸填充，PPT内容全部展示在显示区域，会被拉伸或压缩，不会存在黑边
+                                     2.等比居中，PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+                                     3.等比填充，PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
+                                     4.根据直播间文档显示模式的返回值进行设置（推荐）
  *  必填参数 pauseInBackGround;      //后台是否继续播放，
  *                                  注意：如果开启后台播放需要打开 xcode->Capabilities->Background Modes->on->Audio,AirPlay,and Picture in Picture
  * （选填参数）viewercustomua;        //用户自定义参数，需和后台协商，没有定制传@""
@@ -500,7 +582,7 @@
  *	(已废弃) SDK会主动调用 - (void)onUserCount:(NSString *)count;
  *  @brief  获取在线房间人数，当登录成功后即可调用此接口，登录不成功或者退出登录后就不可以调用了，如果要求实时性比较强的话，可以写一个定时器，不断调用此接口，几秒钟发一次就可以，然后在代理回调函数中，处理返回的数据
  */
-- (void)roomUserCount;
+- (void)roomUserCount DEPRECATED_MSG_ATTRIBUTE("该方法已废弃:请实现代理方法 - (void)onUserCount:(NSString *)count;");
 /**
  *	@brief  获取文档区域内白板或者文档本身的宽高比，返回值即为宽高比，做屏幕适配用
  */
@@ -598,7 +680,7 @@
 /**
  *    @brief     提交随堂测
  *      @param     practiceId  随堂测ID
- *      @param     options   选项ID
+ *      @param     options   选项ID 数组
  */
 - (void)commitPracticeWithPracticeId:(NSString *)practiceId options:(NSArray *)options;
 /**
@@ -652,16 +734,24 @@
 - (void)docReload;
 
 /**
- *    @brief    主动调用方法      用于调整PPT缩放模式
+ *    @brief    主动调用方法      用于调整PPT缩放模式 (已废弃)
  *    @param    docFrame        文档的frame
  *    @param    PPTScalingMode  PPT缩放模式
- *                               1.一种是全部填充屏幕，可拉伸变形，
- *                               2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
- *                               3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
- *                               4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *                               1 = 拉伸填充:PPT内容全部展示在显示区域,会被拉伸或压缩,不会存在黑边
+ *                               2 = 等比居中:PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+ *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
  *                               
  *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
  */
-- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
+- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode DEPRECATED_MSG_ATTRIBUTE("该方法已废弃:调用新方法 - (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;");
+/**
+ *    @brief    主动调用方法       用于调整PPT缩放模式
+ *    @param    pptScalingMode   PPT缩放模式
+ *                               1 = 拉伸填充:PPT内容全部展示在显示区域,会被拉伸或压缩,不会存在黑边
+ *                               2 = 等比居中:PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+ *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
+ */
+- (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;
+
 
 @end

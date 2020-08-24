@@ -48,6 +48,13 @@
 /** 重播shadowView */
 @property (nonatomic, strong)UIView                     * replayView;
 
+/** 历史播放记录view */
+@property (nonatomic, strong)UIView                     * recordHistoryPlayView;
+/** 历史播放记录跳转按钮 */
+@property (nonatomic, strong)UIButton                   * recordHistoryPlayJumpBtn;
+/** 历史播放记录 */
+@property (nonatomic, assign)int                          recordHistoryTime;
+
 @end
 
 @implementation CCPlayBackView
@@ -197,7 +204,8 @@
     //返回按钮
     self.backButton = [[CCButton alloc] init];
     [self.backButton setImage:[UIImage imageNamed:@"nav_ic_back_nor_white"] forState:UIControlStateNormal];
-    self.backButton.tag = 1;
+    // 3.默认以文档为主
+    self.backButton.tag = 2;
 
     [self.topShadowView addSubview:_backButton];
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -223,8 +231,9 @@
     self.changeButton = [[CCButton alloc] init];
     self.changeButton.titleLabel.textColor = [UIColor whiteColor];
     self.changeButton.titleLabel.font = [UIFont systemFontOfSize:FontSize_30];
-    self.changeButton.tag = 1;
-    [self.changeButton setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
+    // 3.默认以文档为主
+    self.changeButton.tag = 2;
+    [self.changeButton setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
     [self.topShadowView addSubview:self.changeButton];
     [self.changeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.mas_equalTo(self.topShadowView).offset(CCGetRealFromPt(-20));
@@ -429,7 +438,7 @@
     self.unStart.frame = CGRectMake(SCREEN_WIDTH/2-50, CCGetRealFromPt(271), 100, 30);
     
     self.draggingShadowView = [[UIView alloc]init];
-    self.draggingShadowView.backgroundColor = CCRGBAColor(0, 0, 0, 0.3);
+    self.draggingShadowView.backgroundColor = CCRGBAColor(0, 0, 0, 0.7);
     self.draggingShadowView.hidden = YES;
     self.draggingShadowView.userInteractionEnabled = NO;
     [self addSubview:self.draggingShadowView];
@@ -481,6 +490,32 @@
         make.top.mas_equalTo(_replayBtn.mas_bottom).offset(-10);
     }];
     
+}
+/**
+ *    @brief    仅有视频模式
+ *    @param    isOnlyVideoMode   YES 仅有视频 NO 视频和文档
+ */
+- (void)setIsOnlyVideoMode:(BOOL)isOnlyVideoMode
+{
+    _isOnlyVideoMode = isOnlyVideoMode;
+    self.backButton.tag = _isOnlyVideoMode == YES ? 1 : 2;
+    self.changeButton.tag = _isOnlyVideoMode == YES ? 1 : 2;
+}
+
+/**
+ *    @brief    视频缓冲速度
+ *    @param    bufferSpeed 视频缓冲速度
+ */
+- (void)setBufferSpeed:(NSString *)bufferSpeed
+{
+    _bufferSpeed = bufferSpeed;
+    if (_loadingView) {
+        NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+        if (self.bufferSpeed.length == 0) {
+            loadingStr = PLAY_LOADING;
+        }
+        _loadingView.label.text = loadingStr;
+    }
 }
 
 #pragma mark - 重播
@@ -674,24 +709,22 @@
     _isUserTouching = YES;
     NSString *title = self.speedButton.titleLabel.text;
     if([title isEqualToString:@"1.0x"]) {
+        [self.speedButton setTitle:@"1.25x" forState:UIControlStateNormal];
+        _playBackRate = 1.25;
+        self.changeRate(_playBackRate);
+    } else if([title isEqualToString:@"1.25x"]) { //1.增加1.25倍速
         [self.speedButton setTitle:@"1.5x" forState:UIControlStateNormal];
         _playBackRate = 1.5;
         self.changeRate(_playBackRate);
     } else if([title isEqualToString:@"1.5x"]) {
-        [self.speedButton setTitle:@"0.5x" forState:UIControlStateNormal];
-        _playBackRate = 0.5;
-        self.changeRate(_playBackRate);
-    } else if([title isEqualToString:@"0.5x"]) {
+           [self.speedButton setTitle:@"0.5x" forState:UIControlStateNormal];
+           _playBackRate = 0.5;
+           self.changeRate(_playBackRate);
+       } else if([title isEqualToString:@"0.5x"]) {
         [self.speedButton setTitle:@"1.0x" forState:UIControlStateNormal];
         _playBackRate = 1.0;
         self.changeRate(_playBackRate);
     }
-    
-    [self stopTimer];
-    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    [runLoop addTimer:_timer forMode:NSRunLoopCommonModes];
 }
 
 /**
@@ -771,7 +804,7 @@
     if (self.delegate) {
         [self.delegate quanpingBtnClicked:_changeButton.tag];
     }
-    CGRect frame = [UIScreen mainScreen].bounds;
+//    CGRect frame = [UIScreen mainScreen].bounds;
     self.backButton.tag = 2;
     [UIApplication sharedApplication].statusBarHidden = YES;
     UIView *view = [self superview];
@@ -784,7 +817,10 @@
     [self layouUI:YES];
     //smallVideoView
     if (_isSmallDocView) {
-        [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+        // 1.更换小窗横屏位置
+        CGFloat y = CGRectGetMaxY(self.topShadowView.frame);
+        [self.smallVideoView setFrame:CGRectMake((IS_IPHONE_X ? 44:0), y, CCGetRealFromPt(200), CCGetRealFromPt(150))];
+//        [self.smallVideoView setFrame:CGRectMake(frame.size.width -CCGetRealFromPt(220), CCGetRealFromPt(332), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
 }
 
@@ -900,43 +936,12 @@
     if (self.smallVideoView) {
         [self.smallVideoView removeFromSuperview];
     }
-    [self stopTimer];
     [self stopPlayerTimer];
 //    NSLog(@"退出直播回放");
     if (self.exitCallBack) {
         self.exitCallBack();//退出回放回调
     }
 }
-#pragma mark - 播放和根据时间添加数据
-/**
- *    @brief    播放和根据时间添加数据
- */
-- (void)timerfunc
-{
-    if (self.delegate) {
-        [self.delegate timerfunc];
-    }
-}
-/**
- *    @brief    开始播放
- */
-- (void)startTimer {
-    [self stopTimer];
-    CCProxy *weakObject = [CCProxy proxyWithWeakObject:self];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:(1.0f / _playBackRate) target:weakObject selector:@selector(timerfunc) userInfo:nil repeats:YES];
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    [runLoop addTimer:_timer forMode:NSRunLoopCommonModes];
-}
-/**
- *    @brief    停止播放
- */
-- (void)stopTimer {
-    if([_timer isValid]) {
-        [_timer invalidate];
-        _timer = nil;
-    }
-}
-
 /**
  *    @brief    显示视频加载中样式
  */
@@ -944,7 +949,11 @@
     if (_loadingView) {
         return;
     }
-    _loadingView = [[LoadingView alloc] initWithLabel:PLAY_LOADING centerY:YES];
+    NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+    if (self.bufferSpeed.length == 0) {
+        loadingStr = PLAY_LOADING;
+    }
+    _loadingView = [[LoadingView alloc] initWithLabel:loadingStr centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(50, 0, 0, 0));
@@ -1045,6 +1054,79 @@
         [self.playerTimer invalidate];
         self.playerTimer = nil;
     }
+}
+
+- (UIView *)recordHistoryPlayView
+{
+    if (!_recordHistoryPlayView) {
+        _recordHistoryPlayView = [[UIView alloc]init];
+        _recordHistoryPlayView.backgroundColor = CCRGBAColor(51, 51, 51, 1);
+        _recordHistoryPlayView.alpha = 0.7;
+        _recordHistoryPlayView.layer.cornerRadius = 17.5;
+        _recordHistoryPlayView.layer.masksToBounds = YES;
+    }
+    return _recordHistoryPlayView;
+}
+
+- (UIButton *)recordHistoryPlayJumpBtn
+{
+    if (!_recordHistoryPlayJumpBtn) {
+        _recordHistoryPlayJumpBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_recordHistoryPlayJumpBtn setTitle:@"跳转" forState:UIControlStateNormal];
+        [_recordHistoryPlayJumpBtn setTitleColor:CCRGBAColor(255,102,51,1) forState:UIControlStateNormal];
+        [_recordHistoryPlayJumpBtn.titleLabel setFont:[UIFont systemFontOfSize:13]];
+        [_recordHistoryPlayJumpBtn addTarget:self action:@selector(jumpHistory:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _recordHistoryPlayJumpBtn;
+}
+
+- (void)jumpHistory:(UIButton *)sender
+{
+    self.sliderCallBack(_recordHistoryTime);
+}
+
+- (void)showRecordHistoryPlayViewWithRecordHistoryTime:(int)time
+{
+    _recordHistoryTime = time;
+    NSString *timeStr = [self timeFormatted:time];
+    [self addSubview:self.recordHistoryPlayView];
+    [self.recordHistoryPlayView mas_makeConstraints:^(MASConstraintMaker *make) {
+//       make.left.mas_equalTo(self.slider.mas_left).offset(-22);
+        make.left.mas_equalTo(self).offset(10);
+        make.bottom.mas_equalTo(self).offset(-40);
+        make.height.mas_equalTo(35);
+    }];
+
+    UILabel *recordLabel = [[UILabel alloc]init];
+    recordLabel.text = [[NSString alloc]initWithFormat:@"%@%@",@"您上次看到",timeStr];
+    recordLabel.textColor = [UIColor whiteColor];
+    recordLabel.alpha = 0.9;
+    recordLabel.font = [UIFont systemFontOfSize:12];
+    [self.recordHistoryPlayView addSubview:recordLabel];
+    [recordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.left.mas_equalTo(self.recordHistoryPlayView).offset(20);
+       make.centerY.mas_equalTo(self.recordHistoryPlayView);
+    }];
+
+    [self.recordHistoryPlayView addSubview:self.recordHistoryPlayJumpBtn];
+    [self.recordHistoryPlayJumpBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.mas_equalTo(self.recordHistoryPlayView).offset(5);
+       make.left.mas_equalTo(recordLabel.mas_right).offset(20);
+       make.bottom.mas_equalTo(self.recordHistoryPlayView).offset(-5);
+       make.right.mas_equalTo(self.recordHistoryPlayView).offset(-20);
+    }];
+    
+    // 3秒无任何操作自动隐藏历史播放记录
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (self.recordHistoryPlayView.hidden == NO) {
+            [self hiddenRecordHistoryPlayView];
+        }
+    });
+}
+
+- (void)hiddenRecordHistoryPlayView
+{
+    self.recordHistoryPlayView.hidden = YES;
 }
 
 #pragma mark - 隐藏视频小窗

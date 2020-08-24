@@ -10,7 +10,6 @@
 
 @interface TopView ()
 @property (nonatomic, strong) UILabel *titleLabel;//顶部标题
-@property (nonatomic, strong) UIButton *closeBtn;//关闭按钮
 @property (nonatomic, copy) CloseBlock closeCallBack;//关闭回调
 @end
 

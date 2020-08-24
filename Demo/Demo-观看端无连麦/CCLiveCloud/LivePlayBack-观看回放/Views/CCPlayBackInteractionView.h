@@ -10,7 +10,7 @@
 #import "CCPlayBackView.h"//视频视图
 #import "LoadingView.h"//加载
 #import "InformationShowView.h"//提示
-#import "CCSDK/SaveLogUtil.h"//日志
+#import <CCSDK/SaveLogUtil.h>//日志
 #import "CCIntroductionView.h"//简介
 #import "CCQuestionView.h"//问答
 #import "Dialogue.h"//模型

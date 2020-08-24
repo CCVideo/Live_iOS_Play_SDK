@@ -415,7 +415,7 @@
             
             if (IOS_SYSTEMVERSION == 10.0 || IOS_SYSTEMVERSION == 10.1) {
                 //为了解决iOS10.0 10.1的BUG
-                task = [self.session downloadTaskWithCorrectResumeData:resumeData];
+                task = [self.session cc_downloadTaskWithCorrectResumeData:resumeData];
             }else{
                 task = [self.session downloadTaskWithResumeData:resumeData];
             }

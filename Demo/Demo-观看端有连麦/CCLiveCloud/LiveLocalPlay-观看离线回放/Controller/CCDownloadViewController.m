@@ -8,7 +8,7 @@
 
 #import "CCDownloadViewController.h"
 #import "CCcommonDefine.h"
-#import "CCSDK/OfflinePlayBack.h"
+#import <CCSDK/OfflinePlayBack.h>
 #import "CCDownloadUtility.h"
 #import "CCDownloadSessionManager+file.h"
 #import "MyTableViewCell.h"
@@ -17,6 +17,7 @@
 #import "LoadingView.h"
 #import "Reachability.h"
 #import "CCProxy.h"
+#import "TextFieldUserInfo.h"
 
 @interface CCDownloadViewController ()<UITableViewDelegate,UITableViewDataSource,CCDownloadSessionDelegate>
 
@@ -29,6 +30,7 @@
 
 @property(nonatomic,strong)NSTimer                      * timer;//定时器
 @property(nonatomic,assign)BOOL                           isNetwork;//网络状态
+
 
 @end
 
@@ -219,6 +221,8 @@
         cell.progressView.backgroundColor = CCRGBColor(35,161,236);
         [self showLoadingView];
         OfflinePlayBackViewController *offlinePlayBackVC = [[OfflinePlayBackViewController alloc] initWithDestination:model.filePath];
+
+        offlinePlayBackVC.fileName = model.fileName;
         [UIApplication sharedApplication].idleTimerDisabled=YES;
         offlinePlayBackVC.modalPresentationStyle = UIModalPresentationFullScreen;
         [self presentViewController:offlinePlayBackVC animated:YES completion:^{
@@ -407,6 +411,7 @@
     [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.top.mas_equalTo(self.view);
     }];
+
 }
 
 //开始播放

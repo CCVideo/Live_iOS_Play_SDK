@@ -14,14 +14,14 @@
 @implementation NSURLSession (CCCorrectedResumeData)
 
 
-- (NSURLSessionDownloadTask *)downloadTaskWithCorrectResumeData:(NSData *)resumeData {
+- (NSURLSessionDownloadTask *)cc_downloadTaskWithcc_correctResumeData:(NSData *)resumeData {
     NSString *kResumeCurrentRequest = @"NSURLSessionResumeCurrentRequest";
     NSString *kResumeOriginalRequest = @"NSURLSessionResumeOriginalRequest";
     
-    NSData *cData = correctResumeData(resumeData);
+    NSData *cData = cc_correctResumeData(resumeData);
     cData = cData?cData:resumeData;
     NSURLSessionDownloadTask *task = [self downloadTaskWithResumeData:cData];
-    NSMutableDictionary *resumeDic = getResumeDictionary(cData);
+    NSMutableDictionary *resumeDic = cc_getResumeDictionary(cData);
     if (resumeDic) {
         if (task.originalRequest == nil) {
             NSData *originalReqData = resumeDic[kResumeOriginalRequest];
@@ -44,7 +44,7 @@
 
 #pragma mark- private
 
-NSData * correctRequestData(NSData *data) {
+NSData * cc_correctRequestData(NSData *data) {
     if (!data) {
         return nil;
     }
@@ -96,7 +96,7 @@ NSData * correctRequestData(NSData *data) {
     return result;
 }
 
-NSMutableDictionary *getResumeDictionary(NSData *data) {
+NSMutableDictionary *cc_getResumeDictionary(NSData *data) {
     NSMutableDictionary *iresumeDictionary = nil;
     if (IS_IOS10ORLATER) {
         id root = nil;
@@ -119,18 +119,18 @@ NSMutableDictionary *getResumeDictionary(NSData *data) {
     return iresumeDictionary;
 }
 
-NSData *correctResumeData(NSData *data) {
+NSData *cc_correctResumeData(NSData *data) {
     NSString *kResumeCurrentRequest = @"NSURLSessionResumeCurrentRequest";
     NSString *kResumeOriginalRequest = @"NSURLSessionResumeOriginalRequest";
     if (data == nil) {
         return  nil;
     }
-    NSMutableDictionary *resumeDictionary = getResumeDictionary(data);
+    NSMutableDictionary *resumeDictionary = cc_getResumeDictionary(data);
     if (resumeDictionary == nil) {
         return nil;
     }
-    resumeDictionary[kResumeCurrentRequest] = correctRequestData(resumeDictionary[kResumeCurrentRequest]);
-    resumeDictionary[kResumeOriginalRequest] = correctRequestData(resumeDictionary[kResumeOriginalRequest]);
+    resumeDictionary[kResumeCurrentRequest] = cc_correctRequestData(resumeDictionary[kResumeCurrentRequest]);
+    resumeDictionary[kResumeOriginalRequest] = cc_correctRequestData(resumeDictionary[kResumeOriginalRequest]);
     NSData *result = [NSPropertyListSerialization dataWithPropertyList:resumeDictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:nil];
     return result;
 }

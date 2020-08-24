@@ -1,0 +1,6 @@
+framework module HDBaseUtils {
+  umbrella header "HDBaseUtils.h"
+
+  export *
+  module * { export * }
+}

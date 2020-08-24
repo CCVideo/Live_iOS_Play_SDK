@@ -169,7 +169,7 @@
     _privateLabel.hidden = hidden;
     _announcementBtn.hidden = hidden;
     _announcementLabel.hidden = hidden;
-   
+    
 }
 -(void)hiddenPrivateBtn{
     [_privateChatBtn removeFromSuperview];

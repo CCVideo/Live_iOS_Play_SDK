@@ -8,8 +8,8 @@
 
 #import "CCPlayLoginController.h"
 #import "TextFieldUserInfo.h"
-#import "CCSDK/CCLiveUtil.h"
-#import "CCSDK/RequestData.h"
+#import <CCSDK/CCLiveUtil.h>
+#import <CCSDK/RequestData.h>
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
 #import "CCLiveCloud.pch"
@@ -32,6 +32,7 @@
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserPassword;//密码
 @property (nonatomic, strong)InformationShowView  * informationView;//提示
 @property (nonatomic, assign)BOOL                  isShowTipView;//是否已显示输入过长提示框
+
 @end
 
 @implementation CCPlayLoginController
@@ -163,6 +164,7 @@
     _loadingView = nil;
     [UIApplication sharedApplication].idleTimerDisabled=YES;
     CCPlayerController *playForPCVC = [[CCPlayerController alloc] initWithRoomName:self.roomName];
+
     playForPCVC.modalPresentationStyle = 0;
     [self presentViewController:playForPCVC animated:YES completion:^{
     }];
@@ -433,6 +435,7 @@
         make.height.mas_equalTo(50);
         make.width.mas_equalTo(300);
     }];
+    
 }
 #pragma mark - 懒加载
 //登陆按钮

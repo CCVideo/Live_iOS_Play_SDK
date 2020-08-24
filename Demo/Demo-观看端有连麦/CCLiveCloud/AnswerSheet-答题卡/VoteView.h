@@ -18,6 +18,8 @@ typedef void(^VoteBtnClickedMultipleNOSubmit)(NSMutableArray *indexArray);//多�
 
 @interface VoteView : UIView
 
+@property (nonatomic, copy)void(^cleanBlock)(BOOL result);//收起按钮回调
+
 /**
  初始化方法
 
@@ -37,5 +39,9 @@ typedef void(^VoteBtnClickedMultipleNOSubmit)(NSMutableArray *indexArray);//多�
                singleNOSubmit:(VoteBtnClickedSingleNOSubmit)singleNOSubmit
              multipleNOSubmit:(VoteBtnClickedMultipleNOSubmit)multipleNOSubmit
             isScreenLandScape:(BOOL)isScreenLandScape;
+
+-(void)show;
+
+- (void)updataUIWithScreenLandScape:(BOOL)isScreenLandScape;
 
 @end

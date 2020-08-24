@@ -10,12 +10,12 @@
 #import "TextFieldUserInfo.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
-#import "CCSDK/CCLiveUtil.h"
-#import "CCSDK/RequestDataPlayBack.h"
+#import <CCSDK/CCLiveUtil.h>
+#import <CCSDK/RequestDataPlayBack.h>
 #import "InformationShowView.h"
 #import "LoadingView.h"
 #import "CCPlayBackController.h"
-#import "CCSDK/SaveLogUtil.h"
+#import <CCSDK/SaveLogUtil.h>
 @interface CCPalyBackLoginController ()<UITextFieldDelegate,RequestDataPlayBackDelegate>
 
 @property(nonatomic,strong)UILabel                      * informationLabel;//直播间信息
@@ -31,6 +31,7 @@
 @property(nonatomic,strong)TextFieldUserInfo            * textFieldUserPassword;//密码
 @property(nonatomic,strong)InformationShowView          * informationView;//提示窗
 @property(nonatomic,assign)BOOL                         isShowTipView;//是否已显示输入过长提示框
+
 
 @end
 
@@ -430,6 +431,7 @@
     }];
     //添加通知
     [self addObserver];
+    
 }
 #pragma mark - 懒加载
 //userId输入框

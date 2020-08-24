@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "PlayParameter.h"
-#import "IJKMediaFramework/IJKMediaPlayback.h"
-#import "IJKMediaFramework/IJKFFMoviePlayerController.h"
+#import "HDMediaFramework/HDMediaPlayback.h"
+#import "HDMediaFramework/HDFFMoviePlayerController.h"
 
 @protocol OfflinePlayBackDelegate <NSObject>
 @optional
@@ -62,30 +62,63 @@
  */
 - (void)pageChangeList:(NSMutableArray *)array;
 /**
- *  @brief  收到本房间历史广播(The new method)
+ *  @brief  收到本房间历史广播
  *  content 广播内容
  *  time 发布时间(单位:秒)
  */
 - (void)broadcastHistory_msg:(NSArray *)array;
 /**
- *  @brief 回放的开始时间和结束时间(The new method)
+ *  @brief 回放的开始时间和结束时间
  */
 -(void)liveInfo:(NSDictionary *)dic;
 
 /**
- *    @brief    文档加载状态(The new method)
+ *    @brief    文档加载状态
  *    index
  *      2 非动画文档加载完成
  */
 - (void)docLoadCompleteWithIndex:(NSInteger)index;
-
+/**
+ *    @brief    视频状态改变
+ *    @param    state
+ *              HDMoviePlaybackStateStopped          播放停止
+ *              HDMoviePlaybackStatePlaying          开始播放
+ *              HDMoviePlaybackStatePaused           暂停播放
+ *              HDMoviePlaybackStateInterrupted      播放间断
+ *              HDMoviePlaybackStateSeekingForward   播放快进
+ *              HDMoviePlaybackStateSeekingBackward  播放后退
+ */
+- (void)HDMoviePlayBackStateDidChange:(HDMoviePlaybackState)state;
+/**
+ *    @brief    视频加载状态
+ *    @param    state   播放状态
+ *              HDMovieLoadStateUnknown         未知状态
+ *              HDMovieLoadStatePlayable        视频未完成全部缓存，但已缓存的数据可以进行播放
+ *              HDMovieLoadStatePlaythroughOK   完成缓存
+ *              HDMovieLoadStateStalled         数据缓存已经停止，播放将暂停
+ */
+- (void)HDMovieLoadStateDidChange:(HDMovieLoadState)state;
+/**
+ *    @brief    视频播放完成原因
+ *    @param    reason  原因
+ *              HDMovieFinishReasonPlaybackEnded    自然播放结束
+ *              HDMovieFinishReasonUserExited       用户人为结束
+ *              HDMovieFinishReasonPlaybackError    发生错误崩溃结束
+ */
+- (void)HDMoviePlayerPlaybackDidFinish:(HDMovieFinishReason)reason;
+/**
+ *    @brief    播放器时间
+ *    @param    currentTime   当前时间
+ *    @param    totalTime     总时间
+ */
+- (void)HDPlayerCurrentTime:(NSTimeInterval)currentTime totalTime:(NSTimeInterval)totalTime;
 
 @end
 
 @interface OfflinePlayBack : NSObject
 
 @property (weak,nonatomic) id<OfflinePlayBackDelegate>  delegate;//代理
-@property (retain,    atomic) id<IJKMediaPlayback>      ijkPlayer;//播放器
+@property (retain,    atomic) id<HDMediaPlayback>      ijkPlayer;//播放器
 /**
  *	@brief	初始化
  *	@param 	parameter   配置参数信息
@@ -111,9 +144,10 @@
  */
 - (void)requestCancel;
 /**
+ *  (已废弃)
  *	@brief	time：从直播开始到现在的秒数，SDK会在画板上绘画出来相应的图形
  */
-- (void)continueFromTheTime:(NSInteger)time;
+- (void)continueFromTheTime:(NSInteger)time DEPRECATED_MSG_ATTRIBUTE("该方法已废弃:配置完SDK基本信息,开始播放会自行播放文档,不需求再次处理;!!!获取播放时间通过代理方法获取: - (void)HDPlayerCurrentTime:(NSTimeInterval)currentTime totalTime:(NSTimeInterval)totalTime;");
 
 /**
  *	@brief  获取文档区域内白板或者文档本身的宽高比，返回值即为宽高比，做屏幕适配用
@@ -191,16 +225,24 @@
  */
 - (int)DecompressZipWithDec:(NSString *)dst dir:(NSString *)dir;
 /**
- *    @brief    主动调用方法      用于调整PPT缩放模式
+ *    @brief    主动调用方法      用于调整PPT缩放模式 (已废弃)
  *    @param    docFrame        文档的frame
  *    @param    PPTScalingMode  PPT缩放模式
- *                               1.一种是全部填充屏幕，可拉伸变形，
- *                               2.第二种是等比缩放，横向或竖向贴住边缘，另一方向可以留黑边，
- *                               3.第三种是等比缩放，横向或竖向贴住边缘，另一方向出边界，裁剪PPT，不可以留黑边，
- *                               4.根据直播间文档显示模式的返回值进行设置(推荐)(The New Method)
+ *                               1 = 拉伸填充:PPT内容全部展示在显示区域,会被拉伸或压缩,不会存在黑边
+ *                               2 = 等比居中:PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+ *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
  *
  *    需要调整docFrame 请直接调用 - (void)changeDocFrame:(CGRect)docFrame;方法
  */
-- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode;
+- (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode DEPRECATED_MSG_ATTRIBUTE("该方法已废弃:调用新方法 - (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;");
+/**
+ *    @brief    主动调用方法       用于调整PPT缩放模式
+ *    @param    pptScalingMode   PPT缩放模式
+ *                               1 = 拉伸填充:PPT内容全部展示在显示区域,会被拉伸或压缩,不会存在黑边
+ *                               2 = 等比居中:PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边
+ *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
+ */
+- (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;
+
 
 @end

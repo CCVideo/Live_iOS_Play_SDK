@@ -119,7 +119,7 @@
     
     
     UILabel *label = [[UILabel alloc] init];
-    label.text = @"版本: hd_sdk_v3.9.1";
+    label.text = @"版本: hd_sdk_v3.10.0";
     label.textColor = [UIColor lightGrayColor];
     [self.view addSubview:label];
     [label mas_makeConstraints:^(MASConstraintMaker *make) {

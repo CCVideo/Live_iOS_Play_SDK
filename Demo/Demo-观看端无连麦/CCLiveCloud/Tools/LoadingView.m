@@ -13,7 +13,7 @@
 
 @interface LoadingView()
 
-@property(nonatomic,strong)UILabel                  *label;
+
 //@property(nonatomic,strong)UIView                   *view;
 @property(nonatomic,strong)UIView                   *centerView;
 

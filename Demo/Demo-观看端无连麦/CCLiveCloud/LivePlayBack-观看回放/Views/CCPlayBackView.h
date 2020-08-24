@@ -37,11 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)changeBtnClicked:(NSInteger)tag;
 
 /**
- 开始播放时调用此方法
- */
--(void)timerfunc;
-
-/**
  *    @brief    播放完成
  */
 -(void)playDone;
@@ -73,6 +68,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong)UIImageView                * liveEnd;//播放结束视图
 
 @property (nonatomic, assign)BOOL                         playDone;//播放完成
+/** 仅有视频模式 */
+@property (nonatomic, assign)BOOL                         isOnlyVideoMode;
+/** 视频缓存速度 */
+@property (nonatomic, copy) NSString                    * bufferSpeed;
 
 @property (nonatomic,copy) void(^exitCallBack)(void);//退出直播间回调
 @property (nonatomic,copy) void(^sliderCallBack)(int);//滑块回调
@@ -92,16 +91,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithFrame:(CGRect)frame docViewType:(BOOL)isSmallDocView;
 /**
- 开始播放
- */
--(void)startTimer;
-
-/**
- 停止播放
- */
--(void)stopTimer;
-
-/**
  显示加载中视图
  */
 -(void)showLoadingView;
@@ -110,6 +99,16 @@ NS_ASSUME_NONNULL_BEGIN
  移除加载中视图
  */
 -(void)removeLoadingView;
+/**
+ *    @brief    展示历史播放记录view
+ *    @param    time   历史播放时间
+ */
+- (void)showRecordHistoryPlayViewWithRecordHistoryTime:(int)time;
+
+/**
+ *    @brief    隐藏历史播放记录view
+ */
+- (void)hiddenRecordHistoryPlayView;
 #pragma mark - 屏幕旋转
 //转为横屏
 -(void)turnRight;

@@ -111,6 +111,7 @@
 }
 //处理聊天数据
 -(void)dealWithPlayBackChatArr:(NSArray *)objectArr groupId:(NSString *)groupId{
+    if (self == nil || objectArr == nil) return;
     for(NSDictionary *dic in objectArr) {
         //通过groupId过滤数据------
         NSString *msgGroupId = dic[@"groupId"];
@@ -532,8 +533,15 @@
 }
 #pragma mark - 清理缓存
 -(void)removeData{
-    if (self.publicChatArray != nil) {
-        [self.publicChatArray removeAllObjects];
+    if (self.publicChatArray != nil)
+    {
+//        if (@available(iOS 9.0, *)) {
+            [self.publicChatArray removeAllObjects];
+//        } else {
+//            [self.publicChatArray removeAllObjects];
+//            NSArray *array = @[];
+//            [self.publicChatArray addObjectsFromArray:array];
+//        }
     }
     if (self.historyRadioArray != nil) {
         [self.historyRadioArray removeAllObjects];
@@ -543,10 +551,12 @@
 #pragma mark - 懒加载
 //公聊数组
 -(NSMutableArray *)publicChatArray{
-    if (!_publicChatArray) {
-        _publicChatArray = [NSMutableArray array];
+    @synchronized (self) {
+        if (!_publicChatArray) {
+            _publicChatArray = [NSMutableArray array];
+        }
+        return _publicChatArray;
     }
-    return _publicChatArray;
 }
 //图片下载dic
 -(NSMutableDictionary *)downloadDic{

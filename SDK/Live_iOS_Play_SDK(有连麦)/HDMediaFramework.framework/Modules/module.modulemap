@@ -1,0 +1,6 @@
+framework module HDMediaFramework {
+  umbrella header "HDMediaFramework.h"
+
+  export *
+  module * { export * }
+}

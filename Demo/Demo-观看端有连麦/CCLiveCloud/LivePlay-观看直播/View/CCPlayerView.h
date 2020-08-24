@@ -76,6 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,assign)BOOL                     isQuestionnaireSurveyKeyBoardAction;//是否是问卷调查键盘事件
 
+/** 仅有视频模式 */
+@property (nonatomic, assign)BOOL                    isOnlyVideoMode;
+/** 视频缓存速度 */
+@property (nonatomic, copy) NSString                *bufferSpeed;
+
 //#ifdef LIANMAI_WEBRTC
 
 @property(nonatomic,strong)LianmaiView              *lianMaiView;//连麦
@@ -137,6 +142,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL)exsitRmoteView;
 //移除远程视图
 -(void)removeRmoteView;
+//移除lianmaiView
+-(void)removeLianMaiView;
 //#endif
 #pragma mark - 直播状态相关代理
 /**

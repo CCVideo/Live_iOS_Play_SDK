@@ -1163,7 +1163,7 @@ static int flagCount = 0; //计数器
     if (!_manager) {
         _manager = [CCChatViewDataSourceManager sharedManager];
         _manager.delegate = self;
-        [_manager removeData];
+//        [_manager removeData];
     }
     return _manager;
 }
@@ -1221,8 +1221,8 @@ static int flagCount = 0; //计数器
 
 #pragma mark - 移除聊天
 -(void)removeChatView{
-    [self.chatView.ccPrivateChatView removeFromSuperview];
     [[CCChatViewDataSourceManager sharedManager] removeData];
+    [self.chatView.ccPrivateChatView removeFromSuperview];
 }
 
 

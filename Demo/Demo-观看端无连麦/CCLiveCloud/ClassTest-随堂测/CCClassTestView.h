@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy)void(^StaticBlock)(NSString *practiceId);// 获取统计回调
 @property (nonatomic, copy)void(^CommitBlock)(NSArray *arr);//提交答案回调
+@property (nonatomic, copy)void(^cleanBlock)(NSMutableDictionary *result);//收起按钮回调
+@property (nonatomic, copy)void(^regetTestBlock)(NSString *practiceId);// 获取统计回调
 
 
 
@@ -49,6 +51,15 @@ NS_ASSUME_NONNULL_BEGIN
  关闭计时器
  */
 -(void)stopTimer;
+
+/**
+ *    @brief    展示testView是否是横屏状态
+ *    @param    isScreenlandscape   是否是全屏
+ */
+- (void)updataTestViewWithScreenlandscape:(BOOL)isScreenlandscape;
+
+- (void)show;
+
 @end
 
 NS_ASSUME_NONNULL_END
