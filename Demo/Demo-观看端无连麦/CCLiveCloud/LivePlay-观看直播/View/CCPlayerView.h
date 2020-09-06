@@ -11,7 +11,6 @@
 #import "InformationShowView.h"//提示框
 #import "SelectMenuView.h"//更多菜单
 #import "LoadingView.h"//加载
-
 #import "CCDocView.h"//文档视图
 NS_ASSUME_NONNULL_BEGIN
 
@@ -78,7 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign)BOOL                    isOnlyVideoMode;
 /** 视频缓存速度 */
 @property (nonatomic, copy) NSString                *bufferSpeed;
-
 
 /**
  初始化方法

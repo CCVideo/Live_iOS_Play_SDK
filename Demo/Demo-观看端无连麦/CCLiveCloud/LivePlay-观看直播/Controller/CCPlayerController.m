@@ -7,7 +7,7 @@
 //
 
 #import "CCPlayerController.h"
-#import <CCSDK/RequestData.h>//SDK
+#import "CCSDK/RequestData.h"//SDK
 #import <CCSDK/SaveLogUtil.h>//日志
 #import "LotteryView.h"//抽奖
 #import "CCPlayerView.h"//视频
@@ -39,7 +39,6 @@
 *******************************************************
 */
 @interface CCPlayerController ()<RequestDataDelegate,
-
 UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 #pragma mark - 房间相关参数
 @property (nonatomic,copy)  NSString                 * viewerId;//观看者的id
@@ -104,6 +103,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 /** 随堂测数据 */
 @property (nonatomic, copy) NSMutableDictionary      *testDict;
 
+@property (nonatomic, strong)InformationShowView  * informationView;//提示
+
 @end
 @implementation CCPlayerController
 //初始化
@@ -159,7 +160,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  集成sdk
  */
 - (void)integrationSDK {
-
     UIView *docView = _isSmallDocView ? self.playerView.smallVideoView : self.contentView.docView;
     PlayParameter *parameter = [[PlayParameter alloc] init];
     parameter.userId = GetFromUserDefaults(WATCH_USERID);//userId
@@ -197,23 +197,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  */
 - (void)sendChatMessageWithStr:(NSString *)str {
     [_requestData chatMessage:str];
-//    [_requestData sendChatMessage:str completion:^(BOOL success) {
-//        NSString * str;
-//        if (success == YES) {
-////            NSLog(@"发送成功");
-//            str =@"发送成功";
-//        } else {
-////            NSLog(@"发送失败");
-//             str =@"发送失败";
-//        }
-//        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:str preferredStyle:UIAlertControllerStyleAlert];
-//
-//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-//
-//        }];
-//        [alertController addAction:okAction];
-//        [self presentViewController:alertController animated:YES completion:nil];
-//    }];
 }
 /**
  切换线路
@@ -413,8 +396,9 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     self.contentView.chatView.ccPrivateChatView.hidden = hidden;//隐藏聊天视图
     self.isScreenLandScape = YES;//支持旋转
     [self interfaceOrientation:hidden? UIInterfaceOrientationLandscapeRight : UIInterfaceOrientationPortrait];
-    self.isScreenLandScape = NO;//不支持旋转
-    
+    if (hidden == NO) {
+        self.isScreenLandScape = NO;//不支持旋转
+    }
     self.contentView.hidden = hidden;//隐藏互动视图
 //    self.menuView.hidden = hidden;//隐藏更多功能菜单
     [self.menuView hiddenMenuViews:hidden];
@@ -596,7 +580,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //
 //        [_requestData changeDocParent:_contentView.docView];
 //        [_requestData changeDocFrame:CGRectMake(0, 0, _contentView.docView.frame.size.width, _contentView.docView.frame.size.height)];
-        
     }else{
         _screenLandScape = YES;
         _isScreenLandScape = YES;
@@ -630,7 +613,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 //        [_requestData changeDocFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREENH_HEIGHT)];
 //        [_requestData changePlayerParent:_oncePlayerView];
 //        [_requestData changePlayerFrame:CGRectMake(0, 0, CCGetRealFromPt(202), CCGetRealFromPt(152))];
-        
     }
 }
 
@@ -763,9 +745,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     [APPDelegate.window addSubview:self.punchView];
     _punchView.frame = [UIScreen mainScreen].bounds;
     
-  
-    
-    
     [self showRollCallView];
 }
 /**
@@ -775,7 +754,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
  }
  */
 -(void)hdReceivedEndPunchWithDict:(NSDictionary *)dic{
-    [self removePunchView];
+//    [self removePunchView];
+    [self.punchView updateUIWithFinish:dic];
 }
 /**
  *    @brief    收到打卡提交结果
@@ -946,7 +926,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [_requestData hdInquirePunchInformation];
         }
     } else {
-        [self.playerView.smallVideoView removeFromSuperview];
+        self.playerView.smallVideoView.hidden = YES;
+//        [self.playerView.smallVideoView removeFromSuperview];
     }
 }
 /**
@@ -1007,6 +988,35 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     //添加禁言弹窗
     [self addBanAlertView:str];
 }
+
+#pragma mark - 进出直播间提示
+- (void)HDUserRemindWithModel:(RemindModel *)model
+{
+    NSArray *array = model.clientType;
+    if ([array containsObject:@(4)]) {
+        [self.contentView HDUserRemindWithModel:model];
+    }
+}
+
+#pragma mark - 聊天禁言提示
+- (void)HDBanChatBroadcastWithModel:(BanChatModel *)model
+{
+    NSString *tipStr = [[NSString alloc]initWithFormat:@"用户:%@%@",model.userName,@"被禁言"];
+    [_informationView removeFromSuperview];
+    _informationView = [[InformationShowView alloc] initWithLabel:tipStr];
+    [self.view addSubview:_informationView];
+    [_informationView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(removeInformationView) userInfo:nil repeats:NO];
+}
+
+#pragma mark - 移除提示信息
+-(void)removeInformationView {
+    [_informationView removeFromSuperview];
+    _informationView = nil;
+}
+
 #pragma mark- 视频或者文档大窗
 /**
  *  @brief  视频或者文档大窗(The new method)
@@ -1530,7 +1540,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
     CCCupView *cupView = [[CCCupView alloc] initWithWinnerName:name isScreen:self.screenLandScape];
     [APPDelegate.window addSubview:cupView];
 }
-
 #pragma mark - 添加通知
 -(void)addObserver
 {
@@ -1548,7 +1557,8 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationWillEnterForegroundNotification
-                                                  object:nil];}
+                                                  object:nil];
+}
 /**
  APP将要进入后台
  */
@@ -1612,7 +1622,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
         _playerView.sendChatMessage = ^(NSString * sendChatMessage) {
             [weakSelf sendChatMessageWithStr:sendChatMessage];
         };
-        
     }
     return _playerView;
 }
@@ -1764,7 +1773,6 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
             [ws.contentView.chatView privateChatBtnClicked];
             [APPDelegate.window bringSubviewToFront:ws.contentView.chatView.ccPrivateChatView];
         };
-        
         //公告按钮回调
         _menuView.announcementBlock = ^{
             [ws announcementBtnClicked];
@@ -1775,7 +1783,7 @@ UIScrollViewDelegate,UITextFieldDelegate,CCPlayerViewDelegate>
 }
 //收回菜单
 -(void)hiddenMenuView{
-  
+
 }
 
 //公告

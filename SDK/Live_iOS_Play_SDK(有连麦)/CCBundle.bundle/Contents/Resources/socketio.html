@@ -6511,6 +6511,18 @@
             socket.on('switch_stream', function(data){
                     socket_message('switch_stream', data);
             });
+            //55  禁言
+            socket.on('ban_chat_broadcast', function(data){
+                    socket_message('ban_chat_broadcast', data);
+            });
+            //56  进入直播间
+            socket.on('in_remind', function(data){
+                    socket_message('in_remind', data);
+            });
+            //57  退出直播间
+            socket.on('out_remind', function(data){
+                    socket_message('out_remind', data);
+            });
      
         }
         function socket_message(type,data){

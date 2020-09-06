@@ -14,7 +14,6 @@
 #import "CCChatContentView.h"
 
 @interface CCPlayerView ()<UITextFieldDelegate
-
 >
 
 @property (nonatomic, assign)BOOL                       isSound;//是否是音频
@@ -574,7 +573,7 @@ dispatch_resume(_timer);
         [self.titleLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.backButton);
             make.left.equalTo(self.backButton.mas_right);
-            make.right.equalTo(self.changeButton.mas_left).offset(-5);
+            make.width.mas_equalTo(SCREEN_WIDTH - CCGetRealFromPt(250));
         }];
         [self.titleLabel layoutIfNeeded];
         self.liveUnStart.frame = CGRectMake(0, 0, SCREEN_WIDTH, CCGetRealFromPt(462));
@@ -894,8 +893,6 @@ dispatch_resume(_timer);
         CGFloat y = CGRectGetMaxY(self.topShadowView.frame);
         [self.smallVideoView setFrame:CGRectMake((IS_IPHONE_X ? 44:0), y, CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
-    
-    
 }
 
 /**
@@ -905,13 +902,28 @@ dispatch_resume(_timer);
 -(void)backBtnClick:(UIButton *)sender{
     [self endEditing:YES];
     
-    
     //返回按钮代理
     [self.delegate backButtonClick:sender changeBtnTag:_changeButton.tag];
     if (sender.tag == 2) {
         // 返回按钮在进入全屏的情况下 tag 被设置为 2
         sender.tag = 1;
         [self backBtnClickWithTag:_changeButton.tag];
+//        [UIApplication sharedApplication].statusBarHidden = NO;
+//        self.selectedIndexView.hidden = YES;
+////        [self endEditing:NO];
+//        self.contentView.hidden = YES;
+//        UIView *view = [self superview];
+//        [self mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(view);
+//            make.height.mas_equalTo(CCGetRealFromPt(462));
+//            make.top.equalTo(view).offset(SCREEN_STATUS);
+//        }];
+//        [self layoutIfNeeded];
+//        CGRect rect = [UIScreen mainScreen].bounds;
+//        if (_isSmallDocView) {
+//            [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
+//        }
+//        [self layouUI:NO];
     }
 }
 
@@ -945,7 +957,6 @@ dispatch_resume(_timer);
         [self.smallVideoView setFrame:CGRectMake(rect.size.width -CCGetRealFromPt(220), CCGetRealFromPt(462)+CCGetRealFromPt(82)+(IS_IPHONE_X? 44:20), CCGetRealFromPt(200), CCGetRealFromPt(150))];
     }
     [self layouUI:NO];
-
 }
 
 /**
@@ -964,12 +975,9 @@ dispatch_resume(_timer);
     if (sender.tag == 1) {//切换文档大屏
         sender.tag = 2;
         [sender setTitle:PLAY_CHANGEVIDEO forState:UIControlStateNormal];
-        //切换视频时remote的视图大小
-        
     } else {//切换文档小屏
         sender.tag = 1;
         [sender setTitle:PLAY_CHANGEDOC forState:UIControlStateNormal];
-       
     }
     if (self.delegate) {//changeBtn按钮点击代理
         [self.delegate changeBtnClicked:sender.tag];
@@ -1270,7 +1278,6 @@ dispatch_resume(_timer);
 //}
 
 -(void)dealloc {
-    
     [self stopPlayerTimer];
 }
 
@@ -1389,7 +1396,8 @@ dispatch_resume(_timer);
     _endNormal = endNormal;
     self.liveUnStart.hidden = NO;
     if (self.smallVideoView) {
-        [self.smallVideoView removeFromSuperview];
+//        [self.smallVideoView removeFromSuperview];
+        self.smallVideoView.hidden = YES;
     }
 //    dispatch_async(dispatch_get_main_queue(), ^{
 //        self.smallVideoView.hidden = YES;
@@ -1408,10 +1416,11 @@ dispatch_resume(_timer);
 - (void)play_loadVideoFail{
     [_loadingView removeFromSuperview];
 //    _loadingView = nil;
-    NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
-    if (self.bufferSpeed.length == 0) {
-        loadingStr = PLAY_LOADING;
-    }
+//    NSString *loadingStr = [NSString stringWithFormat:@"%@%@",PLAY_LOADING,self.bufferSpeed];
+//    if (self.bufferSpeed.length == 0) {
+//        loadingStr = PLAY_LOADING;
+//    }
+    NSString *loadingStr = @"视频加载失败,请退出重试";
     _loadingView = [[LoadingView alloc] initWithLabel:loadingStr centerY:YES];
     [self addSubview:_loadingView];
     [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -1455,5 +1464,4 @@ dispatch_resume(_timer);
     }
     [self changeBtnClick:self.changeButton];
 }
-
 @end

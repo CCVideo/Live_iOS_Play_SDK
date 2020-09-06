@@ -7,11 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		181D1F3C2503936100622B6E /* HDBaseUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184703C624BC5E9D0096686C /* HDBaseUtils.framework */; };
+		181D1F3D2503936100622B6E /* HDBaseUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 184703C624BC5E9D0096686C /* HDBaseUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		181D1F3E2503936300622B6E /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 181D1E5A2503819900622B6E /* CCSDK.framework */; };
+		181D1F3F2503936300622B6E /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 181D1E5A2503819900622B6E /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		18309B3A24E39A570085641B /* HDMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18309B3724E399D60085641B /* HDMediaFramework.framework */; };
+		18309B3B24E39A570085641B /* HDMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 18309B3724E399D60085641B /* HDMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		184703CA24BC63DE0096686C /* NSURLSession+CCCorrectedResumeData.m in Sources */ = {isa = PBXBuildFile; fileRef = 184703C924BC63DE0096686C /* NSURLSession+CCCorrectedResumeData.m */; };
 		184B72A6248897F2003B7A42 /* CCChatBaseImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 184B72A5248897F2003B7A42 /* CCChatBaseImageCell.m */; };
 		184B72A924889D74003B7A42 /* CCChatBaseRadioCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 184B72A824889D74003B7A42 /* CCChatBaseRadioCell.m */; };
 		185009F224862ED100310EC9 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 185009F124862ED100310EC9 /* YYFPSLabel.m */; };
 		185009F524862EEB00310EC9 /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 185009F324862EEA00310EC9 /* YYWeakProxy.m */; };
+		1884F01A24F9EA9F00686CA2 /* HDUserRemindView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1884F01924F9EA9F00686CA2 /* HDUserRemindView.m */; };
 		18AD8BC324A9AD1F00735ABB /* CCButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AD8BC224A9AD1E00735ABB /* CCButton.m */; };
 		18E0FD53245557C700EBD24F /* CCDownloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E0FD52245557C700EBD24F /* CCDownloadViewController.m */; };
 		18E0FD6024555F7500EBD24F /* CCDownloadUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E0FD5824555F7500EBD24F /* CCDownloadUtility.m */; };
@@ -80,16 +87,6 @@
 		528EA204234D780E00E8BD7D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA203234D780E00E8BD7D /* libresolv.tbd */; };
 		528EA205234D781B00E8BD7D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52F8BBDD2231243900B7CC1B /* libc++.tbd */; };
 		528EA207234D782A00E8BD7D /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 528EA206234D782A00E8BD7D /* Accelerate.framework */; };
-		5292349F24F12E4200096046 /* CCBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5292349B24F12E4000096046 /* CCBundle.bundle */; };
-		529234A024F12E4200096046 /* HDBaseUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349C24F12E4100096046 /* HDBaseUtils.framework */; };
-		529234A124F12E4200096046 /* HDMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349D24F12E4200096046 /* HDMediaFramework.framework */; };
-		529234A224F12E4200096046 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349E24F12E4200096046 /* CCSDK.framework */; };
-		529234A324F131B100096046 /* CCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349E24F12E4200096046 /* CCSDK.framework */; };
-		529234A424F131B100096046 /* CCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349E24F12E4200096046 /* CCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		529234A524F131B100096046 /* HDBaseUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349C24F12E4100096046 /* HDBaseUtils.framework */; };
-		529234A624F131B100096046 /* HDBaseUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349C24F12E4100096046 /* HDBaseUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		529234A724F131B100096046 /* HDMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349D24F12E4200096046 /* HDMediaFramework.framework */; };
-		529234A824F131B100096046 /* HDMediaFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5292349D24F12E4200096046 /* HDMediaFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		529D53832179750C0093F724 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53822179750C0093F724 /* AppDelegate.m */; };
 		529D538B2179750D0093F724 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529D538A2179750D0093F724 /* Assets.xcassets */; };
 		529D53912179750D0093F724 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 529D53902179750D0093F724 /* main.m */; };
@@ -100,6 +97,7 @@
 		52CB6A3921F9BE280037AE94 /* UIView+GetVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 52CB6A3821F9BE280037AE94 /* UIView+GetVC.m */; };
 		52D55EF42189ABC9008387DC /* CCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D55EF32189ABC9008387DC /* CCPlayerView.m */; };
 		52D76A6521AE416F00F968D0 /* CCNAVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52D76A6421AE416F00F968D0 /* CCNAVController.m */; };
+		52DC4972238543E700153F80 /* CCBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 52DC4971238543E700153F80 /* CCBundle.bundle */; };
 		52E1CDF1222629B0008DA93D /* UILabel+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 52E1CDF0222629B0008DA93D /* UILabel+Extension.m */; };
 		52E908132320DA3000A40F92 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E908122320DA3000A40F92 /* MediaPlayer.framework */; };
 		52F344A52186A7B1006F1E7B /* CCPlayLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F344A42186A7B1006F1E7B /* CCPlayLoginController.m */; };
@@ -194,9 +192,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				529234A424F131B100096046 /* CCSDK.framework in Embed Frameworks */,
-				529234A624F131B100096046 /* HDBaseUtils.framework in Embed Frameworks */,
-				529234A824F131B100096046 /* HDMediaFramework.framework in Embed Frameworks */,
+				18309B3B24E39A570085641B /* HDMediaFramework.framework in Embed Frameworks */,
+				181D1F3F2503936300622B6E /* CCSDK.framework in Embed Frameworks */,
+				181D1F3D2503936100622B6E /* HDBaseUtils.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,6 +213,9 @@
 
 /* Begin PBXFileReference section */
 		15335BC7E9C5F18881A471DB /* Pods-CCLiveCloud.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CCLiveCloud.release.xcconfig"; path = "Pods/Target Support Files/Pods-CCLiveCloud/Pods-CCLiveCloud.release.xcconfig"; sourceTree = "<group>"; };
+		181D1E5A2503819900622B6E /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
+		18309B3724E399D60085641B /* HDMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HDMediaFramework.framework; sourceTree = "<group>"; };
+		184703C624BC5E9D0096686C /* HDBaseUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HDBaseUtils.framework; sourceTree = "<group>"; };
 		184703C824BC63DE0096686C /* NSURLSession+CCCorrectedResumeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSession+CCCorrectedResumeData.h"; sourceTree = "<group>"; };
 		184703C924BC63DE0096686C /* NSURLSession+CCCorrectedResumeData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+CCCorrectedResumeData.m"; sourceTree = "<group>"; };
 		184B72A4248897F2003B7A42 /* CCChatBaseImageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCChatBaseImageCell.h; sourceTree = "<group>"; };
@@ -225,6 +226,8 @@
 		185009F124862ED100310EC9 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
 		185009F324862EEA00310EC9 /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
 		185009F424862EEA00310EC9 /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
+		1884F01824F9EA9F00686CA2 /* HDUserRemindView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDUserRemindView.h; sourceTree = "<group>"; };
+		1884F01924F9EA9F00686CA2 /* HDUserRemindView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDUserRemindView.m; sourceTree = "<group>"; };
 		18AD8BC124A9AD1E00735ABB /* CCButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCButton.h; sourceTree = "<group>"; };
 		18AD8BC224A9AD1E00735ABB /* CCButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCButton.m; sourceTree = "<group>"; };
 		18E0FD51245557C700EBD24F /* CCDownloadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCDownloadViewController.h; sourceTree = "<group>"; };
@@ -354,10 +357,6 @@
 		528EA201234D77FE00E8BD7D /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		528EA203234D780E00E8BD7D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		528EA206234D782A00E8BD7D /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		5292349B24F12E4000096046 /* CCBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CCBundle.bundle; sourceTree = "<group>"; };
-		5292349C24F12E4100096046 /* HDBaseUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HDBaseUtils.framework; sourceTree = "<group>"; };
-		5292349D24F12E4200096046 /* HDMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HDMediaFramework.framework; sourceTree = "<group>"; };
-		5292349E24F12E4200096046 /* CCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CCSDK.framework; sourceTree = "<group>"; };
 		529D537E2179750C0093F724 /* CCLiveCloud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CCLiveCloud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		529D53812179750C0093F724 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		529D53822179750C0093F724 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -381,6 +380,7 @@
 		52D55EF32189ABC9008387DC /* CCPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCPlayerView.m; sourceTree = "<group>"; };
 		52D76A6321AE416F00F968D0 /* CCNAVController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCNAVController.h; sourceTree = "<group>"; };
 		52D76A6421AE416F00F968D0 /* CCNAVController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCNAVController.m; sourceTree = "<group>"; };
+		52DC4971238543E700153F80 /* CCBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CCBundle.bundle; sourceTree = "<group>"; };
 		52E1CDEF222629B0008DA93D /* UILabel+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+Extension.h"; sourceTree = "<group>"; };
 		52E1CDF0222629B0008DA93D /* UILabel+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+Extension.m"; sourceTree = "<group>"; };
 		52E908122320DA3000A40F92 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
@@ -516,25 +516,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				529234A124F12E4200096046 /* HDMediaFramework.framework in Frameworks */,
 				528EA207234D782A00E8BD7D /* Accelerate.framework in Frameworks */,
 				528EA205234D781B00E8BD7D /* libc++.tbd in Frameworks */,
 				528EA204234D780E00E8BD7D /* libresolv.tbd in Frameworks */,
-				529234A524F131B100096046 /* HDBaseUtils.framework in Frameworks */,
 				528EA202234D77FE00E8BD7D /* CoreMedia.framework in Frameworks */,
 				528EA200234D77F000E8BD7D /* AudioToolbox.framework in Frameworks */,
 				528EA1FE234D76AF00E8BD7D /* CoreTelephony.framework in Frameworks */,
-				529234A024F12E4200096046 /* HDBaseUtils.framework in Frameworks */,
-				529234A224F12E4200096046 /* CCSDK.framework in Frameworks */,
 				528EA1FC234D76A000E8BD7D /* AVFoundation.framework in Frameworks */,
 				52E908132320DA3000A40F92 /* MediaPlayer.framework in Frameworks */,
+				181D1F3E2503936300622B6E /* CCSDK.framework in Frameworks */,
 				4B297A14235D4FC300A5300B /* CoreML.framework in Frameworks */,
 				52F8BBEA2231268B00B7CC1B /* libz.tbd in Frameworks */,
-				529234A324F131B100096046 /* CCSDK.framework in Frameworks */,
 				52F8BBE92231268300B7CC1B /* libz.1.1.3.tbd in Frameworks */,
-				529234A724F131B100096046 /* HDMediaFramework.framework in Frameworks */,
 				7052B44A222FBF6900CF8656 /* SystemConfiguration.framework in Frameworks */,
 				52B9173B21DDD8CF00C3AE9D /* VideoToolbox.framework in Frameworks */,
+				181D1F3C2503936100622B6E /* HDBaseUtils.framework in Frameworks */,
+				18309B3A24E39A570085641B /* HDMediaFramework.framework in Frameworks */,
 				6E1E7835921085EF61E23DB4 /* Pods_CCLiveCloud.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,6 +553,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1884F01124F4F0DA00686CA2 /* UserRemindView-直播间提示语 */ = {
+			isa = PBXGroup;
+			children = (
+				1884F01824F9EA9F00686CA2 /* HDUserRemindView.h */,
+				1884F01924F9EA9F00686CA2 /* HDUserRemindView.m */,
+			);
+			path = "UserRemindView-直播间提示语";
+			sourceTree = "<group>";
+		};
 		18E0FD4E245556D100EBD24F /* LiveLocalPlay-观看离线回放 */ = {
 			isa = PBXGroup;
 			children = (
@@ -730,10 +736,10 @@
 		522F4ED1217D606D001B078F /* CCSDK */ = {
 			isa = PBXGroup;
 			children = (
-				5292349B24F12E4000096046 /* CCBundle.bundle */,
-				5292349E24F12E4200096046 /* CCSDK.framework */,
-				5292349C24F12E4100096046 /* HDBaseUtils.framework */,
-				5292349D24F12E4200096046 /* HDMediaFramework.framework */,
+				181D1E5A2503819900622B6E /* CCSDK.framework */,
+				18309B3724E399D60085641B /* HDMediaFramework.framework */,
+				52DC4971238543E700153F80 /* CCBundle.bundle */,
+				184703C624BC5E9D0096686C /* HDBaseUtils.framework */,
 			);
 			path = CCSDK;
 			sourceTree = "<group>";
@@ -783,6 +789,7 @@
 				529D53C421797CEA0093F724 /* Question-问答 */,
 				529D53C521797CEA0093F724 /* Sign-签到 */,
 				529D53C121797CE90093F724 /* Statistical-统计 */,
+				1884F01124F4F0DA00686CA2 /* UserRemindView-直播间提示语 */,
 				529D53C221797CEA0093F724 /* Tools */,
 				529D53BD21797CD00093F724 /* Category */,
 				529D538F2179750D0093F724 /* Info.plist */,
@@ -1326,8 +1333,8 @@
 				4B209CD923B0618B0017A6E3 /* Emotion.bundle in Resources */,
 				70E04F5C228517DD00A735FC /* chaoren_right@2x.png in Resources */,
 				4B209CE823B0618B0017A6E3 /* Emotions.plist in Resources */,
+				52DC4972238543E700153F80 /* CCBundle.bundle in Resources */,
 				70E04F61228517DD00A735FC /* chaoren_left@2x.png in Resources */,
-				5292349F24F12E4200096046 /* CCBundle.bundle in Resources */,
 				529D538B2179750D0093F724 /* Assets.xcassets in Resources */,
 				70480D57223A4D8C00368084 /* gift_loading_gif@3x.gif in Resources */,
 				70E04F5F228517DD00A735FC /* noble_background_image@2x.png in Resources */,
@@ -1450,6 +1457,7 @@
 				70E04F702285182D00A735FC /* CCBarrage.m in Sources */,
 				7008A64722327BB400CECD43 /* VoteView.m in Sources */,
 				7052B6AA2230B99F00CF8656 /* CCCupView.m in Sources */,
+				1884F01A24F9EA9F00686CA2 /* HDUserRemindView.m in Sources */,
 				7008A64122327B9C00CECD43 /* CCChatBaseView.m in Sources */,
 				70E04F7622852B6C00A735FC /* OCBarrageWalkBannerDescriptor.m in Sources */,
 				52F8BB5C222D110F00B7CC1B /* NSString+Extension.m in Sources */,
@@ -1675,10 +1683,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 39TBB43S2R;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1716,7 +1726,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.CCLiveCloud.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = cc_live_iOS_development;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1729,10 +1739,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 39TBB43S2R;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1770,7 +1782,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.CCLiveCloud.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = cc_live_iOS_development;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

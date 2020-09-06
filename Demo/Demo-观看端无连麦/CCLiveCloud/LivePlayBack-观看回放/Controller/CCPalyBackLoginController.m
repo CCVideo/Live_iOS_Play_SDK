@@ -10,12 +10,12 @@
 #import "TextFieldUserInfo.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
-#import <CCSDK/CCLiveUtil.h>
-#import <CCSDK/RequestDataPlayBack.h>
+#import "CCSDK/CCLiveUtil.h"
+#import "CCSDK/RequestDataPlayBack.h"
 #import "InformationShowView.h"
 #import "LoadingView.h"
 #import "CCPlayBackController.h"
-#import <CCSDK/SaveLogUtil.h>//日志
+#import <CCSDK/SaveLogUtil.h>
 @interface CCPalyBackLoginController ()<UITextFieldDelegate,RequestDataPlayBackDelegate>
 
 @property(nonatomic,strong)UILabel                      * informationLabel;//直播间信息
@@ -93,7 +93,7 @@
     _loadingView = nil;
     [UIApplication sharedApplication].idleTimerDisabled=YES;
     CCPlayBackController *playBackVC = [[CCPlayBackController alloc] init];
-   
+    
     playBackVC.modalPresentationStyle = 0;
     [self presentViewController:playBackVC animated:YES completion:nil];
 }
@@ -432,6 +432,7 @@
     }];
     //添加通知
     [self addObserver];
+    
 }
 #pragma mark - 懒加载
 //userId输入框

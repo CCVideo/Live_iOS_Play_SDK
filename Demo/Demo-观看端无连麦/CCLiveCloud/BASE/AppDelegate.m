@@ -66,7 +66,7 @@
 
 #import "AppDelegate.h"
 #import "CCEntranceViewController.h"
-#import <CCSDK/SaveLogUtil.h>//日志
+#import <CCSDK/SaveLogUtil.h>
 #import "CCNAVController.h"
 #import <Bugly/Bugly.h>
 //#import <WebRTC/WebRTC.h>

@@ -8,8 +8,8 @@
 
 #import "CCPlayLoginController.h"
 #import "TextFieldUserInfo.h"
-#import <CCSDK/CCLiveUtil.h>
-#import <CCSDK/RequestData.h>
+#import "CCSDK/CCLiveUtil.h"
+#import "CCSDK/RequestData.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ScanViewController.h"
 #import "CCLiveCloud.pch"
@@ -32,6 +32,7 @@
 @property (nonatomic, strong)TextFieldUserInfo    * textFieldUserPassword;//密码
 @property (nonatomic, strong)InformationShowView  * informationView;//提示
 @property (nonatomic, assign)BOOL                  isShowTipView;//是否已显示输入过长提示框
+
 
 @end
 

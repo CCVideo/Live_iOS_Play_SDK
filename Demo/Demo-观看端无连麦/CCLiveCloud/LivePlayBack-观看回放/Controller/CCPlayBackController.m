@@ -8,7 +8,7 @@
 
 #import "CCPlayBackController.h"
 #import "CCPlayBackView.h"//视频视图
-#import <CCSDK/RequestDataPlayBack.h>//sdk
+#import "CCSDK/RequestDataPlayBack.h"//sdk
 #import <CCSDK/SaveLogUtil.h>//日志
 #import "CCPlayBackInteractionView.h"//回放互动视图
 //#ifdef LockView
@@ -91,7 +91,6 @@
     [self addObserver];//添加通知
     [self integrationSDK];//集成SDK
 }
-
 /**
  *    @brief   回放翻页数据列表
  *    @param   array [{  docName         //文档名
@@ -116,7 +115,6 @@
 - (void)videoStateChangeWithString:(NSString *)result {
 //    NSLog(@"---状态是%@",result);
 }
-
 
 /**
  切换回放,需要重新配置参数

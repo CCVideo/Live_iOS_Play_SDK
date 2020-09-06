@@ -163,5 +163,59 @@ typedef NS_ENUM(NSUInteger, HDMovieFinishReason) {
     HDMovieFinishReasonPlaybackError,
 };
 
+
+
 @end
 
+
+@interface RemindModel :NSObject
+
+/**
+ *  用户进出通知
+ *  HDUSER_IN_REMIND      进入直播间
+ *  HDUSER_OUT_REMIND     退出直播间
+ */
+typedef NS_ENUM(NSUInteger, HDUSER_REMIND) {
+    HDUSER_IN_REMIND,//进入直播间
+    HDUSER_OUT_REMIND,//退出直播间
+};
+
+/** 用户id */
+@property (nonatomic, copy) NSString    *userId;
+/** 昵称 */
+@property (nonatomic, copy) NSString    *userName;
+/** 角色 */
+@property (nonatomic, copy) NSString    *userRole;
+/** 头像 */
+@property (nonatomic, copy) NSString    *userAvatar;
+/** 分组id */
+@property (nonatomic, copy) NSString    *groupId;
+/** 接收端   1-讲师；2-助教；3-主持人；4-观看端 */
+@property (nonatomic, strong) NSArray   *clientType;
+/** 用户进出通知 */
+@property (nonatomic, assign) HDUSER_REMIND remindType;
+/** 发送内容前缀 */
+@property (nonatomic, copy) NSString    *prefixContent;
+/** 发送内容后缀 */
+@property (nonatomic, copy) NSString    *suffixContent;
+
+
+
+@end
+
+
+@interface BanChatModel : NSObject
+
+/** 用户id */
+@property (nonatomic, copy) NSString    *userId;
+/** 昵称 */
+@property (nonatomic, copy) NSString    *userName;
+/** 角色 */
+@property (nonatomic, copy) NSString    *userRole;
+/** 头像 */
+@property (nonatomic, copy) NSString    *userAvatar;
+/** 分组id */
+@property (nonatomic, copy) NSString    *groupId;
+
+
+@end

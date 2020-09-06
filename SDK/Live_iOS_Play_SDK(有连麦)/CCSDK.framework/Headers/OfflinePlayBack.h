@@ -11,7 +11,6 @@
 #import "PlayParameter.h"
 #import "HDMediaFramework/HDMediaPlayback.h"
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
-
 @protocol OfflinePlayBackDelegate <NSObject>
 @optional
 /**
@@ -236,7 +235,7 @@
  */
 - (void)changeDocFrame:(CGRect)docFrame withPPTScalingMode:(NSInteger)PPTScalingMode DEPRECATED_MSG_ATTRIBUTE("该方法已废弃:调用新方法 - (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;");
 /**
- *    @brief    主动调用方法       用于调整PPT缩放模式
+ *    @brief    主动调用方法       用于调整PPT缩放模式    (3.10更改)
  *    @param    pptScalingMode   PPT缩放模式
  *                               1 = 拉伸填充:PPT内容全部展示在显示区域,会被拉伸或压缩,不会存在黑边
  *                               2 = 等比居中:PPT内容保持原始比例,适应窗口展示在显示区域,会存在黑边

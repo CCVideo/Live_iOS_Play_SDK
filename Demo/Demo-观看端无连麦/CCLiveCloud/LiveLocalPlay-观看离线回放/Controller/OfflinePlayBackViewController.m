@@ -10,8 +10,7 @@
 #import "CCPlayBackView.h"//视频视图
 #import <CCSDK/SaveLogUtil.h>//日志
 #import "CCPlayBackInteractionView.h"//回放互动视图
-#import <CCSDK/OfflinePlayBack.h>//离线下载
-
+#import "CCSDK/OfflinePlayBack.h"//离线下载
 //#ifdef LockView
 #import "CCLockView.h"//锁屏
 //#endif
@@ -87,8 +86,6 @@
     _recordHistoryCount = 0;
     _isShowRecordHistory = NO;
 }
-
-
 //集成SDK
 - (void)integrationSDK {
 
@@ -190,8 +187,17 @@
                 /* 当视频被打断时，重新开启视频需要校对时间 */
                 if (_playerView.slider.value != 0) {
                     _offlinePlayBack.currentPlaybackTime = _playerView.slider.value;
+                    //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
+//                    [self.playerView startTimer];
                     return;
                 }
+                
+                
+                /*   从0秒开始加载文档  */
+//                [_offlinePlayBack continueFromTheTime:0];
+                /*   Ps:从100秒开始加载视频  */
+                //开启playerView的定时器,在timerfunc中去校对SDK中播放器相关数据
+//                [self.playerView startTimer];
             }
             break;
         }

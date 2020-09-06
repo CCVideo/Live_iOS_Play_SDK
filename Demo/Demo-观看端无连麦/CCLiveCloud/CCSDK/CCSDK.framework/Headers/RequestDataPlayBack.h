@@ -13,8 +13,7 @@
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
 
-#define SDKVersion @"3.10.0"
-
+#define SDKVersion @"3.11.0"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -141,6 +140,13 @@
  *              HDMovieFinishReasonPlaybackError    发生错误崩溃结束
  */
 - (void)HDMoviePlayerPlaybackDidFinish:(HDMovieFinishReason)reason;
+
+/**
+ *    @brief    视频准备播放
+ *    @param    dict  数据
+ */
+- (void)HDMediaPlaybackIsPreparedToPlayDidChange:(NSDictionary *)dict;
+
 /**
  *    @brief    播放器时间
  *    @param    currentTime   当前时间

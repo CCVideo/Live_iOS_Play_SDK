@@ -2,8 +2,8 @@
 //  CCSDK.h
 //  CCSDK
 //
-//  Created by Clark on 2020/8/22.
-//  Copyright © 2020 cc. All rights reserved.
+//  Created by Apple on 2020/9/5.
+//  Copyright © 2020 Apple. All rights reserved.
 //
 
 #ifndef CCSDK_h
@@ -17,3 +17,5 @@
 #import "PlayParameter.h"
 
 #endif /* CCSDK_h */
+
+

@@ -12,9 +12,7 @@
 #import "HDMediaFramework/HDMediaPlayback.h"
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.10.0"
-
-
+#define SDKVersion @"3.11.0"
 
 @protocol RequestDataDelegate <NSObject>
 @optional
@@ -441,15 +439,16 @@
 /**
  *    @brief    收到开始打卡
  *    dic {
-     "punchId": "punchId",
-     "expireTime": "2019-10-26 10:00:00",
-     "remainDuration": 124
-    }
+          "punchId": "punchId",
+          "expireTime": "2019-10-26 10:00:00",
+          "remainDuration": 124
+          "tips"  // 没有提示语则不返回该字段
+           }
  *    当没有设置时长，即无过期时间时
  *    {
      "punchId": "asasdasdasdasd",
      "remainDuration": -1 //其中-1表示剩余无限时间。
- }
+      }
  */
 -(void)hdReceivedStartPunchWithDict:(NSDictionary *)dic;
 /**
@@ -510,6 +509,17 @@
  */
 - (void)broadcast_delete:(NSDictionary *)dic;
 
+/**
+ *    @brief    禁言用户提示
+ *    @param    model   BanChatModel    详情
+ */
+- (void)HDBanChatBroadcastWithModel:(BanChatModel *)model;
+
+/**
+ *    @brief    用户进出直播间提示
+ *    @param    model    RemindModel    详情
+ */
+- (void)HDUserRemindWithModel:(RemindModel *)model;
 
 @end
 
@@ -752,6 +762,5 @@
  *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
  */
 - (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;
-
 
 @end
