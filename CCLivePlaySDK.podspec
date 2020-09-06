@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "CCLivePlaySDK"
-  s.version      = '3.10.0'
+  s.version      = '3.11.0'
   s.summary      = "An iOS SDK for CCLive Service"
 
   s.description  = <<-DESC
