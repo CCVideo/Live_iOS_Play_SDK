@@ -12,8 +12,9 @@
 #import "HDMediaFramework/HDMediaPlayback.h"
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
+#import "CCLiveUtil.h"
 
-#define SDKVersion @"3.11.0"
+#define SDKVersion @"3.11.1"
 @protocol RequestDataPlayBackDelegate <NSObject>
 @optional
 /**
@@ -171,6 +172,13 @@
  *接收到播放线路   例:videoArray元素个数 2 代表2条线路 changeLineWithPlayParameter传0或1
  */
 -(void)numberOfReceivedLinesWithVideo:(NSArray *)videoArray audio:(NSArray *)audioArray;
+
+/**
+ *    @brief    错误信息回调
+ *    @param    error       错误描述
+ *    @param    errorCode   错误码 (可选)
+ */
+- (void)HDRequestDataErrorWithDescription:(ERROR_REQUEST_TYPE)error errorCode:(NSString *)errorCode;
 
 @end
 

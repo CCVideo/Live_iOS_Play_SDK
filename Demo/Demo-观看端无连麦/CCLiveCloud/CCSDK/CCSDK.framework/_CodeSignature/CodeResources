@@ -6,11 +6,11 @@
 	<dict>
 		<key>Headers/CCLiveUtil.h</key>
 		<data>
-		wNeZQzeQwCGUb4JVn/FDHEt0STk=
+		WpmRJJcDgOeJe0N/uhAn6imrno8=
 		</data>
 		<key>Headers/CCSDK.h</key>
 		<data>
-		GyYig+/m0RWwgtOO4YxQzZ3NgrA=
+		0o7zw/u/egsh6O3PMGnT3wSv6iA=
 		</data>
 		<key>Headers/OfflinePlayBack.h</key>
 		<data>
@@ -22,19 +22,19 @@
 		</data>
 		<key>Headers/RequestData.h</key>
 		<data>
-		XaJKRRAXlrzuQu6X6rjUHSAjNY8=
+		mhYUSuwWNYHhQXcXNn4N6YRwoBI=
 		</data>
 		<key>Headers/RequestDataPlayBack.h</key>
 		<data>
-		HkbJ9sFko3SlWZUGoAFQDrzbMbE=
+		jD8dolJXIpFrdtqcUk2PQI78yWs=
 		</data>
 		<key>Headers/SaveLogUtil.h</key>
 		<data>
-		Sf/EnIJjNjujEDRy6KrRJuBA7Fg=
+		t9cVkn78douPFVVkX90lFymDqvU=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		fd3ZOsGb3yZRtk9TINri72gUGow=
+		qBah4TjB+6FH6aV2E48GMcd86tc=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -47,22 +47,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			wNeZQzeQwCGUb4JVn/FDHEt0STk=
+			WpmRJJcDgOeJe0N/uhAn6imrno8=
 			</data>
 			<key>hash2</key>
 			<data>
-			aVzbjErdmhiPAcn3CCCGqV4rC3jTO203hJWNBll0oFg=
+			uVYiQTMLgT+3G1c8gC9b1VeSdHVBbYSiRTrTUcRNqVM=
 			</data>
 		</dict>
 		<key>Headers/CCSDK.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			GyYig+/m0RWwgtOO4YxQzZ3NgrA=
+			0o7zw/u/egsh6O3PMGnT3wSv6iA=
 			</data>
 			<key>hash2</key>
 			<data>
-			kKlCKe/Hm0c6LYSfExWZCr+O3SIdMCnZ1efBERstW/c=
+			WkJ2M247rJtTaSxmO+MteNXShYapPUQOBGMhVo0jGK8=
 			</data>
 		</dict>
 		<key>Headers/OfflinePlayBack.h</key>
@@ -91,33 +91,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			XaJKRRAXlrzuQu6X6rjUHSAjNY8=
+			mhYUSuwWNYHhQXcXNn4N6YRwoBI=
 			</data>
 			<key>hash2</key>
 			<data>
-			MK6L6nrx6i0yfJJAQ0gsOE/KuUeqlxXeK1LEtn/IbB0=
+			Qh0dlGAPXtlV6TCn2YLuyN6IgR5zrqjgF4jG6DZ67Gg=
 			</data>
 		</dict>
 		<key>Headers/RequestDataPlayBack.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			HkbJ9sFko3SlWZUGoAFQDrzbMbE=
+			jD8dolJXIpFrdtqcUk2PQI78yWs=
 			</data>
 			<key>hash2</key>
 			<data>
-			fGipwLlCl9HfI4igSheT4v+A0XRSItPRWiBukZhvVOc=
+			1V1mQEsss6L0XnDN77gVWCFEl5SBA63iNjPvXJeMHv0=
 			</data>
 		</dict>
 		<key>Headers/SaveLogUtil.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Sf/EnIJjNjujEDRy6KrRJuBA7Fg=
+			t9cVkn78douPFVVkX90lFymDqvU=
 			</data>
 			<key>hash2</key>
 			<data>
-			oHKdISGuJ0USJGdI0D9jyA19qy7UfoZ4xV5QJDtg5TA=
+			5g9YN5rMKHa6q/WzFAMOwa6R97G4KVYEEvB22gvXVdY=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

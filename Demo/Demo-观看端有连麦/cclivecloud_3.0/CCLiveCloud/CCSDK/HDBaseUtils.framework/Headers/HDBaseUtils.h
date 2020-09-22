@@ -17,7 +17,7 @@ FOUNDATION_EXPORT const unsigned char HDBaseUtilsVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <HDBaseUtils/PublicHeader.h>
 
 //base库版本号
-#define HDBASESDK_VERSION @"1.0.2"
+#define HDBASESDK_VERSION @"1.0.3"
 
 #import <HDBaseUtils/HDUniversalUtils.h>
 
@@ -39,11 +39,6 @@ FOUNDATION_EXPORT const unsigned char HDBaseUtilsVersionString[];
 //网速检测
 #import <HDBaseUtils/HDInternetSpeedMeasuring.h>
 
-//播放器
-#import <HDBaseUtils/HDPlayerView.h>
-
-
-//#import <HDBaseUtils/HDSLogTrack.h>
 #import <HDBaseUtils/HDSReportClient.h>
 
 

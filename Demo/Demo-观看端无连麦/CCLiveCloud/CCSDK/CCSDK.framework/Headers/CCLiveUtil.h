@@ -26,6 +26,11 @@ typedef NS_ENUM(NSInteger, ERROR_SYSTEM_TYPE) {
     ERROR_DRMURL = 1020,//@"获取加密地址失败"
 };
 
+typedef NS_ENUM(NSInteger, ERROR_REQUEST_TYPE) {
+   ERROR_REQUEST_DRAWDATA = 1021,//请求画笔数据错误
+};
+
+
 
 @interface CCLiveUtil : NSObject
 

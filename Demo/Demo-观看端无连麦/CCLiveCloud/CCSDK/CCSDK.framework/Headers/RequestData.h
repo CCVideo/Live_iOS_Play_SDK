@@ -12,7 +12,7 @@
 #import "HDMediaFramework/HDMediaPlayback.h"
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.11.0"
+#define SDKVersion @"3.11.1"
 
 @protocol RequestDataDelegate <NSObject>
 @optional
@@ -521,6 +521,7 @@
  */
 - (void)HDUserRemindWithModel:(RemindModel *)model;
 
+
 @end
 
 @interface RequestData : NSObject
@@ -762,5 +763,7 @@
  *                               3 = 等比填充:PPT内容保持原始比例,以横向或纵向适应显示区域,另一方向将会超出显示区域,超出部分会被裁减,不会存在黑边
  */
 - (void)changeDocPPTScalingMode:(NSInteger)pptScalingMode;
+
+
 
 @end

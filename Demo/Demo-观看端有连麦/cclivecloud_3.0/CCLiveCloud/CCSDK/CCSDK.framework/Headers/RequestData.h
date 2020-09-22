@@ -12,7 +12,7 @@
 #import "HDMediaFramework/HDMediaPlayback.h"
 #import "HDMediaFramework/HDFFMoviePlayerController.h"
 #import <WebKit/WebKit.h>
-#define SDKVersion @"3.11.0"
+#define SDKVersion @"3.11.1"
 
 @protocol RequestDataDelegate <NSObject>
 @optional
