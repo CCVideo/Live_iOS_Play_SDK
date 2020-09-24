@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author             = { "CClive" => "service@bokecc.com" }
 
-  s.platform     = :ios, "8.0"
+  s.platform     = :ios, "9.0"
 
 
   s.source       = { :git => "https://github.com/CCVideo/Live_iOS_Play_SDK.git", :tag => s.version.to_s }
@@ -24,6 +24,6 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = 'SDK/Live_iOS_Play_SDK(无连麦)/*.{framework}'
 
 s.resource = 'SDK/Live_iOS_Play_SDK(无连麦)/CCBundle.bundle'
- s.dependency 'HDBaseUtils', '~> 1.0.3'
+ s.dependency 'HDBaseUtils', '~> 1.0.4'
 
 end
